@@ -110,10 +110,10 @@ import {
   DueDateTitle,
   SecondContDueDate,
   ThirdContDueDate,
-} from "./TaskDetailStyles";
+} from "../../divami_components/task_detail/TaskDetailStyles"
 import { createComment, getCommentsList } from "../../../services/comments";
-import ActivityLog from "./ActivityLog";
-import { ActivityLogContainer } from "../issueDetails/IssueDetailStyles";
+import ActivityLog from "../../divami_components/hotspot_detail/ActivityLog";
+import { ActivityLogContainer } from "../../divami_components/issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import AttachmentPreview from "../../divami_components/attachmentPreview";
@@ -122,7 +122,6 @@ import { truncateString } from "../../../pages/projects";
 import Download from "../../../public/divami_icons/download.svg";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
 import CreateTask from "../../divami_components/create-task/CreateTask";
-import { IToolbarAction } from "../../../models/ITools";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -817,7 +816,7 @@ function BasicTabs(props: any) {
                       variant="standard"
                       placeholder="Add Comment"
                       value={comments}
-                      onChange={(e) => {
+                      onChange={(e:any) => {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
@@ -998,9 +997,12 @@ const CustomTaskDetailsDrawer = (props: any) => {
     );
     return updatedTaskList;
   };
-
+ 
   const onDeleteCallback = () => {
     onClose();
+    console.log("routerrrrrrre",router.query.iss)
+    delete router.query.iss
+    router.push(router)
     if (setTaskList) {
       const updatedIssuesList = deletetaskById(taskList, selectedTask);
 
@@ -1203,6 +1205,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                 <ArrowIcon
                   onClick={() => {
                     onClose(true);
+                   
                   }}
                   src={BackArrow}
                   alt={"close icon"}

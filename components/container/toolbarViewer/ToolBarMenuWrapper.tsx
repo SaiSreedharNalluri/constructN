@@ -22,12 +22,16 @@ interface toolProps {
 
 export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
+  RouterIssueRef:(handleMenuInstance:any) => void;
+ 
 };
 export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
+  handleRouterIssueRef: (handleMenuInstance: any) => void;
 };
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
+  handleRouterTask:(handleMenuInstance:any)=> void;
 };
 
 export type designToolHandle = {
@@ -36,10 +40,14 @@ export type designToolHandle = {
 
 
 
+
+
+
 function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, ref: Ref<toolBarHandle>) {
   const issueRef = React.useRef<IssueToolHandle>(null);
   const taskRef = React.useRef<taskToolHandle>(null);
   const designRef = React.useRef<any>(null);
+  const routerIssueRef = React.useRef<any>(null)
   const [rightNav, setRighttNav] = useState(false);
   // const [isCompareDesign, setIsCompareDesign] = useState(false);
   // const [isCompareReality, setIsCompareReality] = useState(false);
@@ -74,6 +82,16 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           let tasktoolInstance: IToolbarAction = { type: handleMenuInstance.type, data: handleMenuInstance.data }
           taskRef.current?.handleTaskInstance(tasktoolInstance)
         }
+      },
+      RouterIssueRef(handleMenuInstance:any){
+        console.log("handleMenuInstN",handleMenuInstance)
+        if(handleMenuInstance.type === "selectIssue"){
+          issueRef.current?.handleRouterIssueRef(handleMenuInstance)
+        }
+        else if(handleMenuInstance.type === "selectTask"){
+          taskRef.current?.handleRouterTask(handleMenuInstance)
+        }
+        
       }
 
     };
@@ -108,14 +126,14 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
         default:
           setSelectedTypeVal(initData.currentViewType);
       }
-      if(initData?.structure){
-        console.log("passing str")
-        designRef.current.handleDesignRef(initData?.structure)
-      }
+    if (initData?.structure) {
+      console.log("passing str")
+      designRef?.current?.handleDesignRef(initData?.structure)
+    }
 
-      if(initData?.currentLayersList){
-        setMyLayersList(initData.currentLayersList);
-      }
+    if (initData?.currentLayersList) {
+      setMyLayersList(initData.currentLayersList);
+    }
   }, [initData]);
 
   const typeChange = (changeOb: any) => {
@@ -128,41 +146,41 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
 
   };
   const LayerChange = (changeOb: any, layerLabel: string, node: RenderTree) => {
-    if (myLayersList){
-    let obj: ILayer[] = myLayersList;
-    for (const key in obj) {
-      if (obj[key]?.name == node.name) {
-        obj[key] = {
-          ...obj[key],
-          isSelected: !obj[key].isSelected,
-          children: obj[key].children?.length
-            ? obj[key]?.children?.map((each: any) => {
-              return {
-                ...each,
-                isSelected: !obj[key].isSelected,
-              };
-            })
-            : [],
-        };
-      } else if (obj[key].children?.length) {
-        obj[key] = {
-          ...obj[key],
-          children: obj[key]?.children?.map((each: any) => {
-            if (each.name === node.name) {
-              return {
-                ...each,
-                isSelected: !each.isSelected,
-              };
-            } else {
-              return each;
-            }
-          }),
-        };
+    if (myLayersList) {
+      let obj: ILayer[] = myLayersList;
+      for (const key in obj) {
+        if (obj[key]?.name == node.name) {
+          obj[key] = {
+            ...obj[key],
+            isSelected: !obj[key].isSelected,
+            children: obj[key].children?.length
+              ? obj[key]?.children?.map((each: any) => {
+                return {
+                  ...each,
+                  isSelected: !obj[key].isSelected,
+                };
+              })
+              : [],
+          };
+        } else if (obj[key].children?.length) {
+          obj[key] = {
+            ...obj[key],
+            children: obj[key]?.children?.map((each: any) => {
+              if (each.name === node.name) {
+                return {
+                  ...each,
+                  isSelected: !each.isSelected,
+                };
+              } else {
+                return each;
+              }
+            }),
+          };
+        }
       }
+      let typeChangeToolAction: IToolbarAction = { type: "setViewLayers", data: obj };
+      toolClicked(typeChangeToolAction);
     }
-    let typeChangeToolAction: IToolbarAction = { type: "setViewLayers", data: obj };
-    toolClicked(typeChangeToolAction);
-  }
 
     // setActiveRealityMap(obj);
     // setLayersUpdated(!layersUpdated);
@@ -180,26 +198,21 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
   };
   const taskMenuClicked = (localTool: IToolbarAction) => {
     toolClicked(localTool);
-    // if (
-    //   localTool.toolAction === "taskCreateClose" ||
-    //   localTool.toolAction === "taskViewClose"
-    // )
-    //   setRighttNav(!rightNav);
   };
-  // const hotspotMenuClicked = (localTool: ITools) => {
-  //   toolClicked(localTool);
-  //   if (
-  //     localTool.toolAction === "hotspotCreateClose" ||
-  //     localTool.toolAction === "hotspotViewClose" ||
-  //     localTool.toolAction === "hotspotView"
-  //   )
-  //     setRighttNav(!rightNav);
-  // };
   const handleOnIssueSort = (sortMethod: string) => {
 
   }
   const handleOnTasksSort = (sortMethod: string) => {
 
+  }
+
+  const deleteTheIssue = (selectedIssue: any) => {
+    let selectedIssueforDelete: IToolbarAction = { type: "removedIssue", data: selectedIssue };
+    toolClicked(selectedIssueforDelete)
+  }
+  const deleteTheTask = (selectedTask: any) => {
+    let selectedTaskforDelete: IToolbarAction = { type: "removedTask", data: selectedTask };
+    toolClicked(selectedTaskforDelete)
   }
   return initData ? (
     <SectionToolBar>
@@ -246,6 +259,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
         /> */}
         <Issues
           initData={initData}
+          deleteTheIssue={deleteTheIssue}
           isCameraIconClicked={isCameraIconClicked}
           setCameraIconClicked={setCameraIconClicked}
           isClipboardIconClicked={isClipboardIconClicked}
@@ -255,11 +269,13 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           handleOnIssueSort={handleOnIssueSort}
           issueMenuClicked={issueMenuClicked}
           ref={issueRef}
+          toolClicked={toolClicked}
         />
 
         <Task
           tasksList={initData?.currentTaskList}
           taskMenuClicked={taskMenuClicked}
+          deleteTheTask={deleteTheTask}
           highlightCreateTaskIcon={highlightCreateTaskIcon}
           setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
           setHighlightCreateIcon={setHighlightCreateIcon}
@@ -272,17 +288,19 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           // taskFilterState={taskFilterState}
           handleOnTasksSort={handleOnTasksSort}
           ref={taskRef}
+          toolClicked={toolClicked}
 
         />
 
 
-        {/* {(initData.currentViewType === "pointCloud" || initData.currentViewType === "orthoPhoto") ? */}
-        <CompareView
-          issueMenuClicked={issueMenuClicked}
-          ref={designRef}
+        {(initData.currentViewType === "pointCloud" || initData.currentViewType === "orthoPhoto") ?
+          <CompareView
+            issueMenuClicked={issueMenuClicked}
+            ref={designRef}
 
-        /> : <></>
-        {/* } */}
+          /> : <></>
+        }
+
 
 
         {/* <Hotspot /> */}

@@ -10,7 +10,7 @@ import { CustomToast } from "../../../../../components/divami_components/custom-
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
 import MapLoading from "../../../../../components/container/mapLoading";
-import Header from "../../../../../components/divami_components/header/Header";
+import Header from "../../../../../components/container/MultiverseHeader/Header";
 import SidePanelMenu from "../../../../../components/divami_components/side-panel/SidePanel";
 import ToolBarMenuWrapper from "../../../../../components/container/toolbarViewer/ToolBarMenuWrapper";
 import { IDesignMap } from "../../../../../models/IDesign";
@@ -126,7 +126,10 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
 }));
 export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
+  RouterIssueRef:(handleMenuInstance:any) => void;
 };
+
+
 
 const Index: React.FC<IProps> = () => {
   const customLogger = new CustomLoggerClass();
@@ -511,7 +514,6 @@ const Index: React.FC<IProps> = () => {
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
-    console.log("changed structree", structure)
     if (router.isReady && structure) {
       router.query.structId = structure?._id;
       router.query.structureId = structure?._id;
@@ -548,13 +550,6 @@ const Index: React.FC<IProps> = () => {
     });
     setViewTypes(structuredClone(viewTypes));
     //console.log("MyViewTypeList-->r",viewTypes);
-  };
-  const updatedSnapshot = (snapshot: ISnapshot) => {
-    setSnapshot(snapshot);
-    if (router.isReady) {
-      router.query.snap = snapshot._id;
-      router.push(router);
-    }
   };
   useEffect(() => {
     if (router.query.iss !== null) {
@@ -655,6 +650,8 @@ const Index: React.FC<IProps> = () => {
     // let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.type) {
       case "setViewType":
+        router.query.type=toolInstance.data as string;
+        router.push(router);
         switch (toolInstance.data) {
           case "Plan Drawings":
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
@@ -669,6 +666,7 @@ const Index: React.FC<IProps> = () => {
         break;
 
       case "setCompareMode":
+        
         switch(toolInstance.data){
           case "noCompare":
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"'+toolInstance.data+'"}');
@@ -683,6 +681,21 @@ const Index: React.FC<IProps> = () => {
         }
         break;
       case "setViewMode":
+        switch(toolInstance.data){
+          case "Design":
+            if(initData?.structure.isExterior){
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
+            }
+            else{
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
+            }
+            
+            break;
+            case "Reality":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
+            break;
+
+        }
 
         break;
       case "viewIssueList":
@@ -703,27 +716,34 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
         break;
       case "selectIssue":
+        console.log("select issue publish")
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "removedIssue":
-        // setClickedTool(toolInstance);
+        (async () => {
+           const issueDetelteStatus = await deleteTheIssue(toolInstance.data);
+           if(issueDetelteStatus){
+            let issueId = (toolInstance.data as { _id: any })._id;
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),'{"type":"'+toolInstance.type+'","data":'+JSON.stringify(issueId)+'}')
+          }
+        })();
         break;
       case "viewTaskList":
         //setOpenIssueView(true);
-        break;
-      case "createTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
         break;
       case "createFailIssue":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
         break;
       case "createSuccessIssue":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case "createTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
         break;
       case "createFailTask":
         break;
       case "createSuccessTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "selectTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
@@ -735,6 +755,15 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
         break;
       case "removedTask":
+        (async () => {
+          const TaskDetelteStatus = await deleteTheTask(toolInstance.data);
+          console.log(TaskDetelteStatus)
+          if(TaskDetelteStatus){
+           let taskId = (toolInstance.data as { _id: any })._id;
+           console.log("issueId",taskId)
+           conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),'{"type":"'+toolInstance.type+'","data":'+JSON.stringify(taskId)+'}')
+         }
+       })();
         // setClickedTool(toolInstance);
         break;
       case "setViewLayers":
@@ -751,6 +780,13 @@ const Index: React.FC<IProps> = () => {
         break;
       case "setFullScreenMode":
         break;
+      case "closeIssueDrawer":
+        delete router.query.iss
+        router.push(router)
+      case "closeTaskDrawer":
+        delete router.query.tsk
+        router.push(router)
+
       default:
         break;
     }
@@ -1082,60 +1118,45 @@ const Index: React.FC<IProps> = () => {
       numberOfFilters: 0,
     });
   };
-  const deleteTheIssue = (issueObj: any, callback?: any) => {
-    deleteIssue(router.query.projectId as string, issueObj._id)
-      .then((response: any) => {
-        if (response.success === true) {
-          CustomToast(response.message, "success");
-          _.remove(issueFilterList, { _id: issueObj._id });
-          setIssueList(issueFilterList);
-          if (callback && response.message !== "Failed to delete Issue") {
-            callback();
-          }
-          const issueMenuInstance: ITools = {
-            toolName: "issue",
-            toolAction: "issueRemoved",
-            response: issueObj
-          };
-
-          //toolClicked(issueMenuInstance);
-        }
-      })
-      .catch((error: any) => {
-        if (!error.success && error.message === "Forbidden Access") {
-          CustomToast("You do not have access,Contact Admin", "error");
-        } else {
-          CustomToast("Task could not be deleted", "error");
-        }
-      });
+  const deleteTheIssue = async (issueObj: any): Promise<boolean> => {
+    try {
+      const response: any = await deleteIssue(router.query.projectId as string, issueObj._id);
+  
+      if (response.success === true) {
+        CustomToast(response.message, "success");
+        return true;
+      }
+  
+    } catch (error:any) {
+      if (!error.success && error.message === "Forbidden Access") {
+        CustomToast("You do not have access, Contact Admin", "error");
+      } else {
+        CustomToast("Issue could not be deleted", "error");
+      }
+      return false;
+    }
+    return false;
   };
+  
 
-  const deleteTheTask = (taskObj: any, callback?: any) => {
-    deleteTask(router.query.projectId as string, taskObj._id)
-      .then((response: any) => {
-        if (response.success === true) {
-          CustomToast(response.message, "success");
-          _.remove(taskFilterList, { _id: taskObj._id });
-          setTasksList(taskFilterList);
-          if (callback && response.message !== "Failed to delete Issue") {
-            callback();
-          }
-          const taskMenuInstance: ITools = {
-            toolName: "task",
-            toolAction: "taskRemoved",
-            response: taskObj
-          };
-
-          //toolClicked(taskMenuInstance);
-        }
-      })
-      .catch((error: any) => {
-        if (!error.success && error.message === "Forbidden Access") {
-          CustomToast("You do not have access,Contact Admin", "error");
-        } else {
-          CustomToast("Task could not be deleted", "error");
-        }
-      });
+  const deleteTheTask = async (taskObj: any): Promise<boolean> => {
+    try{
+      const response:any= await  deleteTask(router.query.projectId as string, taskObj._id)
+      if (response.success === true) {
+        CustomToast(response.message, "success");
+        return true;
+      }
+    }
+    catch (error:any) {
+      if (!error.success && error.message === "Forbidden Access") {
+        CustomToast("You do not have access, Contact Admin", "error");
+      } else {
+        CustomToast("Issue could not be deleted", "error");
+      }
+      return false;
+    }
+    return false
+    
   };
 
   const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
@@ -1309,22 +1330,57 @@ const Index: React.FC<IProps> = () => {
     }
 
   }, [tasksList, router.query.tsk, router.query.snap]);
+
+
+
+  const updateRouter = (type:String,snap:String) => {
+    if(type !== router.query.type) router.query.type = String(type);
+    if(snap !== router.query.snap) router.query.snap = snap as string;
+
+    router.push(router);
+
+  }
+  const updateITRouter=(type:String,id:string)=>{
+    if(type === "selectIssue")
+    {
+      delete router.query.tsk
+      router.query.iss=id;
+    } 
+    if(type === "selectTask") {
+      delete router.query.iss
+      router.query.tsk=id
+    }
+  }
   useEffect(() => {
 
-
+    if(router.isReady){
     getGenViewerData(router.query.projectId as string, router.query.structureId as string)
       .then((response) => {
         if (response.success === true) {
+          if(router.query.type !== response.result.data?.currentViewType || router.query.snap!== response.result?.data?.currentSnapshotBase._id){
+              router.query.type = response.result.data?.currentViewType as string;  
+              router.query.snap = response.result.data?.currentSnapshotBase._id as string;  
+              router.push(router);
+          }
           setInintData(response.result);
-
+          if(initData && router.query.iss || router.query.tsk){
+            handleMenuInstance.data = router.query.iss as string || router.query.tsk as string;
+            if(router.query.iss) handleMenuInstance.type = "selectIssue"
+            if(router.query.tsk) handleMenuInstance.type = "selectTask"
+            if (ref && ref.current) {
+              ref.current?.RouterIssueRef(handleMenuInstance) // useRef for passing Router Issue/Task
+            }
+          }
+        
         }
       })
       .catch((error) => {
         console.log("Error in loading data: 1 ", error);
       });
+    }
+  }, [router.query.structId,router.isReady])
 
-  }, [router.query.structId])
-
+  
 
   useEffect(() => {
 
@@ -1349,40 +1405,33 @@ const Index: React.FC<IProps> = () => {
   }
 
   }, [initData])
-
-  const issueContext = (issue: any) => {  // selected Issue context pusblish
-    let iContext: IContext = issue.context
-    iContext.id = issue._id
-    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectIssue","data":' + JSON.stringify(iContext) + '}');
-  }
-
-  const taskContext = (task: any) => {  // selected Task context publish
-    console.log("selected context task", task)
-    let tContext: IContext = task.context
-    tContext.id = task._id
-    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectTask","data":' + JSON.stringify(tContext) + '}');
-  }
-
-
-
+ 
   const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("callback data", JSON.parse(msg.toString()))
+    setInintData(prevData => ({
+      ...prevData,
+      ...message.data
+  }));
+  if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
+    updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
+  }
+  if(message.type === "selectIssue" || message.type === "selectTask"){
+    updateITRouter(message.type,message.data.id) //Router current Task/Issue
+  }
+
     if (message.type === "selectIssue" || message.type === "selectTask" || message.type === "createIssue" || message.type === "createTask") {
-      console.log("check msg type",message.type)
       handleMenuInstance.data = message;
       handleMenuInstance.type = message.type
       if (ref && ref.current) {
-        console.log("2nd msg type",message.type)
         ref.current?.selectToolRef(handleMenuInstance)
-        console.log("3nd msg type",message.type)
-        
       }
 
       setCurrentContext(message)
+      
     }
+    
   }
-
   useEffect(() => {
     conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(), appEventsCB)
     return () => {
@@ -1396,13 +1445,11 @@ const Index: React.FC<IProps> = () => {
       if (pdata) {
         pdata.currentViewType = "Plan Drawings"
       }
-      if (router.isReady) {
-        setTimeout(() => {
           conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
-        }, 8000)
-      }
+          
     }
-  }, [conn,initData])
+   
+  }, [router.query.structId,conn])
 
   return (
     <div className=" w-full  h-full">
@@ -1540,7 +1587,7 @@ const Index: React.FC<IProps> = () => {
                 : <></>}
             </div></div></div>
 
-        <div className="ml-10 mt-9">
+        <div>
           {structure && <Iframe
             structureData={structure}
           ></Iframe>}

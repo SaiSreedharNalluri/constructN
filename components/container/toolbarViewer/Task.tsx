@@ -78,6 +78,7 @@ function Task({
   isReality,
   initData,
   taskContext,
+  toolClicked
 
 }: any,ref:Ref<taskToolHandle>) {
   const customLogger = new CustomLoggerClass();
@@ -123,7 +124,22 @@ function Task({
         }
 
         
-      }}},[])
+      },
+      handleRouterTask(handleRouterTask:any){
+        if (handleRouterTask.type === "selectTask" && handleRouterTask.data) {
+          const selectedObj = tasksList?.find(
+            (each: any) => each._id === handleRouterTask?.data
+          
+          ); 
+          let taskMenuInstance: IToolbarAction = { data: selectedObj?.context,type:handleRouterTask.type};
+          taskMenuClicked(taskMenuInstance)
+          setOpenTaskDetail(true)
+          setSelectedTask(selectedObj);
+        
+        }
+
+      }
+    }},[])
 
   useEffect(() => {
     setMyProject(currentProject);
@@ -133,8 +149,8 @@ function Task({
       document.getElementById("forgeViewer_1") ||
       document.getElementById("potreeViewer_1") ||
       document.body
-    ).then(function (canvas) {
-      canvas.toBlob((blob) => {
+    ).then(function (canvas:any) {
+      canvas.toBlob((blob:any) => {
         setImage(blob as Blob);
       }, "image/png");
     });
@@ -246,7 +262,7 @@ console.log("form datttaaa",formData)
       .projectId;
     if (data.title && data.type && data.priority) {
       createTaskWithAttachments(projectId as string, formDataObj)
-        .then((response) => {
+        .then((response:any) => {
           if (response.success === true) {
             CustomToast("Task created sucessfully", "success");
 
@@ -258,7 +274,7 @@ console.log("form datttaaa",formData)
           }
           setLoading(false)
         })
-        .catch((error) => {
+        .catch((error:any) => {
           if (error.status === 403) {
             CustomToast(`You don't have permission. Contact Admin.`, "error");
           } else if (error.status === 415) {
@@ -466,7 +482,10 @@ console.log("form datttaaa",formData)
         >
           <CustomTaskDetailsDrawer
             task={selectedTask}
-            onClose={() => setOpenTaskDetail(false)}
+            onClose={() => {setOpenTaskDetail(false)
+              let typeChangeToolAction: IToolbarAction = { type: "closeTaskDrawer", data: "" }; 
+              toolClicked(typeChangeToolAction);
+            }}
             taskType={currentTypesList}
             deleteTheTask={deleteTheTask}
             currentProject={currentProject}

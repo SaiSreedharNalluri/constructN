@@ -3,7 +3,9 @@
 // import { IUser } from "@/models/IUser";
 import { getCookie } from "cookies-next";
 import  { MqttClient } from "mqtt"
-import mqtt from "mqtt";
+
+import mqtt from "mqtt"
+import path from "path";
 export type OnMessageCallbak = (msg:Buffer,packet:any)=>void;
 interface TopicCB{
   topic:string;
@@ -28,7 +30,7 @@ export class MqttConnector{
    };
    options:mqtt.IClientOptions;
 
-   constructor(url:string='ws://localhost:8080/mqtt',opt:mqtt.IClientOptions={hostname:'localhost',port:9001,path:'/mqtt',clean:true,clientId:'mqtt-asad',protocol:'ws'}){
+   constructor(url:string='ws://localhost:9001/mqtt',opt:mqtt.IClientOptions={hostname:'localhost',port:9001,path:'/mqtt',clean:true,clientId:'mqtt-asad',protocol:'ws'}){
     this.options = opt;
     this._connection= mqtt.connect(url);
     this._connection.on("connect", () => {

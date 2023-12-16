@@ -322,7 +322,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
-      }).then((response) => {
+      }).then((response:any) => {
         if (response.success === true) {
           setIsAdding(true)
           getComments(entityId);
@@ -846,7 +846,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                       variant="standard"
                       placeholder="Add Comment"
                       value={comments}
-                      onChange={(e) => {
+                      onChange={(e:any) => {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
@@ -950,6 +950,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const router = useRouter();
   useEffect(() => {
     setSelectedIssue(issue);
+    console.log("selected Issue in the issue details",selectedIssue)
   }, [issue]);
   const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
     const selectedIssueId = selectedIssue?._id;
@@ -958,7 +959,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     );
     return updatedIssuesList;
   };
-
+  
   const onDeleteCallback = () => {
     onClose();
     if (setIssueList) {
@@ -1086,7 +1087,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
       editIssue(projectId, data, selectedIssue?._id)
-        .then((response) => {
+        .then((response:any) => {
           if (response.success === true) {
             CustomToast("Issue updated successfully","success");
             getIssues(currentStructure._id);
@@ -1097,7 +1098,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           setLoading(false)
           setOpenCreateTask(false);
         })
-        .catch((error) => {
+        .catch((error:any) => {
           if (error.success === false) {
             CustomToast(error?.message,"error");
           }
@@ -1178,13 +1179,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
       });
     if (filesArr?.length) {
       createAttachment(issue._id, fileformdata)
-        .then((response) => {
+        .then((response:any) => {
           if (!response.success) {
             CustomToast("Error uploading attachments","error");
           }
           saveEditDetails(data, projectId);
         })
-        .catch((error) => {
+        .catch((error:any) => {
           if (error.success === false) {
             setLoading(false)
             CustomToast(error?.message, "error", 3000);
@@ -1203,13 +1204,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
     editIssue(projectId as string, issueData, selectedIssue?._id)
-      .then((response) => {
+      .then((response:any) => {
         if (response.success === true) {
           CustomToast("Issue updated successfully","success");
           getIssues(currentStructure._id);
         }
       })
-      .catch((error) => {
+      .catch((error:any) => {
         if (error.success === false) {
           CustomToast(error?.message,"error");
         }
