@@ -63,6 +63,7 @@ import { MqttConnector, OnMessageCallbak } from "../../../../../utils/MqttConnec
 import Iframe from "../../../../../components/container/Iframe"
 import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
 import { responsiveFontSizes } from "@mui/material";
+import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
 interface IProps { }
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -128,8 +129,7 @@ export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
   RouterIssueRef:(handleMenuInstance:any) => void;
 };
-
-
+type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
 const Index: React.FC<IProps> = () => {
   const customLogger = new CustomLoggerClass();
@@ -198,6 +198,9 @@ const Index: React.FC<IProps> = () => {
 
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
   const [initData, setInintData] = useState<IGenData>();
+  const [multiverseIsReady,setMultiverseIsReady] = useState(false);
+  const [mViewerStatus, setMViewerStatus] = useState<multiverseViewerStatusTypes>("NotAvailable");
+
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
  
@@ -231,57 +234,57 @@ const Index: React.FC<IProps> = () => {
     numberOfFilters: 0,
   });
 
-  const closeIssueCreate = () => {
-    setOpenCreateIssue(false);
-    setHighlightCreateIcon(false);
-    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
+  // const closeIssueCreate = () => {
+  //   setOpenCreateIssue(false);
+  //   setHighlightCreateIcon(false);
+  //   conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
 
-  };
-  const issueSubmit = (formdata: Issue) => {
-    issuesList.push(formdata);
-    // if (structure) {
-    //   getIssues(structure._id);
-    // }
+  // };
+  // const issueSubmit = (formdata: Issue) => {
+  //   issuesList.push(formdata);
+  //   // if (structure) {
+  //   //   getIssues(structure._id);
+  //   // }
 
-    setIssueList(structuredClone(issuesList));
-    setIssueFilterList(structuredClone(issuesList));
-    // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
-    // toolClicked(myTool);
-    closeIssueCreate();
-  };
+  //   setIssueList(structuredClone(issuesList));
+  //   setIssueFilterList(structuredClone(issuesList));
+  //   // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
+  //   // toolClicked(myTool);
+  //   closeIssueCreate();
+  // };
 
-  const closeTaskCreate = () => {
-    setOpenCreateTask(false);
-    setHighlightCreateTaskIcon(false)
-  };
-  const closeIssueList = () => {
-    setOpenIssueView(false);
-  };
+  // const closeTaskCreate = () => {
+  //   setOpenCreateTask(false);
+  //   setHighlightCreateTaskIcon(false)
+  // };
+  // const closeIssueList = () => {
+  //   setOpenIssueView(false);
+  // };
 
-  const closeTaskDetails = () => {
-    setOpenTaskDetails(false);
+  // const closeTaskDetails = () => {
+  //   setOpenTaskDetails(false);
 
-    //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
+  //   //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
 
-  };
-  const closeIssueDetails = () => {
-    setOpenIssueDetails(false);
-    // delete router.query.iss
-    //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
-    // router.push(router);
-  };
+  // };
+  // const closeIssueDetails = () => {
+  //   setOpenIssueDetails(false);
+  //   // delete router.query.iss
+  //   //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
+  //   // router.push(router);
+  // };
 
-  const taskSubmit = (formdata: any) => {
-    tasksList.push(formdata);
-    let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    setTasksList(structuredClone(tasksList));
-    setTaskFilterList(structuredClone(tasksList));
-    // if (structure) {
-    //   getTasks(structure._id);
-    // }
-    // toolClicked(myTool);
-    closeTaskCreate();
-  };
+  // const taskSubmit = (formdata: any) => {
+  //   tasksList.push(formdata);
+  //   let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
+  //   setTasksList(structuredClone(tasksList));
+  //   setTaskFilterList(structuredClone(tasksList));
+  //   // if (structure) {
+  //   //   getTasks(structure._id);
+  //   // }
+  //   // toolClicked(myTool);
+  //   closeTaskCreate();
+  // };
 
   useEffect(() => {
     if (router.isReady && router.query?.projectId) {
@@ -531,26 +534,26 @@ const Index: React.FC<IProps> = () => {
     return currentStructure;
   };
 
-  const updateRealityMap = (realityMap: IActiveRealityMap) => {
-    setActiveRealityMap(realityMap);
-    if (currentViewLayers.length > 0) {
-      currentViewLayers.length = 0;
-    }
-    Object.keys(realityMap).map((key) => {
-      currentViewLayers.push(key);
-    });
-    Object.values(realityMap).map((val: any) => {
-      val.realities?.forEach((reality: any) => {
-        reality.realityType?.forEach((rType: any) => {
-          if (viewTypes.findIndex((typ) => typ === rType) == -1) {
-            viewTypes.push(rType);
-          }
-        });
-      });
-    });
-    setViewTypes(structuredClone(viewTypes));
-    //console.log("MyViewTypeList-->r",viewTypes);
-  };
+  // const updateRealityMap = (realityMap: IActiveRealityMap) => {
+  //   setActiveRealityMap(realityMap);
+  //   if (currentViewLayers.length > 0) {
+  //     currentViewLayers.length = 0;
+  //   }
+  //   Object.keys(realityMap).map((key) => {
+  //     currentViewLayers.push(key);
+  //   });
+  //   Object.values(realityMap).map((val: any) => {
+  //     val.realities?.forEach((reality: any) => {
+  //       reality.realityType?.forEach((rType: any) => {
+  //         if (viewTypes.findIndex((typ) => typ === rType) == -1) {
+  //           viewTypes.push(rType);
+  //         }
+  //       });
+  //     });
+  //   });
+  //   setViewTypes(structuredClone(viewTypes));
+  //   //console.log("MyViewTypeList-->r",viewTypes);
+  // };
   useEffect(() => {
     if (router.query.iss !== null) {
 
@@ -572,54 +575,52 @@ const Index: React.FC<IProps> = () => {
 
 
   }, [snapshot]);
-  useEffect(() => {
 
-  })
-  const updateDesignMap = (designMap: IDesignMap) => {
+  // const updateDesignMap = (designMap: IDesignMap) => {
 
 
-    setDesignMap(designMap);
-    setViewTypes([]);
+  //   setDesignMap(designMap);
+  //   setViewTypes([]);
 
-    Object.keys(designMap).forEach((key) => {
-      if (viewTypes.findIndex((k) => k === key) === -1) {
-        setViewTypes((prevViewTypes) => [...prevViewTypes, key]);
-      }
-    });
-  };
+  //   Object.keys(designMap).forEach((key) => {
+  //     if (viewTypes.findIndex((k) => k === key) === -1) {
+  //       setViewTypes((prevViewTypes) => [...prevViewTypes, key]);
+  //     }
+  //   });
+  // };
 
-  const activeClass = (e: any) => {
-    setViewerType(e.currentTarget.id);
-  };
-  const renderSwitch = (param: string) => {
-    switch (param) {
-      case "potree":
-        return <MapLoading></MapLoading>;
+  // const activeClass = (e: any) => {
+  //   setViewerType(e.currentTarget.id);
+  // };
+  // const renderSwitch = (param: string) => {
+  //   switch (param) {
+  //     case "potree":
+  //       return <MapLoading></MapLoading>;
 
-      case "plan Drawings":
-        // setGenData()
-        break;
-        return (
-          structure && (
-            ''
-          )
-        );
-      case "BIM":
-        // setGenData();
-        break;
-        return (
-          snapshot &&
-          structure && (
-            <div className="overflow-x-hidden overflow-y-hidden">
+  //     case "plan Drawings":
+  //       // setGenData()
+  //       break;
+  //       return (
+  //         structure && (
+  //           ''
+  //         )
+  //       );
+  //     case "BIM":
+  //       // setGenData();
+  //       break;
+  //       return (
+  //         snapshot &&
+  //         structure && (
+  //           <div className="overflow-x-hidden overflow-y-hidden">
 
-            </div>
-          )
-        );
+  //           </div>
+  //         )
+  //       );
 
-      default:
-        break;
-    }
-  };
+  //     default:
+  //       break;
+  //   }
+  // };
   const closeStructurePage = (e: any) => {
     if (
       rightrefContainer.current &&
@@ -633,9 +634,9 @@ const Index: React.FC<IProps> = () => {
     }
   };
 
-  const rightNavCollapse = () => {
-    setRightNav(!rightNav);
-  };
+  // const rightNavCollapse = () => {
+  //   setRightNav(!rightNav);
+  // };
 
   const onChangeData = () => {
     if (leftNav) {
@@ -665,6 +666,11 @@ const Index: React.FC<IProps> = () => {
         }
         break;
 
+      case "setStructure":
+        //conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":'+JSON.stringify(response.result)+'}')
+            
+        break;
+
       case "setCompareMode":
         
         switch(toolInstance.data){
@@ -684,15 +690,15 @@ const Index: React.FC<IProps> = () => {
         switch(toolInstance.data){
           case "Design":
             if(initData?.structure.isExterior){
-              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
             }
             else{
-              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
             }
             
             break;
             case "Reality":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
+            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
             break;
 
         }
@@ -1371,7 +1377,16 @@ const Index: React.FC<IProps> = () => {
               ref.current?.RouterIssueRef(handleMenuInstance) // useRef for passing Router Issue/Task
             }
           }
-        
+                  if(mViewerStatus==="Waiting")
+          {
+            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(response.result)+'}')
+            console.log("Handshake setGenData", response.result)
+            setMViewerStatus("Connected")
+          }
+          else if(mViewerStatus==="Connected"){
+            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":'+JSON.stringify(response.result)+'}')
+            
+          }
         }
       })
       .catch((error) => {
@@ -1402,25 +1417,138 @@ const Index: React.FC<IProps> = () => {
     {
       setRealityAvailable(false)
     }
+    if(mViewerStatus==="Waiting")
+    {
+      conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(initData)+'}')
+      console.log("Handshake setGenData", initData)
+      setMViewerStatus("Connected")
+    }
   }
 
   }, [initData])
  
+  useEffect(() => {
+
+    if(mViewerStatus === "Waiting")
+    {
+     if(initData)
+     {
+      conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(initData)+'}')
+      console.log("Handshake setGenData", initData)
+      setMViewerStatus("Connected")
+     }
+     else{
+      if(router.isReady){
+        getGenViewerData(router.query.projectId as string, router.query.structureId as string)
+          .then((response) => {
+            if (response.success === true) {
+
+              setInintData(response.result);
+              
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(response.result)+'}')
+                console.log("Handshake setGenData", response.result)
+                setMViewerStatus("Connected")
+              
+            }
+          })
+          .catch((error) => {
+            console.log("Error in loading data: 1 ", error);
+          });
+
+     }
+    }
+    }
+    else if(mViewerStatus==="Connected"){
+      setMultiverseIsReady(true)
+    }
+    }, [mViewerStatus])
+   
+
+  const issueContext = (issue: any) => {  // selected Issue context pusblish
+    let iContext: IContext = issue.context
+    iContext.id = issue._id
+    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectIssue","data":' + JSON.stringify(iContext) + '}');
+  }
+
+  const taskContext = (task: any) => {  // selected Task context publish
+    console.log("selected context task", task)
+    let tContext: IContext = task.context
+    tContext.id = task._id
+    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectTask","data":' + JSON.stringify(tContext) + '}');
+  }
+
+
+  const multiverseHandShakeEventsCB: OnMessageCallbak = (msg:Buffer,packer:any):void=>{
+    const message = JSON.parse(msg.toString())
+    console.log("Handshake data Rec on APP", JSON.parse(msg.toString()))
+    if(message.type==="getAuthToken")
+    {
+      console.log("yes Handshake Rec getAuthToken")
+      const userObj: any = getCookie('user');
+      let user = null;
+      if (userObj) user = JSON.parse(userObj);
+      if(user){
+        console.log("Going to send Handshake setAuth");
+        conn.publishMessage(MqttConnector.getMultiverseHandShakeString(),'{"type":"setAuthToken","data":'+JSON.stringify(user)+'}');
+      }
+        
+    }
+    else if (message.type==="READY")
+    {
+      setMultiverseIsReady(true);
+      setMViewerStatus("Waiting");
+      console.log("READY, Handshake")
+      if (initData) {
+        
+            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(initData)+'}')
+            console.log("READY, Handshake setGenData",initData);
+            setMViewerStatus("Connected");
+        }
+      
+
+    }
+
+  }
+
+  const updateURLQuery = (newData:IGenData)=>{
+
+    if(router){
+      //console.log("callback tryinf to update router");
+      (router.query.structId !== newData.structure._id)?router.query.structId = newData.structure._id:null;
+      (router.query.structureId !== newData.structure._id)?router.query.structureId = newData.structure._id:null;
+      (router.query.projectId !== newData.structure.project)?router.query.projectId = newData.structure.project:null;
+      (router.query.type !== newData.currentViewType)?router.query.type = newData.currentViewType:null;
+      (router.query.snap !== newData.currentSnapshotBase._id)?router.query.snap = newData.currentSnapshotBase._id:null;
+      router.push(router);
+    }
+
+  }
   const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("callback data", JSON.parse(msg.toString()))
-    setInintData(prevData => ({
-      ...prevData,
-      ...message.data
-  }));
-  if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
-    updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
-  }
-  if(message.type === "selectIssue" || message.type === "selectTask"){
-    updateITRouter(message.type,message.data.id) //Router current Task/Issue
-  }
-
-    if (message.type === "selectIssue" || message.type === "selectTask" || message.type === "createIssue" || message.type === "createTask") {
+    
+  // if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
+  //   updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
+  // }
+  // if(message.type === "selectIssue" || message.type === "selectTask"){
+  //   updateITRouter(message.type,message.data.id) //Router current Task/Issue
+  // }
+    if(message.type==="syncGenViewer"){
+      setInintData(prevData => ({
+        ...prevData,
+        ...message.data
+      }));
+      updateURLQuery(message.data as IGenData);
+      //setViewMode(message.data.viewMode);
+      if(message.data.currentViewType==="Plan Drawings" || message.data.currentViewType ==="BIM" ){
+        currentViewMode!=="Design"? setViewMode("Design"):null;
+      }
+      else{
+        currentViewMode!=="Reality"? setViewMode("Reality"):null;
+      }
+    }
+    else if (message.type === "selectIssue" || message.type === "selectTask" || message.type === "createIssue" || message.type === "createTask") {
+      updateITRouter(message.type,message.data.id)
       handleMenuInstance.data = message;
       handleMenuInstance.type = message.type
       if (ref && ref.current) {
@@ -1434,22 +1562,14 @@ const Index: React.FC<IProps> = () => {
   }
   useEffect(() => {
     conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(), appEventsCB)
+    conn.subscribeTopic(MqttConnector.getMultiverseHandShakeString(),multiverseHandShakeEventsCB)
     return () => {
       conn.unSubscribeTopic(MqttConnector.getMultiverseRecTopicString());
+      conn.unSubscribeTopic(MqttConnector.getMultiverseHandShakeString());
     }
   }, [])
 
-  useEffect(() => {
-    if (initData) {
-      let pdata: IGenData = initData
-      if (pdata) {
-        pdata.currentViewType = "Plan Drawings"
-      }
-          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
-          
-    }
-   
-  }, [router.query.structId,conn])
+
 
   return (
     <div className=" w-full  h-full">
@@ -1588,9 +1708,8 @@ const Index: React.FC<IProps> = () => {
             </div></div></div>
 
         <div>
-          {structure && <Iframe
-            structureData={structure}
-          ></Iframe>}
+          {initData&& <Iframe></Iframe>}
+          {!multiverseIsReady&& <CustomLoader/>}
         </div>
 
       </div>

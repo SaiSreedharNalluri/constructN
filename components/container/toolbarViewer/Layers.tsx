@@ -18,37 +18,38 @@ import {
   ContainerDiv,
 } from "./ToolBarStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { ILayer } from "../../../models/IReality";
 export interface ShowImageDisplay {
   item1: boolean;
   item2: boolean;
   item3: boolean;
 }
 const LayerIcons = ({iconsList}:any)=>{
-  const [myIconsList,setIconsList]= useState<any>(iconsList);
+  const [myIconsList,setIconsList]= useState<ILayer[]>(iconsList);
   useEffect(()=>{setIconsList(iconsList)},[iconsList])
   return(<>
-{myIconsList.map((label: any, index: number) => {
-          if (label === "Phone Image") {
+{myIconsList.map((label: ILayer, index: number) => {
+          if (label.name === "Phone Image") {
             return (
-              <LayerSecondSectionCamImg key={label + index}>
+              <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={hexagonIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === "360 Image") {
+          } else if (label.name === "360 Image") {
             return (
-              <LayerSecondSectionCamImg key={label + index}>
+              <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === "360 Video") {
+          } else if (label.name === "360 Video") {
             return (
-              <LayerSecondSectionCamImg key={label + index}>
+              <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={videoRecorderIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label === "Drone Image") {
+          } else if (label.name === "Drone Image") {
             return (
-              <LayerSecondSectionCamImg key={label + index}>
+              <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={DroneImage} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
@@ -149,8 +150,8 @@ const Layers = ({
           // style={{ border: "2px solid blue" }}
         >
           <IconsContainer>
-            {(layersLabels&&(layersLabels.length > 0 ))? (
-              <>Layer:  <LayerIcons iconsList={layersLabels}></LayerIcons>
+            {(initData&&(initData.currentLayersList.length > 0 ))? (
+              <>Layer:  <LayerIcons iconsList={initData.currentLayersList}></LayerIcons>
               </>
             ) : (
               "Select Layer"

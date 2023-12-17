@@ -96,7 +96,7 @@ function Task({
   const [showImage, setShowImage] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [isLoading, setLoading] = useState(false)
-  const [showHideTask, setshowHideTask] = useState(false)
+  const [showHideTask, setshowHideTask] = useState(true)
   const [contextInfo,setContextInfo] = useState<any>()
   let taskMenuInstance: IToolbarAction = { data: "",type:"showTask"};
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
@@ -392,7 +392,7 @@ console.log("form datttaaa",formData)
         </IssuesSectionFileImg>
       </Tooltip>
 
-      <Tooltip title={showHideTask ? "Show Tasks" : "Hide Tasks"}>
+      <Tooltip title={showHideTask ? "Tasks Visible" : "Tasks Hidden"}>
         <IssuesSectionClipImg
           onClick={() => {
             toggleTaskVisibility();

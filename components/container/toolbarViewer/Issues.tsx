@@ -93,7 +93,7 @@ function Issues({
 
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
-  const [showHideIssue,setShowHideIssue] = useState(false)
+  const [showHideIssue,setShowHideIssue] = useState(true)
   // const [issueVisbility, setIssueVisibility] = useState(showIssueMarkups);
   const [myProject, setMyProject] = useState(currentProject);
   const [selectedIssue, setSelectedIssue] = useState({});
@@ -369,7 +369,7 @@ function Issues({
           </IssuesSectionFileImg>
         </Tooltip>
 
-        <Tooltip title={showHideIssue ? "Show Issues" : "Hide Issues"}>
+        <Tooltip title={showHideIssue ? "Issues Visible" : "Issues Hidden"}>
           <IssuesSectionClipImg  onClick={() => {
                   toggleIssueVisibility();
                   
@@ -462,7 +462,7 @@ function Issues({
         <Drawer
           anchor={"right"}
           open={openIssueDetails}
-          onClose={() =>{ closeIssueDetails()
+          onClose={() =>{ //closeIssueDetails()
             let typeChangeToolAction: IToolbarAction = { type: "closeIssueDrawer", data: "" }; 
             toolClicked(typeChangeToolAction);
             }}

@@ -30,7 +30,7 @@ export class MqttConnector{
    };
    options:mqtt.IClientOptions;
 
-   constructor(url:string='ws://localhost:9001/mqtt',opt:mqtt.IClientOptions={hostname:'localhost',port:9001,path:'/mqtt',clean:true,clientId:'mqtt-asad',protocol:'ws'}){
+   constructor(url:string='wss://broker.emqx.io:8084/mqtt',opt:mqtt.IClientOptions={hostname:'localhost',port:9001,path:'/mqtt',clean:true,clientId:'mqtt-asad',protocol:'ws'}){
     this.options = opt;
     this._connection= mqtt.connect(url);
     this._connection.on("connect", () => {
@@ -126,7 +126,20 @@ export class MqttConnector{
     
     return topicString;
   }
-
+  public static getMultiverseHandShakeString= (hash?:string):string=>{
+    var topicString= "";
+    
+    if(hash!== undefined)
+    {
+      topicString=  hash + "/bonjour"
+    }
+    else
+    {
+    topicString=  this.topicHash + "/bonjour"
+    }
+    
+    return topicString;
+  }
 
 }
 
