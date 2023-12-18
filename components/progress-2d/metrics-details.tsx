@@ -1,4 +1,4 @@
-import { Button, TableRow, TableHead, TableContainer, TableCell, TableBody, Table } from "@mui/material";
+import { Button, TableRow, TableHead, TableContainer, TableCell, TableBody, Table, Select, MenuItem } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import Input from "@mui/material/OutlinedInput";
 import { IAsset, IAssetStage } from "../../models/IAssetCategory";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 interface Stage extends IAssetStage {
 	id?: string;
-	metric?: number | string;
+	metric?: number | string | { metric: string};
 }
 
 interface SetProgressProps {
@@ -16,9 +16,10 @@ interface SetProgressProps {
 	val?: number | string;
 	stageValues?: Stage[];
 	setStageValues?: Dispatch<SetStateAction<Stage[]>>;
+	key?: string;
 }
 
-const updateAssetDetails = (assetId: string, data: Partial<IAsset>) => {
+const updateAssetDetails = (assetId: string, data: { [key: string]: string | number | object; }) => {
 	try {
 		return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, data);
 	} catch (error) {
@@ -31,11 +32,12 @@ const setProgress = ({
 	val = 0,
 	stageValues = [],
 	setStageValues = () => {},
+	key = ''
 }: SetProgressProps) => {
 	const index = stageValues.findIndex((stage) => stage.id === id);
 
 	setStageValues(() => {
-		stageValues[index] = { ...(stageValues[index] || {}), metric: val };
+		stageValues[index] = { ...(stageValues[index] || {}), [key]: val };
 		return [...(stageValues || [])];
 	});
 };
@@ -51,12 +53,16 @@ const onSave = async ({
 	setLoading: Dispatch<SetStateAction<boolean>>;
 	refetchAssets: ()=> void;
 }) => {
-	const metricValues: { [key: string]: string | number } = {};
+	const metricValues: { [key: string]: string | number | object } = {};
 	stageValues.forEach((stage) => {
 		const stageID = stage._id;
 
-		if (stageID && stage.metric) {
-			metricValues[stageID] = stage.metric;
+		if (stageID && (stage.metric as { metric: string; })?.metric) {
+			metricValues[stageID] = { metric: (stage.metric as { metric: string; })?.metric, uom: stage.uom };
+		}
+
+		if(stageID && stage.metric && !(stage.metric as { metric: string; })?.metric){
+			metricValues[stageID] = { metric: stage.metric, uom: stage.uom };
 		}
 	});
 
@@ -134,7 +140,7 @@ export default function Metrics({
 									>
 										{" "}
 										<Input
-											value={row.metric}
+											value={(row.metric as { metric: string; })?.metric || row.metric}
 											size="small"
 											type="number"
 											disabled={loading}
@@ -144,6 +150,7 @@ export default function Metrics({
 													val: val.target.value,
 													stageValues,
 													setStageValues,
+													key: 'metric'
 												})
 											}
 										/>
@@ -152,7 +159,22 @@ export default function Metrics({
 										align="center"
 										className="w-1/6 p-0"
 									>
-										{row.uom}
+										<Select
+											id="unit-select"
+											labelId="unit-select"
+											value={row.uom}
+											size="small"
+											onChange={(val) =>
+												setProgress({
+													id: row.id,
+													val: val.target.value,
+													stageValues,
+													setStageValues,
+													key: 'uom'
+												})}
+										>
+											<MenuItem value={row.uom}>{row.uom}</MenuItem>
+										</Select>
 									</TableCell>
 								</TableRow>
 							))}

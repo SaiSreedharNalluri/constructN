@@ -190,7 +190,6 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [selectedTab , setSelectedTab] = useState('stages') 
 
-    const [totalAssets, setTotalAssets] =  useState<number>(assets.length)
 
     const [clipValue, setClipValue] = useState(50);
 
@@ -335,9 +334,6 @@ const Progress2DPage: React.FC<any> = () => {
     }, [searchParams])
 
 
-    useEffect(()=>{
-        setTotalAssets(assets?.length)
-    },[assets?.length])
 
     useEffect(()=>{
         if(isCompare){
@@ -865,7 +861,6 @@ const Progress2DPage: React.FC<any> = () => {
 
             const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
 
-            const assetsMessage = assets && totalAssets > 0 ? `${totalAssets} assets` : 'No assets'
 
             return <>
 
@@ -880,7 +875,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _renderStageShimmer = (index: number) => {
 
-        if (totalAssets === 0 || loading)
+        if (loading)
 
             return (
 
@@ -1158,7 +1153,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                <Progress2DStages stages={stages} assetCount={totalAssets} compare={isCompare} setTotalAssets={setTotalAssets}
+                                                <Progress2DStages stages={stages} compare={isCompare} assets={assets}
 
                                                 snapShotDate={snapshotBase.date}
 
