@@ -18,8 +18,6 @@ import {
   HeaderLeftSectionText,
   HeaderRightSection,
   HeaderRightSectionResetIcon,
-  HeaderRightSectionResetText,
-  HeaderRightSectionCancel,
   FilterCardContainer,
   FilterCardTitle,
   FilterCardTitleText,
