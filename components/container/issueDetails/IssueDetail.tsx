@@ -28,7 +28,7 @@ import CustomButton from "../../divami_components/custom-button/CustomButton";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
 import { toast } from "react-toastify";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
-// import CreateIssue from "../create-issue/CreateIssue";
+import CreateIssue from "../createIssue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../../divami_components/create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
@@ -125,6 +125,7 @@ import AttachmentPreview from "../../divami_components/attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
+import { IToolbarAction } from "../../../models/ITools";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -940,7 +941,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
     deleteTheAttachment,
     issueLoader,
     setIssueLoader,
-    initData
+    initData,
+    toolClicked
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
@@ -950,7 +952,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const router = useRouter();
   useEffect(() => {
     setSelectedIssue(issue);
-    console.log("selected Issue in the issue details",selectedIssue)
+    console.log("selected Issue in the issue details",selectedIssue,issue)
   }, [issue]);
   const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
     const selectedIssueId = selectedIssue?._id;
@@ -971,6 +973,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
+    console.log("selectedIssue",selectedIssue)
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
 
     const deleteTheAttachment = (attachmentId: string) => {
@@ -1086,12 +1089,15 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
+      console.log("data",data)
       editIssue(projectId, data, selectedIssue?._id)
         .then((response:any) => {
           if (response.success === true) {
             CustomToast("Issue updated successfully","success");
             getIssues(currentStructure._id);
             setLoading(true)
+            let typeChangeToolAction: IToolbarAction = { type: "editIssue", data: response.result };
+            toolClicked(typeChangeToolAction);
           } else {
             CustomToast("Error updating the Issue","error");
           }
@@ -1099,7 +1105,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
           setOpenCreateTask(false);
         })
         .catch((error:any) => {
+          console.log("failed to update Isssue")
           if (error.success === false) {
+           
             CustomToast(error?.message,"error");
           }
           setLoading(false)
@@ -1109,14 +1117,15 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
+    console.log("formData.....",formData)
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each._id || each.value;
+        return each?._id || each?.value || each;
       });
 
-    data.structure = currentStructure?._id;
-    data.snapshot = currentSnapshot?._id;
+    data.structure = initData?.structure?._id;
+    data.snapshot = initData?.currentSnapshotBase?._id;
     data.status = formData.filter(
       (item: any) => item.id == "issueStatus"
     )[0]?.defaultValue;
@@ -1212,6 +1221,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       })
       .catch((error:any) => {
         if (error.success === false) {
+          console.log("another issue Error")
           CustomToast(error?.message,"error");
         }
       });
@@ -1300,7 +1310,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
       {openCreateTask && (
         <CustomDrawer open variant="temporary">
-          {/* <CreateIssue
+          <CreateIssue
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateTask}
             currentProject={currentProject}
@@ -1315,7 +1325,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
             deleteTheAttachment={deleteTheAttachment}
             setLoading={setLoading}
             isLoading={isLoading}
-          /> */}
+          />
         </CustomDrawer>
       )}
       {showPopUp && (

@@ -588,13 +588,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                                       return (
                                         <>
                                           {index !== val?.assignees?.length - 1
-                                            ? assignName?.firstName +
+                                            ? assignName +
                                             " " +
-                                            assignName.lastName +
+                                            assignName +
                                             " | "
-                                            : assignName?.firstName +
+                                            : assignName +
                                             " " +
-                                            assignName.lastName}
+                                            assignName}
                                         </>
                                       );
                                     }
