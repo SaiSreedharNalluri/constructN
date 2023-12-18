@@ -127,7 +127,7 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
 }));
 export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
-  RouterIssueRef:(handleMenuInstance:any) => void;
+  RouterIssueRef: (handleMenuInstance: any) => void;
 };
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
@@ -198,12 +198,12 @@ const Index: React.FC<IProps> = () => {
 
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
   const [initData, setInintData] = useState<IGenData>();
-  const [multiverseIsReady,setMultiverseIsReady] = useState(false);
+  const [multiverseIsReady, setMultiverseIsReady] = useState(false);
   const [mViewerStatus, setMViewerStatus] = useState<multiverseViewerStatusTypes>("NotAvailable");
 
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
- 
+
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
@@ -651,7 +651,7 @@ const Index: React.FC<IProps> = () => {
     // let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.type) {
       case "setViewType":
-        router.query.type=toolInstance.data as string;
+        router.query.type = toolInstance.data as string;
         router.push(router);
         switch (toolInstance.data) {
           case "Plan Drawings":
@@ -668,36 +668,36 @@ const Index: React.FC<IProps> = () => {
 
       case "setStructure":
         //conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":'+JSON.stringify(response.result)+'}')
-            
+
         break;
 
       case "setCompareMode":
-        
-        switch(toolInstance.data){
+
+        switch (toolInstance.data) {
           case "noCompare":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"'+toolInstance.data+'"}');
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
           case "compareDesign":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"'+toolInstance.data+'"}');
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
           case "compareReality":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"'+toolInstance.data+'"}');
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
 
         }
         break;
       case "setViewMode":
-        switch(toolInstance.data){
+        switch (toolInstance.data) {
           case "Design":
-            if(initData?.structure.isExterior){
+            if (initData?.structure.isExterior) {
               conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
             }
-            else{
+            else {
               conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
             }
-            
+
             break;
-            case "Reality":
+          case "Reality":
             conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
             break;
 
@@ -727,10 +727,10 @@ const Index: React.FC<IProps> = () => {
         break;
       case "removedIssue":
         (async () => {
-           const issueDetelteStatus = await deleteTheIssue(toolInstance.data);
-           if(issueDetelteStatus){
+          const issueDetelteStatus = await deleteTheIssue(toolInstance.data);
+          if (issueDetelteStatus) {
             let issueId = (toolInstance.data as { _id: any })._id;
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),'{"type":"'+toolInstance.type+'","data":'+JSON.stringify(issueId)+'}')
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(issueId) + '}')
           }
         })();
         break;
@@ -764,12 +764,12 @@ const Index: React.FC<IProps> = () => {
         (async () => {
           const TaskDetelteStatus = await deleteTheTask(toolInstance.data);
           console.log(TaskDetelteStatus)
-          if(TaskDetelteStatus){
-           let taskId = (toolInstance.data as { _id: any })._id;
-           console.log("issueId",taskId)
-           conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),'{"type":"'+toolInstance.type+'","data":'+JSON.stringify(taskId)+'}')
-         }
-       })();
+          if (TaskDetelteStatus) {
+            let taskId = (toolInstance.data as { _id: any })._id;
+            console.log("issueId", taskId)
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
+          }
+        })();
         // setClickedTool(toolInstance);
         break;
       case "setViewLayers":
@@ -1127,13 +1127,13 @@ const Index: React.FC<IProps> = () => {
   const deleteTheIssue = async (issueObj: any): Promise<boolean> => {
     try {
       const response: any = await deleteIssue(router.query.projectId as string, issueObj._id);
-  
+
       if (response.success === true) {
         CustomToast(response.message, "success");
         return true;
       }
-  
-    } catch (error:any) {
+
+    } catch (error: any) {
       if (!error.success && error.message === "Forbidden Access") {
         CustomToast("You do not have access, Contact Admin", "error");
       } else {
@@ -1143,17 +1143,17 @@ const Index: React.FC<IProps> = () => {
     }
     return false;
   };
-  
+
 
   const deleteTheTask = async (taskObj: any): Promise<boolean> => {
-    try{
-      const response:any= await  deleteTask(router.query.projectId as string, taskObj._id)
+    try {
+      const response: any = await deleteTask(router.query.projectId as string, taskObj._id)
       if (response.success === true) {
         CustomToast(response.message, "success");
         return true;
       }
     }
-    catch (error:any) {
+    catch (error: any) {
       if (!error.success && error.message === "Forbidden Access") {
         CustomToast("You do not have access, Contact Admin", "error");
       } else {
@@ -1162,7 +1162,7 @@ const Index: React.FC<IProps> = () => {
       return false;
     }
     return false
-    
+
   };
 
   const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
@@ -1312,213 +1312,206 @@ const Index: React.FC<IProps> = () => {
   }
 
   useEffect(() => {
-    if (router.query.iss != null) {
-      let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
+    if (router.query.iss !== null && initData) {
+      let sel_iss: Issue | undefined = initData?.currentIssueList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
-        // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
-        // setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
-        setOpenIssueDetails(true);
+        handleMenuInstance.type = "selectIssue"
+        handleMenuInstance.data = sel_iss._id
+        if (ref && ref.current) {
+          ref.current?.RouterIssueRef(handleMenuInstance) // useRef for passing Router Issue/Task
+        }
+      }
+      else {
+        delete router.query.iss
       }
 
     }
 
-  }, [issuesList, router.query.iss, router.query.snap]);
+  }, [router.query.iss, router.query.snap]);
 
   useEffect(() => {
     if (router.query.tsk != null) {
       let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
       if (sel_tsk) {
-        // setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
-        // setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
-        setOpenTaskDetails(true);
+        handleMenuInstance.type = "selectIssue"
+        handleMenuInstance.data = sel_tsk._id
+        if (ref && ref.current) {
+          ref.current?.RouterIssueRef(handleMenuInstance)
+        }
       }
 
     }
 
-  }, [tasksList, router.query.tsk, router.query.snap]);
+  }, [router.query.tsk, router.query.snap]);
 
 
 
-  const updateRouter = (type:String,snap:String) => {
-    if(type !== router.query.type) router.query.type = String(type);
-    if(snap !== router.query.snap) router.query.snap = snap as string;
+  const updateRouter = (type: String, snap: String) => {
+    if (type !== router.query.type) router.query.type = String(type);
+    if (snap !== router.query.snap) router.query.snap = snap as string;
 
     router.push(router);
 
   }
-  const updateITRouter=(type:String,id:string)=>{
-    if(type === "selectIssue")
-    {
+  const updateITRouter = (type: String, id: string) => {
+    console.log("updateITRouter")
+    if (type === "selectIssue") {
       delete router.query.tsk
-      router.query.iss=id;
-    } 
-    if(type === "selectTask") {
-      delete router.query.iss
-      router.query.tsk=id
+      router.query.iss = id;
     }
+    if (type === "selectTask") {
+      // delete router.query.iss
+      router.query.tsk = id
+    }
+    router.push(router)
   }
   useEffect(() => {
 
-    if(router.isReady){
-    getGenViewerData(router.query.projectId as string, router.query.structureId as string)
-      .then((response) => {
-        if (response.success === true) {
-          if(router.query.type !== response.result.data?.currentViewType || router.query.snap!== response.result?.data?.currentSnapshotBase._id){
-              router.query.type = response.result.data?.currentViewType as string;  
-              router.query.snap = response.result.data?.currentSnapshotBase._id as string;  
+    if (router.isReady) {
+      getGenViewerData(router.query.projectId as string, router.query.structureId as string)
+        .then((response) => {
+          if (response.success === true) {
+            if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
+              router.query.type = response.result.data?.currentViewType as string;
+              router.query.snap = response.result.data?.currentSnapshotBase._id as string;
               router.push(router);
-          }
-          setInintData(response.result);
-          if(initData && router.query.iss || router.query.tsk){
-            handleMenuInstance.data = router.query.iss as string || router.query.tsk as string;
-            if(router.query.iss) handleMenuInstance.type = "selectIssue"
-            if(router.query.tsk) handleMenuInstance.type = "selectTask"
-            if (ref && ref.current) {
-              ref.current?.RouterIssueRef(handleMenuInstance) // useRef for passing Router Issue/Task
+            }
+            setInintData(response.result);
+            // if(initData && router.query.iss || router.query.tsk){
+
+            //   handleMenuInstance.data = router.query.iss as string || router.query.tsk as string;
+            //   if(router.query.iss){
+            //     handleMenuInstance.type = "selectIssue"
+            //     handleMenuInstance.data = router.query.iss as string 
+            //   } 
+            //   if(router.query.tsk){
+            //     handleMenuInstance.type = "selectTask"
+            //     handleMenuInstance.data = router.query.tsk as string;
+            //   } 
+            //   if (ref && ref.current) {
+            //     ref.current?.RouterIssueRef(handleMenuInstance) // useRef for passing Router Issue/Task
+            //   }
+            // }
+            if (mViewerStatus === "Waiting") {
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
+              console.log("Handshake setGenData", response.result)
+              setMViewerStatus("Connected")
+            }
+            else if (mViewerStatus === "Connected") {
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(response.result) + '}')
+
             }
           }
-                  if(mViewerStatus==="Waiting")
-          {
-            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(response.result)+'}')
-            console.log("Handshake setGenData", response.result)
-            setMViewerStatus("Connected")
-          }
-          else if(mViewerStatus==="Connected"){
-            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":'+JSON.stringify(response.result)+'}')
-            
-          }
-        }
-      })
-      .catch((error) => {
-        console.log("Error in loading data: 1 ", error);
-      });
+        })
+        .catch((error) => {
+          console.log("Error in loading data: 1 ", error);
+        });
     }
-  }, [router.query.structId,router.isReady])
+  }, [router.query.structId, router.isReady])
 
-  
+
 
   useEffect(() => {
 
-  if(initData)
-  {
-    if(initData.structure.designs?.length)
-    {
-      setDesignAvailable(true)
+    if (initData) {
+      if (initData.structure.designs?.length) {
+        setDesignAvailable(true)
+      }
+      else {
+        setDesignAvailable(false)
+      }
+      if (initData.currentSnapshotBase.reality?.length) {
+        setRealityAvailable(true)
+      }
+      else {
+        setRealityAvailable(false)
+      }
+      if (mViewerStatus === "Waiting") {
+        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        console.log("Handshake setGenData", initData)
+        setMViewerStatus("Connected")
+      }
     }
-    else
-    {
-      setDesignAvailable(false)
-    }
-    if(initData.currentSnapshotBase.reality?.length)
-    {
-      setRealityAvailable(true)
-    }
-    else
-    {
-      setRealityAvailable(false)
-    }
-    if(mViewerStatus==="Waiting")
-    {
-      conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(initData)+'}')
-      console.log("Handshake setGenData", initData)
-      setMViewerStatus("Connected")
-    }
-  }
 
   }, [initData])
- 
+
   useEffect(() => {
 
-    if(mViewerStatus === "Waiting")
-    {
-     if(initData)
-     {
-      conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(initData)+'}')
-      console.log("Handshake setGenData", initData)
-      setMViewerStatus("Connected")
-     }
-     else{
-      if(router.isReady){
-        getGenViewerData(router.query.projectId as string, router.query.structureId as string)
-          .then((response) => {
-            if (response.success === true) {
+    if (mViewerStatus === "Waiting") {
+      if (initData) {
+        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        console.log("Handshake setGenData", initData)
+        setMViewerStatus("Connected")
+        updateURLQuery(initData as IGenData)
+      }
 
-              setInintData(response.result);
-              
-                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(response.result)+'}')
+      else {
+        if (router.isReady) {
+          getGenViewerData(router.query.projectId as string, router.query.structureId as string)
+            .then((response) => {
+              if (response.success === true) {
+
+                setInintData(response.result);
+
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
                 console.log("Handshake setGenData", response.result)
                 setMViewerStatus("Connected")
-              
-            }
-          })
-          .catch((error) => {
-            console.log("Error in loading data: 1 ", error);
-          });
 
-     }
+              }
+            })
+            .catch((error) => {
+              console.log("Error in loading data: 1 ", error);
+            });
+
+        }
+      }
     }
-    }
-    else if(mViewerStatus==="Connected"){
+    else if (mViewerStatus === "Connected") {
       setMultiverseIsReady(true)
     }
-    }, [mViewerStatus])
-   
-
-  const issueContext = (issue: any) => {  // selected Issue context pusblish
-    let iContext: IContext = issue.context
-    iContext.id = issue._id
-    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectIssue","data":' + JSON.stringify(iContext) + '}');
-  }
-
-  const taskContext = (task: any) => {  // selected Task context publish
-    console.log("selected context task", task)
-    let tContext: IContext = task.context
-    tContext.id = task._id
-    conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"selectTask","data":' + JSON.stringify(tContext) + '}');
-  }
+  }, [mViewerStatus])
 
 
-  const multiverseHandShakeEventsCB: OnMessageCallbak = (msg:Buffer,packer:any):void=>{
+
+  const multiverseHandShakeEventsCB: OnMessageCallbak = (msg: Buffer, packer: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("Handshake data Rec on APP", JSON.parse(msg.toString()))
-    if(message.type==="getAuthToken")
-    {
+    if (message.type === "getAuthToken") {
       console.log("yes Handshake Rec getAuthToken")
       const userObj: any = getCookie('user');
       let user = null;
       if (userObj) user = JSON.parse(userObj);
-      if(user){
+      if (user) {
         console.log("Going to send Handshake setAuth");
-        conn.publishMessage(MqttConnector.getMultiverseHandShakeString(),'{"type":"setAuthToken","data":'+JSON.stringify(user)+'}');
+        conn.publishMessage(MqttConnector.getMultiverseHandShakeString(), '{"type":"setAuthToken","data":' + JSON.stringify(user) + '}');
       }
-        
+
     }
-    else if (message.type==="READY")
-    {
+    else if (message.type === "READY") {
       setMultiverseIsReady(true);
       setMViewerStatus("Waiting");
       console.log("READY, Handshake")
       if (initData) {
-        
-            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":'+JSON.stringify(initData)+'}')
-            console.log("READY, Handshake setGenData",initData);
-            setMViewerStatus("Connected");
-        }
-      
+
+        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        console.log("READY, Handshake setGenData", initData);
+        setMViewerStatus("Connected");
+      }
+
 
     }
 
   }
 
-  const updateURLQuery = (newData:IGenData)=>{
+  const updateURLQuery = (newData: IGenData) => {
 
-    if(router){
-      //console.log("callback tryinf to update router");
-      (router.query.structId !== newData.structure._id)?router.query.structId = newData.structure._id:null;
-      (router.query.structureId !== newData.structure._id)?router.query.structureId = newData.structure._id:null;
-      (router.query.projectId !== newData.structure.project)?router.query.projectId = newData.structure.project:null;
-      (router.query.type !== newData.currentViewType)?router.query.type = newData.currentViewType:null;
-      (router.query.snap !== newData.currentSnapshotBase._id)?router.query.snap = newData.currentSnapshotBase._id:null;
+    if (router.isReady) {
+      console.log("callback tryinf to update router");
+      (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
+      (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
+      (router.query.projectId !== newData.structure.project) ? router.query.projectId = newData.structure.project : null;
+      (router.query.type !== newData.currentViewType) ? router.query.type = newData.currentViewType : null;
+      (router.query.snap !== newData.currentSnapshotBase._id) ? router.query.snap = newData.currentSnapshotBase._id : null;
       router.push(router);
     }
 
@@ -1526,29 +1519,26 @@ const Index: React.FC<IProps> = () => {
   const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("callback data", JSON.parse(msg.toString()))
-    
-  // if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
-  //   updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
-  // }
-  // if(message.type === "selectIssue" || message.type === "selectTask"){
-  //   updateITRouter(message.type,message.data.id) //Router current Task/Issue
-  // }
-    if(message.type==="syncGenViewer"){
-      setInintData(prevData => ({
-        ...prevData,
-        ...message.data
-      }));
-      updateURLQuery(message.data as IGenData);
+
+    // if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
+    //   updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
+    // }
+    // if(message.type === "selectIssue" || message.type === "selectTask"){
+    //   updateITRouter(message.type,message.data.id) //Router current Task/Issue
+    // }
+    if (message.type === "syncGenViewer") {
+      setInintData(message.data);
+      // updateURLQuery(message.data as IGenData);
       //setViewMode(message.data.viewMode);
-      if(message.data.currentViewType==="Plan Drawings" || message.data.currentViewType ==="BIM" ){
-        currentViewMode!=="Design"? setViewMode("Design"):null;
+      if (message.data.currentViewType === "Plan Drawings" || message.data.currentViewType === "BIM") {
+        currentViewMode !== "Design" ? setViewMode("Design") : null;
       }
-      else{
-        currentViewMode!=="Reality"? setViewMode("Reality"):null;
+      else {
+        currentViewMode !== "Reality" ? setViewMode("Reality") : null;
       }
     }
     else if (message.type === "selectIssue" || message.type === "selectTask" || message.type === "createIssue" || message.type === "createTask") {
-      updateITRouter(message.type,message.data.id)
+      updateITRouter(message.type, message.data.id)
       handleMenuInstance.data = message;
       handleMenuInstance.type = message.type
       if (ref && ref.current) {
@@ -1556,13 +1546,13 @@ const Index: React.FC<IProps> = () => {
       }
 
       setCurrentContext(message)
-      
+
     }
-    
+
   }
   useEffect(() => {
     conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(), appEventsCB)
-    conn.subscribeTopic(MqttConnector.getMultiverseHandShakeString(),multiverseHandShakeEventsCB)
+    conn.subscribeTopic(MqttConnector.getMultiverseHandShakeString(), multiverseHandShakeEventsCB)
     return () => {
       conn.unSubscribeTopic(MqttConnector.getMultiverseRecTopicString());
       conn.unSubscribeTopic(MqttConnector.getMultiverseHandShakeString());
@@ -1708,8 +1698,8 @@ const Index: React.FC<IProps> = () => {
             </div></div></div>
 
         <div>
-          {initData&& <Iframe></Iframe>}
-          {!multiverseIsReady&& <CustomLoader/>}
+          {initData && <Iframe></Iframe>}
+          {!multiverseIsReady && <CustomLoader />}
         </div>
 
       </div>

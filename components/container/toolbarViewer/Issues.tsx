@@ -111,7 +111,7 @@ function Issues({
             );
            
             issueMenuInstance.type= IssuetoolInstance.type
-            issueMenuInstance.data= selectedObj.context
+            issueMenuInstance.data= selectedObj?.context
             issueMenuClicked(issueMenuInstance)
             setSelectedIssue(selectedObj)
             setOpenIssueDetails(true)
@@ -128,7 +128,7 @@ function Issues({
           (each: any) => each._id === handleIssue.data
         );
         issueMenuInstance.type= handleIssue.type
-        issueMenuInstance.data= selectedObj.context
+        issueMenuInstance.data= selectedObj?.context
         issueMenuClicked(issueMenuInstance)
         setSelectedIssue(selectedObj)
         setOpenIssueDetails(true)

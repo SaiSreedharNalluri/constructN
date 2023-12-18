@@ -16,7 +16,7 @@ import FormWrapper from "../../../divami_components/form-wrapper/FormWrapper";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
 import { getProjectUsers } from "../../../../services/project";
-import { getIssuesPriority, getIssuesTypes } from "../../../../services/issue";
+import { getIssuesPriority, getIssuesStatus, getIssuesTypes } from "../../../../services/issue";
 import { IProjectUsers } from "../../../../models/IProjects";
 import { ISnapshot } from "../../../../models/ISnapshot";
 import { IStructure } from "../../../../models/IStructure";
@@ -25,6 +25,7 @@ import UploadedImagesList from "../../../divami_components/uploaded-images-list/
 
 import Moment from "moment";
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
+import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
@@ -61,7 +62,6 @@ const Body = ({
   validate,
   setIsValidate,
   tagsList,
-  issueStatusList,
   setCanBeDisabled,
   deleteTheAttachment,
   formData,
@@ -73,6 +73,7 @@ const Body = ({
   const [issuePriorities, setIssuePriorities] = useState([]);
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
+  const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const router = useRouter();
   useEffect(() => {
     const tempFormData = formConfig.map((item: any) => {
@@ -101,6 +102,15 @@ const Body = ({
           }
         }
       );
+      getIssuesStatus(router.query.projectId as string)
+      .then((response: any) => {
+        if (response.success === true) {
+          setIssueStatusList(response.result);
+        }
+      })
+      .catch((error: any) => {
+        CustomToast("failed to load data", "error");
+      });
       getProjectUsers(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
@@ -238,7 +248,7 @@ const Body = ({
               isReq: true,
               isflex: false,
               formLabel: "Select issue status",
-              options: issueStatusList.map((item: any) => {
+              options: issueStatusList?.map((item: any) => {
                 return {
                   ...item,
                   label: item,
