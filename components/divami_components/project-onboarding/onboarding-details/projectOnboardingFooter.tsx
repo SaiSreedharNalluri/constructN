@@ -6,6 +6,12 @@ import { OnBoardingStep } from '../../../../state/projectState/state';
 const ProjectOnboardingFooter = () => {
   const { state, projectContextAction } =useProjectContext();
   const{ProjectAction}=projectContextAction;
+  const check=()=>{
+  if(state.bimFiles && state.bimFiles.length>0){
+    ProjectAction.next()
+  }else{
+   ProjectAction.setIsBimNotAvailable(true)
+  }}
   const renderButtons = () => {
     switch (state.step) {
       case OnBoardingStep.ProjectDetails:
@@ -21,6 +27,20 @@ const ProjectOnboardingFooter = () => {
     </div>
           </>
         );
+        case OnBoardingStep.BIM:
+          return (
+            <>
+      <div className='mt-[8px]'>
+      <Button style={{marginRight:"10px",color:"#FF853E",border:"1px solid #FF853E"}}>
+          Cancel
+      </Button>
+      <Button 
+      onClick={() => check()} style={{backgroundColor:"#FF853E",marginRight:"10px",color:"white"}}>
+          Next
+      </Button>
+      </div>
+            </>
+          );
         case OnBoardingStep.AddUsers:
           return (
             <>

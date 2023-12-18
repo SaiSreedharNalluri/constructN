@@ -6,6 +6,7 @@ import ProjectOnboardingForm from './onboarding-details/projectOnboardingForm'
 import { useProjectContext } from '../../../state/projectState/context'
 import { OnBoardingStep } from '../../../state/projectState/state'
 import ProjectOnboardingUsers from './onboarding-users/projectOnboardingUsers'
+import ProjectOnboardingBIM from './onboarding-bim/projectOnboardingBIM'
 const ProjectOnboarding=()=> {
   const { state:onboardingState} = useProjectContext();
   const renderMainContent = () => {
@@ -13,6 +14,10 @@ const ProjectOnboarding=()=> {
         case OnBoardingStep.ProjectDetails:
           return  (
             <ProjectOnboardingForm/>
+          );
+          case OnBoardingStep.BIM:
+            return(
+              <ProjectOnboardingBIM/>
           );
           case OnBoardingStep.AddUsers:
             return  (
