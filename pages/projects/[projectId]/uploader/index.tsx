@@ -307,7 +307,7 @@ const Index: React.FC<IProps> = () => {
       uploaderAction.setIsLoading(false)
       if(response.data.success===true) {
         let job = response.data.result
-        moveJobFromPendingUploadToUpload(job._id);
+        updateJobStatusOnView(job);
         uploaderAction.removeWorker(captureId);
         appAction.removeCaptureUpload(job)
         if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
@@ -320,25 +320,27 @@ const Index: React.FC<IProps> = () => {
       uploaderAction.setIsLoading(false)
       if(axiosError && axiosError.response?.status === 422) {
         let job = axiosError.response.data.result
+        updateJobStatusOnView(job);
         appAction.updateCaptureUploadStatus(job)
       }
-      setIsShowPopUp(true)
-      setPopUPHeading('Upload Completed With Errors')
-      setPopUPConform('Ok')
+      // setIsShowPopUp(true)
+      // setPopUPHeading('Upload Completed With Errors')
+      // setPopUPConform('Ok')
     }).catch((error) => {
       uploaderAction.setIsLoading(false)
       console.log("TestingUploader uploadCompletionStatus: catch error ", error)
     })
   }
 
-  const moveJobFromPendingUploadToUpload = (jobId: string) => {
+  const updateJobStatusOnView = (updatedJob:IJobs) => {
     let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
     captureJobs.forEach((job) => {
-      if (job._id === jobId) {
-        job.status = JobStatus.uploaded
+      if (job._id === updatedJob._id) {
+        job.status = updatedJob.status
       }
     })
     uploaderAction.setCaptureJobs(captureJobs)
+    uploaderAction.setSelectedJob(updatedJob)
   }
 
   return (
@@ -356,6 +358,7 @@ const Index: React.FC<IProps> = () => {
       <SidePanelMenu onChangeData={() => {}} />
       <div className="flex flex-col calc-w  calc-h">
         <header>
+        <div style={{ margin: "4px 20px", fontWeight: "600", fontSize: "22px",fontFamily:"Open Sans",fontStyle:"normal" }}>Upload</div>
         <div>
               {
               (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload) &&(<UploaderStepper />)
@@ -364,7 +367,7 @@ const Index: React.FC<IProps> = () => {
         </header>
      {!uploaderState.isLoading?  
   <div>
-        <main className={`overflow-y-auto  ${ (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload)?`calc-h223`:`calc-h`} `}>
+        <main className={`overflow-y-auto  ${ (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload)?`calc-h223`:`calc-h100 `} `}>
           <div>
           {renderCenterContent()}
            

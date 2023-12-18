@@ -37,6 +37,8 @@ export class ForgeDataVizUtils {
 
     private _navPosition = new THREE.Vector3(0, 0, 0)
 
+    private isCompare = false
+
     private tagVisibility = {
 
         '360 Video': true,
@@ -51,7 +53,7 @@ export class ForgeDataVizUtils {
 
     }
 
-    constructor(viewer: Autodesk.Viewing.GuiViewer3D, dataVizExtn: Autodesk.Extensions.DataVisualization) {
+    constructor(viewer: Autodesk.Viewing.GuiViewer3D, dataVizExtn: Autodesk.Extensions.DataVisualization, isCompare: boolean = false) {
 
         this._viewer = viewer
 
@@ -84,6 +86,8 @@ export class ForgeDataVizUtils {
         this._viewer.impl.invalidate(false, false, true)
 
         this._createNavigator()
+
+        this.isCompare = isCompare
 
         this._viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (e) => {
 
@@ -668,6 +672,8 @@ export class ForgeDataVizUtils {
             publish('reality-click', dbObject)
 
         }
+
+        publish('sync-nav', { compare: this.isCompare })
 
         setTimeout(() => this._dataVizExtn.clearHighlightedViewables(), 500)
     }
