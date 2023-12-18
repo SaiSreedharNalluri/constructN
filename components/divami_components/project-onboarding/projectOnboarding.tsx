@@ -6,22 +6,32 @@ import ProjectOnboardingForm from './onboarding-details/projectOnboardingForm'
 import { useProjectContext } from '../../../state/projectState/context'
 import { OnBoardingStep } from '../../../state/projectState/state'
 import ProjectOnboardingUsers from './onboarding-users/projectOnboardingUsers'
+import ProjectOnboardingHierarchy from './onboarding-hierarchy/project-onboarding-hierarchy'
+import ProjectOnboardingSheets from './onboarding-sheets/project-onboarding-sheets'
 const ProjectOnboarding=()=> {
   const { state:onboardingState} = useProjectContext();
   const renderMainContent = () => {
     switch (onboardingState.step) {
-        case OnBoardingStep.ProjectDetails:
-          return  (
-            <ProjectOnboardingForm/>
-          );
-          case OnBoardingStep.AddUsers:
-            return  (
-              <ProjectOnboardingUsers/>
-            );
-        
-        default:
-          return null;
-      }
+      case OnBoardingStep.ProjectDetails:
+        return (
+          <ProjectOnboardingForm />
+        );
+      case OnBoardingStep.ProjectHierachy:
+        return (
+          <ProjectOnboardingSheets />
+        );
+      case OnBoardingStep.Sheets:
+        return (
+          <ProjectOnboardingSheets />
+        );
+      case OnBoardingStep.AddUsers:
+        return (
+          <ProjectOnboardingUsers />
+        );
+
+      default:
+        return null;
+    }
   };
   return (
     <div className="w-full h-full">
