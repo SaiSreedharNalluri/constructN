@@ -2,12 +2,15 @@ import { IProjects } from "../../models/IProjects";
 import { IUser} from "../../models/IUser";
 
 
+export type uploadBIMFile ={file:File|null}
 export interface OnBoardingProjectState{
     adminDetails:IUser,
     step:number;
     stepNames:string[];
     isNextEnabled:boolean;
     newProjectDetails:IProjects;
+    bimFiles:uploadBIMFile[]|null;
+    isBimNotAvailable:boolean;
 }
 
 export enum OnBoardingStep {
@@ -58,5 +61,7 @@ export const initialOnBoardingProjectState: OnBoardingProjectState={
         "Configure Project",
         "Review",
     ],
-    isNextEnabled:false
+    isNextEnabled:false,
+    bimFiles:[],
+    isBimNotAvailable:false,
 }

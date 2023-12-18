@@ -15,7 +15,7 @@ export const projectReducer=(state: OnBoardingProjectState, action: OnBoardingPr
             return{
                 ...state,
                 step: nextStep,
-                isNextEnabled: isNext(state,nextStep),
+                
             }
         case ProjectActionType.setNewProjectDetails:
             return{
@@ -23,10 +23,20 @@ export const projectReducer=(state: OnBoardingProjectState, action: OnBoardingPr
                 newProjectDetails:action.payload.newProjectDetails
             }
         case ProjectActionType.setAdminDetails:
-           // console.log("reducer page",action.payload.adminDetails)
             return{
                 ...state,
                 adminDetails:action.payload.adminDetails
+            }
+        case ProjectActionType.setBimFile:
+            return{
+                ...state,
+                bimFiles:action.payload.bimFiles,
+            
+            }
+        case ProjectActionType.setIsBimNotAvailable:
+            return{
+                ...state,
+                isBimNotAvailable:action.payload.isBimNotAvailable
             }
     }
 }
@@ -34,11 +44,11 @@ export const projectReducer=(state: OnBoardingProjectState, action: OnBoardingPr
 const isNext = (state:OnBoardingProjectState, step: OnBoardingStep): boolean =>{
     switch (step) {
         case OnBoardingStep.ProjectDetails:
-            return true;
+            return false;
         case OnBoardingStep.ProjectHierachy:
             return true;
         case OnBoardingStep.BIM:
-            return true;
+            return false;
         case OnBoardingStep.Sheets:
             return true;
         case OnBoardingStep.AddUsers:
