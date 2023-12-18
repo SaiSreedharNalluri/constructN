@@ -29,25 +29,25 @@ const LayerIcons = ({iconsList}:any)=>{
   useEffect(()=>{setIconsList(iconsList)},[iconsList])
   return(<>
 {myIconsList.map((label: ILayer, index: number) => {
-          if (label.name === "Phone Image") {
+          if (label.name === "Phone Image" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={hexagonIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label.name === "360 Image") {
+          } else if (label.name === "360 Image" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={cameraIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label.name === "360 Video") {
+          } else if (label.name === "360 Video" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={videoRecorderIcon} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
-          } else if (label.name === "Drone Image") {
+          } else if (label.name === "Drone Image" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={DroneImage} alt="Arrow" />
