@@ -45,6 +45,7 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { IUser } from '../../../../models/IUser'
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader'
 import Progress2dAssets from '../../../../components/viewer/progress-2d-assets'
+import { ForgeDataVizUtils } from '../../../../utils/forge-utils'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -129,6 +130,10 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _compareForge = useRef<Autodesk.Viewing.GuiViewer3D>()
 
+    const _dataViz = useRef<ForgeDataVizUtils>()
+
+    const _compareDataViz = useRef<ForgeDataVizUtils>()
+
     const [isScriptsLoaded, setIsScriptsLoaded] = useState(false)
 
     const [isAutodeskInitialised, setAutodeskInitialised] = useState(false)
@@ -154,6 +159,8 @@ const Progress2DPage: React.FC<any> = () => {
     const [snapshotBase, setSnapshotBase] = useState<any>()
 
     const [snapshotCompare, setSnapshotCompare] = useState<any>()
+
+    const [selectedCompare, setSelectedCompare] = useState<any>()
 
     const [hierarchy, setHierarchy] = useState<any>()
 
@@ -183,7 +190,6 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [selectedTab , setSelectedTab] = useState('stages') 
 
-    const [totalAssets, setTotalAssets] =  useState<number>(assets.length)
 
     const [clipValue, setClipValue] = useState(50);
 
@@ -222,7 +228,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const params = useParams()
 
-    useEffect(() => {
+    const refetch = () => {
 
         const structId = searchParams.get('structId')
 
@@ -321,13 +327,22 @@ const Progress2DPage: React.FC<any> = () => {
             }).catch(e => setShowProgress(false))
 
         }
+    }
 
+    useEffect(() => {
+        refetch()
     }, [searchParams])
 
 
+
     useEffect(()=>{
-        setTotalAssets(assets?.length)
-    },[assets?.length])
+        if(isCompare){
+            if(selectedAsset){
+                toast.warn('Exit Compare Mode to Select Assets')
+            }
+            _closeDetails()
+        }
+    },[isCompare, selectedAsset])
 
     useEffect(() => {
 
@@ -387,6 +402,9 @@ const Progress2DPage: React.FC<any> = () => {
 
         subscribe('reality-click', _onRealityItemClick)
 
+
+        subscribe('sync-nav', _syncNavigator)
+
         return () => {
 
             unsubscribe('add-2d-shape', _onAddShape)
@@ -396,6 +414,8 @@ const Progress2DPage: React.FC<any> = () => {
             unsubscribe('select-2d-shape', _onSelectShape)
 
             unsubscribe('sync-viewer', _syncViewer)
+
+            unsubscribe('sync-nav', _syncNavigator)
 
             // unsubscribe('delete-2d-shape', _onDeleteShape)
 
@@ -616,6 +636,16 @@ const Progress2DPage: React.FC<any> = () => {
 
     }
 
+    const _syncNavigator = (event: any) =>{
+
+        const details = event.detail;
+
+        const _tools = details.compare ? _dataViz: _compareDataViz;
+
+        _tools?.current?.updateNavigator(new THREE.Vector3(-1000, -1000, 0), 0)
+
+    }
+
     const _onCategorySelected = (category: IAssetCategory | undefined) => {
 
         setStages([])
@@ -723,7 +753,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 result.forEach((asset: IAsset) => {
 
-                    const mStage: any = structuredClone(_assetMap.current[asset.progress.stage as string])
+                    const mStage: any = {...(_assetMap.current[asset.progress.stage as string] || {})}
 
                     delete mStage.assets
 
@@ -831,7 +861,6 @@ const Progress2DPage: React.FC<any> = () => {
 
             const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
 
-            const assetsMessage = assets && totalAssets > 0 ? `${totalAssets} assets` : 'No assets'
 
             return <>
 
@@ -846,7 +875,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _renderStageShimmer = (index: number) => {
 
-        if (totalAssets === 0)
+        if (loading)
 
             return (
 
@@ -935,7 +964,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         <div className={`w-3/4 relative flex items-center mx-2`}>
 
-                                            <div id='left-container' className={`relative h-full w-full border border-[#e2e3e5] z-20 rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}  
+                                            <div id='left-container' className={`relative h-full w-${showReality ? '1/2' : 'full'} border border-[#e2e3e5] z-20 rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}  
                                                     style={isCompare ? {
                                                     clipPath: `polygon(0% 0%, ${clipValue}% 0%, ${clipValue}% 100%, 0% 100%)`,
                                                     } : {} }>
@@ -960,12 +989,13 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     _forge={_forge}
 
+                                                    _dataViz={_dataViz}
+
                                                     selectedLayers={selectedLayers} />
 
                                             </div>
 
-                                            {
-                                            !isCompare && showReality ? (<>
+                                            {showReality ? (<>
 
                                                     <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 20 }}>
 
@@ -998,7 +1028,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                 </>) : ''
                                             }
 
-                                            {isCompare  ? <div id='container-right-full' className={`absolute h-full w-full border z-10 border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}>
+                                            {isCompare  ? <div id='container-right-full' className={`absolute h-full w-${showReality ? '1/2' : 'full'} border z-10 border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}>
 
                                             <Progress2DComponent
 
@@ -1012,11 +1042,13 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 compare={isCompare}
 
-                                                reality={false}
+                                                reality={showReality}
 
                                                 assets={comparisionAssets}
 
                                                 _forge={_compareForge}
+
+                                                _dataViz={_compareDataViz}
 
                                                 right
 
@@ -1027,13 +1059,12 @@ const Progress2DPage: React.FC<any> = () => {
                                             </div>:null}
 
                                             {isCompare ? <div
-                                                className='absolute left-50 h-full w-[4px] z-20 bg-[#808080]'
+                                                className={`absolute h-full w-[4px] z-20 bg-[#cccccc]`}
                                                 
-                                                style={{ left: `calc(${clipValue}%)` }}
+                                                style={{ left: showReality? `calc(${clipValue/2}%)`: `calc(${clipValue}%)`}}
                                                 >
                                                     <CompareArrowsIcon 
-                                                        className='relative top-40 right-[26px] text-white rounded-[50%] w-[60px] h-[60px] bg-[#3887be] cursor-ew-resize' 
-                                                        style={{ boxShadow: 'inset 0 0 0 2px #fff'}}
+                                                        className='relative top-40 right-[26px] p-1 text-white rounded-[50%] w-[60px] h-[60px] bg-[#FF843F] cursor-ew-resize' 
                                                         onMouseDown={handleMouseDown} 
                                                     />
                                             </div>: null}
@@ -1122,7 +1153,13 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                <Progress2DStages stages={stages} assetCount={totalAssets} compare={isCompare} setTotalAssets={setTotalAssets}
+                                                <Progress2DStages stages={stages} compare={isCompare} assets={assets}
+
+                                                snapShotDate={snapshotBase.date}
+
+                                                selectedCategory={selectedCategory}
+
+                                                refetch={()=>{ _loadAssetsForCategory(selectedCategory as IAssetCategory, selectedAsset) }}
 
                                                     onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
 
@@ -1138,12 +1175,12 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>}
                                             {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} /> }
-
-                                            {selectedAsset && <AssetDetails
+                                        
+                                            {selectedAsset && !isCompare && <AssetDetails
 
                                                 assetId={selectedAsset}
 
-                                                snapshotBase={snapshotBase}
+                                                snapshotBase={selectedCompare? snapshotCompare: snapshotBase}
 
                                                 supportUser={isSupportUser}
 
