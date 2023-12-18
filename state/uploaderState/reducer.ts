@@ -6,6 +6,7 @@ import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrSt
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
 import { UploadFile } from "@mui/icons-material";
+import { stat } from "fs";
 
 
 export const resetUploaderState = (): UploaderState => {
@@ -104,7 +105,6 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             let updatedList = getUpdatedFileList(state, action.payload.files);
             return {
                 ...state,
-                isReading: false,
                 choosenFiles: updatedList,
                 filesDropped: true,
                 isNextEnabled: updatedList.validFiles.length > 0
@@ -169,6 +169,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 selectedJob: action.payload.job
             }
+        case UploaderActionType.setCurrentUploadFiles:
+            return {
+                ...state,
+                currentUploadFiles: action.payload.uploadFiles
+            }
         case UploaderActionType.updateWorkerStatus:
             let workers = state.inProgressWorkers
             let captureId = action.payload.workerFileList[0].uploadObject.capture
@@ -180,7 +185,15 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 inProgressWorkers: newWorkerStatus
             }
-
+        case UploaderActionType.removeWorker:
+            if( state.inProgressWorkers) {
+                let {[action.payload.captureId]: _, ...workersMap} = state.inProgressWorkers
+                return {
+                    ...state,
+                    inProgressWorkers: workersMap
+                }
+            }
+            return state
         case UploaderActionType.setErrorCount:
             return{
                 ...state,

@@ -26,6 +26,9 @@
   height: calc(100vh - 60px);
   /* height: calc(100vh - 116px); */
 }
+.calc-h100 {
+  height: calc(100vh - 100px);
+}
 .calc-h146 {
   height: calc(100vh - 146px);
 }
@@ -701,3 +704,10 @@ td {
   background-color: #E7E7E7 !important;
   border-radius: 60px !important;
 }
+
+.input-no-arrows input::-webkit-inner-spin-button,
+.input-no-arrows input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+

@@ -1,3 +1,4 @@
+import { IJobs } from "../../models/IJobs";
 import { IProjects } from "../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { ProjectData } from "./state";
@@ -5,6 +6,9 @@ import { ProjectData } from "./state";
 export enum AppActionType {
     appendProjectData,
     setCurrentProjectData,
+    addCaptureUpload,
+    updateCaptureUploadStatus,
+    removeCaptureUpload,
     setIsLoading
 }
 
@@ -16,6 +20,21 @@ export interface appendProjectData {
 export interface setCurrentProjectData {
   type: AppActionType.setCurrentProjectData;
   payload: { projectData: ProjectData}
+}
+
+export interface addCaptureUpload {
+  type: AppActionType.addCaptureUpload;
+  payload: { job: IJobs}
+}
+
+export interface updateCaptureUploadStatus {
+  type: AppActionType.updateCaptureUploadStatus;
+  payload: { job: IJobs}
+}
+
+export interface removeCaptureUpload {
+  type: AppActionType.removeCaptureUpload;
+  payload: { job: IJobs}
 }
 
 export interface setIsLoading {
@@ -38,6 +57,24 @@ export const appContextActions = (dispatch: React.Dispatch<AppActions>) => {
           payload: { projectData: projectData },
         });
       },
+      addCaptureUpload: (job :IJobs) => {
+        dispatch({
+          type: AppActionType.addCaptureUpload,
+          payload: { job: job }
+        })
+      },
+      updateCaptureUploadStatus: (job :IJobs) => {
+        dispatch({
+          type: AppActionType.updateCaptureUploadStatus,
+          payload: { job: job }
+        })
+      },
+      removeCaptureUpload: (job :IJobs) => {
+        dispatch({
+          type: AppActionType.removeCaptureUpload,
+          payload: { job: job }
+        })
+      },
       setIsLoading: (isLoading:boolean) => {
         dispatch({ type: AppActionType.setIsLoading, payload:{isLoading: isLoading}});
     },
@@ -47,4 +84,7 @@ export const appContextActions = (dispatch: React.Dispatch<AppActions>) => {
 
 export type AppActions = appendProjectData
  | setCurrentProjectData
+ | addCaptureUpload
+ | updateCaptureUploadStatus
+ | removeCaptureUpload
  | setIsLoading

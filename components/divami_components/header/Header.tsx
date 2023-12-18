@@ -83,6 +83,9 @@ import { IProjects } from "../../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../../models/IStructure";
 import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
 import { useAppContext } from "../../../state/appState/context";
+import UploaderProjects from "../uploader_details/uploaderProjects";
+import { IJobs } from "../../../models/IJobs";
+import { ProjectCounts } from "../../../models/IUtils";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -130,10 +133,11 @@ const Header: React.FC<any> = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName, setProjectName] = useState('')
   const [notificationCount, setNotificationCount] = useState(0);
+  const [uploaderCount, setUploaderCount] = useState(0);
   const { state: uploaderState } = useUploaderContext();
   const { state: appState, appContextAction } = useAppContext();
+  const [projectUplObj,setProjectUplObj] = useState<ProjectCounts>({})
   const { appAction } = appContextAction;
-
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       let projectId = router?.query?.projectId as string
@@ -421,6 +425,9 @@ const Header: React.FC<any> = ({
   const handleProfileClose = () => {
     setOpenProfile(false);
   };
+  const handleUploaderClose =()=>{
+    setOpenUploader(false)
+  }
   const clearNotificationsCount = () => {
     clearUserNotificationsCount().then((response) => {
       if (response?.success === true) {
@@ -467,6 +474,34 @@ const Header: React.FC<any> = ({
        window.removeEventListener('popstate', popStateHandler)
      })
    }, [url,uploaderState.step])
+
+  useEffect(() => {
+    // Calculate project counts when the component mounts or when the originalArray changes
+    const calculateProjectCounts = () => {
+      const counts:any = {};
+      appState.inProgressPendingUploads.forEach(jobInfo => {
+        const projectId = jobInfo.project as string;
+
+        if (!counts[projectId]) {
+          counts[projectId] = 1;
+        } else {
+          counts[projectId]++;
+        }
+      });
+
+      setProjectUplObj(counts);
+    };
+    calculateProjectCounts();
+    }, [appState.inProgressPendingUploads]);
+  useEffect(()=>{
+    if(Object?.keys(projectUplObj).length>0)
+    {
+      setUploaderCount(Object.keys(projectUplObj).length)
+    }
+    else{
+      setUploaderCount(0)
+    }
+  },[projectUplObj])
   return (
     <>
       <HeaderContainer ref={headerRef}>
@@ -579,7 +614,7 @@ const Header: React.FC<any> = ({
           ) : (
             <></>
           )}
-         {/* <HeaderUploaderImageContainer>
+         <HeaderUploaderImageContainer>
             <TooltipText title="Uploader" onClick={() => {
               if (openUploader) {
                 setOpenUploader(false);
@@ -595,10 +630,12 @@ const Header: React.FC<any> = ({
               }
             }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
-                <Badge badgeContent={notificationCount} color="warning">
+                <Badge badgeContent={uploaderCount} color="warning">
                   <Image
                     src={uploadIcon}
                     alt="Uploader Icon"
+                    width={30}
+                    height={30}
                   />
                 </Badge>
               </div>
@@ -607,11 +644,11 @@ const Header: React.FC<any> = ({
             {openUploader && (
               <div>
                  <CustomDrawer paddingStyle={true} variant="persistent">
-                 <div></div>
+                 <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplObj={projectUplObj}/></div>
                 </CustomDrawer>
               </div>
             )}
-          </HeaderUploaderImageContainer> */}
+          </HeaderUploaderImageContainer>
           <HeaderProfileImageContainer>
             {avatar ? (
               <TooltipText title="My Profile">

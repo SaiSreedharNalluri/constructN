@@ -27,7 +27,7 @@ const AssetTimeline: React.FC<{ asset: IAsset }> = ({ asset }) => {
 
             {asset?.progressSnapshot.map((item: IAssetProgress, index: number) => {
 
-                return <TimelineItem key={index}>
+                return <>{ item.stage !== 'NOT_STARTED' && <TimelineItem key={index}>
 
                     <TimelineSeparator>
 
@@ -43,7 +43,7 @@ const AssetTimeline: React.FC<{ asset: IAsset }> = ({ asset }) => {
 
                     </TimelineContent>
 
-                </TimelineItem>
+                </TimelineItem> }</>
 
             })}
 

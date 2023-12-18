@@ -29,7 +29,9 @@ export enum UploaderActionType {
     appendToRawImagesMap,
     chageIsReading,
     setSelectedJob,
+    setCurrentUploadFiles,
     updateWorkerStatus,
+    removeWorker,
     refreshJobs,
     setErrorCount,
     setResetUploaderState,
@@ -150,9 +152,19 @@ export interface setSelectedJob {
     payload: {job: IJobs | undefined}
 }
 
+export interface setCurrentUploadFiles {
+    type: UploaderActionType.setCurrentUploadFiles
+    payload: {uploadFiles: IUploadFile<RawImage>[] | undefined}
+}
+
 export interface updateWorkerStatus {
     type: UploaderActionType.updateWorkerStatus
     payload: {workerFileList: IUploadFile<RawImage>[]}
+}
+
+export interface removeWoker {
+    type: UploaderActionType.removeWorker
+    payload: {captureId: string}
 }
 
 export interface setErrorCount{
@@ -240,8 +252,14 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setSelectedJob:(job: IJobs | undefined)=>{
             dispatch({type:UploaderActionType.setSelectedJob, payload:{ job: job}})
         },
+        setCurrentUploadFiles:(uploadFiles: IUploadFile<RawImage>[] | undefined)=>{
+            dispatch({type:UploaderActionType.setCurrentUploadFiles, payload:{ uploadFiles: uploadFiles}})
+        },
         updateWorkerStatus:(workerFileList: IUploadFile<RawImage>[]) => {
             dispatch({type:UploaderActionType.updateWorkerStatus, payload:{ workerFileList: workerFileList}})
+        },
+        removeWorker:(captureId: string) => {
+            dispatch({type:UploaderActionType.removeWorker, payload:{ captureId: captureId}})
         },
         setErrorCount:(errorCount:number)=>{
           dispatch({type:UploaderActionType.setErrorCount,payload:{errorCount:errorCount}})
@@ -279,7 +297,9 @@ export type UploaderActions =
   | setRawImagesMap
   | chageIsReading
   | setSelectedJob
+  | setCurrentUploadFiles
   | updateWorkerStatus
+  | removeWoker
   | refreshJobs
   | setErrorCount
   | setResetUploaderState

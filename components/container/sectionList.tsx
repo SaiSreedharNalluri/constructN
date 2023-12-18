@@ -43,7 +43,7 @@ const SectionList: React.FC<IProps>=({
       const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
         handleNodeExpand(nodeIds);
       };
-      const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+      const handleSelect = (event: React.SyntheticEvent, nodeIds: string | string[]) => {
         handleNodeSelection(nodeIds);
       };
       const TruncatedString = ({ text, maxLength, suffixLength }: any) => {

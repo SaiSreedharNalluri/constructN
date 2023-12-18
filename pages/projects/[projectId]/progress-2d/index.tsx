@@ -28,7 +28,7 @@ import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from '../../../../components/progress-2d/asset-details'
 
-import { Button, Divider, IconButton, Typography } from '@mui/material'
+import { Button, Divider, IconButton, Typography, Tab, Tabs } from '@mui/material'
 
 import { API } from '../../../../config/config'
 
@@ -40,8 +40,11 @@ import Progress2DToolbar from '../../../../components/progress-2d/toolbar/progre
 
 import { getCookie } from 'cookies-next'
 
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+
 import { IUser } from '../../../../models/IUser'
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader'
+import Progress2dAssets from '../../../../components/viewer/progress-2d-assets'
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
@@ -122,6 +125,10 @@ const fetchImagesData = (path: string) => {
 
 const Progress2DPage: React.FC<any> = () => {
 
+    const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
+
+    const _compareForge = useRef<Autodesk.Viewing.GuiViewer3D>()
+
     const [isScriptsLoaded, setIsScriptsLoaded] = useState(false)
 
     const [isAutodeskInitialised, setAutodeskInitialised] = useState(false)
@@ -154,6 +161,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [assets, setAssets] = useState<IAsset[]>([])
 
+    const [comparisionAssets, setComparisionAssets] = useState<IAsset[]>([])
+
     const [selectedAsset, setSelectedAsset] = useState<string | undefined>()
 
     const [stages, setStages] = useState<({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[]>()
@@ -171,6 +180,39 @@ const Progress2DPage: React.FC<any> = () => {
     const projectId = useRef<string>()
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
+
+    const [selectedTab , setSelectedTab] = useState('stages') 
+
+    const [totalAssets, setTotalAssets] =  useState<number>(assets.length)
+
+    const [clipValue, setClipValue] = useState(50);
+
+    const handleMouseMove = (e: { buttons: number; clientX: number }) => {
+    if (e.buttons === 1) {
+      // Left mouse button is clicked
+        const container = document.getElementById("container-right-full");
+        const containerRect = container!.getBoundingClientRect();
+        const mouseX = e.clientX - containerRect.left;
+
+      // Ensure clipValue doesn't go out of bounds (0 to 100)
+        const newClipValue = Math.min(
+        100,
+        Math.max(0, (mouseX / containerRect.width) * 100),
+        );
+
+        setClipValue(newClipValue);
+        }
+    };
+
+    const handleMouseUp = () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleMouseDown = () => {
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+    };
 
     const _assetMap = useRef<{ 
         
@@ -282,6 +324,11 @@ const Progress2DPage: React.FC<any> = () => {
 
     }, [searchParams])
 
+
+    useEffect(()=>{
+        setTotalAssets(assets?.length)
+    },[assets?.length])
+
     useEffect(() => {
 
         if (isScriptsLoaded) {
@@ -332,6 +379,8 @@ const Progress2DPage: React.FC<any> = () => {
 
         subscribe('select-2d-shape', _onSelectShape)
 
+        subscribe('sync-viewer', _syncViewer)
+
         // subscribe('delete-2d-shape', _onDeleteShape)
 
         subscribe('remove-2d-shape', _onDeleteShape)
@@ -345,6 +394,8 @@ const Progress2DPage: React.FC<any> = () => {
             unsubscribe('update-2d-shape', _onUpdateShape)
 
             unsubscribe('select-2d-shape', _onSelectShape)
+
+            unsubscribe('sync-viewer', _syncViewer)
 
             // unsubscribe('delete-2d-shape', _onDeleteShape)
 
@@ -553,6 +604,18 @@ const Progress2DPage: React.FC<any> = () => {
 
     }
 
+    const _syncViewer = (event: any) =>{
+
+        const details = event.detail;
+
+        const _viewer = details.compare ? _forge: _compareForge;
+
+        _viewer?.current?.navigation?.setPosition(details.position)
+
+        _viewer?.current?.navigation?.setTarget(details.target)
+
+    }
+
     const _onCategorySelected = (category: IAssetCategory | undefined) => {
 
         setStages([])
@@ -684,7 +747,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
-                // setAssets(result)
+                setComparisionAssets(result)
 
             }
 
@@ -768,7 +831,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
 
-            const assetsMessage = assets && assets.length > 0 ? `${assets.length} assets` : 'No assets'
+            const assetsMessage = assets && totalAssets > 0 ? `${totalAssets} assets` : 'No assets'
 
             return <>
 
@@ -783,7 +846,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _renderStageShimmer = (index: number) => {
 
-        if (assets.length === 0)
+        if (totalAssets === 0)
 
             return (
 
@@ -872,7 +935,10 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         <div className={`w-3/4 relative flex items-center mx-2`}>
 
-                                            <div id='left-container' className={`relative h-full w-1/2 border border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}>
+                                            <div id='left-container' className={`relative h-full w-full border border-[#e2e3e5] z-20 rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}  
+                                                    style={isCompare ? {
+                                                    clipPath: `polygon(0% 0%, ${clipValue}% 0%, ${clipValue}% 100%, 0% 100%)`,
+                                                    } : {} }>
 
                                                 <Progress2DComponent
 
@@ -892,18 +958,20 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     isSupportUser={isSupportUser}
 
+                                                    _forge={_forge}
+
                                                     selectedLayers={selectedLayers} />
 
                                             </div>
 
                                             {
-                                                showReality ? (<>
+                                            !isCompare && showReality ? (<>
 
-                                                    <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 2 }}>
+                                                    <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 20 }}>
 
                                                     </div>
 
-                                                    <div id='right-container' className={'relative h-full w-1/2'}>
+                                                    <div id='right-container' className={'relative h-full w-1/2 z-20'}>
 
                                                         <RealityPage snapshot={snapshotBase} id={'right'} />
 
@@ -929,6 +997,46 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 </>) : ''
                                             }
+
+                                            {isCompare  ? <div id='container-right-full' className={`absolute h-full w-full border z-10 border-[#e2e3e5] rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}>
+
+                                            <Progress2DComponent
+
+                                                id={'container-right'}
+                                                
+                                                viewType={'Plan Drawings'}
+
+                                                category={selectedCategory}
+
+                                                snapshot={snapshotBase}
+
+                                                compare={isCompare}
+
+                                                reality={false}
+
+                                                assets={comparisionAssets}
+
+                                                _forge={_compareForge}
+
+                                                right
+
+                                                isSupportUser={isSupportUser}
+
+                                                selectedLayers={selectedLayers} />
+
+                                            </div>:null}
+
+                                            {isCompare ? <div
+                                                className='absolute left-50 h-full w-[4px] z-20 bg-[#808080]'
+                                                
+                                                style={{ left: `calc(${clipValue}%)` }}
+                                                >
+                                                    <CompareArrowsIcon 
+                                                        className='relative top-40 right-[26px] text-white rounded-[50%] w-[60px] h-[60px] bg-[#3887be] cursor-ew-resize' 
+                                                        style={{ boxShadow: 'inset 0 0 0 2px #fff'}}
+                                                        onMouseDown={handleMouseDown} 
+                                                    />
+                                            </div>: null}
 
                                         </div>
 
@@ -991,12 +1099,30 @@ const Progress2DPage: React.FC<any> = () => {
                                             </div>}
 
                                             <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
+                                            {!selectedAsset && <Tabs
 
-                                            {!selectedAsset && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+                                            centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
+
+                                            TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
+
+                                                <Tab
+
+                                                value='stages' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Stages</Typography>} onClick={() => setSelectedTab('stages')} />
+
+                                                <Tab
+
+                                                value='assets' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Assets</Typography>} onClick={() => setSelectedTab('assets')} />
+                                                </Tabs>}
+
+                                            {!selectedAsset && selectedTab === 'stages' && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                <Progress2DStages stages={stages} assetCount={assets.length} compare={isCompare}
+                                                <Progress2DStages stages={stages} assetCount={totalAssets} compare={isCompare} setTotalAssets={setTotalAssets}
 
                                                     onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
 
@@ -1011,6 +1137,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                     }} />
 
                                             </div>}
+                                            {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} /> }
 
                                             {selectedAsset && <AssetDetails
 
@@ -1020,7 +1147,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 supportUser={isSupportUser}
 
-                                                onChange={_onAssetDetailsChange} />}
+                                                onChange={_onAssetDetailsChange}/>}
 
                                         </div>}
 

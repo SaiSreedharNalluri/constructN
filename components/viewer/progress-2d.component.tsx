@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { MutableRefObject, useEffect, useRef, useState } from 'react'
 
 import Forge from './forge'
 
@@ -35,12 +35,16 @@ interface _ViewerProps {
     category: IAssetCategory | undefined
 
     selectedLayers: string[] | undefined
+
+    _forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>;
+
+    right?: boolean
 }
 
 
 function Progress2DComponent(props: _ViewerProps) {
 
-    const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
+    const _forge = props._forge
 
     const _initialised = useRef<boolean>(false)
 
@@ -275,6 +279,8 @@ function Progress2DComponent(props: _ViewerProps) {
                 models={modelsData}
 
                 onModelLoaded={onModelLoaded}
+
+                compare={props.right}
 
                 onExtnLoaded={onExtnLoaded} /> }
 

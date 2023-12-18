@@ -90,8 +90,10 @@ const UploaderFooter: React.FC<any> = ({ }) => {
               disabled={!state.isNextEnabled || state.isReading}
               onClick={() => {
                 uploaderAction.next()
+                state.choosenFiles.duplicateFiles.length = 0
+                state.choosenFiles.invalidEXIFFiles.length = 0
               }}
-              className={` ${state.isNextEnabled ? "bg-[#F1742E]" : " bg-gray-400"}  text-white rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
+              className={` ${state.isNextEnabled && !state.isReading ? "bg-[#F1742E]" : " bg-gray-400"}  text-white rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
               <p className="text-white">   Confirm Images</p>
             </Button>
           </>

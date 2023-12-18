@@ -16,11 +16,12 @@ interface fileData {
   fileName: string;
 }
 const UploaderFinal: React.FC = () => {
+  const { state: appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const [isShowPopUp, setIsShowPopUp] = useState(false);
   const [fileProgressList, setFileProgressList] = useState<fileData[]>([]);
-  const { state: appState, appContextAction } = useAppContext();
   const[isCustomLoader,setCustomLoader]=useState<boolean>(false);
   useEffect(() => {
     if(uploaderState.selectedJob) {
@@ -98,22 +99,36 @@ const UploaderFinal: React.FC = () => {
       return "";
     }
   };
-  const updateJobStatusUploadCompleteWithErrors =()=>{
-    let ignoreImagesCheck = true
-     updateJobStatus(uploaderState.selectedJob?.project as string,uploaderState.selectedJob?._id as string,JobStatus.uploaded,ignoreImagesCheck).then((response:any)=>{
-       if(response.data.success===true)
-       {
-         let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-         captureJobs.forEach((job) => {
-           if (job._id === response.data.result?._id) {
-             job.status = JobStatus.uploaded
-           }
-         })
-         uploaderAction.setCaptureJobs(captureJobs)
-       }
-      }).catch((error)=>{
-    })
- }
+  const updateJobStatusUploadCompleteWithErrors = () => {
+    let ignoreImagesCheck = true;
+    uploaderAction.setIsLoading(true);
+    updateJobStatus(
+      uploaderState.selectedJob?.project as string,
+      uploaderState.selectedJob?._id as string,
+      JobStatus.uploaded,
+      ignoreImagesCheck
+    )
+      .then((response) => {
+        uploaderAction.setIsLoading(false);
+        if (response.data.success === true) {
+          let updatedJob = response.data.result
+          let captureJobs = uploaderState.pendingProcessJobs.concat(
+            uploaderState.pendingUploadJobs
+          );
+          captureJobs.forEach((job) => {
+            if (job._id === updatedJob._id) {
+              job.status = updatedJob.status;
+            }
+          });
+          uploaderAction.setCaptureJobs(captureJobs);
+          appAction.removeCaptureUpload(updatedJob)
+          uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
+        }
+      })
+      .catch((error) => {
+        uploaderAction.setIsLoading(false);
+      });
+  };
   return (
     <React.Fragment>
       <div className="flex ml-[30px] mt-[15px] calc-w">
