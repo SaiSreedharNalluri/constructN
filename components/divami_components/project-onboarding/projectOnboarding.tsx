@@ -8,6 +8,7 @@ import { OnBoardingStep } from '../../../state/projectState/state'
 import ProjectOnboardingUsers from './onboarding-users/projectOnboardingUsers'
 import ProjectOnboardingHierarchy from './onboarding-hierarchy/project-onboarding-hierarchy'
 import ProjectOnboardingSheets from './onboarding-sheets/project-onboarding-sheets'
+import ProjectOnboardingBIM from './onboarding-bim/projectOnboardingBIM'
 const ProjectOnboarding=()=> {
   const { state:onboardingState} = useProjectContext();
   const renderMainContent = () => {
@@ -23,6 +24,10 @@ const ProjectOnboarding=()=> {
       case OnBoardingStep.Sheets:
         return (
           <ProjectOnboardingSheets />
+        );
+      case OnBoardingStep.BIM:
+          return(
+            <ProjectOnboardingBIM/>
         );
       case OnBoardingStep.AddUsers:
         return (
