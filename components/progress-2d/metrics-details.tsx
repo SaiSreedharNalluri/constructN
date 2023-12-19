@@ -36,6 +36,8 @@ const setProgress = ({
 }: SetProgressProps) => {
 	const index = stageValues.findIndex((stage) => stage.id === id);
 
+	if(key==='metric' && (val as number) < 0) return
+
 	setStageValues(() => {
 		stageValues[index] = { ...(stageValues[index] || {}), [key]: val };
 		return [...(stageValues || [])];
@@ -111,7 +113,7 @@ export default function Metrics({
 					</div>
 				))
 			) : (
-				<TableContainer style={{ maxHeight: 428 }}>
+				<TableContainer style={{ maxHeight: 360 }}>
 					<Table aria-label="table" stickyHeader>
 						<TableHead>
 							<TableRow>
