@@ -289,8 +289,8 @@ function Issues({
     setOpenCreateIssue(false)
     let issueMenuInstance: IToolbarAction = { data: formdata,type:"createSuccessIssue"};
     issueMenuClicked(issueMenuInstance);
-    closeIssueCreate();
-    issueSubmit(formdata);
+    // closeIssueCreate();
+    // issueSubmit(formdata);
     setEnableSubmit(true);
   };
   const openIssueCreateFn = () => {
@@ -489,6 +489,7 @@ function Issues({
             issueLoader={issueLoader}
             setIssueLoader={setIssueLoader}
             initData={initData}
+            toolClicked={toolClicked}
            
           />
         </Drawer>

@@ -673,6 +673,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 getIssues={getIssues}
                 deleteTheAttachment={deleteTheAttachment}
                 setIssueList={setIssueList}
+                toolClicked={toolClicked}
               />
 
             </Drawer>

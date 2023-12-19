@@ -182,9 +182,7 @@ const Index: React.FC<IProps> = () => {
   const [selectedDesign, setSelectedDesign] = useState("");
   const [selectedReality, setSelectedReality] = useState("");
 
-  const [currentContext, setCurrentContext] = useState<IToolResponse>({
-    type: "Task",
-  });
+  const [currentContext, setCurrentContext] = useState<IToolbarAction>();
   const [hierarchy, setHierarchy] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
@@ -743,6 +741,9 @@ const Index: React.FC<IProps> = () => {
       case "createSuccessIssue":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
+      case "editIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
       case "createTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
         break;
@@ -759,6 +760,9 @@ const Index: React.FC<IProps> = () => {
         break;
       case "hideTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
+        break;
+      case "editTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "removedTask":
         (async () => {
@@ -1354,13 +1358,13 @@ const Index: React.FC<IProps> = () => {
 
   }
   const updateITRouter = (type: String, id: string) => {
-    console.log("updateITRouter")
+    console.log("updateITRouter",type,id,router)
     if (type === "selectIssue") {
       delete router.query.tsk
       router.query.iss = id;
     }
     if (type === "selectTask") {
-      // delete router.query.iss
+      delete router.query.iss
       router.query.tsk = id
     }
     router.push(router)
@@ -1431,18 +1435,25 @@ const Index: React.FC<IProps> = () => {
         console.log("Handshake setGenData", initData)
         setMViewerStatus("Connected")
       }
+      updateURLQuery(initData as IGenData)
+      if (initData.currentViewType === "Plan Drawings" || initData.currentViewType === "BIM") {
+        currentViewMode !== "Design" ? setViewMode("Design") : null;
+      }
+      else {
+        currentViewMode !== "Reality" ? setViewMode("Reality") : null;
+      }
     }
 
   }, [initData])
 
   useEffect(() => {
-
+    
     if (mViewerStatus === "Waiting") {
       if (initData) {
         conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
         console.log("Handshake setGenData", initData)
         setMViewerStatus("Connected")
-        updateURLQuery(initData as IGenData)
+        
       }
 
       else {
@@ -1505,7 +1516,7 @@ const Index: React.FC<IProps> = () => {
 
   const updateURLQuery = (newData: IGenData) => {
 
-    if (router.isReady) {
+    if (router) {
       console.log("callback tryinf to update router");
       (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
       (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
@@ -1527,29 +1538,38 @@ const Index: React.FC<IProps> = () => {
     //   updateITRouter(message.type,message.data.id) //Router current Task/Issue
     // }
     if (message.type === "syncGenViewer") {
-      setInintData(message.data);
+      setInintData(message.data);     
       // updateURLQuery(message.data as IGenData);
       //setViewMode(message.data.viewMode);
-      if (message.data.currentViewType === "Plan Drawings" || message.data.currentViewType === "BIM") {
-        currentViewMode !== "Design" ? setViewMode("Design") : null;
-      }
-      else {
-        currentViewMode !== "Reality" ? setViewMode("Reality") : null;
-      }
+      
     }
     else if (message.type === "selectIssue" || message.type === "selectTask" || message.type === "createIssue" || message.type === "createTask") {
-      updateITRouter(message.type, message.data.id)
+      // updateITRouter(message.type, message.data.id)
       handleMenuInstance.data = message;
       handleMenuInstance.type = message.type
       if (ref && ref.current) {
         ref.current?.selectToolRef(handleMenuInstance)
       }
 
-      setCurrentContext(message)
+      setCurrentContext(message as IToolbarAction)
 
     }
 
   }
+
+  useEffect(()=>{
+    if(currentContext){
+    if(currentContext?.type === "selectIssue" ||  currentContext?.type === "selectTask"){
+      let a=currentContext.data as IContext
+      if(a.id !== undefined){
+
+      updateITRouter(currentContext.type,a.id as string)
+      }
+    
+    }
+    setCurrentContext(undefined)
+  }
+  },[currentContext])
   useEffect(() => {
     conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(), appEventsCB)
     conn.subscribeTopic(MqttConnector.getMultiverseHandShakeString(), multiverseHandShakeEventsCB)

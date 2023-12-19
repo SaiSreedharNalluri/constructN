@@ -149,7 +149,9 @@ const CustomTaskListDrawer = (props: any) => {
     projectUsers,
     taskPriority,
     taskStatus,
-    taskContext
+    taskContext,
+    initData,
+    toolClicked
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -650,8 +652,8 @@ const CustomTaskListDrawer = (props: any) => {
               anchor={"right"}
               open={openTaskDetail}
               onClose={() => {setOpenTaskDetail((prev: any) => !prev)
-                delete router.query.iss
-                router.push(router)
+                // delete router.query.iss
+                // router.push(router)
               }
               }
             >
@@ -659,7 +661,9 @@ const CustomTaskListDrawer = (props: any) => {
                 taskList={tasksList}
                 task={viewTask}
                 onClose={() => {setOpenTaskDetail((prev: any) => !prev)
-                  console.log("routerrrrrrrrrr",router.query.iss)
+                let typeChangeToolAction: IToolbarAction = { type: "closeTaskDrawer", data: "" };
+                toolClicked(typeChangeToolAction);
+                  
                 }
                 }
                 taskType={taskType}
@@ -674,6 +678,8 @@ const CustomTaskListDrawer = (props: any) => {
                 getTasks={getTasks}
                 deleteTheAttachment={deleteTheAttachment}
                 setTaskList={setTaskList}
+                initData={initData}
+                toolClicked={toolClicked}
               />
             </Drawer>
           )}

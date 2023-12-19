@@ -122,6 +122,7 @@ import { truncateString } from "../../../pages/projects";
 import Download from "../../../public/divami_icons/download.svg";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
 import CreateTask from "../../divami_components/create-task/CreateTask";
+import { IToolbarAction } from "../../../models/ITools";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -878,6 +879,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     getTasks,
     deleteTheAttachment,
     setTaskList,
+    initData,
+    toolClicked
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
@@ -1000,9 +1003,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
  
   const onDeleteCallback = () => {
     onClose();
-    console.log("routerrrrrrre",router.query.iss)
-    delete router.query.iss
-    router.push(router)
+    // delete router.query.iss
+    // router.push(router)
     if (setTaskList) {
       const updatedIssuesList = deletetaskById(taskList, selectedTask);
 
@@ -1021,10 +1023,14 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
+      console.log("data",data);
+      
       updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {
             CustomToast("Task updated successfully","success");
+            let ChangeToolAction: IToolbarAction = { type: "editTask", data: response?.result };
+            toolClicked(ChangeToolAction);
             getTasks(currentStructure._id);
             setLoading(true);
           } else {
@@ -1058,10 +1064,10 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value || each._id;
+        return each.value || each._id || each;
       });
-    data.structure = currentStructure?._id;
-    data.snapshot = currentSnapshot?._id;
+    data.structure = initData?.structure?._id;
+    data.snapshot = initData?.currentSnapshotBase?._id;
     data.status = formData.filter(
       (item: any) => item.id == "taskStatus"
     )[0]?.defaultValue;

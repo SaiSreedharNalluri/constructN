@@ -188,6 +188,8 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
 
 
   const issueMenuClicked = (localTool: IToolbarAction) => {
+    console.log("inst",localTool);
+    
     toolClicked(localTool);
     // if (
     //   localTool.toolAction === "issueCreateClose" ||
@@ -289,6 +291,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           handleOnTasksSort={handleOnTasksSort}
           ref={taskRef}
           toolClicked={toolClicked}
+          initData={initData}
 
         />
 
