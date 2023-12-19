@@ -577,8 +577,8 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
              }
            else if (Object.keys(rowData.snapshots?.latestSnapshot).length >= 0 && rowData.snapshots?.snapshotActiveCount>0 ) {
               router.push({
-                pathname: `/projects/${router?.query?.projectId as string}/structure`,
-                query: { structId: rowData._id },
+                pathname: `/projects/${router?.query?.projectId as string}/structure/${rowData._id}/multiverseviewer`
+                //query: { structId: rowData._id },
               });
               setCaptureAvailable(false)
               customLogger.logInfo("View Strucuture");
@@ -984,11 +984,11 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           isImageThere={true}
           SecondaryButtonlabel={"No"}
           callBackvalue={isCaptureAvailable? ()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure`,
-            query: { structId: id },
+            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`
+            //query: { structId: id },
           }):()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure`,
-            query: { structId: id },
+            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`//,
+            //query: { structId: id },
           }) }
         />
         )
