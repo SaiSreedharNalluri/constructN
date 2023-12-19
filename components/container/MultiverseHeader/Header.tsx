@@ -237,6 +237,8 @@ const Header: React.FC<any> = ({
   }, [router.isReady]);
   useEffect(() => {
     setIViewMode(viewMode);
+    console.log("tyring to change mode",viewMode);
+    
     setIsDesignSelected(viewMode === "Reality" ? false : true);
     //   document.addEventListener('click', closeStructurePages);
     //   return () => {

@@ -1093,11 +1093,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
       editIssue(projectId, data, selectedIssue?._id)
         .then((response:any) => {
           if (response.success === true) {
+            let ChangeToolAction: IToolbarAction = { type: "editIssue", data: response?.result };
+            toolClicked(ChangeToolAction);
             CustomToast("Issue updated successfully","success");
-            getIssues(currentStructure._id);
+            
+            // getIssues(initData?.structure?._id);
             setLoading(true)
-            let typeChangeToolAction: IToolbarAction = { type: "editIssue", data: response.result };
-            toolClicked(typeChangeToolAction);
+           
           } else {
             CustomToast("Error updating the Issue","error");
           }
@@ -1113,6 +1115,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           setLoading(false)
           setOpenCreateTask(false);
         });
+        
     }
   };
   const clickTaskSubmit = (formData: any) => {
@@ -1215,7 +1218,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response:any) => {
         if (response.success === true) {
-          CustomToast("Issue updated successfully","success");
+          CustomToast("Issue updated successfully 2nd toaast","success");
           getIssues(currentStructure._id);
         }
       })

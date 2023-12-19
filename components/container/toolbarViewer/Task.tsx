@@ -300,8 +300,6 @@ console.log("form datttaaa",formData)
   const taskSubmitFn = (formdata: any) => {
     let taskMenuInstance: IToolbarAction = { data: formdata,type:"createSuccessTask"};
     taskMenuClicked(taskMenuInstance);
-    closeTaskCreate();
-    taskSubmit(formdata);
     setEnableSubmit(true);
     setOpenCreateTask(false)
   };
@@ -455,6 +453,7 @@ console.log("form datttaaa",formData)
             taskPriority={taskPriorityList}
             taskStatus={taskStatusList} 
             taskContext={taskContext} // taskContext
+            toolClicked={toolClicked}
           />
         </Drawer>
       )}
@@ -497,6 +496,8 @@ console.log("form datttaaa",formData)
             getTasks={getTasks}
             taskPriority={taskPriorityList}
             taskStatus={taskStatusList}
+            initData={initData}
+            toolClicked={toolClicked}
           />
         </Drawer>
       )}
