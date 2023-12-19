@@ -515,12 +515,12 @@ const Index: React.FC<IProps> = () => {
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
-    if (router.isReady && structure) {
-      router.query.structId = structure?._id;
-      router.query.structureId = structure?._id;
+    // if (router.isReady && structure) {
+    //   //router.query.structId = structure?._id;
+    //   router.query.structureId = structure?._id;
 
-      router.push(router);
-    }
+    //   router.push(router);
+    //}
   }, [structure, project]);
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -1350,13 +1350,13 @@ const Index: React.FC<IProps> = () => {
 
 
 
-  const updateRouter = (type: String, snap: String) => {
-    if (type !== router.query.type) router.query.type = String(type);
-    if (snap !== router.query.snap) router.query.snap = snap as string;
+  // const updateRouter = (type: String, snap: String) => {
+  //   if (type !== router.query.type) router.query.type = String(type);
+  //   if (snap !== router.query.snap) router.query.snap = snap as string;
 
-    router.push(router);
+  //   router.push(router);
 
-  }
+  // }
   const updateITRouter = (type: String, id: string) => {
     console.log("updateITRouter",type,id,router)
     if (type === "selectIssue") {
@@ -1375,11 +1375,11 @@ const Index: React.FC<IProps> = () => {
       getGenViewerData(router.query.projectId as string, router.query.structureId as string)
         .then((response) => {
           if (response.success === true) {
-            if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
-              router.query.type = response.result.data?.currentViewType as string;
-              router.query.snap = response.result.data?.currentSnapshotBase._id as string;
-              router.push(router);
-            }
+            // if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
+            //   router.query.type = response.result.data?.currentViewType as string;
+            //   router.query.snap = response.result.data?.currentSnapshotBase._id as string;
+            //   router.push(router);
+            // }
             setInintData(response.result);
             // if(initData && router.query.iss || router.query.tsk){
 
@@ -1411,7 +1411,7 @@ const Index: React.FC<IProps> = () => {
           console.log("Error in loading data: 1 ", error);
         });
     }
-  }, [router.query.structId, router.isReady])
+  }, [router.isReady])
 
 
 
@@ -1517,13 +1517,15 @@ const Index: React.FC<IProps> = () => {
   const updateURLQuery = (newData: IGenData) => {
 
     if (router) {
-      console.log("callback tryinf to update router");
-      (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
-      (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
-      (router.query.projectId !== newData.structure.project) ? router.query.projectId = newData.structure.project : null;
-      (router.query.type !== newData.currentViewType) ? router.query.type = newData.currentViewType : null;
-      (router.query.snap !== newData.currentSnapshotBase._id) ? router.query.snap = newData.currentSnapshotBase._id : null;
-      router.push(router);
+      //console.log("callback tryinf to update router");
+      // (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
+      // (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
+      // (router.query.projectId !== newData.structure.project) ? router.query.projectId = newData.structure.project : null;
+      // (router.query.type !== newData.currentViewType) ? router.query.type = newData.currentViewType : null;
+      // (router.query.snap !== newData.currentSnapshotBase._id) ? router.query.snap = newData.currentSnapshotBase._id : null;
+      router.push({pathname:router.pathname,query:
+        {...router.query,projectId:newData.structure.project,structureId:newData.structure._id,type:newData.currentViewType,snap:newData.currentSnapshotBase._id}},
+        undefined,{});
     }
 
   }
