@@ -4,8 +4,6 @@ import { SetStateAction, useEffect, useState } from "react";
 import { SelectLayerContainer } from "../selectLayer/StyledComponents";
 import { SelectLayerProps } from "../selectLayer/Type";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
-
-import { MqttConnector } from "../../../utils/MqttConnector";
 import {
   CloseIconStyled,
   CustomSearchField,
@@ -31,8 +29,7 @@ const SelectTypesList = ({
 }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState(optionsList);
-  console.log("options",initData)
-  const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
+  const [types,setTypes] = useState([])
   const mockSelectTypesData = [
     "Plan Drawings",
     "Cross Section Drawings",
@@ -70,11 +67,29 @@ const SelectTypesList = ({
     setList([...newObj]);
   };
   useEffect(() => {
+    
     if (Object.keys(optionsList)?.length) {
       setList(Object.keys(optionsList));
     }
     setList(optionsList);
   }, [optionsList]);
+
+useEffect(()=>{
+  let types = initData
+  let result = types.currentViewTypeList.map((item:any,index:number)=>{
+    if(item === "pointCloud"){
+      return "Reality";
+    }
+    else if(item === "orthoPhoto"){
+      return "Map"
+    }
+    else{
+      return item;
+    }
+}
+)
+setTypes(result)
+},[initData.currentViewTypeList])
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
   // );
@@ -112,40 +127,21 @@ const SelectTypesList = ({
         </DrawerSearchBar>
         <ListStyled>
           {list.currentViewTypeList?.length > 0 &&
-           initData?.currentViewTypeList.map((item: any, index: number) => (
+           types.map((item: any, index: number) => (
               <>
                 <ListItemStyled
                   className="custom-list-styled"
                   key={item}
                   onClick={() => {
-                    // if(item === "pointCloud"){
-                    //   if (initData) {
-                    //     let pdata: IGenData = initData;
-                    //     if (pdata) {
-                    //       // pdata.currentSnapshotBase = initData.snapshotList;
-                    //       pdata.currentViewType = "pointCloud";
-                    //       const timeoutId = setTimeout(() => {
-                    //         console.log("pdata",JSON.stringify(pdata))
-                    //       conn?.publishMessage("abc", `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)})
-                    //       conn?.publishMessage("abc", `{"type": "setViewType", "data": "${item}"}`);
-                    //     }
-                    //   }
-                    // }
-                    
-                  
-                    if(item === "Plan Drawings" || item === "BIM" || item==="pointCloud"){
-
-                   console.log("item for  Reality",item)
-                      const timeoutId = setTimeout(() => {
-                        const res = conn?.publishMessage("abc", `{"type": "setViewType", "data": "${item}"}`);
-                     
-                      },3000)
-                    
+                    if(item === "Reality"){
+                      item="pointCloud"
+                    }
+                    if(item === "Map"){
+                      item="orthoPhoto"
                     }
                     onSelect({ target: { value: item } });
                     onCloseHandler();
-                  }}
-                  
+                  }}  
                 >
                   <ListItemText primary={item} />
                 </ListItemStyled>

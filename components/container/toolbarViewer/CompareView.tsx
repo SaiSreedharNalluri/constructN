@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useImperativeHandle, useState, Ref, forwardRef } from "react";
 // import styles from '../toolbar/toolbar.module.css'
 import Image from "next/image";
 import eyeOffIcon from "../../../public/public/divami_icons/eyeOffIcon.svg";
@@ -26,19 +26,55 @@ import {
   CompareIcon,
 } from "./ToolBarStyles";
 import { styled } from "@mui/system";
+import { IToolbarAction } from "../../../models/ITools";
+export type designToolHandle = {
+  handleDesignRef: (designInstance: any) => void;
+}
 
 const CompareView = ({
   rightMenuClickHandler,
-  active,
   designMap,
   selectedType = "",
-  setActive,
-  isDesignAvailable,
-}: any) => {
+  issueMenuClicked
+}: any, ref: Ref<designToolHandle>) => {
   const customLogger = new CustomLoggerClass();
-  // useEffect(() => {
-  //   setActive("hideCompare");
-  // }, [selectedType]);
+  const [isDesignAvailable, setDesignAvailable] = useState(false)
+  const [compareMode,setCompareMode] = useState("")
+  const [active, setActive] = useState("hideCompare");
+  useEffect(() => {
+    setActive("hideCompare");
+  }, [selectedType]);
+  const compareModeUpdate = (initData: any) => {
+    if(initData.structure.designs.length >= 1){
+      setDesignAvailable(true)
+    }
+
+    switch(initData.currentCompareMode){
+      case "noCompare":{
+        setActive("hideCompare")
+        break;
+      }
+      case "compareDesign":{
+        setActive(initData.currentCompareMode)
+        break;
+      }
+      case "compareReality":{
+        setActive(initData.currentCompareMode)
+        break;
+      }
+    }
+  }
+
+  useImperativeHandle(ref, () => {
+    return {
+      handleDesignRef(initData: any) {
+        console.log("comp ref",initData) 
+      compareModeUpdate(initData)
+
+
+      }
+    }
+  })
   return (
     <CompareViewBox>
       <CompareViewTitleDiv>Compare Views:</CompareViewTitleDiv>
@@ -46,7 +82,12 @@ const CompareView = ({
         <Tooltip title="Hide Compare">
           <CompareIcon
             id="hideCompare"
-            onClick={(e:any)=>{customLogger.logInfo("ToolBar - No Compare");rightMenuClickHandler(e)}}
+            onClick={(e: any) => {
+              let IssuetoolInstance: IToolbarAction = { type: "setCompareMode", data: "noCompare" }
+              issueMenuClicked(IssuetoolInstance)
+              customLogger.logInfo("ToolBar - No Compare");
+              // rightMenuClickHandler(e)
+            }}
             active={active}
           >
             <Image
@@ -57,37 +98,46 @@ const CompareView = ({
             />{" "}
           </CompareIcon>
         </Tooltip>
-        {designMap && selectedType !== "orthoPhoto" ? (
-          <Tooltip title= {isDesignAvailable?"Compare Design":"No Design"}>
-            <DesignCompareViewIcon
-              id="compareDesign"
-              onClick={(e: any) => {
-                if(isDesignAvailable)
+        {/* {!designMap && selectedType !== "orthoPhoto" ? ( */}
+        <Tooltip title={isDesignAvailable ? "Compare Design" : "No Design"}>
+          <DesignCompareViewIcon
+            id="compareDesign"
+            onClick={(e: any) => {
+              if (isDesignAvailable)
+              {
+              let IssuetoolInstance: IToolbarAction = { type: "setCompareMode", data: "compareDesign" }
+              issueMenuClicked(IssuetoolInstance)
                 customLogger.logInfo("ToolBar - Compare Design");
-                rightMenuClickHandler(e);
-              }}
-              isDesignAvailable={isDesignAvailable}
-              active={active}
-            >
-              <Image
-                src={
-                  active === "compareDesign"
-                    ? designCompare
-                    : designCompareLight
-                }
-                width={18}
-                height={18}
-                alt="Arrow"
-              />{" "}
-            </DesignCompareViewIcon>
-          </Tooltip>
-        ) : (
-          <></>
-        )}
+              // rightMenuClickHandler(e);
+              }
+            }}
+            isDesignAvailable={isDesignAvailable}
+            active={active}
+          >
+            <Image
+              src={
+                active === "compareDesign"
+                  ? designCompare
+                  : designCompareLight
+              }
+              width={18}
+              height={18}
+              alt="Arrow"
+            />{" "}
+          </DesignCompareViewIcon>
+        </Tooltip>
+        {/* ) : ( */}
+        {/* <></> */}
+        {/* )} */}
         <Tooltip title="Compare Reality">
           <RealityCompareViewIcon
             id="compareReality"
-            onClick={(e:any)=>{ customLogger.logInfo("ToolBar - Compare Reality");rightMenuClickHandler(e)}}
+            onClick={(e: any) => { 
+              let IssuetoolInstance: IToolbarAction = { type:"setCompareMode", data:"compareReality"}
+              issueMenuClicked(IssuetoolInstance)
+              customLogger.logInfo("ToolBar - Compare Reality"); 
+              // rightMenuClickHandler(e) 
+            }}
             active={active}
           >
             <Image
@@ -110,4 +160,4 @@ const CompareView = ({
   );
 };
 
-export default CompareView;
+export default forwardRef(CompareView);
