@@ -353,10 +353,10 @@ const Index: React.FC<IProps> = () => {
           if (list.length > 0) {
             let structs: IStructure[] = list;
 
-            if (router.query.structId !== undefined) {
+            if (router.query.structureId !== undefined) {
               setStructure(
                 structs.find((e) => {
-                  if (e._id === router.query.structId) {
+                  if (e._id === router.query.structureId) {
                     return e;
                   }
                 })
@@ -1260,7 +1260,7 @@ const Index: React.FC<IProps> = () => {
           console.log("error", error);
         });
     }
-  }, [router.isReady, router.query.projectId, router.query.structId]);
+  }, [router.isReady, router.query.projectId]);
 
 
   const getBreadCrumbs = () => {
@@ -1380,7 +1380,22 @@ const Index: React.FC<IProps> = () => {
             //   router.query.snap = response.result.data?.currentSnapshotBase._id as string;
             //   router.push(router);
             // }
-            setInintData(response.result);
+            let vData:IGenData = response.result; 
+            if(router.query.type&& router.query.type!== vData.currentViewType)
+              vData.currentViewType = router.query.type.toString()
+            if(router.query.snap&& router.query.snap!== vData.currentSnapshotBase._id)
+            {
+              let urlSnap:ISnapshot|undefined=vData.snapshotList.find((snp:ISnapshot)=>{
+                if(snp._id===router.query.snap?.toString())
+                {
+                  return snp;
+                }
+              });
+              if(urlSnap)
+                vData.currentSnapshotBase=urlSnap;
+            }
+
+            setInintData(vData);
             // if(initData && router.query.iss || router.query.tsk){
 
             //   handleMenuInstance.data = router.query.iss as string || router.query.tsk as string;
@@ -1411,7 +1426,7 @@ const Index: React.FC<IProps> = () => {
           console.log("Error in loading data: 1 ", error);
         });
     }
-  }, [router.isReady])
+  }, [router.isReady,router.query.structureId])
 
 
 
