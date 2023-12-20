@@ -90,7 +90,7 @@ export default function Metrics({
 }: {
 	stages: Stage[];
 	assetId: string;
-	metrics: { [key: string]: string | number };
+	metrics: { [key: string]: string | number | { metric: string} };
 	refetchAssets: () => void,
 }) {
 	const formatStageData = stages.map((stage) => ({
