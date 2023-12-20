@@ -74,6 +74,7 @@ function Task({
   setShowTaskMarkups,
   showTaskMarkups,
   setHighlightCreateTaskIcon,
+  setHighlightCreateIssueIcon,
   highlightCreateTaskIcon,
   isReality,
   initData,
@@ -332,10 +333,11 @@ console.log("form datttaaa",formData)
       taskMenuInstance.type = "hideTask";
       taskMenuClicked(taskMenuInstance);
       customLogger.logInfo("ToolBar - Hide Task")
+      setHighlightCreateTaskIcon(false)
     }
     else{ taskMenuInstance.type = "showTask";
     customLogger.logInfo("ToolBar - Show Task")
-    // setshowHideTask(!showHideTask)
+    setshowHideTask(!showHideTask)
     taskMenuClicked(taskMenuInstance);
     setHighlightCreateTaskIcon(false)
     setHighlightCreateIcon(false)

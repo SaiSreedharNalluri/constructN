@@ -33,27 +33,44 @@ export type designToolHandle = {
 
 const CompareView = ({
   rightMenuClickHandler,
-  active,
   designMap,
   selectedType = "",
-  setActive,
   issueMenuClicked
 }: any, ref: Ref<designToolHandle>) => {
   const customLogger = new CustomLoggerClass();
   const [isDesignAvailable, setDesignAvailable] = useState(false)
-  // useEffect(() => {
-  //   setActive("hideCompare");
-  // }, [selectedType]);
-  const designAvailableUpdate = (e: boolean) => {
-    setDesignAvailable(e)
+  const [compareMode,setCompareMode] = useState("")
+  const [active, setActive] = useState("hideCompare");
+  useEffect(() => {
+    setActive("hideCompare");
+  }, [selectedType]);
+  const compareModeUpdate = (initData: any) => {
+    if(initData.structure.designs.length >= 1){
+      setDesignAvailable(true)
+    }
+
+    switch(initData.currentCompareMode){
+      case "noCompare":{
+        setActive("hideCompare")
+        break;
+      }
+      case "compareDesign":{
+        setActive(initData.currentCompareMode)
+        break;
+      }
+      case "compareReality":{
+        setActive(initData.currentCompareMode)
+        break;
+      }
+    }
   }
 
   useImperativeHandle(ref, () => {
     return {
-      handleDesignRef(designs: any) {
-        if (designs?.designs.length >= 1) {
-          designAvailableUpdate(true)
-        }
+      handleDesignRef(initData: any) {
+        console.log("comp ref",initData) 
+      compareModeUpdate(initData)
+
 
       }
     }

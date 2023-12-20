@@ -127,8 +127,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           setSelectedTypeVal(initData.currentViewType);
       }
     if (initData?.structure) {
-      console.log("passing str")
-      designRef?.current?.handleDesignRef(initData?.structure)
+      designRef?.current?.handleDesignRef(initData)
     }
 
     if (initData?.currentLayersList) {
@@ -266,6 +265,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           setCameraIconClicked={setCameraIconClicked}
           isClipboardIconClicked={isClipboardIconClicked}
           setClipboardIconClicked={setClipboardIconClicked}
+          setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
           setHighlightCreateIcon={setHighlightCreateIcon}
           highlightCreateIcon={highlightCreateIcon}
           handleOnIssueSort={handleOnIssueSort}
