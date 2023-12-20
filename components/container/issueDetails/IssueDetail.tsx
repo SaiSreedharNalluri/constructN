@@ -181,7 +181,7 @@ function BasicTabs(props: any) {
     handleFooter,
     setTaskState,
   } = props;
-
+console.log("taskState",taskState)
   const [value, setValue] = React.useState(0);
   const [formState, setFormState] = useState({
     selectedValue: "",
@@ -292,6 +292,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
     getCommentsList(router.query.projectId as string, entityId)
       .then((response) => {
         if (response.success === true) {
+          
           setBackendComments(response.result);
           if(isAdding)
           {
