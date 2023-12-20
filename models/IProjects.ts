@@ -1,3 +1,5 @@
+import {location, utmLocation } from "./IRawImages";
+
 export interface IProjects {
   _id: string;
   type: string;
@@ -7,20 +9,29 @@ export interface IProjects {
   email: string;
   contact?: Contact;
   address?: Address;
-  location?: number[] | null;
+  // location?: number[] | null;
+  location?: location[];
+  utmLocation?:utmLocation[];
   createdAt: string;
   updatedAt: string;
   jobsOpened?: number;
   LastUpdatedOn?: string;
   coverPhoto: string;
-  utm: string;
+  // utm: string;
   timeZone?:string;
-  metaDetails?: MetaDetails
+  metaDetails?: MetaDetails;
+  measurement?:string;
+  [key: string]: any;
+  // latitude:number,
+  // longitude:number,
+  projectNickName:string,
+  projectID:number,
 }
 
 export interface MetaDetails {
   dashboardURL?: string
   reportURL?: string
+  projectIntend?:string
 }
 
 export interface Contact {
@@ -28,10 +39,10 @@ export interface Contact {
   number: number;
 }
 export interface Address {
-  zipcode: string;
-  city: string;
-  state: string;
-  country: string;
+  zipcode?: string;
+  city?: string;
+  state?: string;
+  country?: string;
 }
 
 export interface IProjectUsers {

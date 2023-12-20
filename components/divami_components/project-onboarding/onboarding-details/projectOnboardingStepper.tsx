@@ -54,7 +54,7 @@ const  ProjectOnboardingStepper = () => {
   return (
  
       <>
-      <Stepper activeStep={state.step} alternativeLabel style={{ width: "900px",margin: "0 auto", }} connector={<ColoredStepConnector />}>
+      <Stepper activeStep={state.step} alternativeLabel style={{ width: "770px",margin: "0 auto", }} connector={<ColoredStepConnector />}>
         {state.stepNames?.map((label:any, index:any) => (
           <Step key={label} >
             <StepLabel  StepIconComponent={CustomStepIcon}>

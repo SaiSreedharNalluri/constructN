@@ -9,6 +9,7 @@ import ProjectOnboardingUsers from './onboarding-users/projectOnboardingUsers'
 import ProjectOnboardingHierarchy from './onboarding-hierarchy/project-onboarding-hierarchy'
 import ProjectOnboardingSheets from './onboarding-sheets/project-onboarding-sheets'
 import ProjectOnboardingBIM from './onboarding-bim/projectOnboardingBIM'
+import ProjectOnboardingReview from './onboarding-review/project-onboarding-review'
 const ProjectOnboarding=()=> {
   const { state:onboardingState} = useProjectContext();
   const renderMainContent = () => {
@@ -33,7 +34,10 @@ const ProjectOnboarding=()=> {
         return (
           <ProjectOnboardingUsers />
         );
-
+        case OnBoardingStep.Review:
+          return (
+            <ProjectOnboardingReview />
+          );
       default:
         return null;
     }

@@ -1,3 +1,6 @@
+
+
+
 import { Button } from '@mui/material'
 import React from 'react'
 import { useProjectContext } from '../../../../state/projectState/context'
@@ -6,68 +9,50 @@ import { OnBoardingStep } from '../../../../state/projectState/state';
 const ProjectOnboardingFooter = () => {
   const { state, projectContextAction } =useProjectContext();
   const{ProjectAction}=projectContextAction;
-  const check=()=>{
-  if(state.bimFiles && state.bimFiles.length>0){
-    ProjectAction.next()
-  }else{
-   ProjectAction.setIsBimNotAvailable(true)
-  }}
+  
+  
+  
   const renderButtons = () => {
     switch (state.step) {
       case OnBoardingStep.ProjectDetails:
         return (
           <>
     <div className='mt-[8px]'>
-    <Button style={{marginRight:"10px",color:"#FF853E",border:"1px solid #FF853E"}}>
-        Cancel
-    </Button>
-    <Button onClick={() => ProjectAction.next()} style={{backgroundColor:"#FF853E",marginRight:"10px",color:"white"}}>
-        Next
-    </Button>
+
     </div>
           </>
         );
-        case OnBoardingStep.BIM:
-          return (
-            <>
-      <div className='mt-[8px]'>
-      <Button style={{marginRight:"10px",color:"#FF853E",border:"1px solid #FF853E"}}>
-          Cancel
-      </Button>
-      <Button 
-      onClick={() => check()} style={{backgroundColor:"#FF853E",marginRight:"10px",color:"white"}}>
-          Next
-      </Button>
-      </div>
-            </>
-          );
-        case OnBoardingStep.AddUsers:
-          return (
-            <>
-      <div className='mt-[8px]'>
-      <Button   style={{marginRight:"10px",color:"#FF853E",border:"1px solid #FF853E"}}>
-          Cancel
-      </Button>
-      <Button style={{backgroundColor:"#FF853E",marginRight:"10px",color:"white"}}>
-          Next
-      </Button>
-      </div>
-            </>
-          );
+       
       default:
         return null;
     }
   };
 
   return (
-    <div className='flex justify-between mx-[60px]'>
-      {state.step===OnBoardingStep.ProjectDetails ? <> <div className='mt-[15px]  font-semibold'>
+    <div className='flex justify-between items-center mx-[60px]'>
+      {state.step===OnBoardingStep.ProjectDetails ? <> <div className='  font-semibold'>
         * Mandatory Field
     </div>
-
-    </>  :""}
+    </>  :<div></div>}
 <div>
-  {renderButtons()}
+<Button onClick={() => {
+  if(state.step>0){
+    ProjectAction.goBack()
+  }
+  else{
+  }
+}}  style={{marginRight:"10px",color:"#FF853E",border:"1px solid #FF853E"}}>
+        Cancel
+    </Button>
+    <Button onClick={() =>{
+      if(state.step<6){
+        ProjectAction.next()
+      }
+      else{
+      }
+    }} style={{backgroundColor:"#FF853E",marginRight:"10px",color:"white"}}>
+        Next
+    </Button>
 </div>
   
 </div>
