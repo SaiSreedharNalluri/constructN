@@ -47,7 +47,7 @@ export const HeaderRightSection = styled.div({
 });
 export const HeaderRightSectionResetIcon = styled.div({
   marginRight: "7px",
-  borderRadius:"50%",
+  borderRadius:"10px",
   padding:"6px",
   "&:hover": {
     cursor: "pointer",
@@ -61,16 +61,6 @@ export const HeaderRightSectionCloseIcon = styled.div({
     cursor: "pointer",
     background:"#E7E7E7"
   },
-});
-export const HeaderRightSectionResetText = styled.div({
-  marginRight: "10px",
-  borderRight: "1px solid #d9d9d9",
-  paddingRight: "15px",
-  fontFamily: "Open Sans",
-  fontStyle: "normal",
-  fontWeight: "400",
-  color: " #F1742E",
-  cursor: "pointer",
 });
 
 export const FilterHeader = styled.div({
