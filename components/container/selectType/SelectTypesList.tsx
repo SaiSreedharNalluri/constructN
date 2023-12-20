@@ -29,6 +29,7 @@ const SelectTypesList = ({
 }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState(optionsList);
+  const [types,setTypes] = useState([])
   const mockSelectTypesData = [
     "Plan Drawings",
     "Cross Section Drawings",
@@ -73,7 +74,22 @@ const SelectTypesList = ({
     setList(optionsList);
   }, [optionsList]);
 
-
+useEffect(()=>{
+  let types = initData
+  let result = types.currentViewTypeList.map((item:any,index:number)=>{
+    if(item === "pointCloud"){
+      return "Reality";
+    }
+    else if(item === "orthoPhoto"){
+      return "Map"
+    }
+    else{
+      return item;
+    }
+}
+)
+setTypes(result)
+},[initData.currentViewTypeList])
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
   // );
@@ -111,12 +127,18 @@ const SelectTypesList = ({
         </DrawerSearchBar>
         <ListStyled>
           {list.currentViewTypeList?.length > 0 &&
-           initData?.currentViewTypeList.map((item: any, index: number) => (
+           types.map((item: any, index: number) => (
               <>
                 <ListItemStyled
                   className="custom-list-styled"
                   key={item}
                   onClick={() => {
+                    if(item === "Reality"){
+                      item="pointCloud"
+                    }
+                    if(item === "Map"){
+                      item="orthoPhoto"
+                    }
                     onSelect({ target: { value: item } });
                     onCloseHandler();
                   }}  

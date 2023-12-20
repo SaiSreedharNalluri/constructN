@@ -82,7 +82,8 @@ function Issues({
     highlightCreateIcon,
     initData,
     issueContext,
-    toolClicked
+    toolClicked,
+    setHighlightCreateTaskIcon
   
   }:any,ref:Ref<IssueToolHandle>) {
     const router = useRouter();
@@ -297,16 +298,16 @@ function Issues({
     issueMenuInstance.type = "createIssue";
     customLogger.logInfo("ToolBar - Create Issue")
     issueMenuClicked(issueMenuInstance);
-      // setHighlightCreateIcon(true) 
-      // setHighlightCreateTaskIcon(false)
+      setHighlightCreateIcon(true) 
+      setHighlightCreateTaskIcon(false)
   };
   
   const openIssueListFn = () => {
     // issueMenuInstance.toolAction = "issueView";
     customLogger.logInfo("ToolBar - View Issue")
     issueMenuClicked(issueMenuInstance);
-    // setHighlightCreateIcon(false)
-    // setHighlightCreateTaskIcon(false)
+     setHighlightCreateIcon(false)
+    setHighlightCreateTaskIcon(false)
   };
 
   const toggleIssueVisibility = () => {
@@ -320,8 +321,8 @@ function Issues({
     customLogger.logInfo("ToolBar - Show Issue")
     issueMenuClicked(issueMenuInstance);
      setShowHideIssue(!showHideIssue);
-    //  setHighlightCreateIcon(false)
-    // setHighlightCreateTaskIcon(false)
+     setHighlightCreateIcon(false)
+    setHighlightCreateTaskIcon(false)
 
   };
 
