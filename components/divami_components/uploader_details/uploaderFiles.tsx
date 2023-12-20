@@ -8,17 +8,44 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import { fileWithExif } from "../../../state/uploaderState/state";
 import { getCaptureIdFromModelOrString } from "../../../utils/utils";
 import { getRawImages } from "../../../services/captureManagement";
+import { UploaderModalPrimaryButton, UploaderModalTitle } from "../../../models/IUploader";
 const UploaderFiles = () => {
   const { state, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const [showPopUp, setshowPopUp] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const [primaryButtonLabel,setPrimaryButtonLabel] = useState(UploaderModalPrimaryButton.skipFilesAndContinue)
+  const [modalTitle,setModalTitle] =useState(UploaderModalTitle.warning)
   let refProcessing = useRef(false);
+  let validFileCount = useRef(state.choosenFiles.validFiles.length)
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
    if (acceptedFiles) {
     uploaderAction.chageIsReading(true)
       const batchSize = 100;
-      for (let i = 0; i < acceptedFiles.length; i += batchSize) {
+      if(acceptedFiles.length > 1500)
+      {
+        setMessage(`You have exceeded the maximum upload limit of 1500 files.`)
+        setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
+        setModalTitle(UploaderModalTitle.uploadFileLimit)
+        setshowPopUp(true)
+        uploaderAction.chageIsReading(false)
+        return
+      }
+      else if (acceptedFiles.length < 1500) {
+       
+        if((validFileCount.current + acceptedFiles.length) >= 1500)
+        {
+          setMessage(`You have exceeded the maximum upload limit of 1500 files.You may upload 
+                      additional ${1500-validFileCount.current} files or reach out to
+                      support@constructn.ai for larger uploads.`)
+          setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
+          setModalTitle(UploaderModalTitle.uploadFileLimit)
+          uploaderAction.chageIsReading(false)
+          setshowPopUp(true)
+          return
+        }
+      }
+      for (let i = 0; i < acceptedFiles.length ; i += batchSize) {
         if (refProcessing.current !== true) {
           break;
         }
@@ -34,7 +61,7 @@ const UploaderFiles = () => {
       refProcessing.current = false
     }
    },[])
-  const processFileBatch = async (fileBatch:File[]):Promise<fileWithExif[]> => {
+   const processFileBatch = async (fileBatch:File[]):Promise<fileWithExif[]> => {
       const acceptedFilesWithExif: fileWithExif[] = await Promise.all(
         fileBatch.map(async (file) => {
           try {
@@ -73,6 +100,8 @@ const UploaderFiles = () => {
           `${state.choosenFiles.duplicateFiles.length} duplicate file(s) found. They will be skipped.`
         );
       }
+      setPrimaryButtonLabel(UploaderModalPrimaryButton.skipFilesAndContinue)
+      setModalTitle(UploaderModalTitle.warning)
     }
   }, [state.choosenFiles.invalidEXIFFiles.length, state.choosenFiles.duplicateFiles.length]);
 
@@ -93,7 +122,9 @@ const UploaderFiles = () => {
       }
     }
   }, [state.isAppendingCapture, state.selectedJob])
-
+  useEffect(()=>{
+  validFileCount.current = state.choosenFiles.validFiles.length;
+  },[state.choosenFiles.validFiles.length])
   return (
     <React.Fragment>
       <div className="flex flex-col justify-center items-center">
@@ -109,9 +140,9 @@ const UploaderFiles = () => {
         setShowPopUp={setshowPopUp}
         isImageThere={true}
         imageSrc={Warning}
-        modalTitle={"Warning"}
+        modalTitle={modalTitle}
         modalmessage={message}
-        primaryButtonLabel={"Skip Files and Continue"}
+        primaryButtonLabel={primaryButtonLabel}
         isUploader={false}
         SecondaryButtonlabel={""}
         callBackvalue={() => {

@@ -107,20 +107,20 @@ const UploaderDateDetails: React.FC<any> = () => {
       //   );
       // });
 
-      const errorJobs = uploaderState.pendingUploadJobs.filter((job, index) => {
-        return job.status === JobStatus.uploadFailed
-      })
-      const combinedJobs = uploaderState.pendingProcessJobs.concat(errorJobs)
-      const filteredPendingProcessJobs = combinedJobs.filter((job) => {
-        return (
-          getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
-          new Date(job.date).toLocaleDateString() ===
-          uploaderState?.date?.toLocaleDateString()
-        );
-      });
+      // const errorJobs = uploaderState.pendingUploadJobs.filter((job, index) => {
+      //   return job.status === JobStatus.uploadFailed
+      // })
+      // const combinedJobs = uploaderState.pendingProcessJobs.concat(errorJobs)
+      // const filteredPendingProcessJobs = combinedJobs.filter((job) => {
+      //   return (
+      //     getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
+      //     new Date(job.date).toLocaleDateString() ===
+      //     uploaderState?.date?.toLocaleDateString()
+      //   );
+      // });
 
-      setFilteredJobs(filteredPendingProcessJobs);
-      console.log("filtered", filteredPendingProcessJobs);
+      // setFilteredJobs(filteredPendingProcessJobs);
+      // console.log("filtered", filteredPendingProcessJobs);
     }
   }, [
     uploaderState.pendingProcessJobs,
