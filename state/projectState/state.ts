@@ -19,7 +19,7 @@ export enum OnBoardingStep {
     BIM,
     Sheets,
     AddUsers,
-    ConfigureProject,
+    // ConfigureProject,
     Review,
 }
 
@@ -49,7 +49,29 @@ export const initialOnBoardingProjectState: OnBoardingProjectState={
         createdAt: "",
         updatedAt: "",
         coverPhoto: "",
-        utm: ""
+        // utm: "",
+        description: "", 
+        company: "", 
+        location: [{
+            type: "point",
+            coordinates: [0,0], 
+            elevation: 0,
+        }],
+        jobsOpened: 0, 
+        measurement:"US",
+        address: {
+          zipcode: "",
+          city: "",
+          state: "",
+          country: "",
+        },
+        metaDetails:{
+            projectIntend:"",
+        },
+        //  latitude:0,
+        // longitude:0,
+        projectNickName:"",
+        projectID:0
     },
     step: OnBoardingStep.ProjectDetails ,
     stepNames:[
@@ -58,7 +80,7 @@ export const initialOnBoardingProjectState: OnBoardingProjectState={
         "BIM",
         "Sheets",
         "Add Users",
-        "Configure Project",
+        // "Configure Project",
         "Review",
     ],
     isNextEnabled:false,

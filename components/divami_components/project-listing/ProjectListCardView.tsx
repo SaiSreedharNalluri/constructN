@@ -49,7 +49,7 @@ import DroneImageNew from "../../../public/divami_icons/DroneImageNew.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import ReactCardFlip from "react-card-flip";
 import cardMenu from "../../../public/divami_icons/cardMenu.svg";
-
+import Delete from "../../../public/divami_icons/delete.svg";
 import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
@@ -78,7 +78,10 @@ export const ProjectListCardView = ({
 
   const Card = ({ each }: any) => {
     const [isFlipped, setIsFlipped] = useState(true);
+const handleDeleteProject=(id:string)=>{
+console.log(id);
 
+}
     return (
       <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
         <ProjectCard
@@ -89,6 +92,7 @@ export const ProjectListCardView = ({
           onMouseLeave={() => {
             setIsFlipped((prev) => !prev);
           }}
+
         >
           <ProjectTopLeftBg active />
           <ProjectTopRightBg active />
@@ -132,14 +136,28 @@ export const ProjectListCardView = ({
         <ProjectCard
           onClick={(e: any) => {
             e.stopPropagation();
-            router.push(`/projects/${each._id}/sections`);
+            if(each.status==="Draft"){
+
+            }
+            else{
+              router.push(`/projects/${each._id}/sections`);
+            }
+           
             customLogger.logInfo("Project Card - Sections");
           }}
+          className={each.status==="Draft"?"bg-[#D9D9D9]":""}
         >
           <ProjectTopLeftBg />
           <ProjectTopRightBg />
           <ProjectBottomLeftBg />
           <ProjectBottomRightBg />
+          {each.status==="Draft"?
+          <Tooltip title="Delete Project" placement="bottom">
+          <Image className="float-right" width={15} height={17} src={Delete} alt=""  onClick={(e) => {
+            // e.stopPropagation(); // Stop event bubbling to prevent triggering the card click
+            handleDeleteProject(each._id); // Call the delete function when the delete icon is clicked
+          }}></Image>
+          </Tooltip>:
           <Tooltip title="Project Menu" placement="bottom">
           <div className="float-right">
           <ProjectCardFlipIcon
@@ -152,6 +170,20 @@ export const ProjectListCardView = ({
           />
           </div>
           </Tooltip>
+          }
+          {/* <Tooltip title="Project Menu" placement="bottom">
+          <div className="float-right">
+            {each._id==="PRJ697680"?<Image src={Delete} alt=""></Image>:<ProjectCardFlipIcon
+            src={cardMenu}
+            alt=""
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFlipped((prev) => !prev);      
+            }}
+          />}
+          
+          </div>
+          </Tooltip> */}
           <ProjectLogo
             src={each.companyLogo}
             alt={""}
@@ -168,7 +200,7 @@ export const ProjectListCardView = ({
             </ProjectNameTitle>
           </Tooltip>
 
-          <CapturesText>Captures so far</CapturesText>
+        {each.status==="Draft"?"":<>  <CapturesText>Captures so far</CapturesText>
           <CaptureImageContainer>
             <CaptureImageIcon src={Capture360photo} alt=""></CaptureImageIcon>
             <CaptureName>360 Image - </CaptureName>
@@ -218,7 +250,9 @@ export const ProjectListCardView = ({
             </CaptureCount>
           </CaptureImageContainer>
           <ListHorizontalDivider />
-          <UpdatedAtContainer>
+
+</>}
+<UpdatedAtContainer>
             <UsersCountContainer>
               <Image src={userCount} alt="" width={14} height={15} />
               <UsersCountText>{each.numberOfUsers}</UsersCountText>
@@ -231,6 +265,17 @@ export const ProjectListCardView = ({
       : moment(each.lastUpdated).format('DD MMM YYYY')}</UsersCountText>
             </CaptureImageContainer>
           </UpdatedAtContainer>
+          <div>
+           {each.status==="Draft"?
+            <div className="font-bold text-base text-[#101F4C] text-center" onClick={()=>router.push(`project-onboarding?id=${each._id}`)}>
+            Click to Resume
+           </div>:each.status==="Draft" ?
+           <div className="font-bold text-base text-[#101F4C] text-center" >
+             Pending Approval
+           </div>
+          :""}  
+          </div>
+<div className="absolute bottom-[10px] left-[40%] font-bold text-base text-[#C24200] ">{each.status==="Draft"? <div className="">Draft</div> :""}</div>
         </ProjectCard>
       </ReactCardFlip>
     );
