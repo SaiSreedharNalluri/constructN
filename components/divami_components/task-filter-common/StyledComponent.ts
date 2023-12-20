@@ -71,6 +71,16 @@ export const FilterHeader = styled.div({
   fontSize: "16px",
   marginTop: "20px",
 });
+export const HeaderRightSectionResetText = styled.div({
+  marginRight: "10px",
+  borderRight: "1px solid #d9d9d9",
+  paddingRight: "15px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  color: " #F1742E",
+  cursor: "pointer",
+});
 
 export const HeaderRightSectionCancel = styled.div({});
 
