@@ -8,7 +8,31 @@ import { useProjectContext } from '../../../../state/projectState/context';
 import { Button, Grid, OutlinedInput } from '@mui/material';
 import { Address } from '../../../../models/IProjects';
 import { useRouter } from 'next/router';
-const ProjectOnboardingForm: React.FC = () => {
+import { IOnboardingProps } from '../projectOnboarding';
+import { effect } from '@preact/signals-react'
+import router from "next/router";
+
+
+const ProjectOnboardingForm = ({ step, action, projectId }: IOnboardingProps) => {
+
+  effect(() => {
+    console.log('Action inside Form', 'Step:', step.peek(), 'Action:', action?.value)
+    switch(action!.value) {
+      case 'Back-0':
+        router.push("/projects");
+        break
+      case 'Next-0':
+        //  Validate Form
+        //  Create Project API
+        //  On Complete callback increment
+        projectId.value = 'PRJ201897'
+        step.value = 1
+        break
+      default:
+        break
+    }
+  })
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [allRequiredFieldsEntered, setAllRequiredFieldsEntered] = useState<boolean>(false);
   const [allAddressFieldsEntered, setAllAddressFieldsEntered] = useState<boolean>(false);

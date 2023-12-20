@@ -7,6 +7,8 @@ import instance from '../../../../services/axiosInstance'
 import { API } from '../../../../config/config'
 
 import authHeader from '../../../../services/auth-header'
+import { effect } from '@preact/signals-react'
+import { IOnboardingProps } from '../projectOnboarding'
 
 const headers = { headers: authHeader.authHeader() }
 
@@ -16,13 +18,28 @@ const fetchStructureHierarchy = (projectId: string) => {
 
 }
 
-const ProjectOnboardingSheets = () => {
+const ProjectOnboardingSheets = ({ step, action, projectId, structureId }: IOnboardingProps) => {
+
+  effect(() => {
+    console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
+    switch(action!.value) {
+      case 'Back-1':
+        step.value = 0
+        break
+      case 'Next-1':
+        if(structureId) structureId.value = 'STR123456'
+        step.value = 2
+        break
+      default:
+        break
+    }
+  })
 
   const [hierarchy, setHierarchy] = useState<any>()
   
   useEffect(() => {
 
-    fetchStructureHierarchy('PRJ201897').then(res => {
+    fetchStructureHierarchy(projectId.value).then(res => {
 
       if (res.data.result) {
 

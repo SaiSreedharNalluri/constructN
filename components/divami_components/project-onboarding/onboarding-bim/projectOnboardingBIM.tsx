@@ -3,8 +3,26 @@ import UploadingStatus from "../../uploaderFIle/uploadingStatus";
 import ChooseOnboardingFiles from "../chooseOnboardingFiles";
 import PopupComponent from "../../../popupComponent/PopupComponent";
 import { useProjectContext } from "../../../../state/projectState/context";
+import { IOnboardingProps } from "../projectOnboarding";
+import { effect } from "@preact/signals-react";
 
-const ProjectOnboardingBIM = () => {
+const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboardingProps) => {
+
+  effect(() => {
+    console.log('Action inside BIM', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek(), 'Structure ID:', structureId?.peek())
+    switch(action!.value) {
+      case 'Back-2':
+        step.value = 1
+        break
+      case 'Next-2':
+        step.value = 3
+        break
+      default:
+        break
+    }
+  })
+
+
   const { state: OnBoardingProjectState, projectContextAction } =
     useProjectContext();
   const { ProjectAction } = projectContextAction;

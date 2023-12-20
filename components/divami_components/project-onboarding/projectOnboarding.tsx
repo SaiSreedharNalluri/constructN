@@ -10,64 +10,91 @@ import ProjectOnboardingHierarchy from './onboarding-hierarchy/project-onboardin
 import ProjectOnboardingSheets from './onboarding-sheets/project-onboarding-sheets'
 import ProjectOnboardingBIM from './onboarding-bim/projectOnboardingBIM'
 import ProjectOnboardingReview from './onboarding-review/project-onboarding-review'
-const ProjectOnboarding=()=> {
-  const { state:onboardingState} = useProjectContext();
+import { useSignal, Signal } from '@preact/signals-react'
+import { useSignals } from '@preact/signals-react/runtime'
+
+export type IOnboardingProps = {
+  step: Signal<number>
+  action?: Signal<string>
+  projectId: Signal<string>
+  structureId?: Signal<string>
+}
+
+const ProjectOnboarding = () => {
+
+  const onboardingStep = useSignal(0)
+  const onboardingAction = useSignal('')
+  const onboardingProjectId = useSignal('')
+  const onboardingStructureId = useSignal('')
+
   const renderMainContent = () => {
-    switch (onboardingState.step) {
-      case OnBoardingStep.ProjectDetails:
-        return (
-          <ProjectOnboardingForm />
-        );
-      case OnBoardingStep.ProjectHierachy:
-        return (
-          <ProjectOnboardingSheets />
-        );
-      case OnBoardingStep.Sheets:
-        return (
-          <ProjectOnboardingSheets />
-        );
-      case OnBoardingStep.BIM:
-          return(
-            <ProjectOnboardingBIM/>
-        );
-      case OnBoardingStep.AddUsers:
-        return (
-          <ProjectOnboardingUsers />
-        );
-        case OnBoardingStep.Review:
-          return (
-            <ProjectOnboardingReview />
-          );
+
+    useSignals()
+
+    switch (onboardingStep.value) {
+
+      case 0:
+        return <ProjectOnboardingForm 
+          step={onboardingStep} 
+          projectId={onboardingProjectId} 
+          action={onboardingAction} />
+
+      case 1:
+        return <ProjectOnboardingSheets 
+        step={onboardingStep} 
+        projectId={onboardingProjectId} 
+        structureId={onboardingStructureId} 
+        action={onboardingAction} />
+
+      case 2:
+        return <ProjectOnboardingBIM 
+          step={onboardingStep} 
+          projectId={onboardingProjectId} 
+          structureId={onboardingStructureId} 
+          action={onboardingAction} />
+
+      case 3:
+        return <ProjectOnboardingUsers 
+          step={onboardingStep} 
+          projectId={onboardingProjectId} 
+          action={onboardingAction} />
+
+      case 4:
+        return <ProjectOnboardingReview 
+          step={onboardingStep} 
+          projectId={onboardingProjectId} 
+          action={onboardingAction} />
+
       default:
-        return null;
+        return <></>;
     }
   };
+
   return (
     <div className="w-full h-full">
-    <Header hideSidePanel  />
-    <div className="flex">
-      <div className="flex flex-col w-full  calc-h">
-        <header className=''>
-        <div className='mt-[20px]'>
-           <ProjectOnboardingStepper></ProjectOnboardingStepper>   
-       </div>
-        </header>
-   
-        <div className='pt-[25px]'>
-        <main className='overflow-y-auto calc-h235 mx-[60px]  '>
-          <div>
-          {renderMainContent()}
-          </div>
-        </main>
-        <footer className=" pb-[20px]">
-    <ProjectOnboardingFooter></ProjectOnboardingFooter>
-        </footer></div>
+      <Header hideSidePanel />
+      <div className="flex">
+        <div className="flex flex-col w-full  calc-h">
+          <header className=''>
+            <div className='mt-[20px]'>
+              <ProjectOnboardingStepper step={onboardingStep}></ProjectOnboardingStepper>
+            </div>
+          </header>
+
+          <div className='pt-[25px]'>
+            <main className='overflow-y-auto calc-h235 mx-[60px]  '>
+              <div>
+                {renderMainContent()}
+              </div>
+            </main>
+            <footer className=" pb-[20px]">
+              <ProjectOnboardingFooter step={onboardingStep} action={onboardingAction} ></ProjectOnboardingFooter>
+            </footer></div>
+        </div>
       </div>
-    </div>
-    <div >
-    </div>
     </div>
   )
 }
 
 export default ProjectOnboarding
+
