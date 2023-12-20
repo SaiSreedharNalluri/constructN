@@ -1531,8 +1531,8 @@ const Index: React.FC<IProps> = () => {
 
   const updateURLQuery = (newData: IGenData) => {
 
-    if (router.isReady) {
-      //console.log("callback tryinf to update router");
+    if (router) {
+      console.log("callback trying to update router");
       // (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
       // (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
       // (router.query.projectId !== newData.structure.project) ? router.query.projectId = newData.structure.project : null;
