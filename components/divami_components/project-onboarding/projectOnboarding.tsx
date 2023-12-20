@@ -77,7 +77,7 @@ const ProjectOnboarding = () => {
         <div className="flex flex-col w-full  calc-h">
           <header className=''>
             <div className='mt-[20px]'>
-              <ProjectOnboardingStepper step={onboardingStep}></ProjectOnboardingStepper>
+              <ProjectOnboardingStepper step={onboardingStep} projectId={onboardingProjectId}></ProjectOnboardingStepper>
             </div>
           </header>
 
@@ -88,7 +88,7 @@ const ProjectOnboarding = () => {
               </div>
             </main>
             <footer className=" pb-[20px]">
-              <ProjectOnboardingFooter step={onboardingStep} action={onboardingAction} ></ProjectOnboardingFooter>
+              <ProjectOnboardingFooter step={onboardingStep} projectId={onboardingProjectId} action={onboardingAction} ></ProjectOnboardingFooter>
             </footer></div>
         </div>
       </div>
