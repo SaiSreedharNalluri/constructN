@@ -207,7 +207,7 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
         <IconButton
 
-        className={measurementType == type?" bg-[#F1742E]":""}
+        className={measurementType == type?" bg-[#F1742E] text-[#fff]":""}
 
         onClick={()=> setMeasurementType(type)}
         
