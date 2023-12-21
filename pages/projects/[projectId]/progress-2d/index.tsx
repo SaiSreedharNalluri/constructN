@@ -193,6 +193,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [clipValue, setClipValue] = useState(50);
 
+    const structId = searchParams.get('structId')
+
     const handleMouseMove = (e: { buttons: number; clientX: number }) => {
     if (e.buttons === 1) {
       // Left mouse button is clicked
@@ -229,8 +231,6 @@ const Progress2DPage: React.FC<any> = () => {
     const params = useParams()
 
     const refetch = () => {
-
-        const structId = searchParams.get('structId')
 
         const projId = params && params['projectId'] as string
 
@@ -1153,7 +1153,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                <Progress2DStages stages={stages} compare={isCompare} assets={assets}
+                                                <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}
 
                                                 snapShotDate={snapshotBase.date}
 
