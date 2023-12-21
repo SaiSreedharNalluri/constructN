@@ -6,18 +6,27 @@ import ProjectTypeDetails from './inputs/projectTypeDetails';
 import { createProject, getProjectDetails, updateProjectCover, updateProjectInfo } from '../../../../services/project';
 import { useProjectContext } from '../../../../state/projectState/context';
 import { Button, Grid, OutlinedInput } from '@mui/material';
-import { Address } from '../../../../models/IProjects';
+import { Address, IProjects } from '../../../../models/IProjects';
 import { useRouter } from 'next/router';
 import { IOnboardingProps } from '../projectOnboarding';
-import { effect } from '@preact/signals-react'
+import { effect, useSignal } from '@preact/signals-react'
 import router from "next/router";
 
 
 const ProjectOnboardingForm = ({ step, action, projectId }: IOnboardingProps) => {
-
+  const projectDetails = useSignal<Partial<IProjects>>({});
+  
+   const isNameValid=useSignal({});
+   const isTypeValid=useSignal({});
+   const isLatLngValid=useSignal({});
+   const isAddressValid=useSignal({});
+   console.log(isLatLngValid.peek(),"lat parent");
+   console.log(isAddressValid.peek(),"address parent");
+   console.log(isTypeValid.peek(),"type parent");
+   console.log(isNameValid.peek(),"name parent");
   effect(() => {
     console.log('Action inside Form', 'Step:', step.peek(), 'Action:', action?.value)
-    switch(action!.value) {
+    switch(action!.peek()) {
       case 'Back-0':
         router.push("/projects");
         break
@@ -25,211 +34,46 @@ const ProjectOnboardingForm = ({ step, action, projectId }: IOnboardingProps) =>
         //  Validate Form
         //  Create Project API
         //  On Complete callback increment
-        projectId.value = 'PRJ201897'
+        if(isLatLngValid.peek()===true&&isAddressValid.peek()===true&&isTypeValid.peek()===true&&isLatLngValid.peek()===true){          
+          const formData = projectDetails
+          const formdata = new FormData();
+          formdata.append('jreq', JSON.stringify(formData.peek()));          
+          if(projectDetails.peek()._id===undefined){            
+            createProject(formdata)
+            .then((res) => {
+        projectDetails.value=res.result
         step.value = 1
+            })
+            .catch((error) => {
+            console.error('Error creating project:', error);
+            console.log("error");     
+            });
+            }
+        }
         break
       default:
         break
     }
   })
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [allRequiredFieldsEntered, setAllRequiredFieldsEntered] = useState<boolean>(false);
-  const [allAddressFieldsEntered, setAllAddressFieldsEntered] = useState<boolean>(false);
-  const { state, projectContextAction } =useProjectContext();
-  const{ProjectAction}=projectContextAction;
-  const requiredFields: string[] = ['name', 'type', 'measurement'];
-  const requiredAddressFields: string[] = ['zipcode', 'city', 'state', 'country'];
-  const [projectImage, setProjectImage] = useState<File | null>(null);
-  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
-  const handleProjectImageChange = (file: File | null): void => {
-    if(file){
-      setProjectImage(file);
-    }
-    else{
-      setProjectImage(null)
-    }
-  };
-  const router = useRouter();
-  // console.log(router.query.id);
-  
-  useEffect(()=>{
-  if(router.isReady && router.query.id){
-    getProjectDetails(router.query.id as string).then((res)=>{
-      console.log(res,"res");
-      
-      ProjectAction.setNewProjectDetails(res.data.result)
-    })
-  }
-  },[router.isReady]) 
-  const handleCoverPhotoChange = (file: File | null): void => {
-    if(file){
-      setCoverPhoto(file);
-    }
-    else{
-      setCoverPhoto(null)
-    }
-  };
-
-  const handleFieldChange = (key: string, value: string, isAddressField: boolean = false, isCoordinates = false): void => {
-    console.log(key,value);
-    
-    if (isAddressField) {
-      ProjectAction.setNewProjectDetails({
-        ...state.newProjectDetails,
-        address: {
-          ...state.newProjectDetails.address,
-          [key]: value,
-        },
-      });
-      setErrors({ ...errors, [`address.${key}`]: '' });
-      
-      // const allEntered = requiredAddressFields.every(field => {
-      //   return field !== key ? !!state.newProjectDetails.address?.[field]?.trim() : !!value.trim();
-      // });
-      // setAllAddressFieldsEntered(allEntered);
-    }
-    else if(isCoordinates && key ==='longitude'){
-      console.log(isCoordinates);      
-      console.log(state.newProjectDetails,'state.newProjectDetails')
-      ProjectAction.setNewProjectDetails({
-        ...state.newProjectDetails,
-        location: {
-          type: 'point',
-          coordinates: [+value, state.newProjectDetails?.location?.coordinates?.[1]],
-        },
-      });
-      setErrors({ ...errors, [key]: '' });
-    }
-    else if(isCoordinates && key ==='latitude'){
-      console.log(state.newProjectDetails,'state.newProjectDetails')
-      ProjectAction.setNewProjectDetails({
-        ...state.newProjectDetails,
-        location: {
-          type: 'point',
-          coordinates: [state.newProjectDetails?.location?.coordinates?.[0], +value],
-        },
-      });
-      setErrors({ ...errors, [key]: '' });
-    }
-     else {
-      ProjectAction.setNewProjectDetails({
-        ...state.newProjectDetails,
-        [key]: value,
-      });
-  
-      setErrors({ ...errors, [key]: '' });
-  
-      // const allEntered = requiredFields.every(field => {
-      //   return field !== key ? !!state.newProjectDetails[field]?.trim() : !!value.trim();
-      // });
-      // setAllRequiredFieldsEntered(allEntered);
-    }
-  };
-
-  const handleClick = (): void => {
-  
-    const newErrors: { [key: string]: string } = {};
-  
-    requiredFields.forEach((field) => {
-      if (!state.newProjectDetails[field]) {
-      const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
-        newErrors[field] = `${fieldName} is required*`;
-      }
-    });
-  
-    if (!state.newProjectDetails.location || !state.newProjectDetails.location.coordinates) {
-      if (!state.newProjectDetails.location || !state.newProjectDetails.location.coordinates?.[0]) {
-        newErrors['latitude'] = 'Latitude is required*';
-      }
-      if (!state.newProjectDetails.location || !state.newProjectDetails.location.coordinates?.[1]) {
-        newErrors['longitude'] = 'Longitude is required*';
-      }
-    }
-    const addressFields: any = state.newProjectDetails.address || {};
-
-
-if (!state.newProjectDetails.address) {
-  newErrors['address'] = 'Address is required';
-} else {
-  requiredAddressFields.forEach((field) => {
-    if (!addressFields[field]) {
-      const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
-      newErrors[`address.${field}`] = `${fieldName} is a required field*`;
-    }
-  });
-}
-  
-console.log(state.newProjectDetails);
-setErrors(newErrors);
-if (Object.keys(newErrors).length === 0) {
-  const formData = state.newProjectDetails;
-  console.log(formData);
-  const formdata = new FormData();
-  formdata.append('jreq', JSON.stringify(formData));
-  if (projectImage) {
-    formdata.append('logo', projectImage);
-  }
-
-  if (coverPhoto) {
-    formdata.append('coverPhoto', coverPhoto);
-  }
-if(state.newProjectDetails._id===""){
-createProject(formdata)
-.then((res) => {
-  console.log(res);
-  
-ProjectAction.setNewProjectDetails(res.result);
-ProjectAction.next()
-
-})
-.catch((error) => {
-console.error('Error creating project:', error);
-});
-}
-else{
-ProjectAction.next()
-  updateProjectInfo(state.newProjectDetails,router.query.id as string).then((res)=>{
-    console.log(res,"update details response");
-  // ProjectAction.setNewProjectDetails(res.result.data)
-  }).catch((error)=>{
-    // console.log(error,"error");
-    
-  })
-
-}  
-}
-  
-  };
   return (
     <div className='mx-[10px]'>
       <ProjectNameDetails
-handleChange={handleFieldChange}
-        errorMessage={errors}
-        setErrorMessage={setErrors}
+details={projectDetails}
+isNameValid={isNameValid}
       />
       <ProjectTypeDetails
-handleChange={handleFieldChange}
-   
-        errorMessage={errors}
-        setErrorMessage={setErrors}
+type={projectDetails}
+isTypeValid={isTypeValid}
       />
       <ProjectLatLngDetails
-handleChange={handleFieldChange}
-        errorMessage={errors}
-        setErrorMessage={setErrors}
+latlngDetails={projectDetails}
+isLatLngValid={isLatLngValid}
       />
       <ProjectAddress
-handleAddressChange={handleFieldChange}
-        setErrorMessage={setErrors} 
-        errorMessage={errors}
-        projectImage={projectImage}
-        coverPhoto={coverPhoto}
-        onProjectImageChange={handleProjectImageChange}
-        onCoverPhotoChange={handleCoverPhotoChange}
+addressDetails={projectDetails}
+isAddressValid={isAddressValid}
       />
-      {/* {allRequiredFieldsEntered && allAddressFieldsEntered ? "all the required filed are entered ":""} */}
-      <Button onClick={handleClick}>submit</Button>
     </div>
   );
 };
