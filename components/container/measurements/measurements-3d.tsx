@@ -152,8 +152,6 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
   const [selected, setSelected] = useState<string>()
 
-  const currenrSelected = useRef<string>()
-
   useEffect(()=>{
     if(loadMeasurementModule && show){
       loadMeasurementModule()
@@ -207,17 +205,17 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
       <Tooltip key={type} title={`${type}`} arrow >
 
-        <ToggleButton
+        <IconButton
 
-          selected={measurementType == type}
+        className={measurementType == type?" bg-[#F1742E]":""}
 
-          value={type}
-
-          aria-label={type} >
+        onClick={()=> setMeasurementType(type)}
+        
+        aria-label={type} >
 
           {getIconForType(type)}
 
-        </ToggleButton>
+        </IconButton>
 
       </Tooltip>
 
@@ -232,6 +230,8 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
       <Tooltip key={action} title={action} arrow >
 
         <IconButton
+        
+        onClick={()=> setMeasurementType('')}
 
           aria-label={action} >
 
@@ -248,16 +248,6 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
   const handleToggle = (measurement: {visible: boolean}) => () => measurement.visible = !measurement.visible
 
   const onSelect = () => {}
-
-  const onMeasurementSelect = (event: Event) => {
-
-		const detail = (event as CustomEvent).detail
-
-    currenrSelected.current = detail.on ? detail.uuid : undefined
-
-		setSelected(currenrSelected.current)
-
-	}
 
   return (
 
@@ -285,29 +275,17 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
       { show && <div className={`flex mx-3 mt-3 rounded-md`} style={{border: '1px solid #e2e3e5'}}>
 
-        <SegmentToggleButtonGroup
+        <SegmentButtonGroup
+        
+        variant="outlined"
+        
+        aria-label='text alignment'
 
-          size='small'
-
-          exclusive
-
-          value={measurementType}
-
-          onChange={(event: React.MouseEvent<HTMLElement>, newValue: string) => {
-
-            event.stopPropagation()
-
-            setMeasurementType(newValue)
-
-            if (onMeasurementChange) onMeasurementChange(newValue)
-
-          }}
-
-          aria-label='text alignment'>
+          >
 
           {toggleButtons}
 
-        </SegmentToggleButtonGroup>
+        </SegmentButtonGroup>
 
         <Divider orientation="vertical" variant="middle" flexItem />
 
@@ -351,6 +329,8 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
                   onChange={handleToggle(measurement)}
 
+                  className='mr-[12px]'
+
                   inputProps={{ 'aria-labelledby': measurementId }}
 
                 />
@@ -377,7 +357,7 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
                 removeMeasurement(measurement);
                 setRender(!render);
                 }}
-                className='ml-[12px]'>
+                className='mr-[12px]'>
                 <RemoveIcon
                     style={{ cursor: "pointer",color:"#101F4C", fontSize: "14px",marginLeft:"7px" }}
                     data-testid={"addIcon"}
