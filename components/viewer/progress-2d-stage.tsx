@@ -16,15 +16,15 @@ import instance from '../../services/axiosInstance';
 import authHeader from '../../services/auth-header';
 
 
-const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>}) => {
+const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>, structId: string}) => {
 
-    const { refetch, setCompleted , setLoading} = details;
+    const { refetch, setCompleted , setLoading, structId } = details;
 
     try {
         setLoading(true)
         await instance.put(`${API.PROGRESS_2D_URL}/assets/mark-as-complete`, null,{
             headers: authHeader.authHeader(),
-            params: {category: details.category, date: details.date, stage: details.stage}
+            params: {category: details.category, date: details.date, stage: details.stage, structure: structId}
         })
         refetch()
         setCompleted(false)
@@ -41,7 +41,7 @@ const markAsComplete = async (details: { category?: string, date?: Date, stage?:
 
 export default function Progress2DStages(
 
-    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets }:
+    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='' }:
 
         {
             stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined,
@@ -55,6 +55,8 @@ export default function Progress2DStages(
             refetch?: ()=> void
 
             assets?: IAsset[]
+
+            structId?: string
 
         }) {
 
@@ -76,6 +78,8 @@ export default function Progress2DStages(
 
                     assets={assets}
 
+                    structId={structId}
+
                     onToggleVisibility={onToggleVisibility} compare={compare} />)
 
             }
@@ -94,7 +98,7 @@ const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(
 
 function Progress2DStage(
 
-    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [] }: {
+    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='' }: {
 
         stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean },
         
@@ -107,6 +111,8 @@ function Progress2DStage(
         refetch?: ()=> void
 
         assets?: IAsset[]
+
+        structId?: string
 
     }) {
 
@@ -234,7 +240,7 @@ function Progress2DStage(
                         SecondaryButtonlabel={"Cancel"}
                         disableSecondaryButton={loading}
                         disablePrimaryButton={loading}
-                        callBackvalue={()=>{ markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch, setLoading })}}
+                        callBackvalue={()=>{ markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch, setLoading , structId})}}
                     />
                 )}
 
