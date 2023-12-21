@@ -951,6 +951,50 @@ export const PotreeViewerUtils = () => {
 
     }
 
+    const removeMeasurement=(measurement)=>{
+        _viewer?.scene?.removeMeasurement(measurement)
+    }
+
+    // const mmoved =(e)=>{
+    //     console.log(_viewer?.scene?.measurements,'_viewer_viewer')
+    // }
+
+    // const madded =(e)=>{
+    //     console.log(_viewer,'marker_added')
+    // }
+
+    // const mremoved =(e)=>{
+    //     console.log(_viewer,'_viewer_viewer')
+    // }
+
+    const getPoints=()=>(_viewer?.scene?.measurements || [])
+
+    const myevent = (e) => {
+        // _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_moved', mmoved)
+        // _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_added', madded)
+        // _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_removed', mremoved)
+    }
+
+    const undoMeasurement =()=>{
+        if(_viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1]?.points?.length>1){
+            _viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1].removeMarker(_viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1]?.points?.length - 1)
+        }else{
+            removeMeasurement(_viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1])
+        }
+    }
+
+    const clearAllMeasurements= () =>{
+        _viewer.scene.removeAllMeasurements()
+    }
+
+    
+
+    const loadAddMeasurementsEvents = () => {
+        if(!_viewer?.scene?.hasEventListener('measurement_added', myevent)){
+            _viewer?.scene?.addEventListener('measurement_added', myevent)
+        }
+    }
+
     const realityViewToggleListener = (event) => {
          console.log("Testing realityViewToggle: onclick listener: ", event.currentTarget)
          const isImageDisabled = JSON.parse(event.currentTarget.getAttribute('data-isEnabled'))
@@ -1004,8 +1048,14 @@ export const PotreeViewerUtils = () => {
 					name: 'Distance'
 				});
             break;
-            case "clear":
-                _viewer.scene.removeAllMeasurements();
+            case "angle":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: true,
+					showArea: false,
+					closed: false,
+                    showAngles: true,
+					name: 'Angle'
+				});
             break;
 
         }
@@ -2248,6 +2298,7 @@ export const PotreeViewerUtils = () => {
         //   _isActive = false;
     }
 
+
     return {
         initializeViewer: initializeViewer,
         isViewerLoaded: isViewerLoaded,
@@ -2274,5 +2325,11 @@ export const PotreeViewerUtils = () => {
         updateFloormapAnimation: updateFloormapAnimation,
         removeData: removeData,
         shutdown: shutdown,
+        loadMeasurementModule,
+        loadAddMeasurementsEvents,
+        getPoints,
+        removeMeasurement,
+        undoMeasurement,
+        clearAllMeasurements,
     };
 };
