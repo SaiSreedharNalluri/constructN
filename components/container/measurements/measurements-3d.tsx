@@ -8,7 +8,7 @@ import LinearScaleIcon from '@mui/icons-material/LinearScale'
 
 import HeightIcon from '@mui/icons-material/Height'
 
-import RemoveIcon from "@mui/icons-material/Remove";
+import CloseIcon from '@mui/icons-material/Close';
 
 import PolylineIcon from '@mui/icons-material/Polyline'
 
@@ -209,7 +209,10 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
         className={measurementType == type?" bg-[#F1742E] text-[#fff]":""}
 
-        onClick={()=> setMeasurementType(type)}
+        onClick={()=> {
+          setMeasurementType(type);
+          setRender(!render);
+        }}
         
         aria-label={type} >
 
@@ -357,9 +360,9 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
                 removeMeasurement(measurement);
                 setRender(!render);
                 }}
-                className='mr-[12px]'>
-                <RemoveIcon
-                    style={{ cursor: "pointer",color:"#101F4C", fontSize: "14px",marginLeft:"7px" }}
+                className='mr-[10px] cursor-pointer'>
+                <CloseIcon
+                    style={{ color:"#101F4C", fontSize: "16px" }}
                     data-testid={"addIcon"}
                   />
               </div>
