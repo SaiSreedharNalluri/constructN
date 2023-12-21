@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { ChangeEvent, ChangeEventHandler } from 'react';
 import { FormHelperText, Grid, OutlinedInput } from '@mui/material';
 import { useProjectContext } from '../../../../../state/projectState/context';
+import { IProjects } from '../../../../../models/IProjects';
+import { computed, useSignal } from '@preact/signals-react';
 
 
 const ProjectNameDetails = ({
-handleChange,
-  errorMessage,
-  setErrorMessage,
+details,isNameValid
 }:any) => {
-  const { state, projectContextAction } =useProjectContext();
+  // const { state, projectContextAction } =useProjectContext();
+  const isValid = computed(() => (
+    (details.value.name !== undefined && details.value.name !== '') ))
+    isNameValid.value=isValid.value 
+
+  const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = event.target
+    details.value = {...details.value, [name]: value}
+  }
 
   return (
     <Grid container spacing={2} justifyContent="space-between" className='mt-[4px]'>
@@ -16,33 +24,27 @@ handleChange,
         <div>Project Name*</div>
         <OutlinedInput
           fullWidth
+          name='name'
           size="small"
           className="outline-none"
-          value={state.newProjectDetails.name || ''}
-          onChange={(e)=>{
-            handleChange('name', e.target.value)
-            setErrorMessage({ ...errorMessage, name: '' });
-          }}
+          value={details.value.name}
+          onChange={handleOnChange}
         />
-        {errorMessage.name && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.name}</FormHelperText>
+        {(details.value.name === undefined || details.value.name === '') && (
+          <FormHelperText className='text-[#FF853E]'>Name is required</FormHelperText>
         )}
       </Grid>
       <Grid item xs={6}>
         <div>Project NickName</div>
         <OutlinedInput
           fullWidth
+          name='projectNickName'
           size="small"
           className="outline-none"
-          value={state.newProjectDetails.projectNickName || ''}
-          onChange={(e)=>{
-            handleChange('projectNickName', e.target.value)
-            setErrorMessage({ ...errorMessage, nickName: '' });
-          }}
+          value={details.value.projectNickName}
+          onChange={handleOnChange}
         />
-        {errorMessage.nickName && typeof errorMessage.nickName === 'string' && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.projectNickName}</FormHelperText>
-        )}
+
       </Grid>
     </Grid>
   );
