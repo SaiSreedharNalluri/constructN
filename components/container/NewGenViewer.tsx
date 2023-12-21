@@ -111,6 +111,7 @@ type PotreeViewerUtilsType = {
   updateTasksData: Function,
   updateProgressData: Function,
   updateData: Function,
+  showLayers: Function,
   updateLayersData: Function,
   initiateAddTag: Function,
   cancelAddTag: Function,
@@ -776,6 +777,16 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   }
 
   function handleRealityTypeChange(viewerType:string) {
+  
+      currentViewerData.currentLayersList?.map(
+        (layer)=>{
+          if(minimapUtils.current)
+            minimapUtils.current.showTag(layer.name,layer.isSelected)
+          if(minimapCompareUtils.current)
+            minimapCompareUtils.current.showTag(layer.name,layer.isSelected)
+            
+        }
+      );
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -788,6 +799,30 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         }
         break;
       case 'Potree':
+        if(potreeUtils.current){
+          potreeUtils.current.showLayers(currentViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
+        }
+        if (forgeCompareUtils.current) {
+          forgeCompareUtils.current.showLayers(currentViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
+        }
+        if(potreeCompareUtils.current){
+          potreeCompareUtils.current.showLayers(currentViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
+        }
         break;
     }
   }
@@ -881,6 +916,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       case 'Potree':
         if (potreeUtils.current) {
           potreeUtils.current.showTag(tag, show);
+        }
+        if(minimapUtils.current){
+          minimapUtils.current.showTag(tag,show);
+        }
+        if(minimapCompareUtils.current){
+          minimapCompareUtils.current.showTag(tag,show);
         }
         break;
     }
