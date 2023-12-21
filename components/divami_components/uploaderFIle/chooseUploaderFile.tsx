@@ -10,10 +10,21 @@ let ChooseUploaderFile:React.FC<IProps>=({onDrop})=>{
   const { state } = useUploaderContext();
   
   const dragDropText = "Drag and Drop the files / folders you want to upload or browse"
-  const supportFileText=`Supported file types: jpeg, jpg with GPS metadata`
+  const supportFileText=`1).Supported file types: jpeg, jpg with GPS metadata. 
+                         2).Maximum upload limit: 1500 files only, Reach out to support@constructn.ai for larger uploads `
+  const getDisableStatus=()=>{
+    if(state.choosenFiles.validFiles.length === 1500)
+    {
+      return true
+    }
+    else
+    {
+      return state.isReading
+    }
+  }                         
 return(
 <React.Fragment> 
-<ChooseFiles onDrop={onDrop} dragDropText={dragDropText} supportFileText={supportFileText} UploadingStatus={<UploadingStatus/>} isDisabled={state.isReading} acceptFiles={{['image/jpeg']:['.jpeg', '.jpg', '.png',]}}/>
+<ChooseFiles onDrop={onDrop} dragDropText={dragDropText} supportFileText={supportFileText} UploadingStatus={<UploadingStatus/>} isDisabled={getDisableStatus()} acceptFiles={{['image/jpeg']:['.jpeg', '.jpg', '.png',]}}/>
 </React.Fragment>)
 }
 export default ChooseUploaderFile

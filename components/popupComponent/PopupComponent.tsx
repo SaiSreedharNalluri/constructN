@@ -77,7 +77,9 @@ export interface PopupComponentProps {
   setShowbutton?: any;
   projectId?: string;
   isUploader?:boolean,
-  isUploaderFinal?:boolean
+  isShowWarningText?:boolean,
+  isCancelCallBack?:boolean
+handleCancel?:(value:boolean)=>void
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -157,7 +159,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     imageSrc,
     isImageThere,
     isUploader = true,
-    isUploaderFinal = true
+    isShowWarningText = true,
+    handleCancel,
+    isCancelCallBack
   } = props;
   const handleClosePopup=()=>{
     if(isUploader === false)
@@ -191,7 +195,16 @@ const PopupComponent = (props: PopupComponentProps) => {
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
-          onClose={handleClose}
+          onClose={()=>{
+            console.log('handle Close',isUploader)
+            if(isCancelCallBack)
+            {
+              handleCancel?.(false)
+            }
+            else{
+             handleClose() 
+            }
+          }}
           isUploader={isUploader}
         >
           {modalTitle}
@@ -208,7 +221,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             modalContent
           ) : (
             <TextComponent>{isImageThere? <div className="flex">
-              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px]">{ modalmessage}</p> </div>: <div>{modalmessage}</div> }</TextComponent>
+              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px] whitespace-pre-line">{ modalmessage}</p> </div>: <div className="whitespace-pre-line">{modalmessage}</div> }</TextComponent>
           )}
         </DialogContent>
         <DialogActions
@@ -222,7 +235,16 @@ const PopupComponent = (props: PopupComponentProps) => {
               <Button
                 variant={paddingStyle ? "outlined" : "text"}
                 // autoFocus
-                onClick={handleClose}
+                onClick={()=>{
+                 
+                  if(isCancelCallBack)
+                  {
+                    handleCancel?.(true)
+                  }
+                  else{
+                    handleClose() 
+                  }
+                }}
                 style={{
                   color: "#F1742E",
                   width: isUploader  ? "180px":"fit-content",
@@ -243,7 +265,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: isUploader && isUploaderFinal ? "180px":"fit-content",
+                  width: isUploader && isShowWarningText ? "180px":"fit-content",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",
@@ -260,7 +282,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             <></>
           )}
         </DialogActions>
-        {!isUploaderFinal &&<p className="text-sm font-extralight italic p-2">* You can upload later by selecting the same date from the uploader tab</p>}
+        {!isShowWarningText &&<p className="text-sm font-extralight italic p-2">* You can discard and retry a new upload with all files</p>}
       </BootstrapDialog>
     </div>
   );

@@ -75,7 +75,9 @@
 .calc-h112 {
   height: calc(100vh - 112px);
 }
-
+.calc-h130 {
+  height: calc(100vh - 177px);
+}
 .calc-h400 {
   height: calc(100vh - 400px);
 }

@@ -61,7 +61,7 @@ const Index: React.FC<IProps> = () => {
 
   const refreshJobs = (projectId: string) =>{
     uploaderAction.setIsLoading(true)
-    getJobsByStatusMode(projectId, [JobStatus.uploadFailed, JobStatus.pendingUpload, JobStatus.uploaded], uploaderState.captureMode).then((response)=>{
+    getJobsByStatusMode(projectId, [JobStatus.uploadFailed, JobStatus.pendingUpload,], uploaderState.captureMode).then((response)=>{
       console.log("TestingUploader: getJobs", response.data.result)
       let jobs: IJobs[] = response.data.result;
       uploaderAction.setCaptureJobs(jobs)
@@ -369,7 +369,19 @@ const Index: React.FC<IProps> = () => {
       }
     }
   }
-
+  const setThecalHeight=()=>{
+    if(uploaderState.selectedJob && uploaderState.step === UploaderStep.Upload)
+    {
+      return
+    }
+    else if(uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload)
+    {
+      return 'calc-h223'
+    }
+    else{
+      return 'calc-h100'
+    }
+  }
   return (
     <div className="w-full h-full">
     <div className="w-full">
@@ -393,8 +405,8 @@ const Index: React.FC<IProps> = () => {
              </div>
         </header>
      {!uploaderState.isLoading?  
-  <div>
-        <main className={`overflow-y-auto  ${ (uploaderState.selectedJob || uploaderState.step !== UploaderStep.Upload)?`calc-h223`:`calc-h100 `} `}>
+    <div>
+        <main className={`overflow-y-auto  ${setThecalHeight()} `}>
           <div>
           {renderCenterContent()}
            
