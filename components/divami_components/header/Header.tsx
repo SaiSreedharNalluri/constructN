@@ -7,7 +7,8 @@ import helpIcon from "../../../public/divami_icons/Help.svg";
 import Notification from "../../../public/divami_icons/Notification.svg";
 import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
 import { useRouter } from "next/router";
-import { getCookie, removeCookies, setCookie } from "cookies-next";
+import { getCookie, removeCookies, setCookie, deleteCookie } from "cookies-next";
+import DesignRealitySwitch from "../../container/designRealitySwitch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import  uploadIcon from '../../../public/divami_icons/uploadIcon.svg'
 import {faSignOut} from "@fortawesome/free-solid-svg-icons";
@@ -254,7 +255,7 @@ const Header: React.FC<any> = ({
     Sentry.setTag("ProjectName", null);
     Sentry.setTag("CompanyName", null);
     Sentry.setTag("ProjectId", null);
-    removeCookies("user");
+    deleteCookies("user");
     removeCookies('projectData');
     removeCookies('isProjectTimeZone');
     localStorage.removeItem('uploaededData')
