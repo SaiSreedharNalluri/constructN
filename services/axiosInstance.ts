@@ -1,5 +1,5 @@
 import axios from "axios";
-import { deleteCookie, getCookie, removeCookies, setCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { refreshToken } from "./userAuth";
 import CustomLoggerClass from "../components/divami_components/custom_logger/CustomLoggerClass";
 // eslint-disable-next-line react-hooks/rules-of-hooks
