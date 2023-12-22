@@ -9,12 +9,12 @@ import { Button, Grid, OutlinedInput } from '@mui/material';
 import { Address, IProjects } from '../../../../models/IProjects';
 import { useRouter } from 'next/router';
 import { IOnboardingProps } from '../projectOnboarding';
-import { effect, useSignal } from '@preact/signals-react'
+import { effect, useSignal, useSignalEffect } from '@preact/signals-react'
 import router from "next/router";
 
 
-const ProjectOnboardingForm = ({ step, action, projectId }: IOnboardingProps) => {
-  const projectDetails = useSignal<Partial<IProjects>>({});
+const ProjectOnboardingForm = ({ step, action, projectId,projectDetails }: IOnboardingProps) => {
+  // const projectDetails = useSignal<Partial<IProjects>>({});
   
    const isNameValid=useSignal({});
    const isTypeValid=useSignal({});
@@ -24,9 +24,11 @@ const ProjectOnboardingForm = ({ step, action, projectId }: IOnboardingProps) =>
    console.log(isAddressValid.peek(),"address parent");
    console.log(isTypeValid.peek(),"type parent");
    console.log(isNameValid.peek(),"name parent");
-  effect(() => {
-    console.log('Action inside Form', 'Step:', step.peek(), 'Action:', action?.value)
-    switch(action!.peek()) {
+  //  console.log(if( projectId.value) { projectDetails.peek()._id},"meknfenjkinkjnkjnijnkijnkijniunui");
+
+   
+  useSignalEffect(() => {
+    switch(action!.value) {
       case 'Back-0':
         router.push("/projects");
         break
@@ -36,20 +38,30 @@ const ProjectOnboardingForm = ({ step, action, projectId }: IOnboardingProps) =>
         //  On Complete callback increment
         if(isLatLngValid.peek()===true&&isAddressValid.peek()===true&&isTypeValid.peek()===true&&isLatLngValid.peek()===true){          
           const formData = projectDetails
-          const formdata = new FormData();
-          formdata.append('jreq', JSON.stringify(formData.peek()));          
+          const formdata:any = new FormData();
+          formdata.append('jreq', JSON.stringify(formData.peek())); 
           if(projectDetails.peek()._id===undefined){            
             createProject(formdata)
             .then((res) => {
         projectDetails.value=res.result
         step.value = 1
+        if(projectId.value)
+              projectId.value = projectDetails.peek()._id ?? ''
             })
             .catch((error) => {
             console.error('Error creating project:', error);
             console.log("error");     
             });
             }
+            else{
+              updateProjectInfo(formdata, projectId.value = projectDetails.peek()._id ?? '' as string).then((response:any)=>{
+                projectDetails.value=response.result 
+              })
+              step.value=1
+             
+            }
         }
+       
         break
       default:
         break
