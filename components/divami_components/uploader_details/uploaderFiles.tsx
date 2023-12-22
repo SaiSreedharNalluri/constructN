@@ -24,16 +24,30 @@ const UploaderFiles = () => {
       const batchSize = 100;
       if(acceptedFiles.length > 1500)
       {
-        setMessage(`You have exceeded the maximum upload limit of 1500 files.`)
-        setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
-        setModalTitle(UploaderModalTitle.uploadFileLimit)
-        setshowPopUp(true)
-        uploaderAction.chageIsReading(false)
-        return
+        if(validFileCount.current > 0)
+        {
+          setMessage(`You have exceeded the maximum upload limit of 1500 files.You may upload 
+          additional ${1500-validFileCount.current} files or reach out to
+          support@constructn.ai for larger uploads.`)
+          setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
+          setModalTitle(UploaderModalTitle.uploadFileLimit)
+          uploaderAction.chageIsReading(false)
+          setshowPopUp(true)
+          return
+
+        }else{
+          setMessage(`You have exceeded the maximum upload limit of 1500 files.`)
+          setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
+          setModalTitle(UploaderModalTitle.uploadFileLimit)
+          setshowPopUp(true)
+          uploaderAction.chageIsReading(false)
+          return
+        }
+       
       }
       else if (acceptedFiles.length < 1500) {
        
-        if((validFileCount.current + acceptedFiles.length) >= 1500)
+        if((validFileCount.current + acceptedFiles.length) > 1500)
         {
           setMessage(`You have exceeded the maximum upload limit of 1500 files.You may upload 
                       additional ${1500-validFileCount.current} files or reach out to
