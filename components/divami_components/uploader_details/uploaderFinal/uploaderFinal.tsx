@@ -51,7 +51,7 @@ const UploaderFinal: React.FC = () => {
     }
   useEffect(() => {
     if(uploaderState.selectedJob) {
-      let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
+     let selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])
       if ( uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]) {
         setCustomLoader(false) 
         let fileList: fileData[] = uploaderState.inProgressWorkers[selectedCaptureId].map((e) => {
@@ -133,7 +133,7 @@ const UploaderFinal: React.FC = () => {
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
                     <div key={fileProgressObj.fileName} className="flex w-full justify-between items-center my-[8px]" >
-                      <div className="ml-[30px]  ">
+                      <div className="ml-[30px]">
                         <FileNameListing fileName={fileProgressObj.fileName} />
                       </div>
                       <div className=" w-[100px]">

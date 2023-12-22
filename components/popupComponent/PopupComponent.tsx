@@ -196,7 +196,6 @@ const PopupComponent = (props: PopupComponentProps) => {
         <BootstrapDialogTitle
           id="customized-dialog-title"
           onClose={()=>{
-            console.log('handle Close',isUploader)
             if(isCancelCallBack)
             {
               handleCancel?.(false)

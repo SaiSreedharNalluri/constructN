@@ -58,7 +58,6 @@ const Index: React.FC<IProps> = () => {
           return null;
       }
   };
-
   const refreshJobs = (projectId: string) =>{
     uploaderAction.setIsLoading(true)
     getJobsByStatusMode(projectId, [JobStatus.uploadFailed, JobStatus.pendingUpload,], uploaderState.captureMode).then((response)=>{
@@ -155,7 +154,7 @@ const Index: React.FC<IProps> = () => {
     } else {
 
     }
-  }, [uploaderState.pendingUploadJobs.length])
+  }, [uploaderState.pendingUploadJobs])
 
   useEffect(() => {
     if(uploaderState.completionState !== undefined) {
