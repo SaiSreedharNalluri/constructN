@@ -129,36 +129,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           return (<CircularProgress color="warning" size={"24px"} thickness={5}/>) 
     } 
   }
-  const updateJobStatusBasedOnAction = (deleteJob:boolean) => {
-    let ignoreImagesCheck = true;
-    uploaderAction.setIsLoading(true);
-    updateJobStatus(
-      uploaderState.selectedJob?.project as string,
-      uploaderState.selectedJob?._id as string,
-      deleteJob ? JobStatus.archived : JobStatus.uploaded,
-      ignoreImagesCheck
-    )
-      .then((response) => {
-        uploaderAction.setIsLoading(false);
-        if (response.data.success === true) {
-          let updatedJob = response.data.result
-          let captureJobs = uploaderState.pendingProcessJobs.concat(
-            uploaderState.pendingUploadJobs
-          );
-          captureJobs.forEach((job) => {
-            if (job._id === updatedJob._id) {
-              job.status = updatedJob.status;
-            }
-          });
-          uploaderAction.setCaptureJobs(captureJobs);
-          // appAction.removeCaptureUpload(updatedJob)
-          // uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
-        }
-      })
-      .catch((error) => {
-        uploaderAction.setIsLoading(false);
-      });
-  };
   return (
     <React.Fragment>
       <div className="calc-h130 bg-[#FFECE2] rounded-3xl shadow-[0px 4px 4px 0px #00000040] overflow-y-auto"
@@ -328,47 +298,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
             </button>
           </div>
         </div>
-    { uploaderState.currentPopup && (<PopupComponent
-      open={uploaderState.isShowPopup}
-      setShowPopUp={(value) => {
-        if (!value) {
-          uploaderAction.setIsShowPopup({isShowPopup: false})
-        }
-      }}
-      modalTitle={uploaderState.currentPopup.modalTitle}
-      modalmessage={uploaderState.currentPopup.modalMessage}
-      primaryButtonLabel={uploaderState.currentPopup.primaryButtonLabel}
-      SecondaryButtonlabel={uploaderState.currentPopup.secondaryButtonlabel}
-      isShowWarningText={uploaderState.currentPopup.type === UploaderPopups.deleteJob ? true : false}
-      isCancelCallBack={true}
-      callBackvalue={() => {
-        switch (uploaderState.currentPopup?.type) {
-          case UploaderPopups.deleteJob:
-            // setIsDelete(false)
-            updateJobStatusBasedOnAction(true)
-            uploaderAction.setIsShowPopup({isShowPopup: false})
-            return
-          case UploaderPopups.completedWithError:
-            updateJobStatusBasedOnAction(false)
-            uploaderAction.setIsShowPopup({isShowPopup: false})
-            return
-        }
-      }}
-      handleCancel={(value)=>{
-        switch (uploaderState.currentPopup?.type) {
-          case UploaderPopups.deleteJob:
-            uploaderAction.setIsShowPopup({isShowPopup: false})
-            return
-          case UploaderPopups.completedWithError:
-            if (value) {
-              uploaderAction.setIsShowPopup({isShowPopup: true, popupType: UploaderPopups.deleteJob})
-            } else {
-              uploaderAction.setIsShowPopup({isShowPopup: false})
-            }
-            return
-        }
-      }}
-    />)}
       </div>
     </React.Fragment>
   );

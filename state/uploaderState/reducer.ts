@@ -405,8 +405,8 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
     })
     return {
         validFiles: validEXIFFiles.concat(...choosenFiles.validFiles),
-        invalidEXIFFiles: invalidEXIFFiles.concat(...choosenFiles.invalidEXIFFiles),
-        duplicateFiles: duplicateEXIFFiles.concat(...choosenFiles.duplicateFiles)
+        invalidEXIFFiles: invalidEXIFFiles, //.concat(...choosenFiles.invalidEXIFFiles),
+        duplicateFiles: duplicateEXIFFiles //.concat(...choosenFiles.duplicateFiles)
     }
 }
 
