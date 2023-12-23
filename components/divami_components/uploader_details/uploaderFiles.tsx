@@ -19,7 +19,6 @@ const UploaderFiles = () => {
   let refProcessing = useRef(false);
   let validFileCount = useRef(state.choosenFiles.validFiles.length)
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    console.log("TestingUploader accepted files", acceptedFiles)
    if (acceptedFiles) {
     uploaderAction.chageIsReading(true)
       const batchSize = 100;
