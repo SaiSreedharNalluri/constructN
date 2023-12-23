@@ -83,6 +83,12 @@ const UploaderFinal: React.FC = () => {
     }
   }, [uploaderState.selectedJob,uploaderState.rawImagesMap])
 
+  useEffect(() => {
+    if(uploaderState.selectedJob && uploaderState.isDelete) {
+      showSelectedJobPopup(uploaderState.selectedJob, fileProgressList)
+    }
+  }, [uploaderState.isDelete])
+
   const showSelectedJobPopup = (selectedJob: IJobs, fileList: fileData[]) => {
     if (selectedJob.status === JobStatus.uploadFailed) {
       if (uploaderState.isDelete) {
