@@ -4,7 +4,9 @@ import { IJobs, JobStatus } from "../../models/IJobs";
 import { RawImage, RawImageStatus, location, metaData, utmLocation } from "../../models/IRawImages";
 import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
-import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
+import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState, UploaderPopups } from "./state";
+import { PopupComponentProps } from "../../components/popupComponent/PopupComponent";
+import { PopupData } from "../../models/Poppup";
 
 export const resetUploaderState = (): UploaderState => {
     return {
@@ -235,9 +237,53 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
             } 
         case UploaderActionType.setResetUploaderState:
             return resetUploaderState();
-       
+        case UploaderActionType.deleteJob:
+            return {
+                ...state,
+                selectedJob: action.payload.job,
+                isDelete: true
+            }
+        case UploaderActionType.setIsShowPopup:
+            let popupVisibility = action.payload.popupVisibility
+            if (popupVisibility.isShowPopup) {
+                let popup = getCurrentPopup(state, popupVisibility.popupType, popupVisibility.message);
+                return {
+                    ...state,
+                    isShowPopup: popupVisibility.isShowPopup,
+                    currentPopup: popup
+                }
+            } else {
+                return {
+                    ...state,
+                    isShowPopup: popupVisibility.isShowPopup,
+                    isDelete: false,
+                    currentPopup: undefined
+                }
+            }
         default:
             return state
+    }
+}
+
+const getCurrentPopup = (state: UploaderState, popupType: UploaderPopups, message?: string): PopupData => {
+    switch (popupType) {
+        case UploaderPopups.completedWithError:
+            return {
+                type: popupType,
+                modalTitle: 'Oops, We Hit a Snag',
+                modalMessage: message ? message : "Some files failed to upload",
+                primaryButtonLabel: 'Skip and Process',
+                secondaryButtonlabel: 'Discard',
+            }
+        case UploaderPopups.deleteJob:
+            return {
+                type: popupType,
+                modalTitle: 'Confirm Discard',
+                modalMessage: `Are you sure you want to discard ? 
+                This action is irreversible, and all data will be lost.`,
+                primaryButtonLabel: 'Yes',
+                secondaryButtonlabel: 'Cancel',
+            }
     }
 }
 

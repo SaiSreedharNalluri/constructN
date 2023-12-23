@@ -4,7 +4,8 @@ import { IProjectUserList, IProjects } from "../../models/IProjects";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { IUploadFile } from "../../models/IUploader";
-import { UploaderFinishState, captureRawImageMap, fileWithExif } from "./state";
+import { PopupVisibility } from "../../models/Poppup";
+import { UploaderFinishState, UploaderPopups, captureRawImageMap, fileWithExif } from "./state";
 
 export enum UploaderActionType {
     startNewUpload,
@@ -37,7 +38,9 @@ export enum UploaderActionType {
     refreshJobs,
     setErrorCount,
     setResetUploaderState,
-    setUploadCompletionState
+    setUploadCompletionState,
+    setIsShowPopup,
+    deleteJob
 }
 
 export interface refreshJobs {
@@ -186,7 +189,16 @@ export interface setErrorCount{
 
 export interface setResetUploaderState{
   type: UploaderActionType.setResetUploaderState
- 
+}
+
+export interface setIsShowPopup{
+  type: UploaderActionType.setIsShowPopup,
+  payload: { popupVisibility: PopupVisibility}
+}
+
+export interface deleteJob{
+  type: UploaderActionType.deleteJob,
+  payload: { job: IJobs}
 }
 
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
@@ -287,8 +299,13 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         },
         setUploadCompletionState:(status: UploaderFinishState)=>{
             dispatch({type:UploaderActionType.setUploadCompletionState, payload: {status: status}})
-          },
-
+        },
+        setIsShowPopup: (popupVisibility: PopupVisibility) => {
+          dispatch({type: UploaderActionType.setIsShowPopup, payload: {popupVisibility: popupVisibility}})
+        },
+        deleteJob: (job: IJobs) => {
+          dispatch({type: UploaderActionType.deleteJob, payload: {job: job}})
+        }
       }
     }
 }
@@ -324,3 +341,5 @@ export type UploaderActions =
   | setErrorCount
   | setResetUploaderState
   | setUploadCompletionState
+  | setIsShowPopup
+  | deleteJob

@@ -1,3 +1,4 @@
+import { PopupComponentProps } from "../../components/popupComponent/PopupComponent";
 import { CaptureMode, CaptureType } from "../../models/ICapture";
 import { GCPType, IGCP, LONGLATType, UTMType } from "../../models/IGCP";
 import { IJobs } from "../../models/IJobs";
@@ -5,6 +6,7 @@ import { IProjects } from "../../models/IProjects";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { IUploadFile } from "../../models/IUploader";
+import { PopupData } from "../../models/Poppup";
 import { getInitialGCPList } from "../../utils/utils";
 
 export type uploadImage = { file: File } & RawImage
@@ -29,6 +31,10 @@ export interface workerFileMap {
     [key:string]: IUploadFile<RawImage>[],
 }
 
+export enum UploaderPopups {
+    deleteJob,
+    completedWithError
+}
 
 export interface UploaderState {
     step: number;
@@ -60,6 +66,9 @@ export interface UploaderState {
     inProgressWorkers?: workerFileMap,
     currentUploadFiles?: IUploadFile<RawImage>[]
     completionState?: UploaderFinishState,
+    isShowPopup: boolean,
+    isDelete: boolean,
+    currentPopup? : PopupData,
     errorCount:number;
 }
 
@@ -113,6 +122,8 @@ export const initialUploaderState: UploaderState = {
     processCompleteJobs: [],
     rawImagesMap: {},
     isReading:false,
+    isShowPopup: false,
+    isDelete: false,
     errorCount:0,
 };
 
