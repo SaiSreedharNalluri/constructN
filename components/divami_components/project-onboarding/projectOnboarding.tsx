@@ -11,13 +11,17 @@ import ProjectOnboardingSheets from './onboarding-sheets/project-onboarding-shee
 import ProjectOnboardingBIM from './onboarding-bim/projectOnboardingBIM'
 import ProjectOnboardingReview from './onboarding-review/project-onboarding-review'
 import { useSignal, Signal } from '@preact/signals-react'
-import { useSignals } from '@preact/signals-react/runtime'
+import { useSignalEffect, useSignals } from '@preact/signals-react/runtime'
+import { IProjects } from '../../../models/IProjects'
+import { getProjectDetails, updateProjectInfo } from '../../../services/project'
+import { useRouter } from 'next/router'
 
 export type IOnboardingProps = {
   step: Signal<number>
   action?: Signal<string>
   projectId: Signal<string>
   structureId?: Signal<string>
+  projectDetails:Signal<IProjects>
 }
 
 const ProjectOnboarding = () => {
@@ -26,6 +30,17 @@ const ProjectOnboarding = () => {
   const onboardingAction = useSignal('')
   const onboardingProjectId = useSignal('')
   const onboardingStructureId = useSignal('')
+  const onboardingProjectDetails:any = useSignal({});
+  const router=useRouter();
+useSignalEffect(()=>{
+  if(router.isReady && router.query.id){
+    getProjectDetails(router.query.id as string).then((res)=>{
+      console.log(res,"res");
+  
+      onboardingProjectDetails.value= res.data.result
+    })
+    }  
+})
 
   const renderMainContent = () => {
 
@@ -37,7 +52,9 @@ const ProjectOnboarding = () => {
         return <ProjectOnboardingForm 
           step={onboardingStep} 
           projectId={onboardingProjectId} 
-          action={onboardingAction} />
+          action={onboardingAction}
+          projectDetails={onboardingProjectDetails}
+          />
 
       case 1:
         return <ProjectOnboardingSheets 
@@ -63,7 +80,11 @@ const ProjectOnboarding = () => {
         return <ProjectOnboardingReview 
           step={onboardingStep} 
           projectId={onboardingProjectId} 
-          action={onboardingAction} />
+          action={onboardingAction} 
+          projectDetails={onboardingProjectDetails}
+          />
+     
+
 
       default:
         return <></>;

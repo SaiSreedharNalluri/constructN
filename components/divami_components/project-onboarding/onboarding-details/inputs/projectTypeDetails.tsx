@@ -9,9 +9,9 @@ type,isTypeValid
   const isValid = computed(() => (
     (type.value.type !== undefined && type.value.type !== '') ))
 isTypeValid.value=isValid.value
-  const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (event: ChangeEvent<{ name?: string; value: unknown }>) => {
     const {name, value} = event.target
-    type.value = {...type.value, [name]: value}
+    type.value = {...type.value, [name as string]: value}
   }
 
   return (
@@ -34,11 +34,11 @@ isTypeValid.value=isValid.value
         fullWidth
         size="small"
         name='type'
-        value={type.value.projectID}
+        value={type.value.type || ""}
         onChange={handleOnChange}
       >
-        <MenuItem value="Residential">Residential</MenuItem>
-        <MenuItem value="Building">Building</MenuItem>
+       <MenuItem value="Residential">Residential</MenuItem>
+          <MenuItem value="Building">Building</MenuItem>
       </Select>
       {(type.value.type === undefined || type.value.type === "") && (
           <FormHelperText className='text-[#FF853E]'>Project type is required</FormHelperText>
