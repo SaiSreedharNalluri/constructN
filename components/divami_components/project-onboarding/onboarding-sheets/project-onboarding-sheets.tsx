@@ -7,7 +7,9 @@ import instance from '../../../../services/axiosInstance'
 import { API } from '../../../../config/config'
 
 import authHeader from '../../../../services/auth-header'
-import { effect } from '@preact/signals-react'
+
+import { useSignalEffect } from '@preact/signals-react'
+
 import { IOnboardingProps } from '../projectOnboarding'
 
 const headers = { headers: authHeader.authHeader() }
@@ -20,15 +22,17 @@ const fetchStructureHierarchy = (projectId: string) => {
 
 const ProjectOnboardingSheets = ({ step, action, projectId, structureId }: IOnboardingProps) => {
 
-  effect(() => {
+  useSignalEffect(() => {
     console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
     switch(action!.value) {
       case 'Back-1':
         step.value = 0
+        action!.value = ''
         break
       case 'Next-1':
         if(structureId) structureId.value = 'STR123456'
         step.value = 2
+        action!.value = ''
         break
       default:
         break

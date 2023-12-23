@@ -1,10 +1,10 @@
-import { useCallback, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 
-import { Button, Chip, IconButton, OutlinedInput, Stack, TextField } from '@mui/material'
+import { Button, Chip, Stack, TextField } from '@mui/material'
 
 import PopupComponent from '../../../popupComponent/PopupComponent'
 
@@ -15,16 +15,21 @@ import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined'
 import ChooseUploaderFile from '../../uploaderFIle/chooseUploaderFile'
 
 import { IStructure } from '../../../../models/IStructure'
-import { LoadingButton } from '@mui/lab';
+
+import { Signal, useSignal } from '@preact/signals-react';
+
+import { useSignals } from '@preact/signals-react/runtime'
 
 
 const StructureHierarchy = ({ hierarchy, onAdd, onDelete }: any) => {
 
-    const [showAddSheetPopup, setShowAddSheetPopup] = useState(false)
+    useSignals()
 
-    const [showAddStructurePopup, setShowAddStructurePopup] = useState(false)
+    const addSheetPopup = useSignal(false)
 
-    const [showRemoveStructurePopup, setShowRemoveStructurePopup] = useState(false)
+    const addStructurePopup = useSignal(false)
+
+    const removeStructurePopup = useSignal(false)
 
     const currentStructure = useRef<IStructure>()
 
@@ -33,52 +38,37 @@ const StructureHierarchy = ({ hierarchy, onAdd, onDelete }: any) => {
         <div className='p-4 min-w-[20vw] bg-white' >
 
             <Tree treeData={hierarchy} parent={undefined} 
-            
-                onAdd={(structure: IStructure) => { currentStructure.current = structure; setShowAddStructurePopup(true) }} 
-                
-                onDelete={(structure: IStructure) => { currentStructure.current = structure; setShowRemoveStructurePopup(true) }} 
-                
-                addSheet={(structure: IStructure) => { currentStructure.current = structure; setShowAddSheetPopup(true)}  }/>
+                onAdd={(structure: IStructure) => { currentStructure.current = structure; addStructurePopup.value = true }} 
+                onDelete={(structure: IStructure) => { currentStructure.current = structure; removeStructurePopup.value = true }} 
+                addSheet={(structure: IStructure) => { currentStructure.current = structure; addSheetPopup.value = true} }/>
 
             {
-                showAddSheetPopup ? <PopupComponent open={showAddSheetPopup} hideButtons
-                    
-                    setShowPopUp={setShowAddSheetPopup} modalTitle={`Add sheet for ${currentStructure.current?.name}`}
-
+                addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
+                    setShowPopUp={(state: boolean) => addSheetPopup.value = state} 
+                    modalTitle={`Add sheet for ${currentStructure.current?.name}`}
                     modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
-                    
-                    callBackvalue={() => {}} modalContent={renderAddSheetForm()}
-                    
+                    callBackvalue={() => {}} modalContent={renderAddSheetForm(addSheetPopup)}
                     width={'60%'} backdropWidth={true} showButton={false}
-                
                 /> : ''
             }
 
             {
-                showAddStructurePopup ? <PopupComponent open={showAddStructurePopup} hideButtons
-                    
-                    setShowPopUp={setShowAddStructurePopup} modalTitle={`Add child level for ${currentStructure.current?.name}`}
-
+                addStructurePopup.value === true ? <PopupComponent open={addStructurePopup.value} hideButtons
+                    setShowPopUp={(state: boolean) => addStructurePopup.value = state} 
+                    modalTitle={`Add child level for ${currentStructure.current?.name}`}
                     modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
-                    
-                    callBackvalue={() => {}} modalContent={renderAddStructureForm()}
-                    
-                    width={'60%'} backdropWidth={true} showButton={false}
-                
+                    callBackvalue={() => {}}  width={'60%'} backdropWidth={true} showButton={false}
+                    modalContent={renderAddStructureForm(addStructurePopup, currentStructure.current?._id, onAdd)}
+                   
                 /> : ''
             }
 
             {
-                showRemoveStructurePopup ? <PopupComponent open={showRemoveStructurePopup} hideButtons
-                    
-                    setShowPopUp={setShowRemoveStructurePopup} modalTitle={'Delete level'}
-
+                removeStructurePopup.value === true ? <PopupComponent open={removeStructurePopup.value} hideButtons
+                    setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Delete level'}
                     modalmessage={`Are you sure you want to delete level ${currentStructure.current?.name} ?`} 
-                    
-                    primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'} callBackvalue={() => {}} 
-                    
+                    primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'} callBackvalue={() => onDelete(currentStructure.current?._id)} 
                     backdropWidth={true} showButton={false}
-                
                 /> : ''
             }
 
@@ -190,53 +180,68 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
 }
 
-const renderAddSheetForm = () => {
+const renderAddSheetForm = (showPopup: Signal<boolean>) => {
 
     const onDrop = (acceptedFiles: File[]) => {
-
         console.log(acceptedFiles)
-
         if (acceptedFiles) {
           
         }
-
       }
 
-    return (<div className='flex flex-col'>
+    return (<><div className='flex flex-col'>
     
         <ChooseUploaderFile onDrop={onDrop} />
 
         <TextField color='warning' size='small' className='mt-4' label='Sheet Name' variant='outlined' />
-
+        
         <TextField color='warning' size='small' className='mt-4 mb-6' label='Sheet Type' variant='outlined' />
+        
+        <div className='flex justify-between mt-6'>
+        
+            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'  
+                onClick={() => { showPopup.value = false }}>
+                Discard
+            </Button>
+        
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' 
+                color='warning' onClick={() => {  }} >
+                    Save
+            </Button>
+        
+        </div>
 
-    </div>)
+    </div></>)
 
 }
 
-const renderAddStructureForm = () => {
+const renderAddStructureForm = (
+    showPopup: Signal<boolean>, parent: string | undefined,
+    onAdd: (name: string, parent: string | undefined) => {}) => {
 
-    const [loading, setLoading] = useState(false)
+    const structureName = useSignal('')
 
-    return (<div className='flex flex-col'>
+    return (<><div className='flex flex-col'>
 
-        <TextField color='warning' className='my-4' label='Structure Name' variant='outlined' />
+        <TextField color='warning' className='my-4' 
+            label='Structure Name' variant='outlined' value={structureName.value}  
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {structureName.value = e.target.value}}/>
 
         <div className='flex justify-between mt-6'>
-
-            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'>Discard</Button>
-
-            <LoadingButton variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' 
-            
-                color='warning' onClick={() => { setLoading(true); setTimeout(() => setLoading(false), 2000) }} >
-                    
+        
+            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'  
+                onClick={() => { showPopup.value = false }}>
+                Discard
+            </Button>
+        
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' 
+                color='warning' onClick={() => onAdd(structureName.value, parent)} >
                     Save
-
-            </LoadingButton>
-
+            </Button>
+        
         </div>
 
-    </div>)
+    </div></>)
 
 }
 

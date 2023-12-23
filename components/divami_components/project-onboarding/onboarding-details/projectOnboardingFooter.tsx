@@ -3,11 +3,16 @@
 
 import { Button } from '@mui/material'
 import React from 'react'
-import { useProjectContext } from '../../../../state/projectState/context'
-import { OnBoardingStep } from '../../../../state/projectState/state';
 import { IOnboardingProps } from '../projectOnboarding';
+import { useSignal } from '@preact/signals-react';
 
 const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
+
+  const messages = useSignal([
+    '* Mandatory Field',
+    'Hover on each item to see more actions',
+    '', '', ''
+  ])
 
   const onBackClick = () => {
     // if(step.value === 0) {
@@ -27,10 +32,9 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
 
   return (
     <div className='flex justify-between items-center mx-[60px]'>
-      {step.value === 0 ? <><div className='font-semibold text-[#ff0000]'>
-        * Mandatory Field
+      <div className='font-semibold text-[#ff0000]'>
+        {messages.value[step.value]}
       </div>
-      </> : <div></div>}
       <div>
         <Button onClick={onBackClick} style={{ marginRight: "10px", color: "#FF853E", border: "1px solid #FF853E" }}>
           { step.value === 0 ? 'Cancel' : 'Back' }
