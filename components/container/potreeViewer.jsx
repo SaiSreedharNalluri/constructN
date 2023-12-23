@@ -4,6 +4,7 @@ import PotreeMeasurementToolbar from './potreeMeasurementToolbar';
 import { getCookie } from "cookies-next";
 import { IUser } from "../../models/IUser";
 import CameraButtons from './cameraButtons';
+import Measurements3DView from './measurements/measurements-3d';
 function PotreeViewer(props) {
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
     const isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
@@ -11,6 +12,7 @@ function PotreeViewer(props) {
     const containerId = `fpContainer_${viewerCount}`;
     const canvasId = `floormap_${viewerCount}`
     const setPotreeViewerUtils = props.setPotreeViewer;
+    const potreeUtils = props.potreeUtils
     const initViewer = function() {
         // let potree = new PotreeViewerUtils(viewerId);
         // if(!potree.isViewerLoaded()) {
@@ -44,7 +46,7 @@ function PotreeViewer(props) {
           {isSupportUser.current ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
-              <PotreeMeasurementToolbar></PotreeMeasurementToolbar>
+              <Measurements3DView potreeUtils={potreeUtils} />
             </div>
           ) : (
             ""

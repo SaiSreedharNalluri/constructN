@@ -1219,6 +1219,7 @@ function GenericViewer(props) {
             viewerCount={count}
             isSupportUser={isSupportUser.current}
             setPotreeViewer={setpotreeViewerUtils}
+            potreeUtils={potreeUtils.current}
           ></PotreeViewer>
         );
       case 'Mapbox':
