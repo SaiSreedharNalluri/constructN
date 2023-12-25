@@ -6,33 +6,33 @@ import { API, AWS } from '../../../config/config'
 
 import authHeader from '../../../services/auth-header'
 
-self.onmessage = async (event: MessageEvent<{ projectId: string, structureId: string, type: string, file: File }>) => {
+// self.onmessage = async (event: MessageEvent<{ projectId: string, structureId: string, type: string, file: File }>) => {
 
-  const { projectId, structureId, type, file } = event.data
+//   const { projectId, structureId, type, file } = event.data
 
-  console.log(projectId, structureId, type, file)
+//   console.log(projectId, structureId, type, file)
 
-  const uploader = new Uploader({file, projectId, structureId, type})
+//   const uploader = new Uploader({file, projectId, structureId, type})
 
-  let mPercentage = 0
+//   let mPercentage = 0
 
-  uploader.onProgress(({ percentage }: { percentage: number }) => {
-    // to avoid the same percentage to be logged twice
-    if (mPercentage !== percentage) {
-      mPercentage = percentage
-      console.log(`${mPercentage}%`)
-      self.postMessage({ structureId, type, percentage })
-    }
-  })
-    .onError((error: any) => {
-      console.error(error)
-    }).onComplete(() => {
-      self.postMessage({ structureId, type, mPercentage })
-    })
+//   uploader.onProgress(({ percentage }: { percentage: number }) => {
+//     // to avoid the same percentage to be logged twice
+//     if (mPercentage !== percentage) {
+//       mPercentage = percentage
+//       console.log(`${mPercentage}%`)
+//       self.postMessage({ structureId, type, percentage })
+//     }
+//   })
+//     .onError((error: any) => {
+//       console.error(error)
+//     }).onComplete(() => {
+//       self.postMessage({ structureId, type, mPercentage })
+//     })
 
-  uploader.start()
+//   uploader.start()
 
-}
+// }
 
 export class Uploader {
 

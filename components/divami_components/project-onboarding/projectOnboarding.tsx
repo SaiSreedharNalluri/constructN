@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { FC } from 'react'
 import Header from '../header/Header'
 import ProjectOnboardingStepper from './onboarding-details/projectOnboardingStepper'
 import ProjectOnboardingFooter from './onboarding-details/projectOnboardingFooter'
@@ -12,13 +12,18 @@ import ProjectOnboardingSheets from './onboarding-sheets/project-onboarding-shee
 import ProjectOnboardingBIM from './onboarding-bim/projectOnboardingBIM'
 import ProjectOnboardingReview from './onboarding-review/project-onboarding-review'
 import { useSignal, Signal } from '@preact/signals-react'
-import { useSignals } from '@preact/signals-react/runtime'
+import { useComputed, useSignalEffect, useSignals } from '@preact/signals-react/runtime'
+import { IProjects } from '../../../models/IProjects'
+import { getProjectDetails, updateProjectInfo } from '../../../services/project'
+import { useRouter } from 'next/router'
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
 export type IOnboardingProps = {
   step: Signal<number>
   action?: Signal<string>
   projectId: Signal<string>
   structureId?: Signal<string>
+  projectDetails: Signal<IProjects>
 }
 
 const ProjectOnboarding = () => {
@@ -27,6 +32,64 @@ const ProjectOnboarding = () => {
   const action = useSignal('')
   const projectId = useSignal('')
   const structureId = useSignal('')
+  const projectDetails: any = useSignal({type: 'Residential'})
+  const router = useRouter()
+
+  useSignalEffect(() => {
+    if (router.isReady && router.query.id) {
+      getProjectDetails(router.query.id as string).then((res) => {
+        console.log(res, "res");
+
+        projectDetails.value = res.data.result
+      })
+    }
+  })
+
+  const mainContent = useComputed(() => {
+
+    switch (step.value) {
+
+      case 0:
+        return <><ProjectOnboardingForm
+          step={step}
+          projectId={projectId}
+          action={action}
+          projectDetails={projectDetails} /></>
+  
+      case 1:
+        return <><ProjectOnboardingSheets
+          step={step}
+          projectId={projectId}
+          structureId={structureId}
+          action={action}
+          projectDetails={projectDetails} /></>
+  
+      case 2:
+        return <><ProjectOnboardingBIM
+          step={step}
+          projectId={projectId}
+          structureId={structureId}
+          action={action}
+          projectDetails={projectDetails} /></>
+  
+      case 3:
+        return <><ProjectOnboardingUsers
+          step={step}
+          projectId={projectId}
+          action={action}
+          projectDetails={projectDetails} /></>
+  
+      case 4:
+        return <><ProjectOnboardingReview
+          step={step}
+          projectId={projectId}
+          action={action}
+          projectDetails={projectDetails} /></>
+  
+      default:
+        return <></>;
+    }
+  })
 
   return (
     <div className="w-full h-full">
@@ -35,68 +98,24 @@ const ProjectOnboarding = () => {
         <div className="flex flex-col w-full  calc-h">
           <header className=''>
             <div className='mt-[20px]'>
-              <ProjectOnboardingStepper step={step} projectId={projectId}></ProjectOnboardingStepper>
+              <ProjectOnboardingStepper step={step} projectId={projectId} projectDetails={projectDetails}></ProjectOnboardingStepper>
             </div>
           </header>
- 
+
           <div className='pt-[25px]'>
             <main className='overflow-y-auto calc-h235 mx-[60px]  '>
               <div>
-                {renderMainContent({step, action, projectId, structureId})}
+                {mainContent}
               </div>
             </main>
             <footer className=" pb-[20px]">
-              <ProjectOnboardingFooter step={step} projectId={projectId} action={action} ></ProjectOnboardingFooter>
+              <ProjectOnboardingFooter step={step} projectId={projectId} action={action} projectDetails={projectDetails} ></ProjectOnboardingFooter>
             </footer></div>
         </div>
       </div>
     </div>
   )
 }
-
-const renderMainContent = ({step, action, projectId, structureId}: IOnboardingProps) => {
-
-  useSignals()
-
-  switch (step.value) {
-
-    case 0:
-      return <ProjectOnboardingForm 
-        step={step} 
-        projectId={projectId} 
-        action={action} />
-
-    case 1:
-      return <ProjectOnboardingSheets 
-      step={step} 
-      projectId={projectId} 
-      structureId={structureId} 
-      action={action} />
-
-    case 2:
-      return <ProjectOnboardingBIM 
-        step={step} 
-        projectId={projectId} 
-        structureId={structureId} 
-        action={action} />
-
-    case 3:
-      return <ProjectOnboardingUsers 
-        step={step} 
-        projectId={projectId} 
-        action={action} />
-
-    case 4:
-      return <ProjectOnboardingReview 
-        step={step} 
-        projectId={projectId} 
-        action={action} />
-
-    default:
-      return <></>;
-  }
-};
-
 
 export default ProjectOnboarding
 

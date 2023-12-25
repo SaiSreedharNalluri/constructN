@@ -1,13 +1,43 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Grid, OutlinedInput, FormControlLabel, Radio, RadioGroup, FormHelperText } from '@mui/material';
 import { useProjectContext } from '../../../../../state/projectState/context';
-const ProjectLatLngDetails = ({
-  handleChange,
-  errorMessage,
-  setErrorMessage,
-}:any) => {
+import { IProjects } from '../../../../../models/IProjects';
+import { computed, useSignal } from '@preact/signals-react';
+const ProjectLatLngDetails = ({latlngDetails,isLatLngValid}:any) => {
+  const isValid = computed(() => (
+    (latlngDetails.value.location?.coordinates?.[0] !== undefined || latlngDetails.value.location?.coordinates?.[0] !== ""))
+    && (latlngDetails.value.location?.coordinates?.[1] !== undefined || latlngDetails.value.location?.coordinates?.[1] !== "")
+    && (latlngDetails.value.measurement === undefined || latlngDetails.value.measurement !=="")
+    )
 
-  const { state, projectContextAction } =useProjectContext();
+isLatLngValid.value=isValid.value
+  const handleOnChange = (event: ChangeEvent<HTMLInputElement>, key: string) => {
+    
+    const { value } = event.target;
+    const newCoordinates = [...(latlngDetails.value.location?.coordinates || [])]; 
+
+    if (key === 'latitude') {
+      newCoordinates[1] = parseFloat(value); 
+    } else if (key === 'longitude') {
+      newCoordinates[0] = parseFloat(value); 
+    }
+
+    latlngDetails.value = {
+      ...latlngDetails.value,
+      location: {
+        type:"point",
+        ...latlngDetails.value.location,
+        coordinates: newCoordinates,
+      },
+    };
+  };
+  const handleMeasurementChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    latlngDetails.value = {
+      ...latlngDetails.value,
+      measurement: value,
+    };
+  };
   return (
     <Grid container spacing={2} justifyContent="space-between" alignItems="center" flex="coloum" className='mt-[4px]'>
       <Grid item xs={3}>
@@ -16,11 +46,11 @@ const ProjectLatLngDetails = ({
           fullWidth
           size="small"
           className="outline-none"
-          value={state?.newProjectDetails?.location?.coordinates?.[1] || ''}
-          onChange={(e)=>{handleChange("latitude",e.target.value,false,true)}}
+          value={latlngDetails.value.location?.coordinates?.[1] || ''}
+          onChange={(e: any) => handleOnChange(e, 'latitude')}
         />
-        {errorMessage.latitude && typeof errorMessage.latitude === 'string' && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.latitude}</FormHelperText>
+        {(latlngDetails.value.location?.coordinates?.[1] === undefined || latlngDetails.value.location?.coordinates?.[1] === "") && (
+          <FormHelperText className='text-[#FF853E]'>Latitude is required</FormHelperText>
         )}
       </Grid>
       <Grid item xs={3}>
@@ -29,23 +59,23 @@ const ProjectLatLngDetails = ({
           fullWidth
           size="small"
           className="outline-none"
-          value={state?.newProjectDetails?.location?.coordinates?.[0] || ''}
-          onChange={(e)=>{handleChange("longitude",e.target.value,false,true)}}
+          value={latlngDetails.value.location?.coordinates?.[0] || ''}
+          onChange={(e: any) => handleOnChange(e, 'longitude')}
         />
-        {errorMessage.longitude && typeof errorMessage.longitude === 'string' && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.longitude}</FormHelperText>
+        {(latlngDetails.value.location?.coordinates?.[0] === undefined || latlngDetails.value.location?.coordinates?.[0] === "") && (
+          <FormHelperText className='text-[#FF853E]'>Longitude is required</FormHelperText>
         )}
       </Grid>
       <Grid item xs={2} className='mt-[16px]'>
         <div>Measurement System*</div>
       </Grid>
       <Grid item xs={4} className='mt-[16px]'>
-        <RadioGroup row value={state.newProjectDetails.measurement || "US"}   onChange={(e)=>{handleChange("measurement",e.target.value)}}>
+        <RadioGroup row value={latlngDetails.value.measurement || "US"}  onChange={handleMeasurementChange} >
           <FormControlLabel value="US" control={<Radio />} label="US (ft,pound)" />
           <FormControlLabel value="metric" control={<Radio />} label="Metric System (m,kg)" />
-        </RadioGroup>
-        {errorMessage.measurement && typeof errorMessage.measurement === 'string' && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.measurement}</FormHelperText>
+        </RadioGroup> 
+        {(latlngDetails.value.measurement === undefined) && (
+          <FormHelperText className='text-[#FF853E]'>Measurement is required</FormHelperText>
         )}
       </Grid>
     </Grid>

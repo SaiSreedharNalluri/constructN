@@ -53,8 +53,8 @@ const isNext = (state:OnBoardingProjectState, step: OnBoardingStep): boolean =>{
             return true;
         case OnBoardingStep.AddUsers:
             return true;
-        case OnBoardingStep.ConfigureProject:
-            return true;
+        // case OnBoardingStep.ConfigureProject:
+        //     return true;
         case OnBoardingStep.Review:
             return true;
         default:

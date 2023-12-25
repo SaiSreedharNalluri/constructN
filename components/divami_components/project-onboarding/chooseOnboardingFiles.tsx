@@ -40,7 +40,7 @@ const ChooseOnboardingFiles: React.FC<IProps> = ({
 
   return (
     <div
-      className={`flex flex-col items-center mt-16 w-40 h-20 border-[2px] rounded-8 border-dashed hover:border-[#F1742E] border-black py-6 px-2 cursor-pointer justify-center ${
+      className={`flex flex-col items-center w-full h-15 border-[2px] rounded-8 border-dashed hover:border-[#F1742E] border-black py-6 px-2 cursor-pointer justify-center ${
         isDragActive ? "border-blue-500" : ""
       }`}
       {...getRootProps()}
@@ -55,31 +55,6 @@ const ChooseOnboardingFiles: React.FC<IProps> = ({
               onClick={(e: any) => onDelete(e)}
               startIcon={<DeleteIcon />}
             ></Button>
-            {isFileUploaded ? (
-              <Button
-                style={{
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  marginRight: "10px",
-                  cursor: "not-allowed",
-                }}
-              >
-                Uploaded
-              </Button>
-            ) : (
-              <>
-                <Button
-                  onClick={(e: any) => handleUpload(e)}
-                  style={{
-                    backgroundColor: "#FF853E",
-                    marginRight: "10px",
-                    color: "white",
-                  }}
-                >
-                  Upload
-                </Button>
-              </>
-            )}
           </div>
         ) : (
           <div className="flex">

@@ -7,12 +7,15 @@ import { IOnboardingProps } from "../projectOnboarding";
 import { effect, useSignal } from "@preact/signals-react";
 import { useSignalEffect, useSignals } from "@preact/signals-react/runtime";
 import { Uploader } from "../../web_worker/uploadFileWorker";
+import { Button, LinearProgress, Typography } from "@mui/material";
 
 const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboardingProps) => {
 
-  // useSignals()
+  useSignals()
   const fileToUpload = useSignal<File | undefined>(undefined)
   const uploadComplete = useSignal(false)
+  const isUploading = useSignal(false)
+  const uploadProgress = useSignal<number>(-1)
   const showPopUp = useSignal(false)
 
   const dragDropText = "(or drag and drop file here)";
@@ -62,7 +65,6 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
   };
   const onUpload = (e: any) => {
     e.stopPropagation();
-    proceedUpload()
   };
 
   const proceedUpload = () => {
@@ -79,20 +81,24 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
 
     uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
       console.log(`${percentage}%`)
+      uploadProgress.value = percentage
     })
       .onError((error: any) => {
+        isUploading.value = false
         console.error(error)
       })
       .onComplete(() => {
+        isUploading.value = false
+        uploadProgress.value = -1
         uploadComplete.value = true
       })
-
+    isUploading.value = true
     uploader.start()
   }
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex mt-12 flex-col justify-center items-center">
         <ChooseOnboardingFiles
           onDrop={onDrop}
           onUpload={onUpload}
@@ -101,12 +107,27 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
           supportFileText={supportFileText}
           uploadedFileName={fileToUpload.value ? fileToUpload.value.name : ''}
           UploadingStatus={<UploadingStatus />}
-          isDisabled={false}
+          isDisabled={uploadComplete.value}
           acceptFiles={{ "application/octet-stream": [".nwd", ".rvt"] }}
         ></ChooseOnboardingFiles>
       </div>
 
-      {fileToUpload.value && (
+      { uploadProgress.value !== -1 && isUploading.value == true &&
+        <LinearProgress className='mt-8 w-[400px]' color='warning' variant="determinate" value={uploadProgress.value} />
+      }
+
+      {uploadComplete.value == false &&
+        <Button variant='contained' disabled={fileToUpload.value === undefined || isUploading.value === true} size='small' className='flex-1 mt-8 bg-[#F1742E]'
+          color='warning' onClick={() => proceedUpload()} >
+          Upload
+        </Button>
+      }
+
+      {uploadComplete.value == true &&
+        <Typography className='text-emerald-500 m-8' variant="body1">Uploaded BIM successfully</Typography>
+      }
+
+      {uploadComplete.value == false && (
         <div style={{ textAlign: "left", marginTop: "20px" }}>
           <a
             href={`#`}
@@ -127,6 +148,8 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
           SecondaryButtonlabel={"Cancel"}
           callBackvalue={() => {
             showPopUp.value = false
+            step.value = 3
+            action!.value = ''
           }}
         />
     </div>

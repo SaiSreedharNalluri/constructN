@@ -4,7 +4,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 
-import { Button, Chip, Stack, TextField } from '@mui/material'
+import { Button, Chip, FormHelperText, LinearProgress, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material'
 
 import PopupComponent from '../../../popupComponent/PopupComponent'
 
@@ -12,16 +12,24 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
 
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined'
 
-import ChooseUploaderFile from '../../uploaderFIle/chooseUploaderFile'
-
 import { IStructure } from '../../../../models/IStructure'
 
-import { Signal, useSignal } from '@preact/signals-react';
+import { Signal, useSignal } from '@preact/signals-react'
 
-import { useSignals } from '@preact/signals-react/runtime'
+import { useComputed, useSignals } from '@preact/signals-react/runtime'
+
+import { IDesign } from '../../../../models/IDesign'
+
+import { Uploader } from '../../web_worker/uploadFileWorker'
+
+import UploadingStatus from '../../uploaderFIle/uploadingStatus'
+
+import ChooseOnboardingFiles from '../chooseOnboardingFiles'
+
+import { CustomToast } from '../../custom-toaster/CustomToast'
 
 
-const StructureHierarchy = ({ hierarchy, onAdd, onDelete }: any) => {
+const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdded }: any) => {
 
     useSignals()
 
@@ -33,44 +41,56 @@ const StructureHierarchy = ({ hierarchy, onAdd, onDelete }: any) => {
 
     const currentStructure = useRef<IStructure>()
 
+    const fileToUpload = useSignal<File | undefined>(undefined)
+
+    const newStructureName = useSignal<string>('')
+
+    const uploadComplete = useSignal(false)
+
+    const uploadProgress = useSignal(-1)
+
+    const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.current!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete ))
+
+    const renderAddSheetPopup = useComputed(() => addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
+        setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Add sheet'}
+        modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
+        callBackvalue={() => { }} modalContent={addSheetFormJSX}
+        backdropWidth={true} showButton={false}
+    /> : <></>)
+
+    const addStructureFormJSX = useComputed(() => renderAddStructureForm(addStructurePopup, currentStructure.current?._id, newStructureName, onAdd))
+
+    const renderAddStructurePopup = useComputed(() => addStructurePopup.value === true ? <PopupComponent open={addStructurePopup.value} hideButtons
+        setShowPopUp={(state: boolean) => addStructurePopup.value = state}
+        modalTitle={`Add child level for ${currentStructure.current?.name}`}
+        modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
+        callBackvalue={() => { }} width={'60%'} backdropWidth={true} showButton={false}
+        modalContent={addStructureFormJSX}
+    /> : <></>)
+
+    const removeStructureFormJSX = useComputed(() => renderDeleteStructureForm(removeStructurePopup, currentStructure.current!, onDelete))
+
+    const renderRemoveStructurePopup = useComputed(() => removeStructurePopup.value === true ? <PopupComponent open={removeStructurePopup.value} hideButtons
+        setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Delete level'}
+        modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
+        callBackvalue={() => { }} modalContent={removeStructureFormJSX}
+        backdropWidth={true} showButton={false}
+    /> : <></>)
+
     return (
 
         <div className='p-4 min-w-[20vw] bg-white' >
 
-            <Tree treeData={hierarchy} parent={undefined} 
-                onAdd={(structure: IStructure) => { currentStructure.current = structure; addStructurePopup.value = true }} 
-                onDelete={(structure: IStructure) => { currentStructure.current = structure; removeStructurePopup.value = true }} 
-                addSheet={(structure: IStructure) => { currentStructure.current = structure; addSheetPopup.value = true} }/>
+            <Tree treeData={hierarchy} parent={undefined}
+                onAdd={(structure: IStructure) => { currentStructure.current = structure; addStructurePopup.value = true }}
+                onDelete={(structure: IStructure) => { currentStructure.current = structure; removeStructurePopup.value = true }}
+                addSheet={(structure: IStructure) => { currentStructure.current = structure; addSheetPopup.value = true }} />
 
-            {
-                addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
-                    setShowPopUp={(state: boolean) => addSheetPopup.value = state} 
-                    modalTitle={`Add sheet for ${currentStructure.current?.name}`}
-                    modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
-                    callBackvalue={() => {}} modalContent={renderAddSheetForm(addSheetPopup)}
-                    width={'60%'} backdropWidth={true} showButton={false}
-                /> : ''
-            }
+            {renderAddSheetPopup}
 
-            {
-                addStructurePopup.value === true ? <PopupComponent open={addStructurePopup.value} hideButtons
-                    setShowPopUp={(state: boolean) => addStructurePopup.value = state} 
-                    modalTitle={`Add child level for ${currentStructure.current?.name}`}
-                    modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
-                    callBackvalue={() => {}}  width={'60%'} backdropWidth={true} showButton={false}
-                    modalContent={renderAddStructureForm(addStructurePopup, currentStructure.current?._id, onAdd)}
-                   
-                /> : ''
-            }
+            {renderAddStructurePopup}
 
-            {
-                removeStructurePopup.value === true ? <PopupComponent open={removeStructurePopup.value} hideButtons
-                    setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Delete level'}
-                    modalmessage={`Are you sure you want to delete level ${currentStructure.current?.name} ?`} 
-                    primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'} callBackvalue={() => onDelete(currentStructure.current?._id)} 
-                    backdropWidth={true} showButton={false}
-                /> : ''
-            }
+            {renderRemoveStructurePopup}
 
         </div>
     )
@@ -105,15 +125,21 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
         console.info('You clicked the Chip.')
 
-      }
-    
-      const handleDelete = () => {
-        
+    }
+
+    const handleDelete = () => {
+
         console.info('You clicked the delete icon.')
-      
+
     }
 
     const _showChildren = () => setShowChildren(!showChildren)
+
+    const _sheetName = () => {
+        const designs = node.designs
+        const drawing = designs?.find((design: IDesign) => design.type === 'Plan Drawings')
+        return drawing?.name ?? ''
+    }
 
     return (
 
@@ -138,11 +164,16 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                 </div>
 
-                <div className='flex items-center mr-4'>
+                <div className='flex w-[20vw] items-center justify-center mr-4'>
 
                     <Stack direction='row' spacing={1}>
-                        
-                        <Chip label='Clickable Deletable' size='small' onClick={handleClick} onDelete={handleDelete} />
+
+                        {_sheetName() !== '' && <Chip label={_sheetName()} color='default' size='small' onClick={handleClick} />}
+
+                        {(_sheetName() === '' && node.parent != null) &&
+                            <Chip label='Add Sheet' size='small' color='secondary' clickable className='mr-2 text-[12px]'
+                                variant='outlined' onClick={() => addSheet(node)} icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} />
+                        }
 
                     </Stack>
 
@@ -150,18 +181,10 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                 <div className='flex group-hover:opacity-100 opacity-0 items-center'>
 
-                    <Chip 
-                    
-                        label='Add Child' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined' 
-                        
+                    <Chip label='Add Child' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined'
                         icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onAdd(node)} />
 
-                    <Chip label='Add Sheet' size='small' color='secondary' clickable className='mr-2 text-[12px]' variant='outlined' 
-                    
-                        icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => addSheet(node)} />
-
-                    <Chip label='Delete Level' size='small' color='error' clickable className='mr-2 text-[12px]' variant='outlined' 
-                        
+                    <Chip label='Delete Level' size='small' color='error' clickable className='mr-2 text-[12px]' variant='outlined'
                         icon={<RemoveOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onDelete(node)} />
 
                 </div>
@@ -180,35 +203,84 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
 }
 
-const renderAddSheetForm = (showPopup: Signal<boolean>) => {
+const renderAddSheetForm = (
+    showPopup: Signal<boolean>, projectId: string, structure: IStructure, onSheetAdded: Function,
+    fileToUpload: Signal<File | undefined>, uploadProgress: Signal<number>, uploadStatus: Signal<boolean>) => {
+
+    const dragDropText = "(or drag and drop file here)";
+    const supportFileText = "Upload .RVT or .NWD file";
 
     const onDrop = (acceptedFiles: File[]) => {
-        console.log(acceptedFiles)
         if (acceptedFiles) {
-          
+            fileToUpload.value = acceptedFiles[0]
         }
-      }
+    }
+
+    const onDelete = (e: any) => {
+        fileToUpload.value = undefined
+        e.stopPropagation();
+    }
+
+    const onUpload = (e: any) => {
+        e.stopPropagation();
+        // proceedUpload()
+    }
+
+    const proceedUpload = () => {
+        const uploader = new Uploader({ file: fileToUpload.value, projectId, structureId: structure._id, type: 'Plan Drawings' })
+
+        uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
+            console.log(`${percentage}%`)
+            uploadProgress.value = percentage
+        })
+            .onError((error: any) => {
+                console.error(error)
+                uploadStatus.value = false
+                CustomToast('Failed to upload.', 'error', false)
+            })
+            .onComplete(() => {
+                uploadStatus.value = false
+                showPopup.value = false
+                uploadProgress.value = -1
+                CustomToast(`Added sheet to ${structure.name} successfully.`, 'success')
+                onSheetAdded()
+            })
+
+        uploadStatus.value = true
+        uploader.start()
+    }
+
+    const _sizeInMB = (file: File) => `${(file.size / (1024 * 1024)).toFixed(1)} MB`
 
     return (<><div className='flex flex-col'>
-    
-        <ChooseUploaderFile onDrop={onDrop} />
 
-        <TextField color='warning' size='small' className='mt-4' label='Sheet Name' variant='outlined' />
-        
-        <TextField color='warning' size='small' className='mt-4 mb-6' label='Sheet Type' variant='outlined' />
-        
+        <ChooseOnboardingFiles
+            onDrop={onDrop}
+            onUpload={onUpload}
+            onDelete={onDelete}
+            dragDropText={dragDropText}
+            supportFileText={supportFileText}
+            uploadedFileName={fileToUpload.value ? fileToUpload.value.name : ''}
+            UploadingStatus={<UploadingStatus />}
+            isDisabled={false}
+            acceptFiles={{ "application/octet-stream": [".nwd", ".rvt"] }} />
+
+        {uploadProgress.value !== -1 && uploadStatus.value == true &&
+            <LinearProgress className='m-4' color='warning' variant="determinate" value={uploadProgress.value} />
+        }
+
         <div className='flex justify-between mt-6'>
-        
-            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'  
+
+            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'
                 onClick={() => { showPopup.value = false }}>
                 Discard
             </Button>
-        
-            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' 
-                color='warning' onClick={() => {  }} >
-                    Save
+
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' color='warning' 
+                disabled={fileToUpload.value === undefined || uploadStatus.value == true} onClick={() => proceedUpload()} >
+                Upload
             </Button>
-        
+
         </div>
 
     </div></>)
@@ -216,29 +288,59 @@ const renderAddSheetForm = (showPopup: Signal<boolean>) => {
 }
 
 const renderAddStructureForm = (
-    showPopup: Signal<boolean>, parent: string | undefined,
+    showPopup: Signal<boolean>, parent: string | undefined, newStructureName: Signal<string>,
     onAdd: (name: string, parent: string | undefined) => {}) => {
-
-    const structureName = useSignal('')
 
     return (<><div className='flex flex-col'>
 
-        <TextField color='warning' className='my-4' 
-            label='Structure Name' variant='outlined' value={structureName.value}  
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {structureName.value = e.target.value}}/>
+        <TextField color='warning' className='my-4'
+            label='Structure Name*' variant='outlined' value={newStructureName.value}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => { newStructureName.value = e.target.value }} />
 
         <div className='flex justify-between mt-6'>
-        
-            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'  
+
+            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'
                 onClick={() => { showPopup.value = false }}>
                 Discard
             </Button>
-        
-            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' 
-                color='warning' onClick={() => onAdd(structureName.value, parent)} >
-                    Save
+
+            <Button variant='contained' size='large' disabled={newStructureName.value === ''} className='flex-1 ml-3 bg-[#F1742E]'
+                color='warning' onClick={() => {
+                    onAdd(newStructureName.value, parent)
+                    showPopup.value = false
+                }} >
+                Save
             </Button>
-        
+
+        </div>
+
+    </div></>)
+
+}
+
+const renderDeleteStructureForm = (
+    showPopup: Signal<boolean>, structure: IStructure,
+    onDelete: (structure: string) => {}) => {
+
+    return (<><div className='flex flex-col'>
+
+        <Typography variant='body1'>{`Are you sure you want to delete level ${structure?.name} ?`}</Typography>
+
+        <div className='flex justify-between mt-6'>
+
+            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'
+                onClick={() => { showPopup.value = false }}>
+                Discard
+            </Button>
+
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]'
+                color='warning' onClick={() => {
+                    onDelete(structure._id)
+                    showPopup.value = false
+                }} >
+                Delete
+            </Button>
+
         </div>
 
     </div></>)

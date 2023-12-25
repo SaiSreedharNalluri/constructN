@@ -1,13 +1,18 @@
-import React from 'react';
-import { FormHelperText, Grid, MenuItem, OutlinedInput, Select } from '@mui/material';
+import React, { ChangeEvent } from 'react';
+import { FormHelperText, Grid, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
+import { computed, useSignal } from '@preact/signals-react';
 import { useProjectContext } from '../../../../../state/projectState/context';
+import { IProjects } from '../../../../../models/IProjects';
 const ProjectTypeDetails = ({
-  handleChange,
-  errorMessage,
-  setErrorMessage,
+type,isTypeValid
 }:any) => {
-
-  const { state, projectContextAction } =useProjectContext();
+  const isValid = computed(() => (
+    (type.value.type !== undefined && type.value.type !== '') ))
+isTypeValid.value=isValid.value
+  const handleOnChange = (event: ChangeEvent<{ name?: string; value: unknown }> |  SelectChangeEvent<{ name?: string; value: unknown }>) => {
+    const {name, value} = event.target
+    type.value = {...type.value, [name as string]: value}
+  }
 
   return (
     <Grid container spacing={2} justifyContent="space-between" className='mt-[4px]'>
@@ -17,31 +22,26 @@ const ProjectTypeDetails = ({
          fullWidth
          size="small"
           className="outline-none"
-          value={state.newProjectDetails.projectID || ''}
-          onChange={(e)=>{
-            handleChange("projectID",e.target.value)
-            setErrorMessage({ ...errorMessage, projectID: '' }); 
-          }}
+          name='projectID'
+          value={type.value.projectID}
+          onChange={
+            handleOnChange}
         />
-        {errorMessage.projectId && typeof errorMessage.projectId === 'string' && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.projectId}</FormHelperText>
-        )}
       </Grid>
       <Grid item xs={3}>
         <div>Project Type*</div>
         <Select
         fullWidth
         size="small"
-        value={state.newProjectDetails.type || ''}
-        onChange={(e) => {
-          handleChange("type", e.target.value);
-        }}
+        name='type'
+        value={type.value.type || ""}
+        onChange={handleOnChange}
       >
-        <MenuItem value="Residential">Residential</MenuItem>
-        <MenuItem value="Building">Building</MenuItem>
+       <MenuItem value="Residential">Residential</MenuItem>
+          <MenuItem value="Building">Building</MenuItem>
       </Select>
-        {errorMessage.type && typeof errorMessage.type === 'string' && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.type}</FormHelperText>
+      {(type.value.type === undefined || type.value.type === "") && (
+          <FormHelperText className='text-[#FF853E]'>Project type is required</FormHelperText>
         )}
       </Grid>
       <Grid item xs={6}>
@@ -50,12 +50,10 @@ const ProjectTypeDetails = ({
           fullWidth
           size="small"
           className="outline-none"
-          value={state.newProjectDetails.description || ''}
-          onChange={(e)=>handleChange("intend",e.target.value)}
-        />
-        {errorMessage.leverageConstuctN && typeof errorMessage.leverageConstuctN === 'string' && (
-          <FormHelperText className='text-[#FF853E]'>{errorMessage.leverageConstuctN}</FormHelperText>
-        )}
+          value={type.value.metaDetails?.projectIntend}
+          onChange={handleOnChange}
+          name='projectIntend'
+        />        
       </Grid>
     </Grid>
   );
