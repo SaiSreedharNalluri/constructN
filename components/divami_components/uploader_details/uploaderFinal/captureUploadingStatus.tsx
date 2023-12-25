@@ -18,6 +18,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Delete from "../../../../public/divami_icons/delete.svg";
 import PopupComponent from "../../../popupComponent/PopupComponent";
 import { UploadStatus, UploaderModalMessage, UploaderModalPrimaryButton, UploaderModalSecondaryButton, UploaderModalTitle } from "../../../../models/IUploader";
+import { UploaderPopups } from "../../../../state/uploaderState/state";
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -51,19 +52,10 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   buttonName,
   button,
   onRowClick,
-  fileProgressList
 }) => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const { state: appState, appContextAction } = useAppContext();
-  const [isDelete,setIsDelete]=useState(false)
-  const [modalTitle,setModalTitle] =useState(UploaderModalTitle.UploadCompleteWithErrors)
-  const[modalMessage,setModalMessage] =useState<string>(UploaderModalMessage.UploadCompleteWithErrorsModalMessage)
-  const [primaryButtonLabel,setPrimaryButtonLabel] = useState(UploaderModalPrimaryButton.UploadCompleteWithErrorsPButton)
-  const [secondaryButtonlabel,setSecondaryButtonlabel] =useState(UploaderModalSecondaryButton.UploadCompleteWithErrorsSButton)
-  const [selectJobShow,setSelectJobShow] =useState(false)
-  const [selectedJob,setSelectedJob]=useState<IJobs>()
   /**
    * If isUploading true case, get data from uploaderState.pendingUploadJobs
    * If isUploading false case, get data from uploaderState.pendingProcessJobs
@@ -137,54 +129,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           return (<CircularProgress color="warning" size={"24px"} thickness={5}/>) 
     } 
   }
-  const updateJobStatusBasedOnAction = (deleteJob:boolean) => {
-    let ignoreImagesCheck = true;
-    uploaderAction.setIsLoading(true);
-    updateJobStatus(
-      uploaderState.selectedJob?.project as string,
-      uploaderState.selectedJob?._id as string,
-      deleteJob ? JobStatus.archived : JobStatus.uploaded,
-      ignoreImagesCheck
-    )
-      .then((response) => {
-        uploaderAction.setIsLoading(false);
-        if (response.data.success === true) {
-          let updatedJob = response.data.result
-          let captureJobs = uploaderState.pendingProcessJobs.concat(
-            uploaderState.pendingUploadJobs
-          );
-          captureJobs.forEach((job) => {
-            if (job._id === updatedJob._id) {
-              job.status = updatedJob.status;
-            }
-          });
-          uploaderAction.setCaptureJobs(captureJobs);
-          // appAction.removeCaptureUpload(updatedJob)
-          // uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
-        }
-      })
-      .catch((error) => {
-        uploaderAction.setIsLoading(false);
-      });
-  };
-  useEffect(()=>{
-    if(selectedJob?.status === JobStatus.uploadFailed)
-    {
-      setModalMessage('')
-      setSelectJobShow(true)
-      setModalTitle(UploaderModalTitle.UploadCompleteWithErrors)
-      setPrimaryButtonLabel(UploaderModalPrimaryButton.UploadCompleteWithErrorsPButton)
-      setSecondaryButtonlabel(UploaderModalSecondaryButton.UploadCompleteWithErrorsSButton)
-    }
-  },[selectedJob])
-  useEffect(()=>{
-    if(selectJobShow === true)
-    {
-      setModalMessage(`${fileProgressList.filter(obj => obj.status === 2).length} of ${fileProgressList.length} file(s) failed to upload`)
-      setIsShowPopUp(true)
-      setSelectJobShow(false)
-    }
-  },[fileProgressList])
   return (
     <React.Fragment>
       <div className="calc-h130 bg-[#FFECE2] rounded-3xl shadow-[0px 4px 4px 0px #00000040] overflow-y-auto"
@@ -263,12 +207,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     onClick={() => {
                       if (isUploading && onRowClick) {
                         onRowClick(job as IJobs, index);
-                        setSelectedJob(job)
-                        if(job.status===JobStatus.uploadFailed && selectJobShow === false)
-                        {
-                            setIsShowPopUp(true)
-                            setModalMessage(`${fileProgressList.filter(obj => obj.status === 2).length} of ${fileProgressList.length} file(s) failed to upload`)
-                        }
                       }
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
@@ -330,12 +268,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       {
                         job.status === JobStatus.uploadFailed &&(<Image src={Delete} alt={""} onClick={(e)=>{
                           e.stopPropagation()
-                          setIsDelete(true)
-                          setModalTitle(UploaderModalTitle.uploadDeleteJob)
-                          setModalMessage(UploaderModalMessage.uploadDeleteJob)
-                          setPrimaryButtonLabel(UploaderModalPrimaryButton.uploadDeleteJobPButton)
-                          setSecondaryButtonlabel(UploaderModalSecondaryButton.uploadDeleteJobSButton)
-                          setIsShowPopUp(true)
+                          uploaderAction.deleteJob(job)
                           }}/>)
                       }
                      </td>
@@ -365,43 +298,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
             </button>
           </div>
         </div>
-        <PopupComponent
-      open={isShowPopUp}
-      setShowPopUp={setIsShowPopUp}
-      modalTitle={modalTitle}
-      modalmessage={modalMessage}
-      primaryButtonLabel={primaryButtonLabel}
-      SecondaryButtonlabel={secondaryButtonlabel}
-      isShowWarningText={isDelete}
-      isCancelCallBack={true}
-      callBackvalue={() => {
-        if(isDelete)
-        {
-          setIsDelete(false)
-          updateJobStatusBasedOnAction(true)
-        }else{
-          updateJobStatusBasedOnAction(false)
-        }
-      }}
-      handleCancel={(value)=>{
-        if(isDelete)
-        {
-          setIsDelete(false)
-          setIsShowPopUp(false)
-        }
-        if(value === true && !isDelete)
-        {
-          setIsDelete(true)
-          setModalTitle(UploaderModalTitle.uploadDeleteJob)
-          setModalMessage(UploaderModalMessage.uploadDeleteJob)
-          setPrimaryButtonLabel(UploaderModalPrimaryButton.uploadDeleteJobPButton)
-          setSecondaryButtonlabel(UploaderModalSecondaryButton.uploadDeleteJobSButton)
-          setIsShowPopUp(true)
-        }else{
-          setIsShowPopUp(false)
-        }
-      }}
-    />
       </div>
     </React.Fragment>
   );

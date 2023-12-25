@@ -22,10 +22,8 @@ const UploaderFiles = () => {
    if (acceptedFiles) {
     uploaderAction.chageIsReading(true)
       const batchSize = 100;
-      if(acceptedFiles.length > 1500)
-      {
-        if(validFileCount.current > 0)
-        {
+      if(acceptedFiles.length > 1500) {
+        if(validFileCount.current > 0) {
           setMessage(`You have exceeded the maximum upload limit of 1500 files.You may upload 
           additional ${1500-validFileCount.current} files or reach out to
           support@constructn.ai for larger uploads.`)
@@ -35,7 +33,7 @@ const UploaderFiles = () => {
           setshowPopUp(true)
           return
 
-        }else{
+        } else {
           setMessage(`You have exceeded the maximum upload limit of 1500 files.`)
           setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
           setModalTitle(UploaderModalTitle.uploadFileLimit)
@@ -43,12 +41,8 @@ const UploaderFiles = () => {
           uploaderAction.chageIsReading(false)
           return
         }
-       
-      }
-      else if (acceptedFiles.length < 1500) {
-       
-        if((validFileCount.current + acceptedFiles.length) > 1500)
-        {
+      } else if (acceptedFiles.length < 1500) {
+        if((validFileCount.current + acceptedFiles.length) > 1500) {
           setMessage(`You have exceeded the maximum upload limit of 1500 files.You may upload 
                       additional ${1500-validFileCount.current} files or reach out to
                       support@constructn.ai for larger uploads.`)
@@ -117,7 +111,7 @@ const UploaderFiles = () => {
       setPrimaryButtonLabel(UploaderModalPrimaryButton.skipFilesAndContinue)
       setModalTitle(UploaderModalTitle.warning)
     }
-  }, [state.choosenFiles.invalidEXIFFiles.length, state.choosenFiles.duplicateFiles.length]);
+  }, [state.choosenFiles.invalidEXIFFiles, state.choosenFiles.duplicateFiles]);
 
   useEffect(() => {
     if (state.isAppendingCapture && state.selectedJob) {
