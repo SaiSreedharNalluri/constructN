@@ -13,19 +13,15 @@ import { effect, useSignal, useSignalEffect } from '@preact/signals-react'
 import router from "next/router";
 
 
-const ProjectOnboardingForm = ({ step, action, projectId,projectDetails }: IOnboardingProps) => {
+const ProjectOnboardingForm = ({ step, action, projectId,projectDetails}: IOnboardingProps) => {
   // const projectDetails = useSignal<Partial<IProjects>>({});
-  
+  const onboardingProjectCoverPhoto = useSignal<File | null>(null);
+  const onboardingProjectprojectLogo = useSignal<File | null>(null);
    const isNameValid=useSignal({});
    const isTypeValid=useSignal({});
    const isLatLngValid=useSignal({});
    const isAddressValid=useSignal({});
-   console.log(isLatLngValid.peek(),"lat parent");
-   console.log(isAddressValid.peek(),"address parent");
-   console.log(isTypeValid.peek(),"type parent");
-   console.log(isNameValid.peek(),"name parent");
   //  console.log(if( projectId.value) { projectDetails.peek()._id},"meknfenjkinkjnkjnijnkijnkijniunui");
-
    
   useSignalEffect(() => {
     switch(action!.value) {
@@ -35,17 +31,18 @@ const ProjectOnboardingForm = ({ step, action, projectId,projectDetails }: IOnbo
       case 'Next-0':
         //  Validate Form
         //  Create Project API
-        //  On Complete callback increment
+        //  On Complete callback increment        
         if(isLatLngValid.peek()===true&&isAddressValid.peek()===true&&isTypeValid.peek()===true&&isLatLngValid.peek()===true){          
           const formData = projectDetails
-          const formdata:any = new FormData();
+          const formdata:any = new FormData();          
           formdata.append('jreq', JSON.stringify(formData.peek())); 
+          formdata.append('logo', onboardingProjectprojectLogo?.peek()); 
+          formdata.append('coverPhoto',onboardingProjectCoverPhoto?.peek()); 
           if(projectDetails.peek()._id===undefined){            
             createProject(formdata)
             .then((res) => {
         projectDetails.value=res.result
         step.value = 1
-        if(projectId.value)
               projectId.value = projectDetails.peek()._id ?? ''
             })
             .catch((error) => {
@@ -85,6 +82,8 @@ isLatLngValid={isLatLngValid}
       <ProjectAddress
 addressDetails={projectDetails}
 isAddressValid={isAddressValid}
+projectCoverPhoto={onboardingProjectCoverPhoto}
+projectLogo={onboardingProjectprojectLogo}
       />
     </div>
   );

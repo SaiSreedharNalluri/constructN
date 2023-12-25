@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import { Grid, OutlinedInput, FormControlLabel, Radio, RadioGroup, FormHelperText } from '@mui/material';
 import { useProjectContext } from '../../../../../state/projectState/context';
 import { IProjects } from '../../../../../models/IProjects';
-import { computed, useSignal } from '@preact/signals-react';
+import { computed, effect, useSignal } from '@preact/signals-react';
 const ProjectLatLngDetails = ({latlngDetails,isLatLngValid}:any) => {
   const isValid = computed(() => (
     (latlngDetails.value.location?.coordinates?.[0] !== undefined || latlngDetails.value.location?.coordinates?.[0] !== ""))
@@ -38,6 +38,20 @@ isLatLngValid.value=isValid.value
       measurement: value,
     };
   };
+    
+  const setDefaultMeasurement = () => {
+    if (latlngDetails.value.measurement === undefined) {
+      latlngDetails.value = {
+        ...latlngDetails.value,
+        measurement: 'US', 
+      };
+    }
+  };
+
+  effect(() => {
+    setDefaultMeasurement(); 
+  });
+
   return (
     <Grid container spacing={2} justifyContent="space-between" alignItems="center" flex="coloum" className='mt-[4px]'>
       <Grid item xs={3}>
@@ -49,7 +63,7 @@ isLatLngValid.value=isValid.value
           value={latlngDetails.value.location?.coordinates?.[1] || ''}
           onChange={(e) => handleOnChange(e, 'latitude')}
         />
-        {(latlngDetails.value.location?.coordinates?.[1] === undefined || latlngDetails.value.location?.coordinates?.[1] === "") && (
+        {(latlngDetails.value.location?.coordinates?.[1] === undefined || Number.isNaN(latlngDetails.value.location?.coordinates?.[1])) && (
           <FormHelperText className='text-[#FF853E]'>Latitude is required</FormHelperText>
         )}
       </Grid>
@@ -62,7 +76,7 @@ isLatLngValid.value=isValid.value
           value={latlngDetails.value.location?.coordinates?.[0] || ''}
           onChange={(e) => handleOnChange(e, 'longitude')}
         />
-        {(latlngDetails.value.location?.coordinates?.[0] === undefined || latlngDetails.value.location?.coordinates?.[0] === "") && (
+        {(latlngDetails.value.location?.coordinates?.[0] === undefined || Number.isNaN(latlngDetails.value.location?.coordinates?.[0])) && (
           <FormHelperText className='text-[#FF853E]'>Longitude is required</FormHelperText>
         )}
       </Grid>
