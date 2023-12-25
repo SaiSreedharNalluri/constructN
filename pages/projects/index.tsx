@@ -336,6 +336,7 @@ const Index: React.FC<any> = () => {
               setShowWelcomeMessage(true);
             }
             const projectsData = response?.data?.result.map((each: any) => {
+              console.log(each)
               return {
                 ...each,
                 companyLogo: each.coverPhoto,
@@ -344,19 +345,19 @@ const Index: React.FC<any> = () => {
                 numberOfUsers: each.usersCount,
                 updatedAt: moment(each.lastUpdated).format("DD MMM YY"),
                 lastUpdated: new Date(each.lastUpdated),
-                capture360Count: each?.captures["360 Image"]
+                capture360Count: each?.captures && each?.captures["360 Image"]
                   ? `${each?.captures["360 Image"]}`
                   : "0",
-                captureVideoWalkCount: each?.captures["360 Video"]
+                captureVideoWalkCount: each?.captures && each?.captures["360 Video"]
                   ? `${each?.captures["360 Video"]}`
                   : "0",
-                capturePhoneCount: each?.captures["Phone Image"]
+                capturePhoneCount: each?.captures && each?.captures["Phone Image"]
                   ? `${each?.captures["Phone Image"]}`
                   : "0",
-                captureLidarCount: each?.captures["LiDAR Scan"]
+                captureLidarCount: each?.captures && each?.captures["LiDAR Scan"]
                   ? `${each?.captures["LiDAR Scan"]}`
                   : "0",
-                captureDroneCount: each?.captures["Drone Image"]
+                captureDroneCount: each?.captures && each?.captures["Drone Image"]
                   ? `${each?.captures["Drone Image"]}`
                   : "0",
               };
@@ -375,11 +376,13 @@ const Index: React.FC<any> = () => {
                 return dateB-dateA
               }
             })
+            console.log(sortedProjects)
             setProjects(sortedProjects);
           }
           setShowLoading(false);
         })
-        .catch((error) => {
+        .catch((error: any) => {
+          console.log(error)
           setShowWelcomeMessage(true);
         });
       getUserRoles().then((res: any) => {

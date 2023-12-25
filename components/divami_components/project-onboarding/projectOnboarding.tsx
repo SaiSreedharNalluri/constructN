@@ -1,5 +1,5 @@
 'use client'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import Header from '../header/Header'
 import ProjectOnboardingStepper from './onboarding-details/projectOnboardingStepper'
 import ProjectOnboardingFooter from './onboarding-details/projectOnboardingFooter'
@@ -35,7 +35,8 @@ const ProjectOnboarding = () => {
   const projectDetails: any = useSignal({type: 'Residential'})
   const router = useRouter()
 
-  useSignalEffect(() => {
+  useEffect(() => {
+    console.log(router.query.id)
     if (router.isReady && router.query.id) {
       getProjectDetails(router.query.id as string).then((res) => {
         console.log(res, "res");
@@ -43,7 +44,18 @@ const ProjectOnboarding = () => {
         projectDetails.value = res.data.result
       })
     }
-  })
+  }, [router.query])
+
+  // useSignalEffect(() => {
+  //   console.log(router.isReady, router.query.id)
+  //   if (router.isReady && router.query.id) {
+  //     getProjectDetails(router.query.id as string).then((res) => {
+  //       console.log(res, "res");
+
+  //       projectDetails.value = res.data.result
+  //     })
+  //   }
+  // })
 
   const mainContent = useComputed(() => {
 

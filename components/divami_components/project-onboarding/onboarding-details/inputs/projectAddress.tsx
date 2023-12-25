@@ -4,7 +4,7 @@ import ProjectImageUpload from './projectImageUpload';
 import { useProjectContext } from '../../../../../state/projectState/context';
 import { computed, useSignal } from '@preact/signals-react';
 import { IProjects } from '../../../../../models/IProjects';
-const ProjectAddress = ({addressDetails,isAddressValid}:any) => {
+const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverPhoto}:any) => {
 
   const isValid = computed(() => (
     (addressDetails.value.address?.city !== undefined && addressDetails.value.address?.city !== '') &&
@@ -52,7 +52,7 @@ const ProjectAddress = ({addressDetails,isAddressValid}:any) => {
             value={addressDetails.value.address?.country}
             onChange={(e) => handleAddressChange('country', e.target.value)}
             />
-          {(addressDetails.value.address?.country === undefined) && (
+          {(addressDetails.value.address?.country === undefined || addressDetails.value.address?.country === "") && (
           <FormHelperText className='text-[#FF853E]'>Country is required</FormHelperText>
         )}
         </Grid>
@@ -68,7 +68,7 @@ const ProjectAddress = ({addressDetails,isAddressValid}:any) => {
             onChange={(e) => handleAddressChange('state', e.target.value)}
             
             />
-          {(addressDetails.value.address?.state === undefined) && (
+          {(addressDetails.value.address?.state === undefined || addressDetails.value.address?.state === "") && (
           <FormHelperText className='text-[#FF853E]'>State is required</FormHelperText>
         )}
           </Grid>
@@ -84,8 +84,8 @@ const ProjectAddress = ({addressDetails,isAddressValid}:any) => {
             onChange={(e) => handleAddressChange('city', e.target.value)}
             
             />
-              {(addressDetails.value.address?.city === undefined) && (
-          <FormHelperText className='text-[#FF853E]'>State is required</FormHelperText>
+              {(addressDetails.value.address?.city === undefined || addressDetails.value.address?.city === "") && (
+          <FormHelperText className='text-[#FF853E]'>City is required</FormHelperText>
         )}
         </Grid>
         <Grid item xs={6}>
@@ -99,14 +99,14 @@ const ProjectAddress = ({addressDetails,isAddressValid}:any) => {
             value={addressDetails.value.address?.zipcode}
             onChange={(e) => handleAddressChange('zipcode', e.target.value)}
             />
-               {(addressDetails.value.address?.zipcode === undefined) && (
+               {(addressDetails.value.address?.zipcode === undefined || addressDetails.value.address?.zipcode === "") && (
           <FormHelperText className='text-[#FF853E]'>Zipcode is required</FormHelperText>
         )}
         </Grid>
       </Grid>
     </Grid>
     <Grid item xs={4} style={{ display: 'flex', alignItems: 'stretch' }}>
- <ProjectImageUpload addressDetails={addressDetails}></ProjectImageUpload>
+ <ProjectImageUpload addressDetails={addressDetails} projectLogo={projectLogo} projectCoverPhoto={projectCoverPhoto} ></ProjectImageUpload>
     </Grid>
 
   </Grid>

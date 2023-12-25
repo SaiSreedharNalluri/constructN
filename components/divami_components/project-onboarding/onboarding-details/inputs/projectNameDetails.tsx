@@ -3,12 +3,15 @@ import { FormHelperText, Grid, OutlinedInput } from '@mui/material';
 import { useProjectContext } from '../../../../../state/projectState/context';
 import { IProjects } from '../../../../../models/IProjects';
 import { computed, useSignal } from '@preact/signals-react';
+import { useSignals } from '@preact/signals-react/runtime';
 
 
 const ProjectNameDetails = ({
 details,isNameValid
 }:any) => {
   // const { state, projectContextAction } =useProjectContext();
+  useSignals()
+  console.log(details)
   const isValid = computed(() => (
     (details.value.name !== undefined && details.value.name !== '') ))
     isNameValid.value=isValid.value 
