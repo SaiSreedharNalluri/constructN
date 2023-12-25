@@ -33,7 +33,7 @@ const ProjectOnboardingForm = ({ step, action, projectId,projectDetails}: IOnboa
         //  Validate Form
         //  Create Project API
         //  On Complete callback increment        
-        if(isLatLngValid.peek()===true&&isAddressValid.peek()===true&&isTypeValid.peek()===true&&isLatLngValid.peek()===true){          
+        if(isLatLngValid.peek()===true&&isAddressValid.peek()===true&&isTypeValid.peek()===true&&isNameValid.peek()===true){          
           const formData = projectDetails
           const formdata:any = new FormData();          
           formdata.append('jreq', JSON.stringify(formData.peek())); 
