@@ -4,7 +4,7 @@ import { useProjectContext } from '../../../../state/projectState/context';
 import { IOnboardingProps } from '../projectOnboarding';
 import { useSignalEffect } from '@preact/signals-react';
 
-const ProjectOnboardingUsers = ({ step, action,projectId }: IOnboardingProps) => {
+const ProjectOnboardingUsers = ({ step, action,projectId,usersCount }: IOnboardingProps) => {
   
   useSignalEffect(() => {
     console.log('Action inside Users', 'Step:', step.peek(), 'Action:', action?.value)
@@ -23,7 +23,7 @@ const ProjectOnboardingUsers = ({ step, action,projectId }: IOnboardingProps) =>
   })
 
   return (
-    <div> <ProjectUsersList projectId={projectId.value} onBoardScreen="onBoarding"></ProjectUsersList></div>
+    <div> <ProjectUsersList projectId={projectId.value} onBoardScreen="onBoarding" usersCount={usersCount}></ProjectUsersList></div>
   )
 }
 

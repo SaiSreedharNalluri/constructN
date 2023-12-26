@@ -1,6 +1,6 @@
 import React from 'react'
 import { IOnboardingProps } from '../projectOnboarding'
-import { effect } from '@preact/signals-react'
+import { useSignalEffect } from '@preact/signals-react'
 
 
 const contentStyle = {
@@ -8,11 +8,9 @@ const contentStyle = {
   textAlign: 'left', // Align content text as needed
 };
 
-const ProjectOnboardingReview = ({ step, action ,projectId, projectDetails}: IOnboardingProps) => {
-console.log(projectDetails.value);
+const ProjectOnboardingReview = ({ step, action ,projectId, projectDetails,usersCount}: IOnboardingProps) => {
 
-  effect(() => {
-    console.log('Action inside Review', 'Step:', step.peek(), 'Action:', action?.value)
+  useSignalEffect(() => {
     switch(action!.value) {
       case 'Back-4':
         step.value = 3
@@ -58,7 +56,7 @@ console.log(projectDetails.value);
          {generateGridRow("No, of maps Uploaded", [])}
          {generateGridRow("Levels without any maps", [])}
          {generateGridRow("BIM Uploaded", [])}
-         {generateGridRow("Number of Users", [])}
+         {generateGridRow("Number of Users", [usersCount?.value?usersCount?.value:0])}
       </div>
     </div>
   </div>
