@@ -77,7 +77,7 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
 
   const renderUploadedOn = useComputed(() => existingBIM.value !== undefined ?
     <Typography className='text-orange-600 m-8' variant="body1">
-     Uploaded on: {moment(hierarchy!.value[0].designs![0].createdAt).format('dd MMM, yyyy')}
+     Uploaded on: {moment(hierarchy!.value[0].designs![0].createdAt).format('LL')}
     </Typography> : <></>)
 
   const renderUploadButton = useComputed(() => uploadComplete.value == false ?
@@ -132,7 +132,7 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
     const uploader = new Uploader({ file: fileToUpload.value, projectId, structureId: hierarchy!.value[0]._id, type: 'BIM' })
 
     uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
-      console.log(`${percentage}%`)
+      // console.log(`${percentage}%`)
       uploadProgress.value = { sent, total, percentage }
     })
       .onError((error: any) => {

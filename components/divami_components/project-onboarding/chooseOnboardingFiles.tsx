@@ -13,7 +13,7 @@ interface IProps {
   UploadingStatus: ReactNode;
   fileToUpload: Signal<File | undefined>;
   uploadStatus: Signal<boolean>;
-  existingBIM: Signal<string | undefined>;
+  existingBIM?: Signal<string | undefined>;
   isDisabled: boolean;
   acceptFiles: Accept;
 }
@@ -48,10 +48,10 @@ const ChooseOnboardingFiles: React.FC<IProps> = ({
     startIcon={<DeleteIcon />}
   /> : <></>)
 
-  const renderFileChooser = useComputed(() => fileToUpload.value !== undefined || existingBIM.value !== undefined ? (
+  const renderFileChooser = useComputed(() => fileToUpload.value !== undefined || existingBIM && existingBIM.value !== undefined ? (
     <div className="flex">
       <p className="m-0 text-gray-700 font-medium text-xl">
-        {existingBIM.value !== undefined ? existingBIM.value : fileToUpload.value!.name }
+        {existingBIM && existingBIM.value !== undefined ? existingBIM.value : fileToUpload.value!.name }
       </p>
       {renderDeleteIcon}
     </div>

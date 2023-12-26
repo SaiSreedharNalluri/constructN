@@ -28,6 +28,11 @@ import ChooseOnboardingFiles from '../chooseOnboardingFiles'
 
 import { CustomToast } from '../../custom-toaster/CustomToast'
 
+type UploadProgress = {
+    sent: number
+    total: number
+    percentage: number
+}
 
 const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdded }: any) => {
 
@@ -47,7 +52,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
 
     const uploadComplete = useSignal(false)
 
-    const uploadProgress = useSignal(-1)
+    const uploadProgress = useSignal<UploadProgress>({sent: 0, total: 0, percentage: -1})
 
     const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.current!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete ))
 
@@ -205,7 +210,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
 const renderAddSheetForm = (
     showPopup: Signal<boolean>, projectId: string, structure: IStructure, onSheetAdded: Function,
-    fileToUpload: Signal<File | undefined>, uploadProgress: Signal<number>, uploadStatus: Signal<boolean>) => {
+    fileToUpload: Signal<File | undefined>, uploadProgress: Signal<UploadProgress>, uploadStatus: Signal<boolean>) => {
 
     const dragDropText = "(or drag and drop file here)";
     const supportFileText = "Upload .RVT or .NWD file";
@@ -230,8 +235,8 @@ const renderAddSheetForm = (
         const uploader = new Uploader({ file: fileToUpload.value, projectId, structureId: structure._id, type: 'Plan Drawings' })
 
         uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
-            console.log(`${percentage}%`)
-            uploadProgress.value = percentage
+            // console.log(`${percentage}%`)
+            uploadProgress.value = {sent, total, percentage}
         })
             .onError((error: any) => {
                 console.error(error)
@@ -241,7 +246,7 @@ const renderAddSheetForm = (
             .onComplete(() => {
                 uploadStatus.value = false
                 showPopup.value = false
-                uploadProgress.value = -1
+                uploadProgress.value = {sent: 0, total: 0, percentage: -1}
                 CustomToast(`Added sheet to ${structure.name} successfully.`, 'success')
                 onSheetAdded()
             })
@@ -260,13 +265,20 @@ const renderAddSheetForm = (
             onDelete={onDelete}
             dragDropText={dragDropText}
             supportFileText={supportFileText}
-            uploadedFileName={fileToUpload.value ? fileToUpload.value.name : ''}
+            fileToUpload={fileToUpload}
+            uploadStatus={uploadStatus}
             UploadingStatus={<UploadingStatus />}
             isDisabled={false}
             acceptFiles={{ "application/octet-stream": [".nwd", ".rvt"] }} />
 
-        {uploadProgress.value !== -1 && uploadStatus.value == true &&
-            <LinearProgress className='m-4' color='warning' variant="determinate" value={uploadProgress.value} />
+        {uploadProgress.value.percentage !== -1 && uploadStatus.value == true &&
+            <div className='mt-8 w-[400px] py-4 px-8'>
+            <div className='flex justify-between'>
+              <div className='text-[12px]'>{`${(uploadProgress.value.sent / (1024 * 1024)).toFixed(1)} MB / ${(uploadProgress.value.total / (1024 * 1024)).toFixed(1)} MB`}</div>
+              <div className='text-[12px]'>{`${(uploadProgress.value.percentage).toFixed(1)}%`}</div>
+            </div>
+            <LinearProgress className='mt-4' color='warning' variant="determinate" value={uploadProgress.value.percentage} />
+          </div>
         }
 
         <div className='flex justify-between mt-6'>

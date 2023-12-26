@@ -8,7 +8,7 @@ import { API } from '../../../../config/config'
 
 import authHeader from '../../../../services/auth-header'
 
-import { useSignalEffect } from '@preact/signals-react'
+import { useComputed, useSignalEffect } from '@preact/signals-react'
 
 import { IOnboardingProps } from '../projectOnboarding'
 
@@ -36,7 +36,7 @@ const deleteStructure = (projectId: string, structureId: string) => {
 
 }
 
-const ProjectOnboardingSheets = ({ step, action, projectId, structureId, hierarchy }: IOnboardingProps) => {
+const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboardingProps) => {
 
   useSignalEffect(() => {
     console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -46,7 +46,6 @@ const ProjectOnboardingSheets = ({ step, action, projectId, structureId, hierarc
         action!.value = ''
         break
       case 'Next-1':
-        if (structureId) structureId.value = 'STR123456'
         step.value = 2
         action!.value = ''
         break
