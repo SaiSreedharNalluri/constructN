@@ -42,8 +42,9 @@ const ProjectOnboarding = () => {
   useEffect(() => {
     if (router.isReady && router.query.id) {
       getProjectDetails(router.query.id as string).then((res) => {
-
-        projectDetails.value = res.data.result
+      const result=res.data.result;
+      delete result.users
+      projectDetails.value = result        
       })
     }
   }, [router.query])
