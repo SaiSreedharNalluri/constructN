@@ -34,8 +34,8 @@ const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverP
         className="outline-none"
         multiline
         rows={4.3}
-        
-        
+        value={addressDetails.value.address?.line1}
+        onChange={(e) => handleAddressChange('line1', e.target.value)}     
         />
 
     </Grid>

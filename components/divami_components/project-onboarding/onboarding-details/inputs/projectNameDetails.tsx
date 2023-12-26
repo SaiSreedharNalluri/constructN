@@ -41,10 +41,10 @@ details,isNameValid
         <div>Project NickName</div>
         <OutlinedInput
           fullWidth
-          name='projectNickName'
+          name='nickName'
           size="small"
           className="outline-none"
-          value={details.value.projectNickName}
+          value={details.value.nickName}
           onChange={handleOnChange}
         />
 

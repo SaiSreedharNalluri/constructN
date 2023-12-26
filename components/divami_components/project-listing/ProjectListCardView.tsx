@@ -186,7 +186,7 @@ console.log(id);
           </div>
           </Tooltip> */}
           <ProjectLogo
-            src={each.companyLogo}
+            src={each.companyLogo?each.companyLogo:"https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp"}
             alt={""}
             width={242}
             height={45}
