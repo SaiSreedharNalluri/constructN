@@ -74,7 +74,7 @@ import { TooltipText } from "../side-panel/SidePanelStyles";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
-export const ProjectUsersList = ( {projectId,onBoardScreen}: any) => {
+export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => {
   const customLogger = new CustomLoggerClass();
   const [tableData, setTableData] = useState<any>([]);
   const router = useRouter();
@@ -316,8 +316,9 @@ export const ProjectUsersList = ( {projectId,onBoardScreen}: any) => {
 
   const getUsersList = () => {
     getProjectUsers(router.query.projectId as string || projectId)
-      .then((response: any) => {      
+      .then((response: any) => {              
         if (response.success) {
+          usersCount.value=response.result.length
           setTableData(
             response.result.map((each: any) => {
               return {

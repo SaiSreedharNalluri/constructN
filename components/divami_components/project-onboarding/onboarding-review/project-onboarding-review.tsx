@@ -11,7 +11,7 @@ const contentStyle = {
   textAlign: 'left', // Align content text as needed
 };
 
-const ProjectOnboardingReview = ({ step, action, projectId, projectDetails }: IOnboardingProps) => {
+const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount }: IOnboardingProps) => {
   console.log(projectDetails.value);
 
   const bimCount = useSignal(0)
@@ -31,7 +31,7 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails }: IO
   {generateGridRow("No, of maps Uploaded", [drawingsCount.value])}
   {generateGridRow("Levels without any maps", [totalCount.value - drawingsCount.value])}
   {generateGridRow("BIM Uploaded", [bimCount.value == 0 ? 'NO' : 'YES'])}
-  {generateGridRow("Number of Users", [])}
+  {generateGridRow("Number of Users", [usersCount?.value ?? 0])}
 </div></>)
 
   getStructureList(projectId.value).then(res => {
@@ -87,7 +87,6 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails }: IO
     );
   }
   return (
-
     <><div className="flex justify-center items-center ">
       <div>
         <div className="col-span-4">
@@ -95,7 +94,6 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails }: IO
         </div>
       </div>
     </div></>
-
   )
 }
 

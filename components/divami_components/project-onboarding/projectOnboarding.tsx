@@ -25,11 +25,13 @@ export type IOnboardingProps = {
   projectId: Signal<string>
   hierarchy?: Signal<IStructure[]>
   projectDetails: Signal<IProjects>
+  usersCount?:Signal<number>
 }
 
 const ProjectOnboarding = () => {
 
   const step = useSignal(0)
+  const usersCount = useSignal(0)
   const action = useSignal('')
   const projectId = useSignal('')
   const structureId = useSignal('')
@@ -91,14 +93,18 @@ const ProjectOnboarding = () => {
           step={step}
           projectId={projectId}
           action={action}
-          projectDetails={projectDetails} /></>
+          projectDetails={projectDetails}
+          usersCount={usersCount}
+          /></>
   
       case 4:
         return <><ProjectOnboardingReview
           step={step}
           projectId={projectId}
           action={action}
-          projectDetails={projectDetails} /></>
+          projectDetails={projectDetails}
+          usersCount={usersCount}
+          /></>
   
       default:
         return <></>;
