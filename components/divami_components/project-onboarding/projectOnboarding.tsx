@@ -17,12 +17,13 @@ import { IProjects } from '../../../models/IProjects'
 import { getProjectDetails, updateProjectInfo } from '../../../services/project'
 import { useRouter } from 'next/router'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import { IStructure } from '../../../models/IStructure'
 
 export type IOnboardingProps = {
   step: Signal<number>
   action?: Signal<string>
   projectId: Signal<string>
-  structureId?: Signal<string>
+  hierarchy?: Signal<IStructure[]>
   projectDetails: Signal<IProjects>
 }
 
@@ -32,6 +33,7 @@ const ProjectOnboarding = () => {
   const action = useSignal('')
   const projectId = useSignal('')
   const structureId = useSignal('')
+  const hierarchy = useSignal([])
   const projectDetails: any = useSignal({type: 'Residential'})
   const router = useRouter()
 
@@ -72,15 +74,15 @@ const ProjectOnboarding = () => {
         return <><ProjectOnboardingSheets
           step={step}
           projectId={projectId}
-          structureId={structureId}
           action={action}
+          hierarchy={hierarchy}
           projectDetails={projectDetails} /></>
   
       case 2:
         return <><ProjectOnboardingBIM
           step={step}
           projectId={projectId}
-          structureId={structureId}
+          hierarchy={hierarchy}
           action={action}
           projectDetails={projectDetails} /></>
   

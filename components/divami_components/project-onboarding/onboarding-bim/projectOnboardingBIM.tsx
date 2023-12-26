@@ -5,40 +5,54 @@ import PopupComponent from "../../../popupComponent/PopupComponent";
 import { useProjectContext } from "../../../../state/projectState/context";
 import { IOnboardingProps } from "../projectOnboarding";
 import { effect, useSignal } from "@preact/signals-react";
-import { useSignalEffect, useSignals } from "@preact/signals-react/runtime";
+import { useComputed, useSignalEffect, useSignals } from "@preact/signals-react/runtime";
 import { Uploader } from "../../web_worker/uploadFileWorker";
 import { Button, LinearProgress, Typography } from "@mui/material";
+import { getStructureHierarchy } from "../../../../services/structure";
+import moment from "moment";
 
-const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboardingProps) => {
+const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardingProps) => {
 
-  useSignals()
+  type UploadProgress = {
+    sent: number
+    total: number
+    percentage: number
+  }
+
+  // useSignals()
   const fileToUpload = useSignal<File | undefined>(undefined)
-  const uploadComplete = useSignal(false)
+  const existingBIM = useSignal(
+    hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 ?
+      hierarchy!.value[0].designs![0].name : undefined)
+  const uploadComplete = useSignal(hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0)
   const isUploading = useSignal(false)
-  const uploadProgress = useSignal<number>(-1)
+  const uploadProgress = useSignal<UploadProgress>({ sent: 0, total: 0, percentage: -1 })
   const showPopUp = useSignal(false)
 
   const dragDropText = "(or drag and drop file here)";
   const supportFileText = "Upload .RVT or .NWD file";
 
-  console.log('rendering BIM')
+  console.log(hierarchy?.peek()[0]._id, existingBIM.value)
 
   useSignalEffect(() => {
-    console.log('Action inside BIM', 'Step:', step.peek(), 'Action:', action?.peek(), 'Project ID:', projectId.peek(), 'Structure ID:', structureId?.peek())
-    switch(action!.value) {
+    console.log('Action inside BIM', 'Step:', step.peek(), 'Action:', action?.peek(), 'Project ID:', projectId.peek(), 'Structure ID:', hierarchy?.peek()[0]._id)
+    switch (action!.value) {
       case 'Back-2':
         step.value = 1
         action!.value = ''
         break
       case 'Next-2':
         console.log(fileToUpload.peek(), showPopUp.peek())
-        if (fileToUpload.peek() === undefined) {
+        if (existingBIM.peek() !== undefined) { 
+          step.value = 3
+          action!.value = ''
+        } else if (fileToUpload.peek() === undefined) {
           showPopUp.value = true
           action!.value = ''
-        } else if(uploadComplete.peek() === false) {
+        } else if (uploadComplete.peek() === false) {
           showPopUp.value = true
           action!.value = ''
-        } else if(uploadComplete.peek() === true) {
+        } else if (uploadComplete.peek() === true) {
           step.value = 3
           action!.value = ''
         }
@@ -47,6 +61,44 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
         break
     }
   })
+
+  const renderProgress = useComputed(() => uploadProgress.value.percentage !== -1 && isUploading.value == true ?
+    <div className='mt-8 w-[400px] py-4 px-8'>
+      <div className='flex justify-between'>
+        <div className='text-[12px] text-[600]'>{`${(uploadProgress.value.sent / (1024 * 1024)).toFixed(1)} MB / ${(uploadProgress.value.total / (1024 * 1024)).toFixed(1)} MB`}</div>
+        <div className='text-[12px] text-[700]'>{`${(uploadProgress.value.percentage).toFixed(1)}%`}</div>
+      </div>
+      <LinearProgress className='mt-4' color='warning' variant="determinate" value={uploadProgress.value.percentage} />
+    </div>
+    : <></>)
+
+  const renderSuccessMessage = useComputed(() => uploadComplete.value == true && existingBIM.value === undefined ?
+    <Typography className='text-emerald-500 m-8' variant="body1">Uploaded BIM successfully</Typography> : <></>)
+
+  const renderUploadedOn = useComputed(() => existingBIM.value !== undefined ?
+    <Typography className='text-orange-600 m-8' variant="body1">
+     Uploaded on: {moment(hierarchy!.value[0].designs![0].createdAt).format('dd MMM, yyyy')}
+    </Typography> : <></>)
+
+  const renderUploadButton = useComputed(() => uploadComplete.value == false ?
+    <Button variant='contained' disabled={fileToUpload.value === undefined || isUploading.value === true} size='small' className='flex-1 mt-8 bg-[#F1742E]'
+      color='warning' onClick={() => proceedUpload()} >
+      Upload
+    </Button> : <></>)
+
+  const renderPopup = useComputed(() => showPopUp.value === true ? <PopupComponent
+    open={showPopUp.value}
+    setShowPopUp={(state: boolean) => { showPopUp.value = state }}
+    modalTitle={"Warning"}
+    modalmessage={"Are you sure you do not want to proceed without BIM?"}
+    primaryButtonLabel={"No BIM"}
+    SecondaryButtonlabel={"Cancel"}
+    callBackvalue={() => {
+      showPopUp.value = false
+      step.value = 3
+      action!.value = ''
+    }}
+  /> : <></>)
 
   const onDrop = (acceptedFiles: File[]) => {
     console.log(acceptedFiles)
@@ -77,11 +129,11 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
     //   console.log(structureId, type, percentage)
     //   // worker.terminate();
     // };
-    const uploader = new Uploader({file: fileToUpload.value, projectId, structureId, type: 'BIM'})
+    const uploader = new Uploader({ file: fileToUpload.value, projectId, structureId: hierarchy!.value[0]._id, type: 'BIM' })
 
     uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
       console.log(`${percentage}%`)
-      uploadProgress.value = percentage
+      uploadProgress.value = { sent, total, percentage }
     })
       .onError((error: any) => {
         isUploading.value = false
@@ -89,7 +141,7 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
       })
       .onComplete(() => {
         isUploading.value = false
-        uploadProgress.value = -1
+        uploadProgress.value = { sent: 0, total: 0, percentage: -1 }
         uploadComplete.value = true
       })
     isUploading.value = true
@@ -105,53 +157,36 @@ const ProjectOnboardingBIM = ({ step, action, projectId, structureId }: IOnboard
           onDelete={onDelete}
           dragDropText={dragDropText}
           supportFileText={supportFileText}
-          uploadedFileName={fileToUpload.value ? fileToUpload.value.name : ''}
+          fileToUpload={fileToUpload}
+          uploadStatus={uploadComplete}
+          existingBIM={existingBIM}
           UploadingStatus={<UploadingStatus />}
           isDisabled={uploadComplete.value}
           acceptFiles={{ "application/octet-stream": [".nwd", ".rvt"] }}
         ></ChooseOnboardingFiles>
       </div>
 
-      { uploadProgress.value !== -1 && isUploading.value == true &&
-        <LinearProgress className='mt-8 w-[400px]' color='warning' variant="determinate" value={uploadProgress.value} />
-      }
+      {renderProgress}
 
-      {uploadComplete.value == false &&
-        <Button variant='contained' disabled={fileToUpload.value === undefined || isUploading.value === true} size='small' className='flex-1 mt-8 bg-[#F1742E]'
-          color='warning' onClick={() => proceedUpload()} >
-          Upload
-        </Button>
-      }
+      {renderUploadedOn}
 
-      {uploadComplete.value == true &&
-        <Typography className='text-emerald-500 m-8' variant="body1">Uploaded BIM successfully</Typography>
-      }
+      {renderUploadButton}
 
-      {uploadComplete.value == false && (
-        <div style={{ textAlign: "left", marginTop: "20px" }}>
-          <a
-            href={`#`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "1.2em", color: "blue" }}
-          >
-            Instructions/Tips for Upload Floor Plans
-          </a>
-        </div>
-      )}
-      <PopupComponent
-          open={showPopUp.value}
-          setShowPopUp={(state: boolean) => {showPopUp.value = state}}
-          modalTitle={"Warning"}
-          modalmessage={"Are you sure you do not want to proceed without BIM?"}
-          primaryButtonLabel={"No BIM"}
-          SecondaryButtonlabel={"Cancel"}
-          callBackvalue={() => {
-            showPopUp.value = false
-            step.value = 3
-            action!.value = ''
-          }}
-        />
+      {renderSuccessMessage}
+
+      <div style={{ textAlign: "left", marginTop: "20px" }}>
+        <a
+          href={`#`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: "1.2em", color: "blue" }}
+        >
+          Instructions/Tips for Upload Floor Plans
+        </a>
+      </div>
+
+      {renderPopup}
+      
     </div>
   );
 };

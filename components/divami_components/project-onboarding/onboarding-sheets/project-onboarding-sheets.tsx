@@ -13,7 +13,6 @@ import { useSignalEffect } from '@preact/signals-react'
 import { IOnboardingProps } from '../projectOnboarding'
 
 import { CustomToast } from '../../custom-toaster/CustomToast'
-import { Uploader } from '../../web_worker/uploadFileWorker'
 
 const headers = { headers: authHeader.authHeader() }
 
@@ -37,7 +36,7 @@ const deleteStructure = (projectId: string, structureId: string) => {
 
 }
 
-const ProjectOnboardingSheets = ({ step, action, projectId, structureId }: IOnboardingProps) => {
+const ProjectOnboardingSheets = ({ step, action, projectId, structureId, hierarchy }: IOnboardingProps) => {
 
   useSignalEffect(() => {
     console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -56,13 +55,15 @@ const ProjectOnboardingSheets = ({ step, action, projectId, structureId }: IOnbo
     }
   })
 
-  const [hierarchy, setHierarchy] = useState<any>()
+  const [mHierarchy, setHierarchy] = useState<any>()
 
   useEffect(() => {
 
     fetchStructureHierarchy(projectId.value).then(res => {
 
       if (res.data.result) {
+
+        if(hierarchy !== undefined) hierarchy.value = res.data.result
 
         setHierarchy(res.data.result)
 
@@ -131,7 +132,7 @@ const ProjectOnboardingSheets = ({ step, action, projectId, structureId }: IOnbo
 
       </div>
 
-      {hierarchy && <StructureHierarchy projectId={projectId.value} hierarchy={hierarchy} 
+      {mHierarchy && <StructureHierarchy projectId={projectId.value} hierarchy={mHierarchy} 
         onAdd={_onAdd} onDelete={_onDelete} onSheetAdded={_reload} />}
 
     </div>
