@@ -10,7 +10,7 @@ const ProjectNameDetails = ({
 details,isNameValid
 }:any) => {
   // const { state, projectContextAction } =useProjectContext();
-  useSignals()
+  
   console.log(details)
   const isValid = computed(() => (
     (details.value.name !== undefined && details.value.name !== '') ))

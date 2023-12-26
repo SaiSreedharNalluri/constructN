@@ -8,7 +8,11 @@ import { useSignal } from '@preact/signals-react';
 import { IProjects } from '../../../../../models/IProjects';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import { useSignals } from '@preact/signals-react/runtime';
 const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
+
+  useSignals()
+
   const coverPhotoRef = useRef<HTMLInputElement>(null); 
   
   const  handleCoverPhotoClick = () => {
@@ -49,7 +53,7 @@ const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
        alt='uploader icon'
        width={50}
        height={50}
-       className='w-full h-[120px]'
+       className='w-full object-contain h-[120px]'
      />
      <div >
      <CloseIcon  onClick={handleRemoveCoverPhoto} className='absolute top-0 right-0 m-0 bg-[#FF853E]  rounded-full p-[6px] h-[28px] w-[28px] text-white'/>
@@ -100,7 +104,7 @@ const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
        alt='uploader icon'
        width={50}
        height={50}
-       className='w-full h-[120px]'
+       className='w-full object-contain h-[120px]'
      />
      <div >
      <CloseIcon  onClick={handleRemoveLogo} className='absolute top-0 right-0 m-0 bg-[#FF853E]  rounded-full p-[6px] h-[28px] w-[28px] text-white'/>

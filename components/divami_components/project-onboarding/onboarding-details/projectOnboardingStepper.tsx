@@ -3,6 +3,7 @@ import React from 'react'
 import { withStyles } from "@mui/styles";
 import { useProjectContext } from '../../../../state/projectState/context';
 import { IOnboardingProps } from '../projectOnboarding';
+import { useSignals } from '@preact/signals-react/runtime';
 
 const CustomStepIcon = ({ active, completed, icon }: any) => {
   const iconStyle = {
@@ -54,6 +55,8 @@ const ColoredStepConnector = withStyles({
 
 const ProjectOnboardingStepper = ({ step }: IOnboardingProps) => {
 
+  useSignals()
+
   const STEPS = [
     "Project Details",
     "Project Hierachy",
@@ -73,7 +76,7 @@ const ProjectOnboardingStepper = ({ step }: IOnboardingProps) => {
           <Step key={label} >
             <StepLabel StepIconComponent={CustomStepIcon}>
               <Typography style={{ fontFamily: "Open Sans", fontSize: "13px", lineHeight: "20px", fontWeight: "400" }}
-                className={`${step === index ? "text-[#000000]" : step > index ? "text-[#000000]" : "text-[#D9D9D9]"
+                className={`${step.value === index ? "text-[#000000]" : step.value > index ? "text-[#000000]" : "text-[#D9D9D9]"
                   }`}>{label}
               </Typography>
             </StepLabel>

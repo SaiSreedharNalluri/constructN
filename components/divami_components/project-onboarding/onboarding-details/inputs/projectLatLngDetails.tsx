@@ -60,7 +60,9 @@ console.log("kmromrfiooirnmrfio",latlngDetails.value.location?.coordinates?.[1])
         <OutlinedInput
           fullWidth
           size="small"
+          type='number'
           className="outline-none"
+          inputProps={{step: 0.1}}
           value={latlngDetails.value.location?.coordinates?.[1] || ''}
           onChange={(e: any) => handleOnChange(e, 'latitude')}
         />
@@ -73,7 +75,9 @@ console.log("kmromrfiooirnmrfio",latlngDetails.value.location?.coordinates?.[1])
         <OutlinedInput
           fullWidth
           size="small"
+          type='number'
           className="outline-none"
+          inputProps={{step: 0.1}}
           value={latlngDetails.value.location?.coordinates?.[0] || ''}
           onChange={(e: any) => handleOnChange(e, 'longitude')}
         />
