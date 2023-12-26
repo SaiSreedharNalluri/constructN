@@ -91,8 +91,16 @@ const StructPage: React.FC = () => {
               console.log('IGendata API Response',response.result);
               //setInintData(response.result);
               window.dispatchEvent(new CustomEvent('notifyViewer',{detail:{action:{type:'setStructure',data:response.result}}}));
+              setSnapshotList(response.result.snapshotList.slice(0,(pageSize)).sort(
+                (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
+              ));
+              setSnapshotCompareList(response.result.snapshotList.slice(0,(pageSize)).sort(
+                (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
+              ));
+              setSnapshotListCal(response.result.snapshotList);
               setBaseSnapshot(response.result.currentSnapshotBase);
               setCompareSnapshot(response.result.currentSnapshotCompare);
+              setTotalSnaphotsCount(response.result.snapshotList.length);
             }
           })
           .catch((error) => {
@@ -113,10 +121,10 @@ const StructPage: React.FC = () => {
                 setInintData(response.result);
                 setBaseSnapshot(response.result.currentSnapshotBase);
                 setCompareSnapshot(response.result.currentSnapshotCompare);
-                setSnapshotList(response.result.snapshotList.slice(0,(pageSize-1)).sort(
+                setSnapshotList(response.result.snapshotList.slice(0,(pageSize)).sort(
                   (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
                 ));
-                setSnapshotCompareList(response.result.snapshotList.slice(0,(pageSize-1)).sort(
+                setSnapshotCompareList(response.result.snapshotList.slice(0,(pageSize)).sort(
                   (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
                 ));
                 setSnapshotListCal(response.result.snapshotList);
