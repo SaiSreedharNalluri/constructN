@@ -40,26 +40,13 @@ const ProjectOnboarding = () => {
   const router = useRouter()
 
   useEffect(() => {
-    console.log(router.query.id)
     if (router.isReady && router.query.id) {
       getProjectDetails(router.query.id as string).then((res) => {
-        console.log(res, "res");
 
         projectDetails.value = res.data.result
       })
     }
   }, [router.query])
-
-  // useSignalEffect(() => {
-  //   console.log(router.isReady, router.query.id)
-  //   if (router.isReady && router.query.id) {
-  //     getProjectDetails(router.query.id as string).then((res) => {
-  //       console.log(res, "res");
-
-  //       projectDetails.value = res.data.result
-  //     })
-  //   }
-  // })
 
   const mainContent = useComputed(() => {
 

@@ -5,6 +5,8 @@ import { IOnboardingProps } from '../projectOnboarding';
 import { useSignalEffect } from '@preact/signals-react';
 
 const ProjectOnboardingUsers = ({ step, action,projectId,usersCount }: IOnboardingProps) => {
+
+  console.log(usersCount?.value)
   
   useSignalEffect(() => {
     console.log('Action inside Users', 'Step:', step.peek(), 'Action:', action?.value)

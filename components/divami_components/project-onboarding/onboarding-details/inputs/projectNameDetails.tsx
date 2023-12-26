@@ -11,7 +11,6 @@ details,isNameValid
 }:any) => {
   // const { state, projectContextAction } =useProjectContext();
   
-  console.log(details)
   const isValid = computed(() => (
     (details.value.name !== undefined && details.value.name !== '') ))
     isNameValid.value=isValid.value 

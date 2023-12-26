@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import { Grid, OutlinedInput, FormControlLabel, Radio, RadioGroup, FormHelperText } from '@mui/material';
 import { useProjectContext } from '../../../../../state/projectState/context';
 import { IProjects } from '../../../../../models/IProjects';
-import { computed, effect, useSignal } from '@preact/signals-react';
+import { computed, effect, useSignal, useSignalEffect } from '@preact/signals-react';
 const ProjectLatLngDetails = ({latlngDetails,isLatLngValid}:any) => {
   const isValid = computed(() => (
     (latlngDetails.value.location?.coordinates?.[0] !== undefined && !Number.isNaN(latlngDetails.value.location?.coordinates?.[0])))
@@ -48,10 +48,9 @@ isLatLngValid.value=isValid.value
     }
   };
 
-  effect(() => {
+  useSignalEffect(() => {
     setDefaultMeasurement(); 
   });
-console.log("kmromrfiooirnmrfio",latlngDetails.value.location?.coordinates?.[1]);
 
   return (
     <Grid container spacing={2} justifyContent="space-between" alignItems="center" flex="coloum" className='mt-[4px]'>

@@ -15,15 +15,12 @@ import { useSignals } from '@preact/signals-react/runtime';
 
 
 const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnboardingProps) => {
-  // const projectDetails = useSignal<Partial<IProjects>>({});
   const onboardingProjectCoverPhoto = useSignal<File | null>(null);
   const onboardingProjectprojectLogo = useSignal<File | null>(null);
   const isNameValid = useSignal({});
   const isTypeValid = useSignal({});
   const isLatLngValid = useSignal({});
   const isAddressValid = useSignal({});
-  //  console.log(if( projectId.value) { projectDetails.peek()._id},"meknfenjkinkjnkjnijnkijnkijniunui");
-  console.log(projectDetails)
 
   useSignals()
 
