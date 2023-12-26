@@ -41,9 +41,9 @@ const ProjectOnboarding = () => {
     console.log(router.query.id)
     if (router.isReady && router.query.id) {
       getProjectDetails(router.query.id as string).then((res) => {
-        console.log(res, "res");
-
-        projectDetails.value = res.data.result
+      const result=res.data.result;
+      delete result.users
+      projectDetails.value = result        
       })
     }
   }, [router.query])
