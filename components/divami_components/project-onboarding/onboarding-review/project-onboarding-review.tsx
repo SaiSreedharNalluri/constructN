@@ -24,97 +24,46 @@ console.log(projectDetails.value);
         break
     }
   })
-
-  return (
-    <div className="flex justify-center items-center mt-[16px]">
-    <div >
-      <div className="col-span-4">
-        <div className="shadow-md rounded-md p-4 mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold">Project Name :</p>
-            </div>
-            <div>
-            {projectDetails.value.name}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold"> Project Nickname :</p>
-            </div>
-            <div>
-    
-            {projectDetails.value.projectNickName}
-
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold">Project ID :</p>
-            </div>
-            <div>
-            {projectDetails.value.projectNickName}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold"> Project Address :</p>
-            </div>
-            <div>
-            {projectDetails.value.projectNickName}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold">Floor Plans Uploaded :</p>
-            </div>
-            <div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold">No,of maps uploaded:</p>
-            </div>
-            <div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold"> Levek without any maps :</p>
-            </div>
-            <div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold">BIM Uploaded:</p>
-            </div>
-            <div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold"> Levek without any maps:</p>
-            </div>
-            <div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
-            <div>
-              <p className="mb-0 font-semibold">  Number of Users Added:</p>
-            </div>
-            <div>
-            </div>
-          </div>
+  function generateGridRow(label:string, values:any) {    
+    return (
+      <div className="grid grid-cols-2 gap-4 p-1">
+        <div>
+          <p className="mb-0 font-semibold">{label}</p>
         </div>
+        <div>
+        {values.map((value:string, index:number) => (
+          <p key={index} className="text-black-500 mb-0">
+           {value}
+          </p>
+        ))}
+        </div>
+      </div>
+    );
+  }
+  return (
+
+<div className="flex justify-center items-center ">
+  <div>
+    <div className="col-span-4">
+      <div className="shadow-md rounded-md p-4 mb-4 ">
+      {generateGridRow("Project Name", [projectDetails.value.name])}
+        {generateGridRow("Project Nickname", [projectDetails.value.nickName ? projectDetails.value.nickName : "N/A"])}
+        {generateGridRow("Project ID", [projectDetails.value._id])}
+        {generateGridRow("Project Address", [
+          `${projectDetails.value.address?.line1 ? projectDetails.value.address.line1 : ""}`,
+          `${projectDetails.value.address?.city} ,${projectDetails.value.address?.state},${projectDetails.value.address?.country }`,
+          `${projectDetails.value.address?.zipcode}`,
+        ])}
+         {generateGridRow("Floor Plans Uploaded", [])}
+         {generateGridRow("No, of maps Uploaded", [])}
+         {generateGridRow("Levels without any maps", [])}
+         {generateGridRow("BIM Uploaded", [])}
+         {generateGridRow("Number of Users", [])}
       </div>
     </div>
   </div>
+</div>
+
   )
 }
 

@@ -24,7 +24,7 @@ export interface IProjects {
   [key: string]: any;
   // latitude:number,
   // longitude:number,
-  projectNickName:string,
+  nickName:string,
   projectID:number,
 }
 
@@ -39,6 +39,7 @@ export interface Contact {
   number: number;
 }
 export interface Address {
+  line1?:string;
   zipcode?: string;
   city?: string;
   state?: string;

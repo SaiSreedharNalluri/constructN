@@ -316,7 +316,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen}: any) => {
 
   const getUsersList = () => {
     getProjectUsers(router.query.projectId as string || projectId)
-      .then((response: any) => {
+      .then((response: any) => {      
         if (response.success) {
           setTableData(
             response.result.map((each: any) => {
@@ -689,7 +689,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen}: any) => {
           form={form}
           setOpenDrawer={setOpenDrawer}
           roles={rolesArr}
-          selectedProjectId={router.query.projectId}
+          selectedProjectId={router.query.projectId || projectId}
           appendToTable={appendToTable}
           tableData={tableData}
         />
