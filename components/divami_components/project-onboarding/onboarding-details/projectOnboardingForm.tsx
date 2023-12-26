@@ -45,7 +45,9 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnb
           if (projectDetails.peek()._id === undefined) {
             createProject(formdata)
               .then((res) => {
-                projectDetails.value = res.result
+               const result=res.result;
+               delete result.users
+               projectDetails.value = result
                 step.value = 1
                 projectId.value = projectDetails.peek()._id ?? ''
               })
