@@ -27,11 +27,9 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
     `${projectDetails.value.address?.city} ,${projectDetails.value.address?.state},${projectDetails.value.address?.country}`,
     `${projectDetails.value.address?.zipcode}`,
   ])}
-  {generateGridRow("Floor Plans Uploaded", [drawingsCount.value == 0 ? 'NO' : 'YES'])}
-  {generateGridRow("No, of maps Uploaded", [drawingsCount.value])}
-  {generateGridRow("Levels without any maps", [totalCount.value - drawingsCount.value])}
+  {generateGridRow("Sheets Uploaded", [drawingsCount.value == 0 ? 'NO' : 'YES'])}
+  {generateGridRow("No, of Sheets Uploaded", [drawingsCount.value])}
   {generateGridRow("BIM Uploaded", [bimCount.value == 0 ? 'NO' : 'YES'])}
-  {generateGridRow("Number of Users", [usersCount?.value ?? 0])}
 </div></>)
 
   getStructureList(projectId.value).then(res => {

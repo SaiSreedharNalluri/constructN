@@ -12,7 +12,7 @@ import ProjectOnboardingSheets from './onboarding-sheets/project-onboarding-shee
 import ProjectOnboardingBIM from './onboarding-bim/projectOnboardingBIM'
 import ProjectOnboardingReview from './onboarding-review/project-onboarding-review'
 import { useSignal, Signal } from '@preact/signals-react'
-import { useComputed, useSignalEffect, useSignals } from '@preact/signals-react/runtime'
+import { useComputed } from '@preact/signals-react/runtime'
 import { IProjects } from '../../../models/IProjects'
 import { getProjectDetails, updateProjectInfo } from '../../../services/project'
 import { useRouter } from 'next/router'

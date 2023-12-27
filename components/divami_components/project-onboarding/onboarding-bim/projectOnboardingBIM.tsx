@@ -5,7 +5,7 @@ import PopupComponent from "../../../popupComponent/PopupComponent";
 import { useProjectContext } from "../../../../state/projectState/context";
 import { IOnboardingProps } from "../projectOnboarding";
 import { effect, useSignal } from "@preact/signals-react";
-import { useComputed, useSignalEffect, useSignals } from "@preact/signals-react/runtime";
+import { useComputed, useSignalEffect } from "@preact/signals-react/runtime";
 import { Uploader } from "../../web_worker/uploadFileWorker";
 import { Button, LinearProgress, Typography } from "@mui/material";
 import { getStructureHierarchy } from "../../../../services/structure";
@@ -19,7 +19,6 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
     percentage: number
   }
 
-  // useSignals()
   const fileToUpload = useSignal<File | undefined>(undefined)
   const existingBIM = useSignal(
     hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 ?
@@ -91,8 +90,8 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
     setShowPopUp={(state: boolean) => { showPopUp.value = state }}
     modalTitle={"Warning"}
     modalmessage={"Are you sure you do not want to proceed without BIM?"}
-    primaryButtonLabel={"No BIM"}
-    SecondaryButtonlabel={"Cancel"}
+    primaryButtonLabel={"Yes"}
+    SecondaryButtonlabel={"Discard"}
     callBackvalue={() => {
       showPopUp.value = false
       step.value = 3

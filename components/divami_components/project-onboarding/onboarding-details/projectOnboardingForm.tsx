@@ -12,6 +12,7 @@ import { IOnboardingProps } from '../projectOnboarding';
 import { effect, useSignal, useSignalEffect } from '@preact/signals-react'
 import router from "next/router";
 import { useSignals } from '@preact/signals-react/runtime';
+import { CustomToast } from '../../custom-toaster/CustomToast';
 
 
 const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnboardingProps) => {
@@ -60,6 +61,9 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnb
             step.value = 1
 
           }
+        } else {
+          CustomToast('Fill all the necessary fields', 'error')
+          if(action) action.value = ''
         }
         // projectId.value = 'PRJ061491'
         // step.value = 1

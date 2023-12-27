@@ -84,17 +84,18 @@ isLatLngValid.value=isValid.value
           <FormHelperText className='text-[#FF853E]'>Longitude is required</FormHelperText>
         )}
       </Grid>
-      <Grid item xs={2} className='mt-[16px]'>
+      <Grid item xs={4.5} className='flex flex-col mt-[0px]'>
         <div>Measurement System*</div>
-      </Grid>
-      <Grid item xs={4} className='mt-[16px]'>
         <RadioGroup row value={latlngDetails.value.measurement || "US"}  onChange={handleMeasurementChange} >
-          <FormControlLabel value="US" control={<Radio />} label="US (ft,pound)" />
-          <FormControlLabel value="metric" control={<Radio />} label="Metric System (m,kg)" />
+          <FormControlLabel className='[&>span]:text-sm' value="US" control={<Radio size='small' />} label="US (ft,pound)" />
+          <FormControlLabel className='[&>span]:text-sm' value="metric" control={<Radio size='small' />} label="Metric System (m,kg)" />
         </RadioGroup> 
         {(latlngDetails.value.measurement === undefined) && (
           <FormHelperText className='text-[#FF853E]'>Measurement is required</FormHelperText>
         )}
+      </Grid>
+      <Grid item xs={1} className='mt-[16px]'>
+        
       </Grid>
     </Grid>
   );

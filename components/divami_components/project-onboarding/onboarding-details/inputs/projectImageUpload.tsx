@@ -75,28 +75,32 @@ const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
       </div>
 
      </Grid>
-  :<Grid xs={12} item className='flex flex-col justify-center items-center border border-dotted border-orange-500 p-[10px] mt-[16px] cursor-pointer' onClick={handleCoverPhotoClick}>
+  :<Grid xs={12} item className='flex flex justify-center items-center border border-dotted border-orange-500 p-[10px] mt-[16px] cursor-pointer' onClick={handleCoverPhotoClick}>
     <Image
        src={uploaderIcon}
        alt='uploader icon'
-       width={50}
-       height={50}
+       width={64}
+       height={64}
      />
-     <div className='flex justify-center items-center'>
-       <p className='text-gray-500 mt-[6px]'>
+     <div className='flex ml-4 flex-col'>
+       <p className='text-gray-700 text-[1rem]'>
           Project Image
+       </p>
+       <p className='text-gray-400 text-[0.75rem] mt-[4px]'>
+          Upload .JPG, .JPEG or .PNG files
        </p>
      </div>
      <input
        type='file'
        className='hidden'
        ref={coverPhotoRef}
+       accept='image/*'
        onChange={handleCoverPhotoUpload}
      />
 
     </Grid>}
     
-    {projectLogo.value?
+    {/* {projectLogo.value?
     <Grid xs={12} item className=' border border-dotted border-orange-500  mt-[16px] cursor-pointer rounded-[6px] ml-[10px]' >
       <div style={{ position: 'relative' }}>
       <Image
@@ -145,7 +149,7 @@ const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
        onChange={handleLogoUpload}
      />
 
-    </Grid>}
+    </Grid>} */}
     </>
   )
 }

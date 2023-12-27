@@ -1,9 +1,6 @@
-import React, { ChangeEvent, ChangeEventHandler } from 'react';
+import React, { ChangeEvent } from 'react';
 import { FormHelperText, Grid, OutlinedInput } from '@mui/material';
-import { useProjectContext } from '../../../../../state/projectState/context';
-import { IProjects } from '../../../../../models/IProjects';
-import { computed, useSignal } from '@preact/signals-react';
-import { useSignals } from '@preact/signals-react/runtime';
+import { computed } from '@preact/signals-react';
 
 
 const ProjectNameDetails = ({

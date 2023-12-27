@@ -28,6 +28,8 @@ import ChooseOnboardingFiles from '../chooseOnboardingFiles'
 
 import { CustomToast } from '../../custom-toaster/CustomToast'
 
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+
 type UploadProgress = {
     sent: number
     total: number
@@ -175,7 +177,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                         {_sheetName() !== '' && <Chip label={_sheetName()} color='default' size='small' onClick={handleClick} />}
 
-                        {(_sheetName() === '' && node.parent != null) &&
+                        {_sheetName() === '' &&
                             <Chip label='Add Sheet' size='small' color='secondary' clickable className='mr-2 text-[12px]'
                                 variant='outlined' onClick={() => addSheet(node)} icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} />
                         }
@@ -186,13 +188,15 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                 <div className='flex group-hover:opacity-100 opacity-0 items-center'>
 
-                    <Chip label='Add Child' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined'
+                    <Chip label='Add Child Level' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined'
                         icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onAdd(node)} />
 
                     <Chip label='Delete Level' size='small' color='error' clickable className='mr-2 text-[12px]' variant='outlined'
                         icon={<RemoveOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onDelete(node)} />
 
                 </div>
+                
+                <MoreVertIcon className='group-hover:opacity-0 opacity-100' htmlColor='#c2c3c5' fontSize='small' />
 
             </div>
 
@@ -213,7 +217,7 @@ const renderAddSheetForm = (
     fileToUpload: Signal<File | undefined>, uploadProgress: Signal<UploadProgress>, uploadStatus: Signal<boolean>) => {
 
     const dragDropText = "(or drag and drop file here)";
-    const supportFileText = "Upload .RVT or .NWD file";
+    const supportFileText = "Upload .PDF or .DWG file";
 
     const onDrop = (acceptedFiles: File[]) => {
         if (acceptedFiles) {
@@ -269,7 +273,7 @@ const renderAddSheetForm = (
             uploadStatus={uploadStatus}
             UploadingStatus={<UploadingStatus />}
             isDisabled={false}
-            acceptFiles={{ "application/octet-stream": [".nwd", ".rvt"] }} />
+            acceptFiles={{ "application/octet-stream": [".pdf", ".dwg"] }} />
 
         {uploadProgress.value.percentage !== -1 && uploadStatus.value == true &&
             <div className='mt-8 w-[400px] py-4 px-8'>
