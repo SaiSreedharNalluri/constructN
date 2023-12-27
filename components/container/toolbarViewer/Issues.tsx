@@ -102,7 +102,6 @@ function Issues({
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [contextInfo,setContextInfo] = useState<any>()
   const[isLoading,setLoading]=useState(false)
-
   useImperativeHandle(ref, () => {
     return{
       handleIssueInstance(IssuetoolInstance:any){
@@ -176,8 +175,8 @@ function Issues({
     const formData = new FormData();
     let data: any = {};
 
-    data.structure = router.query.structId;
-    data.snapshot = currentSnapshot?._id;
+    data.structure = initData.structure?._id;
+    data.snapshot = initData.currentSnapshotBase?._id;
     data.status = "To Do";
     data.owner = values?.owner;
 
@@ -279,6 +278,7 @@ function Issues({
     issueMenuInstance.type = "createFailIssue";
     issueMenuClicked(issueMenuInstance);
     setOpenCreateIssue(false);
+    setHighlightCreateIcon(false);
   };
   // useEffect(() => {
     
@@ -293,6 +293,7 @@ function Issues({
     // closeIssueCreate();
     // issueSubmit(formdata);
     setEnableSubmit(true);
+    setHighlightCreateIcon(false)
   };
   const openIssueCreateFn = () => {
     issueMenuInstance.type = "createIssue";
@@ -437,6 +438,7 @@ function Issues({
             projectUsers={projectUsers}
             issueContext={issueContext}
             toolClicked={toolClicked}
+            initData={initData}
 
           />
         </Drawer>

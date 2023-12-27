@@ -113,6 +113,7 @@ interface IProps {
   issueMenuClicked?: any;
   projectUsers?: any;
   issueContext: any;
+  initData:any;
 }
 
 export interface IFilterProps {
@@ -156,6 +157,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   projectUsers,
   issueContext,
   toolClicked,
+  initData
+
 }) => {
 
   const handleClose = () => {
@@ -408,6 +411,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       issueContRef.current.scrollTop = 0;
     }
   };
+console.log("drawer isserie",issueList);
 
   return (
     <>
@@ -567,7 +571,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                           </ProgressChild>
                           <SmallDivider src={smallDivider} alt="progress" />
 
-                          {/* <PriorityChild>
+                          <PriorityChild>
                             {val?.assignees[0]?.firstName
                               .charAt(0)
                               .toUpperCase()}
@@ -576,7 +580,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                               .charAt(0)
                               .toUpperCase()}
                             {val?.assignees[0]?.lastName.slice(1)}
-                          </PriorityChild> */}
+                          </PriorityChild> 
 
                           <LightTooltip
                             arrow
@@ -588,20 +592,19 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                                       return (
                                         <>
                                           {index !== val?.assignees?.length - 1
-                                            ? assignName +
-                                            " " +
-                                            assignName +
-                                            " | "
-                                            : assignName +
-                                            " " +
-                                            assignName}
+                                            ? assignName?.firstName +
+                                              " " +
+                                              assignName.lastName +
+                                              " | "
+                                            : assignName?.firstName +
+                                              " " +
+                                              assignName.lastName}
                                         </>
                                       );
                                     }
                                   }
                                 )}
-                              </AssigneeList>
-                            }
+                              </AssigneeList>                            }
                           >
                             <Watcher>
                               {val?.assignees.length - 1 > 0
@@ -674,6 +677,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                 deleteTheAttachment={deleteTheAttachment}
                 setIssueList={setIssueList}
                 toolClicked={toolClicked}
+                initData={initData}
+                
               />
 
             </Drawer>

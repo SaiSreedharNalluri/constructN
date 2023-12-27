@@ -541,14 +541,14 @@ function BasicTabs(props: any) {
                               return (
                                 <>
                                   {index !==
-                                  taskState?.TabOne?.assignees.length - 1
-                                    ? assignName +
+                                  taskState?.TabOne?.assigneesList.length - 1
+                                    ? assignName.firstName +
                                       " " +
-                                      assignName +
+                                      assignName.firstName +
                                       " | "
-                                    : assignName +
+                                    : assignName.firstName +
                                       " " +
-                                      assignName}
+                                      assignName.lastName}
                                 </>
                               );
                             }
@@ -891,11 +891,17 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const [file, setFile] = useState<File>();
 
   useEffect(() => {
-    setSelectedTask(task);
    
-
-
-  }, [task]);
+    const taskData=initData?.currentTaskList?.find((each:any)=>{
+      if(each._id === task._id){
+        return each
+      }
+     
+      
+    
+    })
+    setSelectedTask(taskData);
+  }, [task,initData]);
   const DetailsObj = {
     TabOne: {
       options: [
