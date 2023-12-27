@@ -1228,26 +1228,32 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setProcorePopup(true)
     setTaskDetail(false)
   }
-  const closeProcorePopup = () =>{
-    setProcorePopup(false)
-    setTaskDetail(true)
-  } 
-  const setnewRFI = (e:boolean) =>{
-    setnewLinkRFI(e)
-    setTaskDetail(false)
-    setProcorePopup(false)
-    
-  }
-  const closeNewRFI = (e:any) =>{
-    setProcorePopup(true)
-    setnewLinkRFI(e)
 
+  const handleInstance= (data:IprocoreActions)=>{
+      switch(data.action){
+        case "setnewRFI":{
+          setnewLinkRFI(data.status)
+          setTaskDetail(false)
+          setProcorePopup(false)
+          break;
+        }
+        case "closeNewRFI":{
+          setProcorePopup(true)
+          setnewLinkRFI(data.status)
+          break;
+        }
+        case "closeProcorePopup":{
+          setProcorePopup(false)
+          setTaskDetail(true)
+          break;
+        }
+      }
   }
 
   return (
     <>
    
-      {procorePopup && <ProcoreLink closeProcorePopup={closeProcorePopup} setnewRFI={setnewRFI}></ProcoreLink>}
+      {procorePopup && <ProcoreLink handleInstance={handleInstance}></ProcoreLink>}
       {taskDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
@@ -1378,7 +1384,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           callBackvalue={onDeleteIssue}
         />
       )} */}
-    {newRFI ? (<LinkNewRFI closeNewRFI={closeNewRFI}>
+    {newRFI ? (<LinkNewRFI handleInstance={handleInstance}>
       
     </LinkNewRFI>):
         (<></>)}

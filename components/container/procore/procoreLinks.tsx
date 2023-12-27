@@ -10,8 +10,7 @@ import LinkNewRFI from "./linkNewRfi";
 
 const ProcoreLink = (props: any) => {
     const {
-        closeProcorePopup,
-        setnewRFI,
+        handleInstance,
     } = props
 
     const [footerState, SetFooterState] = useState(false);
@@ -24,7 +23,8 @@ const ProcoreLink = (props: any) => {
                         <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
                             <ArrowIcon
                                 onClick={() => {
-                                    closeProcorePopup(true);
+                                    let closeProPopup: IprocoreActions = {action:"closeProcorePopup", status:true}
+                                    handleInstance(closeProPopup)
                                 }}
                                 src={BackArrow}
                                 alt={"close icon"}
@@ -39,7 +39,8 @@ const ProcoreLink = (props: any) => {
             </HeaderContainer>
             <BodyContainer footerState={footerState}>
                 <LabelContainer className="cursor-pointer hover:bg-gray-100 " onClick={()=>{
-                    setnewRFI(true); 
+                    let handleNewRfi: IprocoreActions = {action:"setnewRFI", status:true}
+                    handleInstance(handleNewRfi)
                     }}>
                     <AddRfi
                         className=""
