@@ -313,7 +313,6 @@ export class ForgeEdit2DUtils {
             if(stage.visible) checkedCount++
 
         })
-
         if(checkedCount == 1) stageMap['NOT_STARTED'].visible = false
 
         assets.forEach((asset: IAsset) => {

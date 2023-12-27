@@ -1214,6 +1214,9 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
 
 
   function renderMinimap  (count:number)  {
+    if (currentViewerData.structure.designs?.length&&currentViewerData.structure.designs?.length <= 0 && currentViewerData.currentSnapshotBase.reality?.length &&currentViewerData.currentSnapshotBase.reality?.length <= 0) {
+      return;
+    }
     if (count !== 1 && !isCompareMode) {
       return;
     }
@@ -2074,7 +2077,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         <div className={`relative ${currentViewerData.currentCompareMode!=='noCompare' ? "basis-1/2": "hidden" }`}>
           {isInitReady && isCompareMode && renderViewer(2)}
           {(currentViewerData.currentCompareMode==='compareReality')?renderMinimap(2):<></>}
-          {isInitReady && tmcCompare}
+          {isInitReady &&(currentViewerData.currentCompareMode==='compareReality') && tmcCompare}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
         </div>
         {

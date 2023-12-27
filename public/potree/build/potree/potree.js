@@ -88457,6 +88457,7 @@ ENDSEC
 			this.measuringTool = new MeasuringTool(this);
 			this.profileTool = new ProfileTool(this);
 			this.volumeTool = new VolumeTool(this);
+			this.propertiesPanel = new PropertiesPanel({}, this);
 
 			}catch(e){
 				this.onCrash(e);

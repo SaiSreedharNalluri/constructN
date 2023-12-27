@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { MutableRefObject, useEffect, useRef, useState } from 'react'
 
 import Forge from './forge'
 
@@ -35,12 +35,19 @@ interface _ViewerProps {
     category: IAssetCategory | undefined
 
     selectedLayers: string[] | undefined
+
+    _forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>;
+
+    right?: boolean
+
+    _dataViz: MutableRefObject<ForgeDataVizUtils | undefined>
+
 }
 
 
 function Progress2DComponent(props: _ViewerProps) {
 
-    const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
+    const _forge = props._forge
 
     const _initialised = useRef<boolean>(false)
 
@@ -54,7 +61,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const _offset = useRef<number[]>()
 
-    const _dataVizUtils = useRef<ForgeDataVizUtils>()
+    const _dataVizUtils = props._dataViz
 
     const _edit2dUtils = useRef<ForgeEdit2DUtils>()
 
@@ -208,7 +215,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
         if (extensionId === 'Autodesk.DataVisualization') {
 
-            _dataVizUtils.current = new ForgeDataVizUtils(_forge.current!, _extn as Autodesk.Extensions.DataVisualization)
+            _dataVizUtils.current = new ForgeDataVizUtils(_forge.current!, _extn as Autodesk.Extensions.DataVisualization, props.compare)
 
         } else if (extensionId === 'Autodesk.Edit2D') {
 
@@ -275,6 +282,8 @@ function Progress2DComponent(props: _ViewerProps) {
                 models={modelsData}
 
                 onModelLoaded={onModelLoaded}
+
+                compare={props.right}
 
                 onExtnLoaded={onExtnLoaded} /> }
 

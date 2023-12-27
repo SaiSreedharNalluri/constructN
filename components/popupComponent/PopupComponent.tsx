@@ -59,11 +59,11 @@ export interface DialogTitleProps {
 }
 export interface PopupComponentProps {
   modalTitle: string;
-  modalmessage: string;
+  modalmessage: string | JSX.Element;
   primaryButtonLabel: string;
   SecondaryButtonlabel: string;
   callBackvalue?: any;
-  setShowPopUp: (value: boolean) => void;
+  setShowPopUp: (value: any) => void;
   open: boolean;
   modalContent?: any;
   hideButtons?: boolean;
@@ -78,7 +78,9 @@ export interface PopupComponentProps {
   setShowbutton?: any;
   projectId?: string;
   isUploader?:boolean,
-  isUploaderFinal?:boolean
+  isUploaderFinal?:boolean;
+  disableSecondaryButton?: boolean;
+  disablePrimaryButton?: boolean;
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -160,7 +162,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     imageSrc,
     isImageThere,
     isUploader = true,
-    isUploaderFinal = true
+    isUploaderFinal = true,
+    disableSecondaryButton = false,
+    disablePrimaryButton = false,
   } = props;
   const handleClosePopup=()=>{
     if(isUploader === false)
@@ -227,6 +231,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 variant={paddingStyle ? "outlined" : "text"}
                 // autoFocus
                 onClick={handleClose}
+                disabled={disableSecondaryButton}
                 style={{
                   color: "#F1742E",
                   width: isUploader  ? "180px":"fit-content",
@@ -244,6 +249,7 @@ const PopupComponent = (props: PopupComponentProps) => {
               <Button
                 variant="contained"
                 onClick={() => callBackvalue("Delete")}
+                disabled={disablePrimaryButton}
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",

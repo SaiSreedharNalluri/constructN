@@ -65,6 +65,10 @@ export interface IAsset {
     updatedAt: Date
 
     properties: any
+
+    metrics?: { [key: string]: string | number | { metric: string}}
+
+    compare?: boolean
     
 }
 

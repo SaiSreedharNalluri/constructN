@@ -761,7 +761,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
     },
 
     {
-      title: "Last Captured",
+      title: "Last Processed Capture",
       field: "lastupdated",
       sorting: false,
       headerStyle: {
