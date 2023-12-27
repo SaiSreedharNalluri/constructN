@@ -25,13 +25,14 @@ export interface IProjects {
   // latitude:number,
   // longitude:number,
   nickName:string,
-  projectID:number,
+  // projectId:number,
 }
 
 export interface MetaDetails {
   dashboardURL?: string
   reportURL?: string
   projectIntend?:string
+  projectId?:string
 }
 
 export interface Contact {

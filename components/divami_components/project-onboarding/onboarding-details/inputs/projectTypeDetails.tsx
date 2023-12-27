@@ -4,6 +4,8 @@ import { computed, useSignal } from '@preact/signals-react';
 const ProjectTypeDetails = ({
   type, isTypeValid
 }: any) => {
+  console.log(type,"type");
+  
   const isValid = computed(() => (
     (type.value.type !== undefined && type.value.type !== '')))
   isTypeValid.value = isValid.value
@@ -13,10 +15,14 @@ const ProjectTypeDetails = ({
     type.value = { ...type.value, [name as string]: value }
   }
 
-  const handleProjectIntend = (event: SelectChangeEvent<{ name?: string; value: unknown }>) => {
-    const { name, value } = event.target
-    const metaDetails = {...type.value.metadetails, [name as string]: value}
-    type.value = { ...type.value, metaDetails }
+  const handleProjectIntend = (field: string, value: string) => {
+    type.value = {
+      ...type.value,
+      metaDetails: {
+        ...type.value.metaDetails,
+        [field]: value,
+      },
+    };
   }
 
   return (
@@ -28,9 +34,8 @@ const ProjectTypeDetails = ({
           size="small"
           className="outline-none"
           name='projectId'
-          value={type.value.metaDetails.projectId}
-          onChange={
-            handleOnChange}
+          value={type.value.metaDetails?.projectId}
+          onChange={(e) => handleProjectIntend('projectId', e.target.value)}
         />
       </Grid>
       <Grid item xs={3}>
@@ -59,7 +64,7 @@ const ProjectTypeDetails = ({
           size="small"
           name='projectIntend'
           value={type.value.metaDetails?.projectIntend || ""}
-          onChange={handleProjectIntend} >
+          onChange={(e) => handleProjectIntend('projectIntend', e.target.value)} >
           <MenuItem value="Visual Documentation">Visual Documentation</MenuItem>
           <MenuItem value="Progress Monitoring">Progress Monitoring</MenuItem>
         </Select>

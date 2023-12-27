@@ -34,8 +34,11 @@ const ProjectImageUpload = ({addressDetails,projectCoverPhoto,projectLogo}:any) 
 
   };}
   const handleRemoveCoverPhoto = () => {
-    projectCoverPhoto.value = null;
-    addressDetails.value={ ...addressDetails.value, 'coverPhoto': null}
+  if (projectCoverPhoto.value) {
+      projectCoverPhoto.value = null;
+    } else {
+      addressDetails.value = { ...addressDetails.value, 'coverPhoto': null };
+    }
   };
   const handleRemoveLogo = () => {
     projectLogo.value = null;
@@ -97,7 +100,7 @@ const ProjectImageUpload = ({addressDetails,projectCoverPhoto,projectLogo}:any) 
      />
 
     </Grid>}
-    
+
     {/* {projectLogo.value || addressDetails.value.logo?
     <Grid xs={12} item className=' border border-dotted border-orange-500  mt-[16px] cursor-pointer rounded-[6px] ml-[10px]' >
       <div style={{ position: 'relative' }}>
