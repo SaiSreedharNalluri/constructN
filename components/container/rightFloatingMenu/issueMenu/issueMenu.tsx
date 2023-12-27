@@ -71,7 +71,7 @@ const IssueMenu: React.FC<IProps> = ({
   };
   const openIssueList = () => {
     //setListOverlay(true);
-    console.log("coming herer");
+   
     issueMenuInstance.toolAction = 'issueView';
     issueMenuClicked(issueMenuInstance);
   };

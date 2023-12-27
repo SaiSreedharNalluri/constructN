@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,Ref, useImperativeHandle,forwardRef } from "react";
 
 import Drawer from "@mui/material/Drawer";
 import Image from "next/image";
@@ -22,12 +22,12 @@ import {
   TaskTitle,
   CameraIcon,
 } from "./ToolBarStyles";
-import TaskList from "../rightFloatingMenu/taskMenu/taskList";
+import TaskList from "../taskListing/TaskList"
 import CreateTask from "../../divami_components/create-task/CreateTask";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import { createTask, createTaskWithAttachments } from "../../../services/task";
-import { ITools } from "../../../models/ITools";
-import CustomTaskDetailsDrawer from "../../divami_components/task_detail/TaskDetail";
+import { IContext, IToolResponse, IToolbarAction, ITools } from "../../../models/ITools";
+import CustomTaskDetailsDrawer from "../taskDetails/TaskDetail";
 import Tooltip from "@mui/material/Tooltip";
 import html2canvas from "html2canvas";
 import moment from "moment";
@@ -37,8 +37,14 @@ import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import { getTimeInProjectTimezone } from "../../../utils/utils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { MqttConnector } from "../../../utils/MqttConnector";
+import { useRouter } from "next/router";
 
-const Task = ({
+export type taskToolHandle = {
+  handleTaskInstance: (tasktoolInstance: any) => void;
+  
+  
+};
+function Task({
   rightMenuClickHandler,
   tasksList,
   setTasksList,
@@ -49,7 +55,6 @@ const Task = ({
   currentTypesList,
   closeTaskFilterOverlay,
   handleOnTaskFilter,
-  contextInfo,
   taskOpenDrawer,
   taskLayer,
   taskMenuClicked,
@@ -69,15 +74,20 @@ const Task = ({
   setShowTaskMarkups,
   showTaskMarkups,
   setHighlightCreateTaskIcon,
+  setHighlightCreateIssueIcon,
   highlightCreateTaskIcon,
   isReality,
+  initData,
+  taskContext,
+  toolClicked
 
-}: any) => {
+}: any,ref:Ref<taskToolHandle>) {
   const customLogger = new CustomLoggerClass();
+  const router = useRouter();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
   const [myProject, setMyProject] = useState(currentProject);
-  const [myStructure, setMyStructure] = useState(currentStructure);
+  const [myStructure, setMyStructure] = useState();
   const [mySnapshot, setMySnapshot] = useState(currentSnapshot);
   const [myTypesList, setMyTypesList] = useState(currentTypesList);
   const [openCreateTask, setOpenCreateTask] = useState(false);
@@ -87,9 +97,50 @@ const Task = ({
   const [showImage, setShowImage] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [isLoading, setLoading] = useState(false)
-  const [showHideTask, setshowHideTask] = useState(false)
-  let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
+  const [showHideTask, setshowHideTask] = useState(true)
+  const [contextInfo,setContextInfo] = useState<any>()
+  let taskMenuInstance: IToolbarAction = { data: "",type:"showTask"};
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
+
+ 
+  useImperativeHandle(ref, () => {
+    return{
+      handleTaskInstance(tasktoolInstance:any){
+        if (tasktoolInstance.type === "selectTask" && tasktoolInstance?.data?.data?.id) {
+          const selectedObj = tasksList?.find(
+            (each: any) => each._id === tasktoolInstance?.data?.data?.id
+          
+          ); 
+          let taskMenuInstance: IToolbarAction = { data: selectedObj.context,type:tasktoolInstance.type};
+          taskMenuClicked(taskMenuInstance)
+          setOpenTaskDetail(true)
+          setSelectedTask(selectedObj);
+        
+        }
+        else if(tasktoolInstance.type === "createTask")
+        {
+          setOpenCreateTask(true)
+          setContextInfo(tasktoolInstance?.data?.data)
+          
+        }
+
+        
+      },
+      handleRouterTask(handleRouterTask:any){
+        if (handleRouterTask.type === "selectTask" && handleRouterTask.data) {
+          const selectedObj = tasksList?.find(
+            (each: any) => each._id === handleRouterTask?.data
+          
+          ); 
+          let taskMenuInstance: IToolbarAction = { data: selectedObj?.context,type:handleRouterTask.type};
+          taskMenuClicked(taskMenuInstance)
+          setOpenTaskDetail(true)
+          setSelectedTask(selectedObj);
+        
+        }
+
+      }
+    }},[])
 
   useEffect(() => {
     setMyProject(currentProject);
@@ -99,8 +150,8 @@ const Task = ({
       document.getElementById("forgeViewer_1") ||
       document.getElementById("potreeViewer_1") ||
       document.body
-    ).then(function (canvas) {
-      canvas.toBlob((blob) => {
+    ).then(function (canvas:any) {
+      canvas.toBlob((blob:any) => {
         setImage(blob as Blob);
       }, "image/png");
     });
@@ -117,6 +168,7 @@ const Task = ({
     }
   };
   const clickTaskSubmit = (formData: any) => {
+console.log("form datttaaa",formData)
     setEnableSubmit(false);
     let data: any = {};
     const userIdList = formData
@@ -124,10 +176,11 @@ const Task = ({
       ?.selectedName?.map((each: any) => {
         return each._id || each.value;
       });
-    data.structure = currentStructure?._id;
+    data.structure = router.query.structId;
     data.snapshot = currentSnapshot?._id;
     data.status = "To Do";
     data.context = contextInfo;
+    console.log("contextInfo",contextInfo)
     Object.keys(contextInfo).forEach((key) => {
       if (key !== "id") {
         data.context = { ...data.context, [key]: contextInfo[key] };
@@ -210,7 +263,7 @@ const Task = ({
       .projectId;
     if (data.title && data.type && data.priority) {
       createTaskWithAttachments(projectId as string, formDataObj)
-        .then((response) => {
+        .then((response:any) => {
           if (response.success === true) {
             CustomToast("Task created sucessfully", "success");
 
@@ -222,7 +275,7 @@ const Task = ({
           }
           setLoading(false)
         })
-        .catch((error) => {
+        .catch((error:any) => {
           if (error.status === 403) {
             CustomToast(`You don't have permission. Contact Admin.`, "error");
           } else if (error.status === 415) {
@@ -239,68 +292,55 @@ const Task = ({
   };
 
   const onCancelCreate = () => {
-    taskMenuInstance.toolAction = "taskCreateFail";
-    // setOpenCreateTask(false);
+    // taskMenuInstance.toolAction = "taskCreateFail";
+    setOpenCreateTask(false);
     taskMenuClicked(taskMenuInstance);
-    closeTaskCreate();
+    setOpenCreateTask(false)
+    
   };
-
-  useEffect(() => {
-    if (openTaskDetails && contextInfo?.id) {
-      const selectedObj = tasksList.find(
-        (each: any) => each._id === contextInfo.id
-      );
-      setSelectedTask(selectedObj);
-    }
-  }, [openTaskDetails, contextInfo?.id, tasksList]);
   const taskSubmitFn = (formdata: any) => {
-    // tasksList.push(formdata);
-    taskMenuInstance.toolAction = "taskCreateSuccess";
-    taskMenuInstance.response = { ...formdata.context, id: formdata._id };
-    // setCreateOverlay(false);
+    let taskMenuInstance: IToolbarAction = { data: formdata,type:"createSuccessTask"};
     taskMenuClicked(taskMenuInstance);
-    closeTaskCreate();
-    taskSubmit(formdata);
     setEnableSubmit(true);
+    setOpenCreateTask(false)
   };
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
-    taskMenuInstance.toolAction = "taskCreate";
     customLogger.logInfo("ToolBar - Create Task")
+    taskMenuInstance.type = "createTask";
     taskMenuClicked(taskMenuInstance);
     setHighlightCreateTaskIcon(true)
     setHighlightCreateIcon(false)
   };
   const closeTaskCreateFn = () => {
-    taskMenuInstance.toolAction = "taskCreateClose";
+    // taskMenuInstance.toolAction = "taskCreateClose";
     // setCreateOverlay(false);
     taskMenuClicked(taskMenuInstance);
   };
   const openTaskListFn = () => {
     // setListOverlay(true);
-    taskMenuInstance.toolAction = "taskView";
+    // taskMenuInstance.toolAction = "taskView";
     taskMenuClicked(taskMenuInstance);
   };
   const closeTaskListFn = () => {
     // setListOverlay(false);
-    taskMenuInstance.toolAction = "taskViewClose";
+    // taskMenuInstance.toolAction = "taskViewClose";
     taskMenuClicked(taskMenuInstance);
   };
   const toggleTaskVisibility = () => {
-    // setshowHideTask(!showHideTask);
+    setshowHideTask(!showHideTask);
     if (showHideTask) {
-      taskMenuInstance.toolAction = "taskHide";
+      taskMenuInstance.type = "hideTask";
+      taskMenuClicked(taskMenuInstance);
       customLogger.logInfo("ToolBar - Hide Task")
-      conn?.publishMessage("abc", '{"type":"showTask","data":" "}')
+      setHighlightCreateTaskIcon(false)
     }
-    else{ taskMenuInstance.toolAction = "taskShow";
-    conn?.publishMessage("abc", '{"type":"hideTask","data":" "}')
+    else{ taskMenuInstance.type = "showTask";
     customLogger.logInfo("ToolBar - Show Task")
     setshowHideTask(!showHideTask)
-  
-    // taskMenuClicked(taskMenuInstance);
-    // setHighlightCreateTaskIcon(false)
-    // setHighlightCreateIcon(false)
+    taskMenuClicked(taskMenuInstance);
+    setHighlightCreateTaskIcon(false)
+    setHighlightCreateIcon(false)
   }
   };
 
@@ -352,7 +392,7 @@ const Task = ({
         </IssuesSectionFileImg>
       </Tooltip>
 
-      <Tooltip title={showHideTask ? "Show Tasks" : "Hide Tasks"}>
+      <Tooltip title={showHideTask ? "Tasks Visible" : "Tasks Hidden"}>
         <IssuesSectionClipImg
           onClick={() => {
             toggleTaskVisibility();
@@ -394,7 +434,7 @@ const Task = ({
             setOpenDrawer((prev: any) => !prev);
           }}
         >
-          {/* <TaskList
+          <TaskList
             tasksList={tasksList}
             taskMenuClicked={taskMenuClicked}
             currentProject={myProject}
@@ -413,8 +453,10 @@ const Task = ({
             projectUsers={projectUsers}
             taskType={currentTypesList}
             taskPriority={taskPriorityList}
-            taskStatus={taskStatusList}
-          /> */}
+            taskStatus={taskStatusList} 
+            taskContext={taskContext} // taskContext
+            toolClicked={toolClicked}
+          />
         </Drawer>
       )}
       {openCreateTask && (
@@ -433,15 +475,18 @@ const Task = ({
           />
         </CustomDrawer>
       )}
-      {openTaskDetails && (
+      {openTaskDetail && (
         <Drawer
           anchor={"right"}
-          open={openTaskDetails}
-          onClose={() => closeTaskDetails()}
+          open={openTaskDetail}
+          onClose={() => setOpenTaskDetail(false)}
         >
           <CustomTaskDetailsDrawer
             task={selectedTask}
-            onClose={() => closeTaskDetails()}
+            onClose={() => {setOpenTaskDetail(false)
+              let typeChangeToolAction: IToolbarAction = { type: "closeTaskDrawer", data: "" }; 
+              toolClicked(typeChangeToolAction);
+            }}
             taskType={currentTypesList}
             deleteTheTask={deleteTheTask}
             currentProject={currentProject}
@@ -453,6 +498,8 @@ const Task = ({
             getTasks={getTasks}
             taskPriority={taskPriorityList}
             taskStatus={taskStatusList}
+            initData={initData}
+            toolClicked={toolClicked}
           />
         </Drawer>
       )}
@@ -460,4 +507,4 @@ const Task = ({
   );
 };
 
-export default Task;
+export default forwardRef(Task);
