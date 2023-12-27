@@ -17,10 +17,14 @@ import {
   RememberDiv,
   SectionShowcase,
   SignInHeader,
+  ProcoreButton,
+  ProcoreLogo,
+  TextContainer
 } from "./SignInPageStyle";
 
 import { useRouter } from "next/router";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
+import procore from "../../../public/divami_icons/procore.svg";
 // import Logo from "../../../public/divami_icons/Logo.svg";
 
 import Checked from "../../../public/divami_icons/checked.svg";
@@ -97,7 +101,7 @@ const SignInPage = () => {
   ) => {
     if(loginEnable){
       setLoginEnable(false)
-      login(email?.toLocaleLowerCase(), password)
+      login(email?.toLocaleLowerCase(), password,12345)
       .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified) {
@@ -195,6 +199,12 @@ const SignInPage = () => {
     if (userObj) router.push("/projects");
   }, [])
 
+  const handleProcoreButtonClick = () => {
+    console.log("procoreurl",process.env.NEXT_PUBLIC_PROCORE_URL)
+    const redirectUrl = `${process.env.NEXT_PUBLIC_PROCORE_URL}&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URL}`;
+    window.location.href = redirectUrl;
+  };
+
   return (
     <>
       {loading && <CustomLoader />}
@@ -245,6 +255,12 @@ const SignInPage = () => {
 
               {/* Render the loader if loading state is true */}
             </ButtonSection>
+            <br />
+            <p className="flex justify-center">or</p>
+            <ProcoreButton onClick={handleProcoreButtonClick}>
+            <ProcoreLogo src={procore} alt="logo" />
+            <TextContainer>Sign in with procore</TextContainer>
+          </ProcoreButton>
 
             <NewUserDiv>
               New User?{"   "}

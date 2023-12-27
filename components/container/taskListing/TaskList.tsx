@@ -33,8 +33,8 @@ import {
   getTaskStatus,
   getTasksTypes,
 } from "../../../services/task";
-import TaskFilterCommon from "../task-filter-common/TaskFilterCommon";
-import CustomTaskDetailsDrawer from "../task_detail/TaskDetail";
+import TaskFilterCommon from "../taskFilter/TaskFilterCommon";
+import CustomTaskDetailsDrawer from "../taskDetails/TaskDetail";
 import {
   AppliedFilter,
   ArrowDownIcon,
@@ -97,13 +97,12 @@ import {
 } from "@mui/material";
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
-import { ITools } from "../../../models/ITools";
+import { IToolbarAction, ITools } from "../../../models/ITools";
 import {
-  downloadMenuOptions,
-  getDownladableList,
-} from "../issue-listing/Constants";
-import { DownloadTable } from "../toolbar/DownloadTable";
-import { MenuOptionLabel } from "../issue-listing/IssueListStyles";
+  downloadMenuOptions
+} from "../issueListing/Constants";
+import { DownloadTable } from "../toolbarViewer/DownloadTable";
+import { MenuOptionLabel } from "../issueListing/IssueListStyles";
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 import filterElip from "../../../public/divami_icons/filterElip.svg";
 import progressHour from "../../../public/divami_icons/progressHour.svg";
@@ -127,6 +126,7 @@ interface IProps {
   onClose: any;
   taskFilterState: any;
   deleteTheAttachment?: any;
+  taskContext:any;
 }
 
 const CustomTaskListDrawer = (props: any) => {
@@ -142,7 +142,6 @@ const CustomTaskListDrawer = (props: any) => {
     handleOnTaskFilter,
     deleteTheTask,
     taskFilterState,
-    setTaskFilterState,
     getTasks,
     handleOnTasksSort,
     deleteTheAttachment,
@@ -150,6 +149,7 @@ const CustomTaskListDrawer = (props: any) => {
     projectUsers,
     taskPriority,
     taskStatus,
+    taskContext
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -165,7 +165,7 @@ const CustomTaskListDrawer = (props: any) => {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [remainingTasks, setRemainingtasks] = useState(taskList?.length);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  let taskMenuInstance: ITools = { toolName: "task", toolAction: "" };
+  let taskMenuInstance: IToolbarAction = { data: "", type: "selectTask" };
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [downloadList, setDownloadList] = useState(taskList);
   const sortMenuOptions = [
@@ -258,31 +258,32 @@ const CustomTaskListDrawer = (props: any) => {
     }
   }, []);
 
-  // const sortDateOrdering = () => {
-  //   let sorted;
-  //   if (sortOrder === "asc") {
-  //     sorted = filteredTaskList.sort((a: any, b: any) => {
-  //       return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-  //     });
-  //     setSortOrder("desc");
-  //   } else {
-  //     sorted = filteredTaskList.sort((a: any, b: any) => {
-  //       return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-  //     });
-  //     setSortOrder("asc");
-  //   }
-  //   setFilteredTaskList(sorted);
-  // };
+  const sortDateOrdering = () => {
+    let sorted;
+    if (sortOrder === "asc") {
+      sorted = filteredTaskList.sort((a: any, b: any) => {
+        return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+      });
+      setSortOrder("desc");
+    } else {
+      sorted = filteredTaskList.sort((a: any, b: any) => {
+        return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+      });
+      setSortOrder("asc");
+    }
+    setFilteredTaskList(sorted);
+  };
 
   const handleViewTask = (task: any) => {
     filteredTaskList.forEach((item: any) => {
       if (task._id === item._id) {
         setViewTask(item);
+        // taskContext(task)
       }
     });
     setOpenTaskDetail(true);
-    taskMenuInstance.toolAction = "taskSelect";
-    taskMenuInstance.response = { ...task.context, id: task._id };
+    taskMenuInstance.type = "selectTask";
+    taskMenuInstance.data = task;
     taskMenuClicked(taskMenuInstance);
   };
 
@@ -356,7 +357,7 @@ const CustomTaskListDrawer = (props: any) => {
 
   return (
     <>
-      {errorShow.length > 0  || taskFilterState.isFilterApplied? (
+      {errorShow?.length > 0 ? (
         <TaskListContainer>
           <HeaderContainer>
             <TitleContainer>
@@ -400,7 +401,7 @@ const CustomTaskListDrawer = (props: any) => {
                     variant="outlined"
                     autoFocus={true}
                     value={searchTerm}
-                    onChange={(e:any) => {
+                    onChange={(e) => {
                       setSearchTerm(e.target.value);
                     }}
                     InputLabelProps={{ shrink: false }}
@@ -435,9 +436,9 @@ const CustomTaskListDrawer = (props: any) => {
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
                   <DividerIcon src={DividerSvg} alt="" />
-                  {/* {taskFilterState.isFilterApplied ? (
+                  {taskFilterState?.isFilterApplied ? (
                     <AppliedFilter>
-                      {taskFilterState.numberOfFilters} Filters{" "}
+                      {taskFilterState?.numberOfFilters} Filters{" "}
                       <FilterIcon
                         src={AppliedFilterIcon}
                         alt="Arrow"
@@ -446,12 +447,12 @@ const CustomTaskListDrawer = (props: any) => {
                         }}
                       />
                     </AppliedFilter>
-                  ) : null} */}
+                  ) : null}
                   <Tooltip title="Sort Menu">
                     <IconContainer
                       src={sort}
                       alt="Arrow"
-                      onClick={(e:any) => {
+                      onClick={(e) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
@@ -486,7 +487,7 @@ const CustomTaskListDrawer = (props: any) => {
 
                   <SecondDividerIcon src={DividerSvg} alt="" />
 
-                  {/* {!taskFilterState.isFilterApplied ? (
+                  {!taskFilterState?.isFilterApplied ? (
                     <IconContainer
                       src={FilterInActive}
                       alt="Arrow"
@@ -495,19 +496,19 @@ const CustomTaskListDrawer = (props: any) => {
                       }}
                       data-testid="filter"
                     />
-                  ) : null} */}
-                  <FunnelIcon
+                  ) : null} 
+                  {/* <FunnelIcon
                     src={FilterInActive}
                     alt="Arrow"
                     onClick={() => {
                       handleViewTaskList();
                     }}
                     data-testid="filter"
-                  />
-                  {taskFilterState.isFilterApplied && taskFilterState.numberOfFilters ? (
+                  /> */}
+                  {taskFilterState?.isFilterApplied && taskFilterState?.numberOfFilters ? (
                     <FilterIndication />
                   ) : null}
-                  {/* <Tooltip title="Download Menu">
+                  <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
@@ -516,8 +517,8 @@ const CustomTaskListDrawer = (props: any) => {
                         handleSortClick(e);
                       }}
                     />
-                  </Tooltip> */}
-                  <CSVLink
+                  </Tooltip> 
+                  {/* <CSVLink
                     data={getDownladableList(taskList)}
                     filename={"my-tasks.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
@@ -525,7 +526,7 @@ const CustomTaskListDrawer = (props: any) => {
                     data-testid="download"
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink>
+                  </CSVLink> */}
                 </>
               )}
             </MiniSymbolsContainer>
@@ -533,8 +534,8 @@ const CustomTaskListDrawer = (props: any) => {
 
           <BodyContainer ref={taskContRef}>
             <CustomBox searchingOn={searchingOn}>
-              {filteredTaskList.length > 0 ? (
-                filteredTaskList.map((val: any) => {
+              {filteredTaskList?.length > 0 ? (
+                filteredTaskList?.map((val: any) => {
                   return (
                     <>
                       <BodyInfo
@@ -568,14 +569,12 @@ const CustomTaskListDrawer = (props: any) => {
 
                           <PriorityChild>
                             {" "}
-                            {val?.assignees[0]?.firstName
+                            {val?.assignees}{" "}
+                            {/* {val?.assignees?.slice(1)}{" "}
+                            {val?.assignees
                               .charAt(0)
                               .toUpperCase()}
-                            {val?.assignees[0]?.firstName.slice(1)}{" "}
-                            {val?.assignees[0]?.lastName
-                              .charAt(0)
-                              .toUpperCase()}
-                            {val?.assignees[0]?.lastName.slice(1)}
+                            {val?.assignees?.slice(1)} */}
                           </PriorityChild>
                           <LightTooltip
                             arrow
@@ -583,17 +582,17 @@ const CustomTaskListDrawer = (props: any) => {
                               <AssigneeList>
                                 {val?.assignees?.map(
                                   (assignName: any, index: number) => {
-                                    if (index != 0) {
+                                    if (index) {
                                       return (
                                         <>
                                           {index !== val?.assignees?.length - 1
-                                            ? assignName?.firstName +
+                                            ? assignName +
                                               " " +
-                                              assignName.lastName +
+                                              assignName +
                                               " | "
-                                            : assignName?.firstName +
+                                            : assignName +
                                               " " +
-                                              assignName.lastName}
+                                              assignName}
                                         </>
                                       );
                                     }
@@ -624,7 +623,7 @@ const CustomTaskListDrawer = (props: any) => {
                 </NoMatchDiv>
               )}
               <div className="flex justify-between px-1">
-              {remainingTasks > 1 && filteredTaskList.length > 1 ? (
+              {remainingTasks > 1 && filteredTaskList?.length > 1 ? (
                 <LoadMoreText
                   onClick={() => {
                     handleLoadMore();
@@ -634,7 +633,7 @@ const CustomTaskListDrawer = (props: any) => {
                 </LoadMoreText>
               ) : null}
               <div></div>
-              {filteredTaskList.length >= 10 &&
+              {filteredTaskList?.length >= 10 &&
                             <TopButton onClick={scrollTop}>
                             Top
                           </TopButton>
@@ -680,7 +679,7 @@ const CustomTaskListDrawer = (props: any) => {
             >
               <TaskFilterCommon
                 tasksList={tasksList}
-                // taskMenuClicked={taskMenuClicked}
+                taskMenuClicked={taskMenuClicked}
                 // currentProject={myProject}
                 // currentStructure={myStructure}
                 // currentSnapshot={mySnapshot}
@@ -688,7 +687,6 @@ const CustomTaskListDrawer = (props: any) => {
                 handleOnFilter={handleOnTaskFilter}
                 onClose={() => setOpenDrawer((prev: any) => !prev)}
                 taskFilterState={taskFilterState}
-                setTaskFilterState={setTaskFilterState}
               />
             </Drawer>
           )}
@@ -791,24 +789,24 @@ const CustomTaskListDrawer = (props: any) => {
                     // onClick={() => handleDownloadMenuClick()}
                     data-testid="download-menu-item"
                   >
-                    {option.label === "Download as CSV" ? (
-                      <CSVLink
-                        data={getDownladableList(downloadList)}
-                        filename={"tasks.csv"}
-                        className="text-black btn btn-primary fill-black fa fa-Download "
-                        target="_blank"
-                        data-testid="download"
-                        onClick={() => handleDownloadClose()}
-                      >
-                        <MenuOptionLabel>{option.label}</MenuOptionLabel>
-                      </CSVLink>
-                    ) : (
-                      <DownloadTable
-                        data={getDownladableList(downloadList)}
-                        label={option.label}
-                        filename="tasks.pdf"
-                        onClick={() => handleDownloadClose()}
-                      />
+                    {option.label === "Download as CSV" ? (''
+                      // <CSVLink
+                      // data={getDownladableList(downloadList)}
+                      //   filename={"tasks.csv"}
+                      //   className="text-black btn btn-primary fill-black fa fa-Download "
+                      //   target="_blank"
+                      //   data-testid="download"
+                      //   onClick={() => handleDownloadClose()}
+                      // >
+                      //   <MenuOptionLabel>{option.label}</MenuOptionLabel>
+                      // </CSVLink>
+                    ) : (''
+                      // <DownloadTable
+                      //   data={getDownladableList(downloadList)}
+                      //   label={option.label}
+                      //   filename="tasks.pdf"
+                      //   onClick={() => handleDownloadClose()}
+                      // />
                     )}
 
                     {/* {option.icon && (

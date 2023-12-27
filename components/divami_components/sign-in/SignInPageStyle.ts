@@ -4,6 +4,33 @@ import Image from "next/image";
 import { Box, Button, Checkbox, MenuItem, TextField } from "@mui/material";
 import zIndex from "@mui/material/styles/zIndex";
 
+
+
+export const ProcoreLogo = styled(Image)`
+  width: 20px; 
+  height: 20px;
+  
+`;
+
+export const ProcoreButton = styled("div")`
+  margin-top: 30px;
+  flex-direction: coloumn;
+  background-color:#FF7F11;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 10px 20px;
+  display: flex;
+`;
+export const TextContainer = styled("div")`
+  flex: 1 ; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  fontSize: "16px"
+`;
+
+
+
 export const SectionShowcase = styled("section")({
   position: "absolute",
   right: "0",

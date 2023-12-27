@@ -1,49 +1,54 @@
 import {
   Autocomplete,
   Box,
-  Drawer,
-  TextField,
-  ListItemIcon,
   Menu,
+  Select,
+  TextField,
   Tooltip,
   tooltipClasses,
   TooltipProps,
   Typography,
 } from "@mui/material";
-import { styled } from "@mui/system";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { Select } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import Chip from "@mui/material/Chip";
+import { styled } from "@mui/system";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
+import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
 import Clip from "../../../public/divami_icons/clip.svg";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Edit from "../../../public/divami_icons/edit.svg";
 import Send from "../../../public/divami_icons/send.svg";
-import vectorTool from "../../../public/divami_icons/vectorTool.svg";
-
-import CustomButton from "../custom-button/CustomButton";
-import CustomSelect from "../custom-select/CustomSelect";
-import { toast } from "react-toastify";
-import CustomDrawer from "../custom-drawer/custom-drawer";
-import CreateIssue from "../create-issue/CreateIssue";
-import { ISSUE_FORM_CONFIG } from "../create-issue/body/Constants";
-import PopupComponent from "../../popupComponent/PopupComponent";
-import { editIssue } from "../../../services/issue";
-import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
-import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
-
-import _ from "lodash";
 import {
   createAttachment,
   deleteAttachment,
 } from "../../../services/attachments";
 import {
+  getTasksList,
+  updateAttachments,
+  updateTask,
+} from "../../../services/task";
+import CustomButton from "../../divami_components/custom-button/CustomButton";
+import PopupComponent from "../../popupComponent/PopupComponent";
+// import { TASK_FORM_CONFIG } from "../create-task/body/Constants";
+// import CreateTask from "../create-task/CreateTask";
+import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
+// import CustomSelect from "../custom-select/CustomSelect";
+import {
+  AddCommentButtonContainer,
+  AddCommentContainer,
+  AddCommentContainerSecond,
   ArrowIcon,
   AssignEditSearchContainer,
+  AssignedLabel,
+  AssigneeList,
+  AttachButton,
   AttachedImageDiv,
   AttachedImageIcon,
   AttachedImageTitle,
@@ -51,37 +56,46 @@ import {
   AttachmentDescription,
   AttachmentDiv,
   AttachmentTitle,
+  BodyContainer,
   CaptureStatus,
   CaptureTitle,
-  CustomSelectContainer,
   CustomTaskDrawerContainer,
   DeleteIcon,
   DescriptionDiv,
   DescriptionPara,
   DescriptionTitle,
   EditIcon,
+  ExtraLabel,
   FirstHeaderDiv,
-  FormElementContainer,
+  FourthBodyDiv,
   FourthContAssigned,
   FourthContLeft,
   FourthContProgType,
   HeaderContainer,
+  ImageErrorIcon,
   LeftTitleCont,
+  ValueContainer,
   MoreText,
   PenIconImage,
   PriorityStatus,
   PriorityTitle,
+  ProgressCustomSelect,
   ProgressEditStateButtonsContainer,
+  ProgressStateFalse,
+  ProgressStateTrue,
   RelatedDiv,
   RelatedSingleButton,
   RelatedTagsButton,
   RelatedTagTitle,
   RightTitleCont,
+  SecondAssigneeList,
   SecondBodyDiv,
   SecondContCapt,
   SecondContPrior,
   SecondContPriorParal,
+  SendButton,
   SpanTile,
+  StyledInput,
   TabOneDiv,
   ThirdContProg,
   ThirdContProgType,
@@ -89,47 +103,28 @@ import {
   ThirdContWatch,
   ThirdContWatchName,
   TitleContainer,
-  BodyContainer,
-  ProgressStateTrue,
-  FourthBodyDiv,
-  ProgressStateFalse,
-  ProgressCustomSelect,
-  AddCommentContainer,
-  AddCommentContainerSecond,
-  AddCommentButtonContainer,
-  AttachButton,
-  ImageErrorIcon,
-  SendButton,
-  StyledInput,
-  ActivityLogContainer,
-  StyledMenu,
-  IconContainer,
-  AssigneeList,
-  SecondAssigneeList,
-  ExtraLabel,
-  AssignedLabel,
-  ValueContainer,
   CloseIcon,
-  FourthContMoreText,
-  ParentFourthContMoreText,
   MoreTextDiv,
+  ParentFourthContMoreText,
+  FourthContMoreText,
   DueDateTitle,
   SecondContDueDate,
   ThirdContDueDate,
-  ProcoreLogo,
-} from "./IssueDetailStyles";
+} from "../../divami_components/task_detail/TaskDetailStyles"
 import { createComment, getCommentsList } from "../../../services/comments";
-import ActivityLog from "../task_detail/ActivityLog";
-import Chip from "@mui/material/Chip";
+import ActivityLog from "../../divami_components/hotspot_detail/ActivityLog";
+import { ActivityLogContainer } from "../../divami_components/issue_detail/IssueDetailStyles";
 import moment from "moment";
-import { CustomToast } from "../custom-toaster/CustomToast";
-import AttachmentPreview from "../attachmentPreview";
+import { showImagePreview } from "../../../utils/IssueTaskUtils";
+import AttachmentPreview from "../../divami_components/attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
-import procore from "../../../public/divami_icons/procore.svg";
-import ProcoreLink from "../../container/procore/procoreLinks";
-import LinkNewRFI from "../../container/procore/linkNewRfi";
+import Download from "../../../public/divami_icons/download.svg";
+import CustomSelect from "../../divami_components/custom-select/CustomSelect";
+import CreateTask from "../../divami_components/create-task/CreateTask";
+interface ContainerProps {
+  footerState: boolean;
+}
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -137,9 +132,8 @@ interface TabPanelProps {
   value: number;
 }
 
-interface Issue {
+interface Task {
   _id: string;
-  // Include other properties if needed
 }
 
 const CustomTabPanel = styled(TabPanel)`
@@ -176,38 +170,38 @@ function a11yProps(index: number) {
 function BasicTabs(props: any) {
   const {
     taskState,
-    formHandler,
+    onClose,
     taskType,
     taskPriority,
     taskStatus,
     projectUsers,
-    issueUpdate,
+    taskUpdate,
     deleteTheAttachment,
-    handleFooter,
     setTaskState,
   } = props;
 
   const [value, setValue] = React.useState(0);
+  const [issueTypeConfig, setIssueTypeConfig] = useState("");
   const [formState, setFormState] = useState({
     selectedValue: "",
     selectedProgress: null,
-    selectedUser:
-      taskState?.assignessList || taskState?.TabOne?.assignessList || [],
+    selectedUser: taskState?.assignessList || taskState?.TabOne?.assignessList,
   });
   const [progressEditState, setProgressEditState] = useState(false);
   const [assigneeEditState, setAssigneeEditState] = useState(false);
   const [progressOptionsState, setProgressOptionsState] = useState<any>([{}]);
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
-  const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
+  // const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [searchTerm, setSearchTerm] = useState("");
   const [list, setList] = useState<any>();
   const [comments, setComments] = useState("");
   const [backendComments, setBackendComments] = useState<any>([]);
-  const [file, setFile] = useState<File>();
+  const router = useRouter();
+
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [attachmentPopup, setAttachmentPopup] = useState(false);
   const[isAdding,setIsAdding]=useState(false)
-  const router = useRouter();
   const [showPreview,setShowPreview]=useState(false)
   const[attachment,setAttachment]=useState<{
     name: string;
@@ -215,7 +209,6 @@ function BasicTabs(props: any) {
     entity: string;
     _id: string;
 }>()
-const [attachmentPopup, setAttachmentPopup] = useState(false);
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -226,7 +219,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
     setProgressOptionsState((prevState: any) => {
       return [
         {
-          id: "issuePriority",
+          id: "taskPriority",
           type: "select",
           defaultValue: "",
           placeHolder: "Select",
@@ -239,23 +232,20 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
         },
       ];
     });
-    let tempUsers = projectUsers.map((each: any) => {
+    let tempUsers = projectUsers?.map((each: any) => {
       return {
         ...each,
-        label: each?.user?.fullName,
+        label: each.user?.fullName,
       };
     });
     setAssigneeOptionsState(tempUsers);
-    setFormState({
-      ...formState,
-      selectedUser: taskState?.TabOne?.assignessList,
-    });
   }, []);
 
   useEffect(() => {
     setFormState({
       ...formState,
-      selectedUser: taskState?.TabOne?.assignessList,
+      selectedUser:
+        taskState?.assignessList || taskState?.TabOne?.assignessList,
     });
   }, [taskState]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -265,7 +255,6 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
   const handleEditProgress = () => {
     setProgressEditState(!progressEditState);
   };
-
   const handleClose = () => {
     setProgressEditState(false);
     setAssigneeEditState(false);
@@ -281,47 +270,12 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
       ...formState,
       selectedProgress: progressOptionsState[0].defaultValue,
     };
-    issueUpdate(optState);
+    taskUpdate(optState);
   };
 
   const handleEditAssigne = () => {
     setAssigneeEditState(!assigneeEditState);
   };
-
-  useEffect(() => {
-    if (progressEditState || assigneeEditState) handleFooter(true);
-    else handleFooter(false);
-  }, [progressEditState, assigneeEditState]);
-
-  const getComments = async (entityId: any) => {
-    getCommentsList(router.query.projectId as string, entityId)
-      .then((response) => {
-        if (response.success === true) {
-          setBackendComments(response.result);
-          if(isAdding)
-          {
-            const fileInput = document.getElementById(
-              "issueDetailsWindow"
-            ) as HTMLInputElement;
-            if (fileInput) {
-              setTimeout(()=>{
-                fileInput.scrollTo (0,fileInput.scrollHeight);
-              },100)
-              
-            }
-          }
-        }
-      })
-      .catch((error) => {
-        CustomToast("Failed to load data. Please refresh the page.","error");
-      });
-  };
-
-  useEffect(() => {
-    if (taskState?.TabOne?.id) {
-      getComments(taskState?.TabOne?.id);
-    }
-  }, [taskState,isAdding]);
 
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
@@ -337,39 +291,47 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
       });
       setComments("");
     }
-    //
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
+  const getComments = async (entityId: any) => {
+    getCommentsList(router.query.projectId as string, entityId)
+      .then((response) => {
+        if (response.success === true) {
+          setBackendComments(response.result);
+          if(isAdding)
+          {
+            const fileInput = document.getElementById(
+              "taskDetailsWindow"
+            ) as HTMLInputElement;
+            if (fileInput) {
+              setTimeout(()=>{
+                fileInput.scrollTo (0,fileInput.scrollHeight);
+              },100)
+              
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        CustomToast("Failed to load the data","error");
+      });
   };
+  useEffect(() => {
+    if (taskState?.TabOne?.id) {
+      getComments(taskState?.TabOne?.id);
+    }
+  }, [taskState,isAdding]);
 
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
     setAnchorEl(null);
   };
-
-  const sortMenuOptions = [
-    {
-      label: "Status ( To Do - Completed)",
-      icon: null,
-      method: "status_asc",
-    },
-    {
-      label: "Status ( Completed - To Do)",
-      icon: null,
-      method: "status_desc",
-    },
-  ];
-
   return (
-    <Box sx={{ width: "100%", height: "100%" }}>
+    <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "#D9D9D9", color: "black" }}>
         <Tabs
           TabIndicatorProps={{
-            style: { background: "#F1742E", height: "3px", color: "black" },
+            style: { background: "#F1742E", height: "3px" },
           }}
           value={value}
           onChange={handleChange}
@@ -413,6 +375,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
             },
           }}
         >
+          {/* MuiTab-root.Mui-selected */}
           <Tab
             label="Details"
             {...a11yProps(0)}
@@ -432,36 +395,35 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            {taskState?.TabOne?.screenshot && (
-              <Image
-                src={
-                  taskState?.TabOne?.screenshot
-                    ? taskState?.TabOne?.screenshot
-                    : ""
-                }
-                alt=""
-                width={400}
-                height={400}
-              />
-            )}
+            <Image
+              src={
+                taskState?.TabOne?.screenshot
+                  ? taskState?.TabOne?.screenshot
+                  : ""
+              }
+              alt=""
+              width={400}
+              height={400}
+            />
           </FirstHeaderDiv>
           <SecondBodyDiv>
             <SecondContPrior>
               <PriorityTitle>Type</PriorityTitle>
               <PriorityStatus
                 style={{ color: "#101F4B" }}
-                data-testid="issue-title"
+                data-testid="task-title"
               >
                 {taskState?.TabOne?.type}
               </PriorityStatus>
             </SecondContPrior>
           </SecondBodyDiv>
+
           <SecondBodyDiv>
             <SecondContPriorParal>
               <PriorityTitle>Priority</PriorityTitle>
               <PriorityStatus
                 style={{ color: "#101F4B" }}
-                data-testid="issue-priority"
+                data-testid="task-priority"
               >
                 {taskState?.TabOne?.priority}
               </PriorityStatus>
@@ -473,10 +435,10 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
               <CaptureTitle>Captured on</CaptureTitle>
               <CaptureStatus
                 style={{ color: "#101F4B" }}
-                data-testid="issue-captured"
+                data-testid="task-captured"
               >
                 {" "}
-                {setTheFormatedDate(taskState?.TabOne?.capturedOn)}
+                {setTheFormatedDate(taskState?.TabOne?.startDate)}
               </CaptureStatus>
             </SecondContCapt>
           </SecondBodyDiv>
@@ -484,23 +446,16 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           <SecondBodyDiv>
             <SecondContPriorParal>
               <ThirdContWatch>Created By</ThirdContWatch>
-              <ThirdContWatchName
-                style={{ color: "#101F4B" }}
-                data-testid="issue-watcher"
-              >
+              <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
-                {taskState?.TabOne?.creator}
+                {taskState?.TabOne?.owner}
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
           <SecondBodyDiv>
             <SecondContDueDate>
               <DueDateTitle>Due date</DueDateTitle>
-              <ThirdContDueDate
-                style={{ color: "#101F4B" }}
-                data-testid="issue-duedate"
-              >
-                {" "}
+              <ThirdContDueDate style={{ color: "#101F4B" }}>
                 {setTheFormatedDate(taskState?.TabOne?.dueDate)}
               </ThirdContDueDate>
             </SecondContDueDate>
@@ -511,12 +466,14 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
 
               <ThirdContProgType
                 style={{ color: "#101F4B" }}
-                data-testid="issue-progress"
+                data-testid="task-progress"
               >
                 {taskState?.TabOne?.status}
                 {taskState?.TabOne?.status ? (
                   <PenIconImage
-                    onClick={handleEditProgress}
+                    onClick={() => {
+                      handleEditProgress();
+                    }}
                     src={Edit}
                     alt={"close icon"}
                     data-testid="issue-progress-edit"
@@ -527,66 +484,70 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
               </ThirdContProgType>
             </ThirdContRight>
           </SecondBodyDiv>
-          {progressEditState && (
+          {progressEditState ? (
             <ProgressCustomSelect data-testid="progress-options">
               {/* <ExtraLabel>Progress</ExtraLabel> */}
+
               <CustomSelect
                 config={progressOptionsState[0]}
                 data={{
                   ...progressOptionsState[0],
                   defaultValue: taskState?.TabOne?.status,
                 }}
-                // defaultValue={progressOptionsState?.options[0].value}
-                id={"issuePriority"}
+                id={"taskPriority"}
                 sx={{ minWidth: 120 }}
                 setFormConfig={setProgressOptionsState}
                 isError={""}
                 label=""
-                data-testid="progress-options"
               />
             </ProgressCustomSelect>
+          ) : (
+            ""
           )}
 
           <SecondBodyDiv>
             <FourthContLeft>
-              <FourthContAssigned>Assigned to</FourthContAssigned>
+              <FourthContAssigned data-testid="assigned-to-label">
+                Assigned to
+              </FourthContAssigned>
               <MoreTextDiv>
+                {" "}
                 <ParentFourthContMoreText>
-                  <FourthContProgType
-                    style={{ color: "#101F4B" }}
-                    data-testid="issue-assignees"
-                  >
-                    {taskState?.TabOne?.assignees}
+                  <FourthContProgType style={{ color: "#101F4B" }}>
+                    {taskState?.TabOne?.assignees}{" "}
+                    {taskState?.TabOne?.assignees ? (
+                      <PenIconImage
+                        data-testid="assignees-edit"
+                        onClick={() => {
+                          handleEditAssigne();
+                        }}
+                        src={Edit}
+                        alt={"close icon"}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </FourthContProgType>
-                  {taskState?.TabOne?.assignees ? (
-                    <PenIconImage
-                      onClick={handleEditAssigne}
-                      src={Edit}
-                      alt={"close icon"}
-                    />
-                  ) : (
-                    ""
-                  )}
                 </ParentFourthContMoreText>
                 <FourthContMoreText>
                   <LightTooltip
                     arrow
                     title={
                       <SecondAssigneeList>
-                        {taskState?.TabOne?.assignessList?.map(
+                        {taskState?.TabOne?.assignee?.map(
                           (assignName: any, index: number) => {
                             if (index !== 0) {
                               return (
                                 <>
                                   {index !==
-                                  taskState?.TabOne?.assignessList.length - 1
-                                    ? assignName?.firstName +
+                                  taskState?.TabOne?.assignees.length - 1
+                                    ? assignName +
                                       " " +
-                                      assignName.lastName +
+                                      assignName +
                                       " | "
-                                    : assignName?.firstName +
+                                    : assignName +
                                       " " +
-                                      assignName.lastName}
+                                      assignName}
                                 </>
                               );
                             }
@@ -601,23 +562,22 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
               </MoreTextDiv>
             </FourthContLeft>
           </SecondBodyDiv>
-          {/* <ParentFourthContMoreText>
-          
-          </ParentFourthContMoreText> */}
+
           {assigneeEditState && (
             <AssignEditSearchContainer>
               {/* <AssignedLabel>Assigned to</AssignedLabel> */}
+
               <Autocomplete
                 data-testid="assignee-options"
                 disablePortal
                 id="combo-box-demo"
-                disableClearable
                 options={projectUsers.map((each: any) => {
                   return {
                     ...each,
                     label: each.user?.fullName,
                   };
                 })}
+                disableClearable
                 sx={{
                   width: 300,
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -625,6 +585,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                   },
                 }}
                 renderTags={() => null}
+                // defaultValue={formState.selectedUser[0]?.user?.fullName}
                 renderInput={(params) => <TextField {...params} />}
                 onChange={(event, value: any) => {
                   const newSelectedUser = value
@@ -646,6 +607,13 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                 }}
                 value={formState.selectedUser}
                 multiple={true}
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <SearchIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
               />
               <ValueContainer>
                 {formState.selectedUser.map((v: any) =>
@@ -659,10 +627,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                         <CloseIcon
                           src={closeIcon}
                           alt=""
-                          style={{
-                            marginLeft: "5px",
-                            marginRight: "12px",
-                          }}
+                          style={{ marginLeft: "5px", marginRight: "12px" }}
                         />
                       }
                       onDelete={() => {
@@ -698,18 +663,11 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
             ""
           )}
 
-          <FormElementContainer>
-            <CustomSelectContainer>
-              {/* <SelectVariants options={DetailsObj.TabOne[0].options} /> */}
-              {/* <BasicSelect options={DetailsObj.TabOne[0].options} /> */}
-            </CustomSelectContainer>
-          </FormElementContainer>
-
           {taskState?.TabOne?.issueDescription?.length > 0 ? (
             <DescriptionDiv>
               <DescriptionTitle>Description</DescriptionTitle>
 
-              <DescriptionPara data-testid="issue-description">
+              <DescriptionPara>
                 {taskState?.TabOne?.issueDescription}
               </DescriptionPara>
             </DescriptionDiv>
@@ -720,14 +678,13 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           {taskState?.TabOne?.attachments?.length > 0 && (
             <>
               <AttachmentDiv className={`attachmentsSection`}>
-                <AttachmentTitle data-testid="issue-attachments-label">
-                  Attachments
-                </AttachmentTitle>
+                <AttachmentTitle>Attachments</AttachmentTitle>
                 <AttachmentDescription>
                   {taskState?.TabOne.attachments?.map(
                     (a: any, index: number) => {
                       return (
-                        <AttachedImageDiv key={a._id}className={`detailsImageDiv`}>
+                        <div key={a._id}>
+                          <AttachedImageDiv key={a._id}className={`detailsImageDiv`}>
                           <div className="w-[50%]">
                           <Tooltip title={a?.name?.length > 20 ? a?.name : ""}>
                           <AttachedImageTitle onClick={() => {
@@ -754,7 +711,10 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                               onClick={() => {
                                 setAttachmentPopup(true);
                                }}
-                        /> {attachmentPopup && (
+                              //className={`deleteIcon`}
+                            />
+
+                            {attachmentPopup && (
                               <PopupComponent
                                 open={attachmentPopup}
                                 setShowPopUp={setAttachmentPopup}
@@ -764,7 +724,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                                 SecondaryButtonlabel={"Cancel"}
                                 callBackvalue={() => {
                                   setAttachmentPopup(false);
-                                  deleteTheAttachment(a?._id, "issue");
+                                  deleteTheAttachment(a?._id, "task");
                                   setTaskState((prev: any) => {
                                     const updatedTabOne = {
                                       ...prev.TabOne,
@@ -782,32 +742,32 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                                 }}
                               />
                             )}
-                                    
-                       </AttachedImageDiv>
+                          </AttachedImageDiv>
+                        </div>
                       );
                     }
                   )}
-                   { 
-                    showPreview&&(
-                            <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 z-10">
-                              <AttachmentPreview attachment={attachment} setShowPreview={setShowPreview}></AttachmentPreview>
-                            </div>)
-                           
-                    }
                 </AttachmentDescription>
+                {
+                  showPreview&&(
+                    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 z-10">
+                      <AttachmentPreview attachment={attachment} setShowPreview={setShowPreview}></AttachmentPreview>
+                    </div>)         
+                            
+                }
               </AttachmentDiv>
             </>
           )}
+
           {taskState?.TabOne?.tags?.length > 0 ? (
             <RelatedDiv>
               <RelatedTagTitle>Related Tags</RelatedTagTitle>
               <RelatedTagsButton>
+                {/* {console.log("taskState12", taskState)} */}
                 {taskState?.TabOne.tags?.map((item: any) => {
                   return (
                     <>
-                      <RelatedSingleButton data-testid="chip-button">
-                        {item}
-                      </RelatedSingleButton>
+                      <RelatedSingleButton>{item}</RelatedSingleButton>
                     </>
                   );
                 })}
@@ -823,13 +783,17 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                 <CustomButton
                   type="outlined"
                   label="Cancel"
-                  formHandler={handleClose}
+                  formHandler={() => {
+                    handleClose();
+                  }}
                   dataTestId={"issue-edit-cancel"}
                 />
                 <CustomButton
                   type="contained"
                   label="Update"
-                  formHandler={handleStateChange}
+                  formHandler={() => {
+                    handleStateChange();
+                  }}
                   dataTestId={"issue-edit-save"}
                 />
               </ProgressEditStateButtonsContainer>
@@ -852,7 +816,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                       variant="standard"
                       placeholder="Add Comment"
                       value={comments}
-                      onChange={(e) => {
+                      onChange={(e:any) => {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
@@ -868,10 +832,6 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                       }}
                     />
                     <AddCommentButtonContainer>
-                      {/* <AttachButton>
-                    <ImageErrorIcon src={Clip} alt="" />
-                    <input type="file" onChange={handleFileChange} />
-                  </AttachButton> */}
                       <SendButton
                         onClick={() => {
                           addComment(comments, taskState?.TabOne?.id);
@@ -896,103 +856,43 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           setIsAdding={setIsAdding}
         />
       </CustomTabPanel>
-      {/* <>
-        <AddCommentContainerSecond>
-          <StyledInput
-            id="standard-basic"
-            variant="standard"
-            placeholder="Add Comment"
-            value={comments}
-            onChange={(e) => {
-              setComments(e.target.value);
-            }}
-          />
-          <AddCommentButtonContainer>
-            <AttachButton>
-              <ImageErrorIcon src={Clip} alt="" />
-              <input type="file" onChange={handleFileChange} />
-            </AttachButton>
-            <SendButton
-              onClick={() => {
-                addComment(comments, taskState?.TabOne?.id);
-              }}
-            >
-              <ImageErrorIcon src={Send} alt="" />
-            </SendButton>
-          </AddCommentButtonContainer>
-        </AddCommentContainerSecond>
-      </> */}
     </Box>
   );
 }
 
-const CustomIssueDetailsDrawer = (props: any) => {
+const CustomTaskDetailsDrawer = (props: any) => {
   const {
     onClose,
-    issue,
-    issuesList,
-    issueType,
-    issuePriority,
-    issueStatus,
+    task,
+    taskList,
+    taskType,
+    taskPriority,
+    taskStatus,
     projectUsers,
+    deleteTheTask,
     currentProject,
     currentSnapshot,
     currentStructure,
     contextInfo,
-    deleteTheIssue,
-    setIssueList,
-    getIssues,
+    closeTaskCreate,
+    getTasks,
     deleteTheAttachment,
-    issueLoader,
-    setIssueLoader,
+    setTaskList,
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
-  const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState(issue);
-  const[isLoading,setLoading]=useState(false);
-  const [procorePopup,setProcorePopup]= useState<boolean>(false)
-  const [newRFI,setnewLinkRFI] = useState<boolean>(false);
-  const [taskDetail,setTaskDetail] = useState<boolean>(true)
+  const [selectedTask, setSelectedTask] = useState(task);
   const router = useRouter();
+  const [backendComments, setBackendComments] = useState<any>([]);
+  const[isLoading,setLoading]=useState(false);
+  const [file, setFile] = useState<File>();
+
   useEffect(() => {
-    setSelectedIssue(issue);
-  }, [issue]);
+    setSelectedTask(task);
+   
 
-  const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
-    const selectedIssueId = selectedIssue?._id;
-    const updatedIssuesList = issuesList.filter(
-      (issue) => issue._id !== selectedIssueId
-    );
-    return updatedIssuesList;
-  };
 
-  const onDeleteCallback = () => {
-    onClose();
-    if (setIssueList) {
-      const updatedIssuesList = deleteIssueById(issuesList, selectedIssue);
-
-      setIssueList(updatedIssuesList);
-    }
-  };
-
-  const onDeleteIssue = (status: any) => {
-    setshowPopUp(false);
-    if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
-
-    const deleteTheAttachment = (attachmentId: string) => {
-      deleteAttachment(attachmentId)
-        .then((response) => {
-          if (response.success === true) {
-            toast(response.message);
-          }
-        })
-        .catch((error) => {
-          CustomToast(error.message,"error");
-        });
-    };
-  };
-
+  }, [task]);
   const DetailsObj = {
     TabOne: {
       options: [
@@ -1048,37 +948,39 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
+  const [showPopUp, setshowPopUp] = useState(false);
 
   useEffect(() => {
     let tempObj = {
-      ...selectedIssue,
-      options: selectedIssue?.options,
-      priority: selectedIssue?.priority,
-      capturedOn: selectedIssue?.createdAt,
-      creator: selectedIssue?.owner?.fullName,
-      issueDescription: selectedIssue?.description,
-      screenshot: selectedIssue?.screenshot as string,
-      attachments: selectedIssue?.attachments,
-      assignees: selectedIssue?.assignees?.length
-        ? `${selectedIssue?.assignees[0].fullName}`
+      ...selectedTask,
+      title: selectedTask?.title,
+      options: selectedTask?.options,
+      priority: selectedTask?.priority,
+      sequenceNumber: selectedTask?.sequenceNumber,
+
+      capturedOn: selectedTask?.createdAt,
+      creator: selectedTask?.owner?.fullName,
+      issueDescription: selectedTask?.description,
+      screenshot: selectedTask?.screenshot as string,
+      attachments: selectedTask?.attachments,
+      relatedTags: selectedTask?.tags,
+      assignees: selectedTask?.assignees?.length
+        ? `${selectedTask?.assignees[0].fullName}`
         : "",
-      assigneeName: selectedIssue?.assignees?.length
-        ? selectedIssue?.assignees[0].fullName
+      assigneeName: selectedTask?.assignees?.length
+        ? selectedTask?.assignees[0].fullName
         : "",
-      assignessList: selectedIssue?.assignees?.length
-        ? selectedIssue?.assignees?.map((item: any) => {
+      assignessList: selectedTask?.assignees?.length
+        ? selectedTask?.assignees?.map((item: any) => {
             return { ...item, label: item.fullName };
           })
         : [],
       moreText:
-        selectedIssue?.assignees?.length > 1
-          ? `+${selectedIssue?.assignees?.length - 1} more`
+        selectedTask?.assignees?.length > 1
+          ? `+${selectedTask?.assignees?.length - 1} more`
           : "",
-      relatedTags: selectedIssue?.tags,
-      id: selectedIssue?._id,
-      tags: selectedIssue?.tags,
-      status: selectedIssue?.status,
-      title: selectedIssue?.title,
+      id: selectedTask?._id,
+      status: selectedTask?.status,
     };
     setTaskState((prev: any) => {
       return {
@@ -1086,7 +988,29 @@ const CustomIssueDetailsDrawer = (props: any) => {
         TabOne: tempObj,
       };
     });
-  }, [selectedIssue]);
+  }, [selectedTask]);
+
+  const deletetaskById = (taskList: Task[], selectedTask: Task) => {
+    const selectedTaskId = selectedTask?._id;
+    const updatedTaskList = taskList.filter(
+      (task) => task._id !== selectedTaskId
+    );
+    return updatedTaskList;
+  };
+
+  const onDeleteCallback = () => {
+    onClose();
+    if (setTaskList) {
+      const updatedIssuesList = deletetaskById(taskList, selectedTask);
+
+      setTaskList(updatedIssuesList);
+    }
+  };
+
+  const onDeleteTask = () => {
+    setshowPopUp(false);
+    deleteTheTask(selectedTask, onDeleteCallback);
+  };
 
   const handleCreateTask = (formData: any) => {
     clickTaskSubmit(formData);
@@ -1094,14 +1018,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
-      editIssue(projectId, data, selectedIssue?._id)
+      updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
           if (response.success === true) {
-            CustomToast("Issue updated successfully","success");
-            getIssues(currentStructure._id);
-            setLoading(true)
+            CustomToast("Task updated successfully","success");
+            getTasks(currentStructure._id);
+            setLoading(true);
           } else {
-            CustomToast("Error updating the Issue","error");
+            CustomToast("Error updating the task","error");
           }
           setLoading(false)
           setOpenCreateTask(false);
@@ -1117,27 +1041,36 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
+    // let userIdList: any[] = [];
+    // const assignes = formData.filter((item: any) => item.id == "assignedTo")[0]
+    //   ?.selectedName;
+    // if (assignes && assignes.length > 0) {
+    //   assignes.map((user: any) => {
+    //     userIdList?.push(user.value);
+    //   });
+    // }
+    // if (assignes?.value) {
+    //   userIdList.push(assignes.value);
+    // }
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each._id || each.value;
+        return each.value || each._id;
       });
-
     data.structure = currentStructure?._id;
     data.snapshot = currentSnapshot?._id;
     data.status = formData.filter(
-      (item: any) => item.id == "issueStatus"
+      (item: any) => item.id == "taskStatus"
     )[0]?.defaultValue;
-
     data.title = formData.filter(
       (item: any) => item.id == "create_title"
     )[0]?.defaultValue;
 
     data.type = formData.filter(
-      (item: any) => item.id == "issueType"
+      (item: any) => item.id == "tasks"
     )[0]?.defaultValue;
     (data.priority = formData.filter(
-      (item: any) => item.id == "issuePriority"
+      (item: any) => item.id == "taskPriority"
     )[0]?.defaultValue),
       (data.description = formData.filter(
         (item: any) => item.id == "description"
@@ -1147,18 +1080,24 @@ const CustomIssueDetailsDrawer = (props: any) => {
         (formData.length
           ? formData
               .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString
+              ?.chipString?.join(";")
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
         ?.fields.filter(
           (item: any) => item.id == "start-date"
         )[0]?.defaultValue);
+    // data.startDate = data.startDate
+    //   ? moment(data.startDate).format("YYYY-MM-DD")
+    //   : "";
     data.startDate = `${moment(data.startDate).toISOString()}`;
 
     data.dueDate = formData
       .filter((item: any) => item.id === "dates")[0]
       ?.fields.filter((item: any) => item.id == "due-date")[0]?.defaultValue;
+    // data.dueDate = data.dueDate
+    //   ? moment(data.dueDate).format("YYYY-MM-DD")
+    //   : "";
     data.dueDate = `${moment(data.dueDate).toISOString()}`;
 
     if (!data.startDate) {
@@ -1167,8 +1106,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
     if (!data.dueDate) {
       data = _.omit(data, "dueDate");
     }
+
     const projectId = formData.filter((item: any) => item.projectId)[0]
       .projectId;
+
     const fileformdata = new FormData();
     const filesArr = formData.filter(
       (item: any) => item.id === "file-upload"
@@ -1186,7 +1127,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         };
       });
     if (filesArr?.length) {
-      createAttachment(issue._id, fileformdata)
+      createAttachment(task._id, fileformdata)
         .then((response) => {
           if (!response.success) {
             CustomToast("Error uploading attachments","error");
@@ -1196,26 +1137,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
         .catch((error) => {
           if (error.success === false) {
             setLoading(false)
-            CustomToast(error?.message, "error", 3000);
+            CustomToast(error?.message,"error");
           }
         });
     } else {
       saveEditDetails(data, projectId);
     }
   };
-  const issueUpdate = (data: any) => {
+  const taskUpdate = (data: any) => {
+    // const issueData = _.cloneDeep(selectedTask);
     let issueData: any = {};
+
     issueData.assignees = data.selectedUser.map((user: any) => {
       return user._id || user.user._id;
     });
-
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    editIssue(projectId as string, issueData, selectedIssue?._id)
+
+    // issueData.startDate = moment(issueData.startDate).format("YYYY-MM-DD");
+    // issueData.dueDate = moment(issueData.dueDate).format("YYYY-MM-DD");
+    updateTask(projectId as string, issueData, selectedTask?._id)
       .then((response) => {
         if (response.success === true) {
-          CustomToast("Issue updated successfully","success");
-          getIssues(currentStructure._id);
+          CustomToast("Task updated successfully","success");
+          getTasks(currentStructure._id);
+        } else {
         }
       })
       .catch((error) => {
@@ -1224,32 +1170,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
-  const handleProcoreLinks = () =>{
-    setProcorePopup(true)
-    setTaskDetail(false)
-  }
-  const closeProcorePopup = () =>{
-    setProcorePopup(false)
-    setTaskDetail(true)
-  } 
-  const setnewRFI = (e:boolean) =>{
-    setnewLinkRFI(e)
-    setTaskDetail(false)
-    setProcorePopup(false)
-    
-  }
-  const closeNewRFI = (e:any) =>{
-    setProcorePopup(true)
-    setnewLinkRFI(e)
+  // const deleteTheAttachment = (attachmentId: string) => {
+  //   deleteAttachment(attachmentId)
+  //     .then((response) => {
+  //       if (response.success === true) {
+  //         toast(response.message);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.message);
+  //     });
+  // };
+  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
+    let truncatedText = text;
 
-  }
+    if (text?.length > maxLength) {
+      const prefix = text.substring(0, maxLength - suffixLength);
+      const suffix = text.substring(text.length - suffixLength);
+      truncatedText = prefix + "..." + suffix;
+    }
 
+    return truncatedText;
+  };
   return (
     <>
-   
-      {procorePopup && <ProcoreLink closeProcorePopup={closeProcorePopup} setnewRFI={setnewRFI}></ProcoreLink>}
-      {taskDetail && 
-      <CustomTaskDrawerContainer issueLoader={issueLoader}>
+      <CustomTaskDrawerContainer>
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
@@ -1263,28 +1208,16 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   data-testid="back-arrow"
                 />
               </div>
-
-              <DarkToolTip
-                title={
-                  <SecondAssigneeList>
-                    {selectedIssue?.title}
-                  </SecondAssigneeList>
-                }
-              >
-                <SpanTile data-testid="issue-detail-header">
-                  {selectedIssue?.title
-                    ? selectedIssue?.title?.length >= 20
-                      ? `${selectedIssue?.title.substring(0, 16)}...`
-                      : `${selectedIssue?.title}`
-                    : ""}
-                  (#{selectedIssue?.sequenceNumber})
-                </SpanTile>
-              </DarkToolTip>
+              <SpanTile data-testid="task-detail-header">
+                <TruncatedString
+                  text={selectedTask?.title}
+                  maxLength={20}
+                  suffixLength={0}
+                ></TruncatedString>
+                (#{selectedTask?.sequenceNumber})
+              </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
-            <div className="p-[6px] hover:bg-[#E7E7E7]">
-            <ProcoreLogo src={procore} alt="logo" onClick={handleProcoreLinks}/>
-              </div>
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1299,96 +1232,65 @@ const CustomIssueDetailsDrawer = (props: any) => {
                 <DeleteIcon
                   src={Delete}
                   alt={"close icon"}
-                  data-testid="delete-icon"
                   onClick={() => {
                     setshowPopUp(true);
                   }}
+                  data-testid="delete-icon"
                 />
               </div>
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        {issueLoader ? (
-          <div className="mini-loader-parent">
-            <CustomMiniLoader></CustomMiniLoader>
-          </div>
-        ) : (
-          <>
-            <BodyContainer footerState={footerState} id="issueDetailsWindow">
-              <BasicTabs
-                taskType={issueType}
-                taskPriority={issuePriority}
-                taskStatus={issueStatus}
-                projectUsers={projectUsers}
-                taskState={taskState}
-                issueUpdate={issueUpdate}
-                deleteTheAttachment={deleteTheAttachment}
-                handleFooter={SetFooterState}
-                setTaskState={setTaskState}
-              />
-            </BodyContainer>
-          </>
-        )}
-        
+        <BodyContainer footerState={footerState} id="taskDetailsWindow">
+          <BasicTabs
+            taskType={taskType}
+            taskPriority={taskPriority}
+            taskStatus={taskStatus}
+            projectUsers={projectUsers}
+            taskState={taskState}
+            deleteTheAttachment={deleteTheAttachment}
+            onClose={onClose}
+            taskUpdate={taskUpdate}
+            setTaskState={setTaskState}
+          />
+        </BodyContainer>
       </CustomTaskDrawerContainer>
-    
-}
-
-
+      {showPopUp && (
+        <PopupComponent
+          open={showPopUp}
+          setShowPopUp={setshowPopUp}
+          modalTitle={"Delete Task"}
+          // modalmessage={`Are you sure you want to delete this Task "${selectedTask?.type}(#${selectedTask?._id})"?`}
+          modalmessage={`Are you sure you want to delete this Task "${selectedTask?.title} (#${selectedTask?.sequenceNumber})"?`}
+          primaryButtonLabel={"Delete"}
+          SecondaryButtonlabel={"Cancel"}
+          callBackvalue={onDeleteTask}
+        />
+      )}
       {openCreateTask && (
-        <CustomDrawer open variant="temporary">
-          <CreateIssue
+        <CustomDrawer variant="temporary" open>
+          <CreateTask
             handleCreateTask={handleCreateTask}
             setOpenCreateTask={setOpenCreateTask}
             currentProject={currentProject}
             currentSnapshot={currentSnapshot}
             currentStructure={currentStructure}
             contextInfo={contextInfo}
-            editData={selectedIssue}
-            closeIssueCreate={() => {
+            editData={selectedTask}
+            deleteTheAttachment={deleteTheAttachment}
+            closeTaskCreate={() => {
               setOpenCreateTask(false);
             }}
-            issueStatusList={issueStatus}
-            deleteTheAttachment={deleteTheAttachment}
             setLoading={setLoading}
             isLoading={isLoading}
           />
         </CustomDrawer>
       )}
-      {showPopUp && (
-        <PopupComponent
-          open={showPopUp}
-          setShowPopUp={setshowPopUp}
-          modalTitle={"Delete Issue"}
-          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.title} (#${selectedIssue?.sequenceNumber})"?`}
-          primaryButtonLabel={"Delete"}
-          SecondaryButtonlabel={"Cancel"}
-          callBackvalue={onDeleteIssue}
-        />
-      )}
-      {/* {showImagePreviewPopup && (
-        <PopupComponent
-          open={showImagePreviewPopup}
-          setShowPopUp={setShowImagePreviewPopup}
-          modalTitle={"Preview"}
-          // modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.type}(#${selectedIssue?._id})"?`}
-          modalmessage={`Are you sure you want to delete this Issue "${selectedIssue?.title} (#${selectedIssue?._id})"?`}
-          primaryButtonLabel={"Delete"}
-          SecondaryButtonlabel={"Cancel"}
-          callBackvalue={onDeleteIssue}
-        />
-      )} */}
-    {newRFI ? (<LinkNewRFI closeNewRFI={closeNewRFI}>
-      
-    </LinkNewRFI>):
-        (<></>)}
     </>
-    
   );
-  
 };
 
-export default CustomIssueDetailsDrawer;
+export default CustomTaskDetailsDrawer;
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -1424,7 +1326,7 @@ const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
     // color: "rgba(0, 0, 0, 0.87)",
     fontSize: 11,
     // position: "absolute",
-    right: 5,
+    right: 30,
     borderRadius: "4px",
     top: 2,
     // width: "308px",
