@@ -814,7 +814,7 @@ function BasicTabs(props: any) {
                       variant="standard"
                       placeholder="Add Comment"
                       value={comments}
-                      onChange={(e) => {
+                      onChange={(e:any) => {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
@@ -1233,6 +1233,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                   data-testid="delete-icon"
                 />
               </div>
+              
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>

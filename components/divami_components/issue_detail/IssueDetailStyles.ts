@@ -14,6 +14,22 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
+export const ProcoreLogo = styled(Image)`
+  width: 20px; 
+  height: 20px;
+  
+`;
+export const AddRfi = styled(Image)`
+margin-top:20px;
+margin-left:45%
+
+`;
+export const SpanCont = styled("span")`
+
+ 
+`;
+//
 export const HeaderContainer = styled(Box)`
   background-color: white;
   height: 51px;
@@ -434,6 +450,18 @@ export const StyledLabel = styled(Typography)`
   margin-bottom: 8px;
 `;
 
+export const CustomTaskProcoreLinks = styled("div")((props: any) => ({
+  width: "438px",
+  height: "calc(100vh - 60px)",
+
+  paddingLeft: "20px",
+  paddingRight: "20px",
+  // border: "2px solid blue",
+
+  // overflowY: !props.loader ? "scroll" : "hidden",
+  overflowY:"hidden"
+}))
+
 
 interface ICustomTaskDrawerContainer {
   loader: boolean;
@@ -506,7 +534,20 @@ export const StyledSelect = styled(Select)`
 interface ContainerProps {
   footerState: boolean;
 }
+ export const LabelContainer = styled("div")({
+    display: 'flex-col',
+    // justifyContent: 'center',
+    alignItems: 'center',
+    width: "100%",
+    height: "90px",
+    border: "1px solid #D9D9D9",
+    marginTop : "10px"
+  
+    
+    // position: "relative",
+  });
 
+  
 export const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};

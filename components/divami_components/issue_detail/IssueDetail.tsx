@@ -116,6 +116,7 @@ import {
   DueDateTitle,
   SecondContDueDate,
   ThirdContDueDate,
+  ProcoreLogo,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
@@ -126,6 +127,10 @@ import AttachmentPreview from "../attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
+import procore from "../../../public/divami_icons/procore.svg";
+import ProcoreLink from "../../container/procore/procoreLinks";
+import LinkNewRFI from "../../container/procore/linkNewRfi";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -946,6 +951,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [footerState, SetFooterState] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(issue);
   const[isLoading,setLoading]=useState(false);
+  const [procorePopup,setProcorePopup]= useState<boolean>(false)
+  const [newRFI,setnewLinkRFI] = useState<boolean>(false);
+  const [taskDetail,setTaskDetail] = useState<boolean>(true)
   const router = useRouter();
   useEffect(() => {
     setSelectedIssue(issue);
@@ -1216,9 +1224,31 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
+  const handleProcoreLinks = () =>{
+    setProcorePopup(true)
+    setTaskDetail(false)
+  }
+  const closeProcorePopup = () =>{
+    setProcorePopup(false)
+    setTaskDetail(true)
+  } 
+  const setnewRFI = (e:boolean) =>{
+    setnewLinkRFI(e)
+    setTaskDetail(false)
+    setProcorePopup(false)
+    
+  }
+  const closeNewRFI = (e:any) =>{
+    setProcorePopup(true)
+    setnewLinkRFI(e)
+
+  }
 
   return (
     <>
+   
+      {procorePopup && <ProcoreLink closeProcorePopup={closeProcorePopup} setnewRFI={setnewRFI}></ProcoreLink>}
+      {taskDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
@@ -1252,6 +1282,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
+            <div className="p-[6px] hover:bg-[#E7E7E7]">
+            <ProcoreLogo src={procore} alt="logo" onClick={handleProcoreLinks}/>
+              </div>
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1296,7 +1329,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </BodyContainer>
           </>
         )}
+        
       </CustomTaskDrawerContainer>
+    
+}
+
 
       {openCreateTask && (
         <CustomDrawer open variant="temporary">
@@ -1341,8 +1378,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
           callBackvalue={onDeleteIssue}
         />
       )} */}
+    {newRFI ? (<LinkNewRFI closeNewRFI={closeNewRFI}>
+      
+    </LinkNewRFI>):
+        (<></>)}
     </>
+    
   );
+  
 };
 
 export default CustomIssueDetailsDrawer;
