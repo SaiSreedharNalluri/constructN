@@ -91,27 +91,27 @@ const UploaderFiles = () => {
   }
   useEffect(() => {
     if(state.filesDropped) {
-      if (state.choosenFiles.invalidEXIFFiles.length > 0 && state.choosenFiles.invalidEXIFFiles.length > 0 && !state.isReading) {
+      if (state.choosenFiles.currentInvalidEXIFFiles.length > 0 && state.choosenFiles.currentDuplicateFiles.length > 0 && !state.isReading) {
         setshowPopUp(true);
         setMessage(
-          `${state.choosenFiles.invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
-          ${state.choosenFiles.duplicateFiles.length} duplicate file(s) found. They will be skipped.`
+          `${state.choosenFiles.currentInvalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.
+          ${state.choosenFiles.currentDuplicateFiles.length} duplicate file(s) found. They will be skipped.`
         );
-      } else if (state.choosenFiles.invalidEXIFFiles.length > 0 && !state.isReading) {
+      } else if (state.choosenFiles.currentInvalidEXIFFiles.length > 0 && !state.isReading) {
         setshowPopUp(true);
         setMessage(
-          `${state.choosenFiles.invalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.`
+          `${state.choosenFiles.currentInvalidEXIFFiles.length} file(s) do not have exif data. These file(s) will not be uploaded.`
         );
-      } else if (state.choosenFiles.duplicateFiles.length > 0 && !state.isReading) {
+      } else if (state.choosenFiles.currentDuplicateFiles.length > 0 && !state.isReading) {
         setshowPopUp(true);
         setMessage(
-          `${state.choosenFiles.duplicateFiles.length} duplicate file(s) found. They will be skipped.`
+          `${state.choosenFiles.currentDuplicateFiles.length} duplicate file(s) found. They will be skipped.`
         );
       }
       setPrimaryButtonLabel(UploaderModalPrimaryButton.skipFilesAndContinue)
       setModalTitle(UploaderModalTitle.warning)
     }
-  }, [state.choosenFiles.invalidEXIFFiles, state.choosenFiles.duplicateFiles]);
+  }, [state.choosenFiles.currentInvalidEXIFFiles, state.choosenFiles.currentDuplicateFiles]);
 
   useEffect(() => {
     if (state.isAppendingCapture && state.selectedJob) {

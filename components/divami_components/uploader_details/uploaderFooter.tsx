@@ -90,8 +90,6 @@ const UploaderFooter: React.FC<any> = ({ }) => {
               disabled={!state.isNextEnabled || state.isReading}
               onClick={() => {
                 uploaderAction.next()
-                state.choosenFiles.duplicateFiles.length = 0
-                state.choosenFiles.invalidEXIFFiles.length = 0
               }}
               className={` ${state.isNextEnabled && !state.isReading ? "bg-[#F1742E]" : " bg-gray-400"}  text-white rounded-[4px] hover:bg-[#F1742E] hover:text-white mr-[20px]`}>
               <p className="text-white">   Confirm Images</p>
@@ -141,7 +139,39 @@ const UploaderFooter: React.FC<any> = ({ }) => {
         return null;
     }
   };
-
+  const getDuplicateAndInvalidText = () => {
+    let duplicateStr =
+      state.choosenFiles.duplicateFiles.length > 0
+        ? (
+          <span>
+          <span className="text-[#F1742E] mr-[2px]">
+            {state.choosenFiles.duplicateFiles.length} 
+          </span>
+          duplicate
+          </span>
+        )
+        : '';
+    let invalidStr =
+      state.choosenFiles.invalidEXIFFiles.length > 0
+        ?  (
+        <span>
+          <span className="text-[#F1742E] mr-[2px]">
+            {state.choosenFiles.invalidEXIFFiles.length} 
+          </span>
+          invalid
+          </span>
+        )
+        : '';
+       let finalString
+    return (
+      <div>
+      {duplicateStr != '' || invalidStr !='' ?(<div>
+        {duplicateStr} {invalidStr} file(s) have been skipped
+      </div>):''}
+      </div>
+    );
+  };
+  
   return (
     <React.Fragment>
       <div style={containerStyle}>
@@ -177,11 +207,9 @@ const UploaderFooter: React.FC<any> = ({ }) => {
                     Total size is <span className="text-[#F1742E]">{calculateTotalFileSize(state.choosenFiles.validFiles)} </span>
                   </div>
                   <div>
-                    {
-                      state.choosenFiles.duplicateFiles.length > 0 && <div style={duplicateCountStyle}>
-                        <span className="text-[#F1742E]">{state.choosenFiles.duplicateFiles.length}</span> duplicates have been skipped
+                   <div style={duplicateCountStyle}>
+                        {getDuplicateAndInvalidText()}
                       </div>
-                    }
                   </div>
                 </div>)
               }

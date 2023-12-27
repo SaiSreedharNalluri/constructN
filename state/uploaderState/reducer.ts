@@ -1,8 +1,7 @@
-import { act } from "react-dom/test-utils";
 import { GCPType, IGCP } from "../../models/IGCP";
 import { IJobs, JobStatus } from "../../models/IJobs";
 import { RawImage, RawImageStatus, location, metaData, utmLocation } from "../../models/IRawImages";
-import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
+import { getCaptureIdFromModelOrString, getInitialGCPList, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState, UploaderPopups } from "./state";
 import { PopupComponentProps } from "../../components/popupComponent/PopupComponent";
@@ -25,7 +24,9 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 choosenFiles: {
                     validFiles: [],
                     invalidEXIFFiles: [],
-                    duplicateFiles: []
+                    duplicateFiles: [],
+                    currentInvalidEXIFFiles: [],
+                    currentDuplicateFiles: [],
                 },
                 filesDropped: false,
                 gcpType: GCPType.LONGLAT,
@@ -405,8 +406,10 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
     })
     return {
         validFiles: validEXIFFiles.concat(...choosenFiles.validFiles),
-        invalidEXIFFiles: invalidEXIFFiles, //.concat(...choosenFiles.invalidEXIFFiles),
-        duplicateFiles: duplicateEXIFFiles //.concat(...choosenFiles.duplicateFiles)
+        invalidEXIFFiles: invalidEXIFFiles.concat(...choosenFiles.invalidEXIFFiles),
+        duplicateFiles: duplicateEXIFFiles.concat(...choosenFiles.duplicateFiles),
+        currentDuplicateFiles:duplicateEXIFFiles,
+        currentInvalidEXIFFiles:invalidEXIFFiles,
     }
 }
 
