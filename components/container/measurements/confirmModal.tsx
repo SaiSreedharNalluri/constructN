@@ -24,7 +24,7 @@ const createMeasurement = async ({ name = '', type = '', snapshot = '', context 
       headers: authHeader.authHeader(),
     },
   );
-  toast.error('Created Sucessfully!', { autoClose: 5000 });
+  toast.success('Created Sucessfully!', { autoClose: 5000 });
   setSelected(resp?.data?.result?._id || '');
   setShow(false);
   }catch{
