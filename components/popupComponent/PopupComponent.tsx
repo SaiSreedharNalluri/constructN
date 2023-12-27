@@ -80,6 +80,7 @@ export interface PopupComponentProps {
   isUploaderFinal?:boolean;
   disableSecondaryButton?: boolean;
   disablePrimaryButton?: boolean;
+  secondaryCallback?: any;
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -162,6 +163,7 @@ const PopupComponent = (props: PopupComponentProps) => {
     isUploaderFinal = true,
     disableSecondaryButton = false,
     disablePrimaryButton = false,
+    secondaryCallback,
   } = props;
   const handleClosePopup=()=>{
     if(isUploader === false)
@@ -179,6 +181,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     }
     if (setShowbutton) {
       setShowbutton(false);
+    }
+    if(secondaryCallback){
+      secondaryCallback()
     }
   };
   return (

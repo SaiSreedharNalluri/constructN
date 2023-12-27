@@ -61,7 +61,9 @@
 
 			const listeners = this._listeners;
 
-			return listeners[type] !== undefined && listeners[type].indexOf(listener) !== - 1;
+			const listnersToString = listeners[ type ].map((listner)=>(listner?.toString()))
+
+			return listeners[ type ] !== undefined && listnersToString.indexOf( listener?.toString() ) !== - 1;
 		}
 
 		removeEventListener(type, listener){
@@ -53871,6 +53873,11 @@
 			this.maxMarkers = Number.MAX_SAFE_INTEGER;
 
 			this.sphereGeometry = new SphereGeometry(0.4, 10, 10);
+			this.lineMaterial = new LineMaterial({
+				color: 0xff0000, 
+				linewidth: 2, 
+				resolution:  new Vector2(1000, 1000),
+			});
 			this.color = new Color(0xff0000);
 
 			this.spheres = [];
@@ -53934,15 +53941,8 @@
 						0, 0, 0,
 				]);
 
-				let lineMaterial = new LineMaterial({
-					color: 0xff0000, 
-					linewidth: 2, 
-					resolution:  new Vector2(1000, 1000),
-				});
 
-				lineMaterial.depthTest = false;
-
-				let edge = new Line2(lineGeometry, lineMaterial);
+				let edge = new Line2(lineGeometry, this.lineMaterial);
 				edge.visible = true;
 
 				this.add(edge);
@@ -68476,6 +68476,7 @@ void main() {
 
 					if (measure.points.length >= measure.maxMarkers) {
 						cancel.callback();
+						measure.dispatchEvent({type: 'marker_removed', measurement: measure});
 					}
 
 					this.viewer.inputHandler.startDragging(

@@ -951,36 +951,96 @@ export const PotreeViewerUtils = () => {
 
     }
 
+    const measurementMoved = (eve, measurement)=>{ 
+        const isClick = eve.drag.start.x === eve.drag.end.x && eve.drag.start.y === eve.drag.end.y;
+        publish("measurement-moved", { measure: measurement, isClick }); 
+    }
+
+    const loadMeasurements =(points = [])=>{
+        clearAllMeasurements();
+        points.forEach((point)=>{
+            let measure = new Potree.Measure();
+            if(point.type ==='Distance'){
+                measure.closed = false;
+            }
+            if(point.type ==='Angle'){
+                measure.closed = true;
+                measure.showAngles = true;
+                measure.showDistances = true;
+            }
+            if(point.type ==='Point'){
+                measure.showDistances = false;
+                measure.showCoordinates = true;
+                measure.maxMarkers = 1;
+            }
+            if(point.type ==='Height'){
+                measure.closed = false;
+                measure.showDistances = false;
+                measure.showHeight = true;
+            }
+            if(point.type ==='Area'){
+                measure.closed = true;
+                measure.showArea = true;
+                measure.showHeight = true;
+            }
+            measure.name = point.name;
+            measure.mtype = point.type;
+            measure._id = point._id;
+            point.data.forEach((position)=>{
+                measure.addMarker(new THREE.Vector3(position.x, position.y, position.z));
+            });
+            _viewer?.scene?.addMeasurement(measure);
+        });
+        _viewer?.scene?.measurements.forEach((measurement)=>{
+            measurement?.spheres?.forEach((sphere) => {
+                if(!sphere.hasEventListener("drop", (eve)=>{measurementMoved(eve, measurement)})){
+                    sphere.addEventListener("drop", (eve)=>{measurementMoved(eve, measurement)});
+                }
+            });
+        })
+        
+    }
+
     const removeMeasurement=(measurement)=>{
         _viewer?.scene?.removeMeasurement(measurement)
     }
 
-    // const mmoved =(e)=>{
-    //     console.log(_viewer?.scene?.measurements,'_viewer_viewer')
-    // }
-
-    // const madded =(e)=>{
-    //     console.log(_viewer,'marker_added')
-    // }
-
-    // const mremoved =(e)=>{
-    //     console.log(_viewer,'_viewer_viewer')
-    // }
-
-    const getPoints=()=>(_viewer?.scene?.measurements || [])
-
-    const myevent = (e) => {
-        // _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_moved', mmoved)
-        // _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_added', madded)
-        // _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_removed', mremoved)
+    const publish = (eventName, data) => {
+        const event = new CustomEvent(eventName, { detail: data })
+        document.dispatchEvent(event)
+    
     }
 
-    const undoMeasurement =()=>{
-        if(_viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1]?.points?.length>1){
-            _viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1].removeMarker(_viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1]?.points?.length - 1)
-        }else{
-            removeMeasurement(_viewer?.scene?.measurements?.[_viewer?.scene?.measurements?.length-1])
+    const getPoints=()=>(_viewer?.scene?.measurements || [])
+    const mmoved= (e) => {
+        console.log('marker moved')
+    }
+
+    const markerdropped= (e) => {
+        publish('marker-added', e);
+        if(e.measurement.name === 'Point' && !e.measurement?._id){
+            publish('measurement-created', { measure: e.measurement })
         }
+        if(e.measurement.name === 'Height' && e.measurement.points.length === 2 && !e.measurement?._id){
+            publish('measurement-created', { measure: e.measurement })
+        }
+    }
+
+    const markeremoved= (e) => {
+        if(!['Point','Height'].includes(e.measurement.name) && !e.measurement?._id){
+            publish('measurement-created', { measure: e.measurement });
+        }
+    }
+
+    const assetremoved= (e) => {
+        console.log('asset removed')
+    }
+
+
+    const myevent = (e) => {
+        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_moved', mmoved)
+        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_removed', markeremoved)
+        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_dropped', markerdropped)
     }
 
     const clearAllMeasurements= () =>{
@@ -991,7 +1051,10 @@ export const PotreeViewerUtils = () => {
 
     const loadAddMeasurementsEvents = () => {
         if(!_viewer?.scene?.hasEventListener('measurement_added', myevent)){
-            _viewer?.scene?.addEventListener('measurement_added', myevent)
+            _viewer?.scene?.addEventListener('measurement_added', myevent);
+        }
+        if(!_viewer?.scene?.hasEventListener('measurement_removed', assetremoved)){
+            _viewer?.scene?.addEventListener('measurement_removed', assetremoved)
         }
     }
 
@@ -2329,7 +2392,7 @@ export const PotreeViewerUtils = () => {
         loadAddMeasurementsEvents,
         getPoints,
         removeMeasurement,
-        undoMeasurement,
         clearAllMeasurements,
+        loadMeasurements,
     };
 };
