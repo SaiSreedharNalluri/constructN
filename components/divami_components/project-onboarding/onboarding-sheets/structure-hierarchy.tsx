@@ -59,7 +59,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
     const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.current!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete ))
 
     const renderAddSheetPopup = useComputed(() => addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
-        setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Add sheet'}
+        setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Add Drawing'}
         modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} modalContent={addSheetFormJSX}
         backdropWidth={true} showButton={false}
@@ -69,7 +69,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
 
     const renderAddStructurePopup = useComputed(() => addStructurePopup.value === true ? <PopupComponent open={addStructurePopup.value} hideButtons
         setShowPopUp={(state: boolean) => addStructurePopup.value = state}
-        modalTitle={`Add child level for ${currentStructure.current?.name}`}
+        modalTitle={`Add sublevel for ${currentStructure.current?.name}`}
         modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} width={'60%'} backdropWidth={true} showButton={false}
         modalContent={addStructureFormJSX}
@@ -178,7 +178,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
                         {_sheetName() !== '' && <Chip label={_sheetName()} color='default' size='small' onClick={handleClick} />}
 
                         {_sheetName() === '' &&
-                            <Chip label='Add Sheet' size='small' color='secondary' clickable className='mr-2 text-[12px]'
+                            <Chip label='Add Drawing' size='small' color='secondary' clickable className='mr-2 text-[12px]'
                                 variant='outlined' onClick={() => addSheet(node)} icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} />
                         }
 
@@ -188,7 +188,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                 <div className='flex group-hover:opacity-100 opacity-0 items-center'>
 
-                    <Chip label='Add Child Level' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined'
+                    <Chip label='Add Sublevel' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined'
                         icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onAdd(node)} />
 
                     <Chip label='Delete Level' size='small' color='error' clickable className='mr-2 text-[12px]' variant='outlined'
@@ -251,7 +251,7 @@ const renderAddSheetForm = (
                 uploadStatus.value = false
                 showPopup.value = false
                 uploadProgress.value = {sent: 0, total: 0, percentage: -1}
-                CustomToast(`Added sheet to ${structure.name} successfully.`, 'success')
+                CustomToast(`Added drawing to ${structure.name} successfully.`, 'success')
                 onSheetAdded()
             })
 
@@ -310,7 +310,7 @@ const renderAddStructureForm = (
     return (<><div className='flex flex-col'>
 
         <TextField color='warning' className='my-4'
-            label='Structure Name*' variant='outlined' value={newStructureName.value}
+            label='Level Name*' variant='outlined' value={newStructureName.value}
             onChange={(e: ChangeEvent<HTMLInputElement>) => { newStructureName.value = e.target.value }} />
 
         <div className='flex justify-between mt-6'>

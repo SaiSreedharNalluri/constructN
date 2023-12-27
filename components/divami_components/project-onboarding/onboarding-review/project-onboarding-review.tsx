@@ -1,9 +1,11 @@
 import React from 'react'
 import { IOnboardingProps } from '../projectOnboarding'
-import { effect, useComputed, useSignal } from '@preact/signals-react'
+import { effect, useComputed, useSignal, useSignalEffect } from '@preact/signals-react'
 import { getStructureList } from '../../../../services/structure';
 import { IStructure } from '../../../../models/IStructure';
 import { IDesign } from '../../../../models/IDesign';
+import { CustomToast } from '../../custom-toaster/CustomToast';
+import router from "next/router";
 
 
 const contentStyle = {
@@ -18,6 +20,22 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
   const drawingsCount = useSignal(0)
   const totalCount = useSignal(0)
 
+  useSignalEffect(() => {
+    console.log('Action inside review', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
+    switch (action!.value) {
+      case 'Back-4':
+        step.value = 3
+        action!.value = ''
+        break
+      case 'Next-4':
+        CustomToast('Submitted project for Review', 'success')
+        router.push("/projects")
+        break
+      default:
+        break
+    }
+  })
+
   const renderContent = useComputed(() => <><div className="shadow-md rounded-md p-4 mb-4 ">
   {generateGridRow("Project Name", [projectDetails.value.name])}
   {generateGridRow("Project Nickname", [projectDetails.value.nickName ? projectDetails.value.nickName : "N/A"])}
@@ -27,8 +45,8 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
     `${projectDetails.value.address?.city} ,${projectDetails.value.address?.state},${projectDetails.value.address?.country}`,
     `${projectDetails.value.address?.zipcode}`,
   ])}
-  {generateGridRow("Sheets Uploaded", [drawingsCount.value == 0 ? 'NO' : 'YES'])}
-  {generateGridRow("No, of Sheets Uploaded", [drawingsCount.value])}
+  {generateGridRow("Drawings Uploaded", [drawingsCount.value == 0 ? 'NO' : 'YES'])}
+  {generateGridRow("No, of Drawings Uploaded", [drawingsCount.value])}
   {generateGridRow("BIM Uploaded", [bimCount.value == 0 ? 'NO' : 'YES'])}
 </div></>)
 
