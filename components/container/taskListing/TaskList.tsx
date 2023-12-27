@@ -571,12 +571,14 @@ const CustomTaskListDrawer = (props: any) => {
 
                           <PriorityChild>
                             {" "}
-                            {val?.assignees}{" "}
-                            {/* {val?.assignees?.slice(1)}{" "}
-                            {val?.assignees
+                            {val?.assignees[0]?.firstName
                               .charAt(0)
                               .toUpperCase()}
-                            {val?.assignees?.slice(1)} */}
+                            {val?.assignees[0]?.firstName.slice(1)}{" "}
+                            {val?.assignees[0]?.lastName
+                              .charAt(0)
+                              .toUpperCase()}
+                            {val?.assignees[0]?.lastName.slice(1)}
                           </PriorityChild>
                           <LightTooltip
                             arrow
@@ -584,17 +586,17 @@ const CustomTaskListDrawer = (props: any) => {
                               <AssigneeList>
                                 {val?.assignees?.map(
                                   (assignName: any, index: number) => {
-                                    if (index) {
+                                    if (index != 0) {
                                       return (
                                         <>
                                           {index !== val?.assignees?.length - 1
-                                            ? assignName +
+                                            ? assignName?.firstName +
                                               " " +
-                                              assignName +
+                                              assignName.lastName +
                                               " | "
-                                            : assignName +
+                                            : assignName?.firstName +
                                               " " +
-                                              assignName}
+                                              assignName.lastName}
                                         </>
                                       );
                                     }

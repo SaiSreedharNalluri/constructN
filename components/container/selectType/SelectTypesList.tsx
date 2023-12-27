@@ -57,7 +57,7 @@ const SelectTypesList = ({
   // };
 
   const onSearchChange = (event: any) => {
-    let parentList = [...optionsList];
+    let parentList = [...list.currentViewTypeList];
     const searchFieldString = event.target.value.toLocaleLowerCase();
     // console.log("searchFieldString", searchFieldString);
     let newObj = parentList.filter((val: any) => {

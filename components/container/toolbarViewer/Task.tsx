@@ -101,8 +101,8 @@ function Task({
   const [contextInfo,setContextInfo] = useState<any>()
   let taskMenuInstance: IToolbarAction = { data: "",type:"showTask"};
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
+  
 
- 
   useImperativeHandle(ref, () => {
     return{
       handleTaskInstance(tasktoolInstance:any){
@@ -176,8 +176,8 @@ console.log("form datttaaa",formData)
       ?.selectedName?.map((each: any) => {
         return each._id || each.value;
       });
-    data.structure = router.query.structId;
-    data.snapshot = currentSnapshot?._id;
+    data.structure = initData?.structure?._id;
+    data.snapshot = initData.currentSnapshotBase._id;
     data.status = "To Do";
     data.context = contextInfo;
     console.log("contextInfo",contextInfo)
@@ -293,9 +293,12 @@ console.log("form datttaaa",formData)
 
   const onCancelCreate = () => {
     // taskMenuInstance.toolAction = "taskCreateFail";
+    // taskMenuInstance.type = "createFailIssue";
+    // taskMenuClicked(taskMenuInstance);
     setOpenCreateTask(false);
     taskMenuClicked(taskMenuInstance);
     setOpenCreateTask(false)
+    setHighlightCreateTaskIcon(false)
     
   };
   const taskSubmitFn = (formdata: any) => {
@@ -303,6 +306,7 @@ console.log("form datttaaa",formData)
     taskMenuClicked(taskMenuInstance);
     setEnableSubmit(true);
     setOpenCreateTask(false)
+    setHighlightCreateTaskIcon(false)
   };
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
@@ -456,6 +460,7 @@ console.log("form datttaaa",formData)
             taskStatus={taskStatusList} 
             taskContext={taskContext} // taskContext
             toolClicked={toolClicked}
+            initData={initData}
           />
         </Drawer>
       )}

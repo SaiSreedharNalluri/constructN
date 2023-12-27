@@ -126,6 +126,7 @@ import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
 import { IToolbarAction } from "../../../models/ITools";
+import { init } from "mixpanel-browser";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -181,7 +182,6 @@ function BasicTabs(props: any) {
     handleFooter,
     setTaskState,
   } = props;
-console.log("taskState",taskState)
   const [value, setValue] = React.useState(0);
   const [formState, setFormState] = useState({
     selectedValue: "",
@@ -886,7 +886,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <ActivityLog
-          ActivityLog={taskState.TabTwo}
+         ActivityLog={taskState.TabTwo}
           comments={backendComments}
           getComments={getComments}
           setIsAdding={setIsAdding}
@@ -952,9 +952,15 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const[isLoading,setLoading]=useState(false);
   const router = useRouter();
   useEffect(() => {
-    setSelectedIssue(issue);
-    console.log("selected Issue in the issue details",selectedIssue,issue)
-  }, [issue]);
+
+    const issueData=initData?.currentIssueList.find((each:any)=>{
+      if(each._id === issue?._id){
+        return each
+      }
+    
+    })
+    setSelectedIssue(issueData);
+  }, [issue,initData]);
   const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
     const selectedIssueId = selectedIssue?._id;
     const updatedIssuesList = issuesList.filter(
@@ -1045,7 +1051,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
-
+  console.log("selected issue",initData);
+  
   useEffect(() => {
     let tempObj = {
       ...selectedIssue,
@@ -1057,17 +1064,17 @@ const CustomIssueDetailsDrawer = (props: any) => {
       screenshot: selectedIssue?.screenshot as string,
       attachments: selectedIssue?.attachments,
       assignees: selectedIssue?.assignees?.length
-        ? `${selectedIssue?.assignees[0]}`
-        : "",
-      assigneeName: selectedIssue?.assignees?.length
-        ? selectedIssue?.assignees[0]
-        : "",
-      assignessList: selectedIssue?.assignees?.length
-        ? selectedIssue?.assignees?.map((item: any) => {
-            return { ...item, label: item };
-          })
-        : [],
-      moreText:
+      ? `${selectedIssue?.assignees[0].fullName}`
+      : "",
+    assigneeName: selectedIssue?.assignees?.length
+      ? selectedIssue?.assignees[0].fullName
+      : "",
+    assignessList: selectedIssue?.assignees?.length
+      ? selectedIssue?.assignees?.map((item: any) => {
+          return { ...item, label: item.fullName };
+        })
+      : [],
+    moreText:
         selectedIssue?.assignees?.length > 1
           ? `+${selectedIssue?.assignees?.length - 1} more`
           : "",
@@ -1121,11 +1128,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    console.log("formData.....",formData)
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each?._id || each?.value || each;
+        return each?._id || each?.value;
       });
 
     data.structure = initData?.structure?._id;
@@ -1216,10 +1222,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
+    console.log("issu",issueData)
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response:any) => {
         if (response.success === true) {
-          CustomToast("Issue updated successfully 2nd toaast","success");
+          CustomToast("Issue updated successfully","success");
           getIssues(currentStructure._id);
         }
       })

@@ -1374,7 +1374,7 @@ const Index: React.FC<IProps> = () => {
     if (router.isReady) {
       getGenViewerData(router.query.projectId as string, router.query.structureId as string)
         .then((response) => {
-          if (response.success === true) {
+          if (response.success === true) {           
             // if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
             //   router.query.type = response.result.data?.currentViewType as string;
             //   router.query.snap = response.result.data?.currentSnapshotBase._id as string;
@@ -1731,11 +1731,12 @@ const Index: React.FC<IProps> = () => {
                   ref={ref}
                 ></ToolBarMenuWrapper>
 
+                
                 : <></>}
             </div></div></div>
 
         <div>
-          {initData && <Iframe></Iframe>}
+          {initData && <Iframe isFullScreen={isFullScreen}></Iframe>}
           {!multiverseIsReady && <CustomLoader />}
         </div>
 
