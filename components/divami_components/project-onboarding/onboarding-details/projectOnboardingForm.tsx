@@ -56,7 +56,9 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnb
           }
           else {
             updateProjectInfo(formdata, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
-              projectDetails.value = response.result
+              const result=response.result;
+              delete result.users
+              projectDetails.value = result
             })
             step.value = 1
 

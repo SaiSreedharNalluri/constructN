@@ -9,7 +9,7 @@ import { IProjects } from '../../../../../models/IProjects';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import { useSignals } from '@preact/signals-react/runtime';
-const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
+const ProjectImageUpload = ({addressDetails,projectCoverPhoto,projectLogo}:any) => {
 
   useSignals()
 
@@ -39,17 +39,19 @@ const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
   };}
   const handleRemoveCoverPhoto = () => {
     projectCoverPhoto.value = null;
+    addressDetails.value={ ...addressDetails.value, 'coverPhoto': null}
   };
   const handleRemoveLogo = () => {
     projectLogo.value = null;
+    // addressDetails.value={ ...addressDetails.value, 'logo': null}
   };
   return (
     <>
-  {projectCoverPhoto.value?
+  {projectCoverPhoto.value || addressDetails.value.coverPhoto ?
     <Grid xs={12} item className=' border border-dotted border-orange-500  mt-[16px] cursor-pointer rounded-[6px]' >
       <div style={{ position: 'relative' }}>
       <Image
-       src={URL.createObjectURL(projectCoverPhoto.value)}
+      src={projectCoverPhoto.value? URL.createObjectURL(projectCoverPhoto.value): addressDetails.value.coverPhoto}
        alt='uploader icon'
        width={50}
        height={50}
@@ -75,7 +77,7 @@ const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
       </div>
 
      </Grid>
-  :<Grid xs={12} item className='flex flex justify-center items-center border border-dotted border-orange-500 p-[10px] mt-[16px] cursor-pointer' onClick={handleCoverPhotoClick}>
+  :<Grid xs={12} item className='flex  justify-center items-center border border-dotted border-orange-500 p-[10px] mt-[16px] cursor-pointer' onClick={handleCoverPhotoClick}>
     <Image
        src={uploaderIcon}
        alt='uploader icon'
@@ -100,11 +102,11 @@ const ProjectImageUpload = ({projectCoverPhoto,projectLogo}:any) => {
 
     </Grid>}
     
-    {/* {projectLogo.value?
+    {/* {projectLogo.value || addressDetails.value.logo?
     <Grid xs={12} item className=' border border-dotted border-orange-500  mt-[16px] cursor-pointer rounded-[6px] ml-[10px]' >
       <div style={{ position: 'relative' }}>
       <Image
-       src={URL.createObjectURL(projectLogo.value)}
+       src={projectLogo.value? URL.createObjectURL(projectLogo.value):addressDetails.value.logo}
        alt='uploader icon'
        width={50}
        height={50}
