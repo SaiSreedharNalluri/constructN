@@ -21,7 +21,7 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
   const renderContent = useComputed(() => <><div className="shadow-md rounded-md p-4 mb-4 ">
   {generateGridRow("Project Name", [projectDetails.value.name])}
   {generateGridRow("Project Nickname", [projectDetails.value.nickName ? projectDetails.value.nickName : "N/A"])}
-  {generateGridRow("Project ID", [projectDetails.value._id])}
+  {generateGridRow("Project ID", [projectDetails.value.metaDetails?.projectId])}
   {generateGridRow("Project Address", [
     `${projectDetails.value.address?.line1 ? projectDetails.value.address.line1 : ""}`,
     `${projectDetails.value.address?.city} ,${projectDetails.value.address?.state},${projectDetails.value.address?.country}`,
