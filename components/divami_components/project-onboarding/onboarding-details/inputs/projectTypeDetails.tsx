@@ -27,8 +27,8 @@ const ProjectTypeDetails = ({
           fullWidth
           size="small"
           className="outline-none"
-          name='projectID'
-          value={type.value.projectID}
+          name='projectId'
+          value={type.value.metaDetails.projectId}
           onChange={
             handleOnChange}
         />
