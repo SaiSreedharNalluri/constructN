@@ -245,7 +245,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   };
 
   const [offset, setOffset] = useState(1);
-  const pageSize = 10;
+  const pageSize = 5;
   const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
 
   const [totalPages, setTotalPages] = useState(Math.ceil(totalSnaphotsCount / pageSize));
@@ -1255,9 +1255,20 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
 
 
   function renderMinimap  (count:number)  {
-    if (currentViewerData.structure.designs?.length&&currentViewerData.structure.designs?.length <= 0 && currentViewerData.currentSnapshotBase.reality?.length &&currentViewerData.currentSnapshotBase.reality?.length <= 0) {
+    if ( ( currentViewerData.currentSnapshotBase.reality?.length &&currentViewerData.currentSnapshotBase.reality?.length <= 0)) {
       return;
     }
+    if(currentViewerData.structure.designs)
+    {
+      if(currentViewerData.structure.designs.find((des:IDesign)=>{
+        if(des.type==="Plan Drawings"){
+          return des
+        }
+      }) == undefined){
+        return
+      }
+    }
+
     if (count !== 1 && !isCompareMode) {
       return;
     }
@@ -2084,7 +2095,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   };
 
   useEffect(() => {
-    setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+    setTotalPages(Math.ceil(totalSnaphotsCount / pageSize));
   }, [totalSnaphotsCount]);
 
   const setPrevList = () => {

@@ -1,6 +1,7 @@
 import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import type { Dayjs } from "dayjs";
 import * as React from "react";
@@ -48,7 +49,7 @@ const CalenderICon = (props: any) => {
     </>
   );
 };
-const CustomDatePicker = styled(DatePicker)({
+const CustomDatePicker = styled(DesktopDatePicker)({
   border: "1px solid #36415d",
   borderRadius: "6px",
   width: "184px",

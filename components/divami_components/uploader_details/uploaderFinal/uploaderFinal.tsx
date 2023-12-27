@@ -9,6 +9,7 @@ import { getCaptureIdFromModelOrString, getPathToRoot, getStructureIdFromModelOr
 import { useAppContext } from "../../../../state/appState/context";
 import { UploadStatus } from "../../../../models/IUploader";
 import CircularProgress from '@mui/material/CircularProgress';
+import { UploaderPopups } from "../../../../state/uploaderState/state";
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -61,6 +62,7 @@ const UploaderFinal: React.FC = () => {
           }
         })
         setFileProgressList(fileList)
+        showSelectedJobPopup(uploaderState.selectedJob, fileList)
       } 
       else if(uploaderState.rawImagesMap[selectedCaptureId]) {
         setCustomLoader(false) 
@@ -72,6 +74,7 @@ const UploaderFinal: React.FC = () => {
           }
         })
         setFileProgressList(fileList)
+        showSelectedJobPopup(uploaderState.selectedJob, fileList)
       }
       else{
        setCustomLoader(true) 
@@ -80,8 +83,34 @@ const UploaderFinal: React.FC = () => {
     }
   }, [uploaderState.selectedJob,uploaderState.rawImagesMap])
 
+  useEffect(() => {
+    if(uploaderState.selectedJob && uploaderState.isDelete) {
+      showSelectedJobPopup(uploaderState.selectedJob, fileProgressList)
+    }
+  }, [uploaderState.isDelete])
+
+  const showSelectedJobPopup = (selectedJob: IJobs, fileList: fileData[]) => {
+    if (selectedJob.status === JobStatus.uploadFailed) {
+      if (uploaderState.isDelete) {
+        uploaderAction.setIsShowPopup({
+          isShowPopup: true, 
+          popupType: UploaderPopups.deleteJob, 
+        })
+      } else {
+        uploaderAction.setIsShowPopup({
+          isShowPopup: true, 
+          popupType: UploaderPopups.completedWithError, 
+          message: `${fileList.filter(obj => obj.status === 2).length} of ${fileList.length} file(s) failed to upload`
+        })
+      }
+
+    }
+  }
   const handleRowClick = (job: IJobs, index: number) => {
     //  setSelectedRow(index);
+    if (uploaderState.selectedJob?._id === job._id && isCustomLoader == false) {
+      showSelectedJobPopup(uploaderState.selectedJob, fileProgressList)
+    }
      uploaderAction.setSelectedJob(job);
   };
   const gethierarchyPath = (structure: string | IStructure): string => {

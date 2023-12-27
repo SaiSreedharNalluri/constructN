@@ -6,7 +6,7 @@ import UploaderFiles from "../../../../components/divami_components/uploader_det
 import UploaderStepper from "../../../../components/divami_components/uploader_details/uploaderStepper";
 import UploaderFooter from "../../../../components/divami_components/uploader_details/uploaderFooter"; 
 import { useUploaderContext } from "../../../../state/uploaderState/context";
-import { UploaderFinishState, UploaderStep, captureRawImageMap } from "../../../../state/uploaderState/state";
+import { UploaderFinishState, UploaderPopups, UploaderStep, captureRawImageMap } from "../../../../state/uploaderState/state";
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
@@ -368,6 +368,38 @@ const Index: React.FC<IProps> = () => {
       }
     }
   }
+
+  const updateJobStatusBasedOnAction = (deleteJob:boolean) => {
+    let ignoreImagesCheck = true;
+    uploaderAction.setIsLoading(true);
+    updateJobStatus(
+      uploaderState.selectedJob?.project as string,
+      uploaderState.selectedJob?._id as string,
+      deleteJob ? JobStatus.archived : JobStatus.uploaded,
+      ignoreImagesCheck
+    )
+      .then((response) => {
+        uploaderAction.setIsLoading(false);
+        if (response.data.success === true) {
+          let updatedJob = response.data.result
+          let captureJobs = uploaderState.pendingProcessJobs.concat(
+            uploaderState.pendingUploadJobs
+          );
+          captureJobs.forEach((job) => {
+            if (job._id === updatedJob._id) {
+              job.status = updatedJob.status;
+            }
+          });
+          uploaderAction.setCaptureJobs(captureJobs);
+          // appAction.removeCaptureUpload(updatedJob)
+          // uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
+        }
+      })
+      .catch((error) => {
+        uploaderAction.setIsLoading(false);
+      });
+  };
+  
   const setThecalHeight=()=>{
     if(uploaderState.selectedJob && uploaderState.step === UploaderStep.Upload)
     {
@@ -418,7 +450,7 @@ const Index: React.FC<IProps> = () => {
     </div>
     <div >
     </div>
-    <PopupComponent
+    {/* <PopupComponent
       open={isShowPopUp}
       setShowPopUp={setIsShowPopUp}
       modalTitle={popUpHeading}
@@ -431,8 +463,48 @@ const Index: React.FC<IProps> = () => {
       callBackvalue={() => {
         setIsShowPopUp(false)
       }}
-      
-    />
+    /> */}
+    { uploaderState.currentPopup && (<PopupComponent
+      open={uploaderState.isShowPopup}
+      setShowPopUp={(value) => {
+        if (!value) {
+          uploaderAction.setIsShowPopup({isShowPopup: false})
+        }
+      }}
+      modalTitle={uploaderState.currentPopup.modalTitle}
+      modalmessage={uploaderState.currentPopup.modalMessage}
+      primaryButtonLabel={uploaderState.currentPopup.primaryButtonLabel}
+      SecondaryButtonlabel={uploaderState.currentPopup.secondaryButtonlabel}
+      isShowWarningText={uploaderState.currentPopup.type === UploaderPopups.deleteJob ? true : false}
+      isCancelCallBack={true}
+      callBackvalue={() => {
+        switch (uploaderState.currentPopup?.type) {
+          case UploaderPopups.deleteJob:
+            // setIsDelete(false)
+            updateJobStatusBasedOnAction(true)
+            uploaderAction.setIsShowPopup({isShowPopup: false})
+            return
+          case UploaderPopups.completedWithError:
+            updateJobStatusBasedOnAction(false)
+            uploaderAction.setIsShowPopup({isShowPopup: false})
+            return
+        }
+      }}
+      handleCancel={(value)=>{
+        switch (uploaderState.currentPopup?.type) {
+          case UploaderPopups.deleteJob:
+            uploaderAction.setIsShowPopup({isShowPopup: false})
+            return
+          case UploaderPopups.completedWithError:
+            if (value) {
+              uploaderAction.setIsShowPopup({isShowPopup: true, popupType: UploaderPopups.deleteJob})
+            } else {
+              uploaderAction.setIsShowPopup({isShowPopup: false})
+            }
+            return
+        }
+      }}
+    />)}
     </div>
   );
 };
