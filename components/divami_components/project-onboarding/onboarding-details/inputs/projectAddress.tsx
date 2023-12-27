@@ -1,9 +1,7 @@
 import React from 'react';
 import { Grid, OutlinedInput, FormHelperText } from '@mui/material';
 import ProjectImageUpload from './projectImageUpload';
-import { useProjectContext } from '../../../../../state/projectState/context';
 import { computed, useSignal } from '@preact/signals-react';
-import { IProjects } from '../../../../../models/IProjects';
 const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverPhoto}:any) => {
 
   const isValid = computed(() => (

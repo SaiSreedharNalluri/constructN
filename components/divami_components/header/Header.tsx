@@ -277,7 +277,7 @@ const Header: React.FC<any> = ({
     Sentry.setTag("ProjectName", null);
     Sentry.setTag("CompanyName", null);
     Sentry.setTag("ProjectId", null);
-    deleteCookies("user");
+    deleteCookie("user");
     removeCookies('projectData');
     removeCookies('isProjectTimeZone');
     localStorage.removeItem('uploaededData')

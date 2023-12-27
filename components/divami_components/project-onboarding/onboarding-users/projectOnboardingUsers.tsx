@@ -1,6 +1,5 @@
 import React from 'react'
 import { ProjectUsersList } from '../../project-users-list/ProjectUsersList'
-import { useProjectContext } from '../../../../state/projectState/context';
 import { IOnboardingProps } from '../projectOnboarding';
 import { useSignalEffect } from '@preact/signals-react';
 

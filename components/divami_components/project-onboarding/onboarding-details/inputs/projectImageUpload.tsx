@@ -1,11 +1,7 @@
 import {Grid} from '@mui/material'
 import React, { ChangeEvent, useRef, useState } from 'react'
 import Image from "next/image";
-import axios from 'axios';
 import uploaderIcon from "../../../../../public/divami_icons/Upload_graphics.svg";
-import { updateProjectCover } from '../../../../../services/project';
-import { useSignal } from '@preact/signals-react';
-import { IProjects } from '../../../../../models/IProjects';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import { useSignals } from '@preact/signals-react/runtime';

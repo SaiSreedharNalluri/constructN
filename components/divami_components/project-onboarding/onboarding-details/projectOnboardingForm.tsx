@@ -4,10 +4,6 @@ import ProjectLatLngDetails from './inputs/projectLatLngDetails';
 import ProjectNameDetails from './inputs/projectNameDetails';
 import ProjectTypeDetails from './inputs/projectTypeDetails';
 import { createProject, getProjectDetails, updateProjectCover, updateProjectInfo } from '../../../../services/project';
-import { useProjectContext } from '../../../../state/projectState/context';
-import { Button, Grid, OutlinedInput } from '@mui/material';
-import { Address, IProjects } from '../../../../models/IProjects';
-import { useRouter } from 'next/router';
 import { IOnboardingProps } from '../projectOnboarding';
 import { effect, useSignal, useSignalEffect } from '@preact/signals-react'
 import router from "next/router";

@@ -9,7 +9,6 @@ import Typography from "@mui/material/Typography";
 import { IconButton } from "@mui/material";
 import Image from "next/image";
 import closeWithCircle from "../../public/divami_icons/closeWithCircle.svg";
-import { useProjectContext } from "../../state/projectState/context";
 
 export const CloseIcon = styled(Image)({
   cursor: "pointer",
@@ -140,8 +139,6 @@ const TextComponent = styled(Typography)({
 });
 
 const PopupComponent = (props: PopupComponentProps) => {
-  const { state, projectContextAction } =useProjectContext();
-  const{ProjectAction}=projectContextAction;
   const {
     modalTitle,
     modalmessage,
@@ -177,7 +174,6 @@ const PopupComponent = (props: PopupComponentProps) => {
   }
   const handleClose = () => {
     setShowPopUp(false);
-    ProjectAction.setIsBimNotAvailable(false);
     if (setSelectedOption) {
       setSelectedOption("issuePriority");
     }

@@ -1,7 +1,6 @@
 import { Stepper, Step, StepLabel, StepConnector, Typography } from '@mui/material'
 import React from 'react'
 import { withStyles } from "@mui/styles";
-import { useProjectContext } from '../../../../state/projectState/context';
 import { IOnboardingProps } from '../projectOnboarding';
 import { useSignals } from '@preact/signals-react/runtime';
 

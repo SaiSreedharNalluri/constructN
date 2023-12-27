@@ -1,8 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { FormHelperText, Grid, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { computed, useSignal } from '@preact/signals-react';
-import { useProjectContext } from '../../../../../state/projectState/context';
-import { IProjects } from '../../../../../models/IProjects';
 const ProjectTypeDetails = ({
   type, isTypeValid
 }: any) => {

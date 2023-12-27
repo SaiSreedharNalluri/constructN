@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import UploadingStatus from "../../uploaderFIle/uploadingStatus";
 import ChooseOnboardingFiles from "../chooseOnboardingFiles";
 import PopupComponent from "../../../popupComponent/PopupComponent";
-import { useProjectContext } from "../../../../state/projectState/context";
 import { IOnboardingProps } from "../projectOnboarding";
 import { effect, useSignal } from "@preact/signals-react";
 import { useComputed, useSignalEffect } from "@preact/signals-react/runtime";
