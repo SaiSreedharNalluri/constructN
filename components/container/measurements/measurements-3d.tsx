@@ -620,7 +620,11 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
           )
 
         })}
-        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>removeMeasurement(measurement)} refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
+        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>{
+          removeMeasurement(measurement);
+          setSelected('');
+        }
+          } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <PopupComponent
           open={!!deleteMeasurementId}
           hideButtons
