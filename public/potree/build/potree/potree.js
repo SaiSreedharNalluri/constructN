@@ -68476,7 +68476,6 @@ void main() {
 
 					if (measure.points.length >= measure.maxMarkers) {
 						cancel.callback();
-						measure.dispatchEvent({type: 'marker_removed', measurement: measure});
 					}
 
 					this.viewer.inputHandler.startDragging(

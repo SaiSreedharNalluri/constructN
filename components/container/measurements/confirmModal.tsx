@@ -7,7 +7,7 @@ import authHeader from '../../../services/auth-header';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
 
-const createMeasurement = async ({ name = '', type = '', snapshot = '', context = {}, data = [] , setLoading, setShow , setSelected}: {name?: string ,type?: string, snapshot?: string, context?: object, data?:{position?: object}[] , setLoading: React.Dispatch<React.SetStateAction<boolean>>,setShow: (v: boolean) => void, setSelected?: Dispatch<SetStateAction<string>>}) => {
+const createMeasurement = async ({ name = '', type = '', snapshot = '', context = {}, data = [] , setLoading, setShow , setSelected}: {name?: string ,type?: string, snapshot?: string, context?: object, data?:{position?: object}[] , setLoading: React.Dispatch<React.SetStateAction<boolean>>,setShow: (v: boolean) => void, setSelected: Dispatch<SetStateAction<string>>}) => {
   const formatData = data.map((single)=>(single.position))
   try{
     setLoading(true)
@@ -34,7 +34,7 @@ const createMeasurement = async ({ name = '', type = '', snapshot = '', context 
   }
 };
 
-const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, refetch =()=>{}, setLoading=()=>{} , loading=false, setSelected =()=>{}}: {setShow?: Dispatch<SetStateAction<boolean>>, show?: boolean, measurement: {name?: string; points?: object[]; uuid?: string}; onCancel: Function,refetch: Function, setLoading: Function, loading?: boolean ,setSelected?: Dispatch<SetStateAction<string>>}) => {
+const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, refetch =()=>{}, setLoading=()=>{} , loading=false, setSelected =()=>{}, apiPoints= []}: {setShow?: Dispatch<SetStateAction<boolean>>, show?: boolean, measurement: {name?: string; points?: object[]; uuid?: string}; onCancel: Function, refetch: Function, setLoading: Dispatch<SetStateAction<boolean>>, loading?: boolean ,setSelected?: Dispatch<SetStateAction<string>>, apiPoints: {name: string}[]}) => {
     const router = useRouter();
     const snapshot = router.query.snap as string;
     const [name, setName] = useState('');
@@ -65,7 +65,12 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
           SecondaryButtonlabel={"Cancel"}
           disableSecondaryButton={loading}
           disablePrimaryButton={loading}
-          callBackvalue={async () =>{ 
+          callBackvalue={async () =>{
+            const isNameExists = apiPoints.find((point)=> (point.name === name?.trim()) );
+            if(isNameExists){
+              toast.error("Name Already Exists Please Choose a Different Name");
+              return;
+            }
             await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected});
             refetch();
           }}

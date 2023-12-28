@@ -28,7 +28,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
-import { styled, ToggleButtonGroup, ButtonGroup, Tooltip, ToggleButton, Divider, Checkbox, List, ListItem, ListItemButton, Button } from '@mui/material'
+import { styled, ToggleButtonGroup, ButtonGroup, Tooltip, ToggleButton, Divider, Checkbox, List, ListItem, ListItemButton, Button, OutlinedInput } from '@mui/material'
 import instance from '../../../services/axiosInstance'
 import { API } from '../../../config/config'
 import authHeader from '../../../services/auth-header'
@@ -242,7 +242,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
 
   const [measurementsLoaded, setMeasurementsLoaded]=useState(false)
   
-  const [points, setPoints]= useState<{_id?: string, name?: string, points?: object[]}[]>([]);
+  const [points, setPoints]= useState<{ _id?: string, removeMarker: Function; position: object; mtype?: string; uuid: string; name?: string, points?: { position: object}[], visible: boolean}[]>([]);
 
   const [apiPoints, setApiPoints]= useState([])
 
@@ -259,6 +259,8 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
   const [deleteMeasurementId, setDeleteMeasurementId] = useState<string>('');
 
   const [hideButton, setHideButton] = useState(true);
+
+  const [search ,setSearch] = useState('');
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -377,8 +379,8 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
       case 'Area': return <FormatShapesIcon id="rahmanMeasure_area" />
 
       case 'Undo': return <ReplayOutlinedIcon id="rahmanMeasure_undo" onClick={()=>{
-        if(measurement?.points?.length >1){
-          measurement.removeMarker(measurement?.points?.length - 1);
+        if(measurement?.points?.length! > 1){
+          measurement?.removeMarker(measurement?.points?.length! - 1);
       }else{
         setDeleteMeasurementId(measurement?._id || '');
       }
@@ -389,14 +391,14 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
       }}/>
 
       case 'Update': return <VerifiedOutlinedIcon onClick={()=>{
-      const formatData = measurement.points?.map((point:{position: object})=>(point.position))
+      const formatData = measurement?.points?.map((point)=>(point.position))
         updateMeasurement({
-          name: measurement.name,
-          type: measurement.mtype,
+          name: measurement?.name,
+          type: measurement?.mtype,
           snapshot,
           context: {},
           data: formatData,
-          measurementId: measurement._id,
+          measurementId: measurement?._id,
           setLoading,
           refetch
         });
@@ -476,6 +478,10 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
 
   })
 
+  const filteredpoints = points.filter((point) =>
+    point.name?.toLowerCase()?.includes(search?.toLowerCase())
+	);
+
 
   return (
 
@@ -506,13 +512,14 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
 
       {/* <h6 className='px-6 py-1 bg-[#e2e3e5] text-sm rounded-t-md text-gray-700'>Measurements</h6> */}
 
-      { show && <div className={`flex mx-3 mt-3 rounded-md`} style={{border: '1px solid #e2e3e5'}}>
+      { show && <div className={`flex mx-3 mt-3 rounded-md justify-between`} style={{border: '1px solid #e2e3e5'}}>
 
         <SegmentButtonGroup
         
         variant="outlined"
         
         aria-label='text alignment'
+        className='flex justify-between w-full'
 
           >
 
@@ -538,7 +545,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
 
       {((show || selected) && apiPoints?.length > 0 ) ? <div className='flex mt-1 justify-end mr-4'>
           {hideButton ? <Button variant="text" className='text-sm' onClick={()=>{
-            points?.forEach((measurement)=>{
+            points?.forEach((measurement: {visible: boolean})=>{
               measurement.visible = false;
             });
             setHideButton(false);
@@ -553,12 +560,18 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
             Show All
           </Button>}
       </div>: null}
+      {(show || selected) ? <div className="m-4 mt-1">
+        {apiPoints?.length > 0 ? <OutlinedInput
+				size="small"
+				placeholder="Search"
+				onChange={(e) => setSearch(e.target.value)}
+				fullWidth
+			/>: null}
+      </div>: null}
 
-      { (show || selected) && <List dense className='rounded-md m-4 mt-1' sx={{ maxWidth: 360, bgcolor: 'background.paper', border: '1px solid #e2e3e5' }} key={points?.length}>
+      { (show || selected) && <List dense className='rounded-md m-4 mt-1 pb-0  overflow-scroll' sx={{ minWidth: 240, maxWidth: 360, bgcolor: 'background.paper', border: '1px solid #e2e3e5', maxHeight: 360 }} key={points?.length} >
 
-        {points?.length > 0 && points?.map((measurement: {_id?: string; type?: string; name?: string, visible?: boolean, mtype?: string, _id?: string }) => {
-
-          const measurementId = `checkbox-list-secondary-measurement-${measurement._id}`;
+        {points?.length > 0 && filteredpoints?.map((measurement: { type?: string; name?: string, visible?: boolean, mtype?: string, _id?: string }) => {
 
           return (
 
@@ -604,7 +617,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
           )
 
         })}
-        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>removeMeasurement(measurement)} refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} />: null}
+        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>removeMeasurement(measurement)} refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <PopupComponent
           open={!!deleteMeasurementId}
           hideButtons
