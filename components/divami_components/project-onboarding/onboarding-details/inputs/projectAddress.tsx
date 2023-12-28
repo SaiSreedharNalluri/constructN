@@ -108,7 +108,7 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
             value={addressDetails.value.address?.zipcode}
             onChange={(e) => handleAddressChange('zipcode', e.target.value)}
           />
-          {(addressDetails.value.address?.zipcode === undefined || addressDetails.value.address?.zipcode === "") && (
+          {(addressDetails.value.address?.zipcode === "") && (
             <FormHelperText className='text-[#FF853E]'>Zipcode is required</FormHelperText>
           )}
         </Grid>

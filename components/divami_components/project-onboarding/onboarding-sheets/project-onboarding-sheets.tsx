@@ -13,6 +13,7 @@ import { useComputed, useSignalEffect } from '@preact/signals-react'
 import { IOnboardingProps } from '../projectOnboarding'
 
 import { CustomToast } from '../../custom-toaster/CustomToast'
+import Link from 'next/link'
 
 const headers = { headers: authHeader.authHeader() }
 
@@ -122,10 +123,10 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboar
         </div>
 
         <div className='flex w-[25vw] items-center mr-4 justify-center'>
-          Drawings
+          Drawings <Link href='#' target='_blank' className='text-xs !text-orange-600 !underline ml-4'>Good Sheet vs Bad Sheet</Link>
         </div>
 
-        <div className='flex w-[14rem] group-hover:opacity-100 opacity-0 items-center'>
+        <div className='flex w-[9rem] group-hover:opacity-100 opacity-0 items-center'>
           
         </div>
 

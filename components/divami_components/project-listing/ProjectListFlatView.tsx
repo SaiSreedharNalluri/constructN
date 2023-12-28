@@ -125,7 +125,7 @@ export const ProjectListFlatView = ({
       cellStyle: { width: "36%" },
       render: (rowData: any) => {
         return <><div className="hover:cursor-pointer" onClick={()=>{
-          if(rowData.status === "Draft"){
+          if(rowData.status === "Draft" || rowData.status === 'PendingApproval'){
 
           }
           else{
@@ -134,9 +134,9 @@ export const ProjectListFlatView = ({
           <div className="flex justify-between">
           {truncateString(rowData.projectName, 50)}
 
-{rowData.status === "Draft"?
+{rowData.status === "Draft" || rowData.status === 'PendingApproval'?
 <div className=" text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px] " >
-Draft
+{rowData.status}
 </div>
 :""}  
           </div>
@@ -370,10 +370,10 @@ Draft
       render: (rowData: any) => {
         return (
           <div>
-       {rowData.status === "Draft"?
+       {rowData.status === "Draft" || rowData.status === 'PendingApproval'?
          <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>router.push(`project-onboarding?id=${rowData._id}`)}>
          Click to Resume
-        </div>:rowData.status === "Draft" ?
+        </div>:rowData.status === "Draft" || rowData.status === 'PendingApproval' ?
         <div className="font-bold text-base text-[#101F4C] text-center cursor-pointer" >
           Pending Approval
         </div>
@@ -401,7 +401,7 @@ Draft
       render: (rowData: any) => {
         return (
          
-          rowData.status === "Draft"?  <TooltipText title="Delete Project" placement="bottom"> 
+          rowData.status === "Draft" || rowData.status === 'PendingApproval'?  <TooltipText title="Delete Project" placement="bottom"> 
           <div>
           <Image src={Delete} alt="delete" className=" cursor-pointer"></Image>
           </div>
@@ -491,7 +491,7 @@ Draft
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
-                backgroundColor: rowData.status === "Draft" ? "#D9D9D9" : "",
+                backgroundColor: rowData.status === "Draft" || rowData.status === 'PendingApproval' ? "#D9D9D9" : "",
                 // backgroundColor:
                 //   rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),

@@ -54,6 +54,8 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
     setDefaultMeasurement();
   });
 
+  console.log(latlngDetails.value.location)
+
   const renderContent = useComputed(() => <Grid container spacing={2} justifyContent="space-between" alignItems="center" flex="coloum" className='mt-[4px]'>
     <Grid item xs={3}>
       <div>Latitude*</div>
@@ -66,7 +68,7 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         value={latlngDetails.value.location?.coordinates?.[1] || ''}
         onChange={(e: any) => handleOnChange(e, 'latitude')}
       />
-      {validateLatitude(latlngDetails.value.location?.coordinates?.[1]) !== true && (
+      {latlngDetails.value.location?.coordinates?.[1] === '' || validateLatitude(latlngDetails.value.location?.coordinates?.[1]) !== true && (
         <FormHelperText className='text-[#FF853E]'>Latitude must be in the range [-90, 90]</FormHelperText>
       )}
     </Grid>
@@ -81,7 +83,7 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         value={latlngDetails.value.location?.coordinates?.[0] || ''}
         onChange={(e: any) => handleOnChange(e, 'longitude')}
       />
-      {validateLongitude(latlngDetails.value.location?.coordinates?.[0]) !== true && (
+      {latlngDetails.value.location?.coordinates?.[0] === '' || validateLongitude(latlngDetails.value.location?.coordinates?.[0]) !== true && (
         <FormHelperText className='text-[#FF853E]'>Longitude must be in the range [-180, 180]</FormHelperText>
       )}
     </Grid>
