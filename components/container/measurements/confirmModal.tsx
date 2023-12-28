@@ -6,6 +6,7 @@ import { API } from '../../../config/config';
 import authHeader from '../../../services/auth-header';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
+import { CustomToast } from '../../divami_components/custom-toaster/CustomToast';
 
 const createMeasurement = async ({ name = '', type = '', snapshot = '', context = {}, data = [] , setLoading, setShow , setSelected}: {name?: string ,type?: string, snapshot?: string, context?: object, data?:{position?: object}[] , setLoading: React.Dispatch<React.SetStateAction<boolean>>,setShow: (v: boolean) => void, setSelected: Dispatch<SetStateAction<string>>}) => {
   const formatData = data.map((single)=>(single.position))
@@ -24,11 +25,11 @@ const createMeasurement = async ({ name = '', type = '', snapshot = '', context 
       headers: authHeader.authHeader(),
     },
   );
-  toast.success('Created Sucessfully!', { autoClose: 5000 });
+  CustomToast('Created Sucessfully!',"success");
   setSelected(resp?.data?.result?._id || '');
   setShow(false);
   }catch{
-    toast.error('Failed to Create Measurement!', { autoClose: 5000 });
+    CustomToast('Failed to Create Measurement!',"error");
   }finally{
     setLoading(false)
   }
@@ -39,7 +40,7 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
     const snapshot = router.query.snap as string;
     const [name, setName] = useState('');
     const content = (
-        <div className='flex ml-2.5 w-80'>
+        <div className='flex ml-2.5'>
             <TextField color='warning' 
             label='Name' 
             type='small'
