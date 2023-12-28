@@ -138,6 +138,9 @@ console.log(id);
           onClick={(e: any) => {
             e.stopPropagation();
             if(each.status==="Draft"){
+              router.push(`project-onboarding?id=${each._id}`)
+            }
+            else if(each.status==="PendingApproval"){
 
             }
             else{
@@ -146,7 +149,7 @@ console.log(id);
            
             customLogger.logInfo("Project Card - Sections");
           }}
-          className={each.status==="Draft"?"bg-[#D9D9D9]":""}
+          className={each.status==="Draft"|| each.status==="PendingApproval"?"bg-[#D9D9D9]":""}
         >
           <ProjectTopLeftBg />
           <ProjectTopRightBg />
@@ -201,7 +204,7 @@ console.log(id);
             </ProjectNameTitle>
           </Tooltip>
 
-        {each.status==="Draft"?"":<>  <CapturesText>Captures so far</CapturesText>
+        {each.status==="Draft" ||each.status==="PendingApproval" ?"":<>  <CapturesText>Captures so far</CapturesText>
           <CaptureImageContainer>
             <CaptureImageIcon src={Capture360photo} alt=""></CaptureImageIcon>
             <CaptureName>360 Image - </CaptureName>
@@ -268,9 +271,10 @@ console.log(id);
           </UpdatedAtContainer>
           <div>
            {each.status==="Draft"?
-            <div className="font-bold text-base text-[#101F4C] text-center" onClick={()=>router.push(`project-onboarding?id=${each._id}`)}>
+            <div className="font-bold text-base text-[#101F4C] text-center" >
             Click to Resume
-           </div>:each.status==="Draft" ?
+           </div>:
+           each.status==="PendingApproval" ?
            <div className="font-bold text-base text-[#101F4C] text-center" >
              Pending Approval
            </div>

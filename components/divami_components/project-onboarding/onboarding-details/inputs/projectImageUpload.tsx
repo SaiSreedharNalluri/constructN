@@ -49,11 +49,9 @@ const ProjectImageUpload = ({addressDetails,projectCoverPhoto,projectLogo}:any) 
   {projectCoverPhoto.value || addressDetails.value.coverPhoto ?
     <Grid xs={12} item className=' border border-dotted border-orange-500  mt-[16px] cursor-pointer rounded-[6px]' >
       <div style={{ position: 'relative' }}>
-      <Image
+      <img
       src={projectCoverPhoto.value? URL.createObjectURL(projectCoverPhoto.value): addressDetails.value.coverPhoto}
        alt='uploader icon'
-       width={50}
-       height={50}
        className='w-full object-contain h-[120px]'
      />
      <div >

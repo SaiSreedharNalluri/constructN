@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Grid, OutlinedInput, FormControlLabel, Radio, RadioGroup, FormHelperText } from '@mui/material';
 import { computed, effect, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { validateLatitude, validateLongitude } from '../../../../../utils/utils';
 const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
   
   useSignalEffect(() => {
@@ -65,8 +66,8 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         value={latlngDetails.value.location?.coordinates?.[1] || ''}
         onChange={(e: any) => handleOnChange(e, 'latitude')}
       />
-      {(latlngDetails.value.location?.coordinates?.[1] === undefined || Number.isNaN(latlngDetails.value.location?.coordinates?.[1])) && (
-        <FormHelperText className='text-[#FF853E]'>Latitude is required</FormHelperText>
+      {validateLatitude(latlngDetails.value.location?.coordinates?.[1]) !== true && (
+        <FormHelperText className='text-[#FF853E]'>Latitude must be in the range [-90, 90]</FormHelperText>
       )}
     </Grid>
     <Grid item xs={3}>
@@ -80,8 +81,8 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         value={latlngDetails.value.location?.coordinates?.[0] || ''}
         onChange={(e: any) => handleOnChange(e, 'longitude')}
       />
-      {(latlngDetails.value.location?.coordinates?.[0] === undefined || Number.isNaN(latlngDetails.value.location?.coordinates?.[0])) && (
-        <FormHelperText className='text-[#FF853E]'>Longitude is required</FormHelperText>
+      {validateLongitude(latlngDetails.value.location?.coordinates?.[0]) !== true && (
+        <FormHelperText className='text-[#FF853E]'>Longitude must be in the range [-180, 180]</FormHelperText>
       )}
     </Grid>
     <Grid item xs={4.5} className='flex flex-col mt-[0px]'>

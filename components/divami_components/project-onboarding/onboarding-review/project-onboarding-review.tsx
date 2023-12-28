@@ -6,6 +6,7 @@ import { IStructure } from '../../../../models/IStructure';
 import { IDesign } from '../../../../models/IDesign';
 import { CustomToast } from '../../custom-toaster/CustomToast';
 import router from "next/router";
+import { updateProjectInfo } from '../../../../services/project';
 
 
 const contentStyle = {
@@ -28,8 +29,15 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
         action!.value = ''
         break
       case 'Next-4':
-        CustomToast('Submitted project for Review', 'success')
-        router.push("/projects")
+        updateProjectInfo({status: 'PendingApproval'}, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
+          CustomToast('Submitted project for Review', 'success')
+          setTimeout(() => router.push("/projects"), 1000)
+        }).catch((error) => {
+          console.error('Error submitting project for review:', error);
+          CustomToast('Error submitting project for review', 'error')
+          console.log("error");
+          if (action) action.value = ''
+        });
         break
       default:
         break

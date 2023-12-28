@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, OutlinedInput, FormHelperText } from '@mui/material';
 import ProjectImageUpload from './projectImageUpload';
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { validateText } from '../../../../../utils/utils';
 const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCoverPhoto }: any) => {
 
   const isValid = computed(() => (
@@ -59,8 +60,8 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
             value={addressDetails.value.address?.country}
             onChange={(e) => handleAddressChange('country', e.target.value)}
           />
-          {(addressDetails.value.address?.country === undefined || addressDetails.value.address?.country === "") && (
-            <FormHelperText className='text-[#FF853E]'>Country is required</FormHelperText>
+          {validateText(addressDetails.value.address?.country) !== true && (
+            <FormHelperText className='text-[#FF853E]'>Invalid Country</FormHelperText>
           )}
         </Grid>
         <Grid item xs={6}>
@@ -75,8 +76,8 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
             onChange={(e) => handleAddressChange('state', e.target.value)}
 
           />
-          {(addressDetails.value.address?.state === undefined || addressDetails.value.address?.state === "") && (
-            <FormHelperText className='text-[#FF853E]'>State is required</FormHelperText>
+          {validateText(addressDetails.value.address?.state) !== true && (
+            <FormHelperText className='text-[#FF853E]'>Invalid State</FormHelperText>
           )}
         </Grid>
         <Grid item xs={6}>
@@ -91,8 +92,8 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
             onChange={(e) => handleAddressChange('city', e.target.value)}
 
           />
-          {(addressDetails.value.address?.city === undefined || addressDetails.value.address?.city === "") && (
-            <FormHelperText className='text-[#FF853E]'>City is required</FormHelperText>
+          {validateText(addressDetails.value.address?.city) !== true && (
+            <FormHelperText className='text-[#FF853E]'>Invalid City</FormHelperText>
           )}
         </Grid>
         <Grid item xs={6}>
@@ -102,6 +103,7 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
           <OutlinedInput
             fullWidth
             size="small"
+            type='number'
             className="outline-none"
             value={addressDetails.value.address?.zipcode}
             onChange={(e) => handleAddressChange('zipcode', e.target.value)}
