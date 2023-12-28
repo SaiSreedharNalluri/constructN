@@ -318,7 +318,9 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
     getProjectUsers(router.query.projectId as string || projectId)
       .then((response: any) => {              
         if (response.success) {
+          if(onBoardScreen==="onBoarding"){
           usersCount.value=response.result.length
+          }          
           setTableData(
             response.result.map((each: any) => {
               return {
