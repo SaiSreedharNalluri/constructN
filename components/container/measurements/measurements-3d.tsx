@@ -53,7 +53,7 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
   try{
     setLoading(true);
     const resp =  await instance.get(
-      `${API.STAGE_URL}/measurements`,
+      `${API.BASE_URL}/measurements`,
       {
         headers: authHeader.authHeader(),
         params: { snapshot }
@@ -70,7 +70,7 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
 
 const getMeasurement = async (measurementId: string) => {
   return await instance.get(
-    `${API.STAGE_URL}/measurements/${measurementId}`,
+    `${API.BASE_URL}/measurements/${measurementId}`,
     {
       headers: authHeader.authHeader(),
     }
@@ -90,7 +90,7 @@ const updateMeasurement = async ({
   try{
   setLoading(true);
   await instance.put(
-    `${API.STAGE_URL}/measurements/${measurementId}`,
+    `${API.BASE_URL}/measurements/${measurementId}`,
     {
       name,
       type,
@@ -115,7 +115,7 @@ const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<Set
   try{
     setLoading(true)
     await instance.delete(
-    `${API.STAGE_URL}/measurements/${measurementId}`,
+    `${API.BASE_URL}/measurements/${measurementId}`,
     {
       headers: authHeader.authHeader(),
     }

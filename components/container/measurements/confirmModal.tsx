@@ -13,7 +13,7 @@ const createMeasurement = async ({ name = '', type = '', snapshot = '', context 
   try{
     setLoading(true)
   const resp =  await instance.post(
-    `${API.STAGE_URL}/measurements`,
+    `${API.BASE_URL}/measurements`,
     {
       name,
       type,
