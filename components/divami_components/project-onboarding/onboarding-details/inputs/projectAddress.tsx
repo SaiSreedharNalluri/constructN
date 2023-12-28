@@ -1,16 +1,25 @@
 import React from 'react';
 import { Grid, OutlinedInput, FormHelperText } from '@mui/material';
 import ProjectImageUpload from './projectImageUpload';
-import { computed, useSignal } from '@preact/signals-react';
-const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverPhoto}:any) => {
+import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCoverPhoto }: any) => {
 
   const isValid = computed(() => (
     (addressDetails.value.address?.city !== undefined && addressDetails.value.address?.city !== '') &&
-    (addressDetails.value.address?.state !== undefined && addressDetails.value.address?.state !== '')&& 
-    (addressDetails.value.address?.country !== undefined && addressDetails.value.address?.country !== '')&& 
+    (addressDetails.value.address?.state !== undefined && addressDetails.value.address?.state !== '') &&
+    (addressDetails.value.address?.country !== undefined && addressDetails.value.address?.country !== '') &&
     (addressDetails.value.address?.zipcode !== undefined && addressDetails.value.address?.zipcode !== '')
   ))
-  isAddressValid.value=isValid.value; 
+  isAddressValid.value = isValid.value;
+
+  useSignalEffect(() => {
+    isAddressValid.value = (
+      (addressDetails.value.address?.city !== undefined && addressDetails.value.address?.city !== '') &&
+      (addressDetails.value.address?.state !== undefined && addressDetails.value.address?.state !== '') &&
+      (addressDetails.value.address?.country !== undefined && addressDetails.value.address?.country !== '') &&
+      (addressDetails.value.address?.zipcode !== undefined && addressDetails.value.address?.zipcode !== '')
+    )
+  })
   const handleAddressChange = (field: string, value: string) => {
     addressDetails.value = {
       ...addressDetails.value,
@@ -20,8 +29,8 @@ const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverP
       },
     };
   };
-  return (
-    <Grid container spacing={2} className='mt-[2px]' justifyContent="space-between">
+
+  const renderContent = useComputed(() => <Grid container spacing={2} className='mt-[2px]' justifyContent="space-between">
     <Grid item xs={3}>
       <div>
         Address
@@ -33,8 +42,8 @@ const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverP
         multiline
         rows={4.3}
         value={addressDetails.value.address?.line1}
-        onChange={(e) => handleAddressChange('line1', e.target.value)}     
-        />
+        onChange={(e) => handleAddressChange('line1', e.target.value)}
+      />
 
     </Grid>
     <Grid item xs={5}>
@@ -49,10 +58,10 @@ const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverP
             className="outline-none"
             value={addressDetails.value.address?.country}
             onChange={(e) => handleAddressChange('country', e.target.value)}
-            />
+          />
           {(addressDetails.value.address?.country === undefined || addressDetails.value.address?.country === "") && (
-          <FormHelperText className='text-[#FF853E]'>Country is required</FormHelperText>
-        )}
+            <FormHelperText className='text-[#FF853E]'>Country is required</FormHelperText>
+          )}
         </Grid>
         <Grid item xs={6}>
           <div>
@@ -64,12 +73,12 @@ const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverP
             className="outline-none"
             value={addressDetails.value.address?.state}
             onChange={(e) => handleAddressChange('state', e.target.value)}
-            
-            />
+
+          />
           {(addressDetails.value.address?.state === undefined || addressDetails.value.address?.state === "") && (
-          <FormHelperText className='text-[#FF853E]'>State is required</FormHelperText>
-        )}
-          </Grid>
+            <FormHelperText className='text-[#FF853E]'>State is required</FormHelperText>
+          )}
+        </Grid>
         <Grid item xs={6}>
           <div>
             City*
@@ -80,11 +89,11 @@ const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverP
             className="outline-none"
             value={addressDetails.value.address?.city}
             onChange={(e) => handleAddressChange('city', e.target.value)}
-            
-            />
-              {(addressDetails.value.address?.city === undefined || addressDetails.value.address?.city === "") && (
-          <FormHelperText className='text-[#FF853E]'>City is required</FormHelperText>
-        )}
+
+          />
+          {(addressDetails.value.address?.city === undefined || addressDetails.value.address?.city === "") && (
+            <FormHelperText className='text-[#FF853E]'>City is required</FormHelperText>
+          )}
         </Grid>
         <Grid item xs={6}>
           <div>
@@ -96,18 +105,21 @@ const ProjectAddress = ({addressDetails,isAddressValid,projectLogo,projectCoverP
             className="outline-none"
             value={addressDetails.value.address?.zipcode}
             onChange={(e) => handleAddressChange('zipcode', e.target.value)}
-            />
-               {(addressDetails.value.address?.zipcode === undefined || addressDetails.value.address?.zipcode === "") && (
-          <FormHelperText className='text-[#FF853E]'>Zipcode is required</FormHelperText>
-        )}
+          />
+          {(addressDetails.value.address?.zipcode === undefined || addressDetails.value.address?.zipcode === "") && (
+            <FormHelperText className='text-[#FF853E]'>Zipcode is required</FormHelperText>
+          )}
         </Grid>
       </Grid>
     </Grid>
     <Grid item xs={4} style={{ display: 'flex', alignItems: 'stretch' }}>
- <ProjectImageUpload addressDetails={addressDetails} projectLogo={projectLogo} projectCoverPhoto={projectCoverPhoto} ></ProjectImageUpload>
+      <ProjectImageUpload addressDetails={addressDetails} projectLogo={projectLogo} projectCoverPhoto={projectCoverPhoto} ></ProjectImageUpload>
     </Grid>
 
-  </Grid>
+  </Grid>)
+
+  return (
+    <>{renderContent}</>
   );
 };
 

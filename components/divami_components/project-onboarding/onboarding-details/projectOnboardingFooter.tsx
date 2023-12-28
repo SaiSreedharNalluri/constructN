@@ -37,9 +37,9 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
   }
 
   const onNextClick = () => {
-    // if(step.value < 5) {
-    //   step.value++
-    // }
+    if(step.value === 5) {
+      return
+    }
     saveState.value = false
     if (action) action.value = `Next-${step.value}`
   }
