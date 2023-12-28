@@ -29,7 +29,6 @@ interface Iprops {
   buttonName: string;
   button: string;
   onRowClick?: (job: IJobs, index: any) => void;
-  fileProgressList:fileData[]
 }
 const CustomCheckbox = ({ checked, onChange }:any) => {
   return (

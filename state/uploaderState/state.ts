@@ -21,6 +21,8 @@ export interface choosenFileObject {
     validFiles: uploadImage[]
     invalidEXIFFiles: File[]
     duplicateFiles: uploadImage[]
+    currentInvalidEXIFFiles: File[],
+    currentDuplicateFiles: uploadImage[],
 }
 
 export interface captureRawImageMap {
@@ -107,7 +109,9 @@ export const initialUploaderState: UploaderState = {
     choosenFiles: {
         validFiles: [],
         invalidEXIFFiles: [],
-        duplicateFiles: []
+        duplicateFiles: [],
+        currentInvalidEXIFFiles: [],
+        currentDuplicateFiles: [],
     },
     filesDropped: false,
     gcpType: GCPType.LONGLAT,

@@ -134,7 +134,6 @@ const UploaderFinal: React.FC = () => {
                   buttonName="+ Start a new upload"
                   button="Start Upload"
                   onRowClick={handleRowClick}
-                  fileProgressList={fileProgressList}
                 />
               </div> 
               {/* <div>
