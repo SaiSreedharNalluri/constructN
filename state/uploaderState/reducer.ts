@@ -4,7 +4,6 @@ import { RawImage, RawImageStatus, location, metaData, utmLocation } from "../..
 import { getCaptureIdFromModelOrString, getInitialGCPList, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
 import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState, UploaderPopups } from "./state";
-import { PopupComponentProps } from "../../components/popupComponent/PopupComponent";
 import { PopupData } from "../../models/Poppup";
 
 export const resetUploaderState = (): UploaderState => {

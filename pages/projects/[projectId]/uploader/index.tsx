@@ -205,10 +205,10 @@ const Index: React.FC<IProps> = () => {
           let capture = response?.result
           let job = response?.result.jobId as IJobs;
           job.captures = [capture]
-          let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-          captureJobs.push(job)
-          uploaderAction.setCaptureJobs(captureJobs)
-          uploaderAction.setSelectedJob(job)
+          //let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+          //captureJobs.push(job)
+         // uploaderAction.setCaptureJobs(captureJobs)
+         // uploaderAction.setSelectedJob(job)
           addGcpToCapture(job)
         }
         
@@ -244,6 +244,10 @@ const Index: React.FC<IProps> = () => {
       
       if(response.success===true)
       {
+        let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+        captureJobs.push(job)
+          uploaderAction.setCaptureJobs(captureJobs)
+          uploaderAction.setSelectedJob(job)
         uploaderAction.setCurrentUploadFiles(getUploadFiles(response.result, job))
         appAction.addCaptureUpload(job)
         uploaderAction.changeUploadinitiate(false)
@@ -327,7 +331,7 @@ const Index: React.FC<IProps> = () => {
         appAction.removeCaptureUpload(job)
         updateJobStatusOnView(job, jobProject);
         if (jobProject) {
-          CustomToast(`Upload Completed SUCCESSFULLY for ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
+          CustomToast(`SUCCESSFULLY uploaded all file(s) for the ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
         } else {
           CustomToast(`Upload Completed SUCCESSFULLY`,'success')
         }
@@ -339,7 +343,7 @@ const Index: React.FC<IProps> = () => {
         appAction.removeCaptureUpload(job)
         updateJobStatusOnView(job, jobProject);
         if (jobProject) {
-          CustomToast(`Upload Completed with ERRORS for ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
+          CustomToast(`Upload completed with ERRORS for the ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
         } else {
           CustomToast(`Upload Completed with ERRORS`,'success')
         }
@@ -370,6 +374,9 @@ const Index: React.FC<IProps> = () => {
   }
 
   const updateJobStatusBasedOnAction = (deleteJob:boolean) => {
+    let jobProject = appState.projectDataList.find((projectData) => {
+      return projectData.project._id === router.query.projectId
+    })
     let ignoreImagesCheck = true;
     uploaderAction.setIsLoading(true);
     updateJobStatus(
@@ -390,9 +397,25 @@ const Index: React.FC<IProps> = () => {
               job.status = updatedJob.status;
             }
           });
+          if(deleteJob === true)
+          {
+            if(uploaderState?.selectedJob && jobProject)
+            {
+              CustomToast(`Discarded all files for the ${getPathToRoot(getStructureIdFromModelOrString(uploaderState?.selectedJob?.structure),jobProject.hierarchy[0])} on ${moment(uploaderState.selectedJob.date).format("MMM DD YYYY")}`,'success')
+            }
+            else{
+              CustomToast(`Discarded all files.`,'success') 
+            }
+          }
+          else{
+            if(uploaderState?.selectedJob && jobProject)
+            {
+              CustomToast(`Files for the ${getPathToRoot(getStructureIdFromModelOrString(uploaderState?.selectedJob?.structure),jobProject.hierarchy[0])} on ${moment(uploaderState.selectedJob.date).format("MMM DD YYYY")} have been sent for processing.`,'success')
+            }else{
+              CustomToast(`Files have been sent for processing.`,'success')
+            } 
+          }
           uploaderAction.setCaptureJobs(captureJobs);
-          // appAction.removeCaptureUpload(updatedJob)
-          // uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
         }
       })
       .catch((error) => {
