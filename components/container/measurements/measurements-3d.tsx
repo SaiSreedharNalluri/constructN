@@ -37,6 +37,7 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import CustomLoader from '../../divami_components/custom_loader/CustomLoader'
 import PopupComponent from '../../popupComponent/PopupComponent'
+import { CustomToast } from '../../divami_components/custom-toaster/CustomToast'
 
 
 const subscribe = (eventName: string, listener: EventListenerOrEventListenerObject) => {
@@ -61,6 +62,7 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
     setApiPoints(resp.data.result);
   }catch{
     setApiPoints([]);
+    CustomToast('Failed to Load Measurements!',"error");
   }finally{
     setLoading(false);
   }
@@ -100,10 +102,10 @@ const updateMeasurement = async ({
       headers: authHeader.authHeader(),
     }
   );
-  toast.success('Measurement Updated Sucessfull!',{ autoClose: 5000 });
+  CustomToast('Measurement Updated Sucessfull!',"success");
   refetch();
   }catch{
-    toast.error('Failed to Update Measurement!',{ autoClose: 5000 })
+    CustomToast('Failed to Update Measurement!',"error");
   }finally{
     setLoading(false);
   }
@@ -119,9 +121,9 @@ const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<Set
     }
   )
   refetch();
-  toast.success('Measurement Sucessfully Deleted!',{ autoClose: 5000 })
+  CustomToast('Measurement Sucessfully Deleted!',"success");
   }catch{
-    toast.error('Failed to Delete Measurement!',{ autoClose: 5000 })
+    CustomToast('Failed to Delete Measurement!',"error");
   }finally{
     setLoading(false)
   }
@@ -500,7 +502,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
           }
         }} >
 
-        <div className='pl-4 text-xs flex-1 items-center text-gray-600 cursor-pointer'>{show ? 'Hide' : 'Show'} Measurements</div>
+        <div className='pl-4 text-[12px] flex-1 items-center text-gray-600 cursor-pointer'>{show ? 'Hide' : 'Show'} Measurements</div>
 
         <IconButton size="small" className='w-3 h-4 text-l mx-2' aria-label="delete">
 
@@ -543,15 +545,16 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
 
       </div> }
 
-      {((show || selected) && apiPoints?.length > 0 ) ? <div className='flex mt-1 justify-end mr-4'>
-          {hideButton ? <Button variant="text" className='text-sm' onClick={()=>{
+      {((show || selected) && apiPoints?.length > 0 ) ? <div className='flex mt-2 justify-between mr-4'>
+        <div className='ml-4 text-[12px] text-gray-600 font-medium'>Measurements</div>
+          {hideButton ? <Button variant="text" className='text-xs' onClick={()=>{
             points?.forEach((measurement: {visible: boolean})=>{
               measurement.visible = false;
             });
             setHideButton(false);
           }}>
             Hide All
-          </Button>: <Button variant="text" className='text-sm' onClick={()=>{
+          </Button>: <Button variant="text" className='text-xs' onClick={()=>{
             points?.forEach((measurement)=>{
               measurement.visible = true;
             });
@@ -617,7 +620,11 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
           )
 
         })}
-        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>removeMeasurement(measurement)} refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
+        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>{
+          removeMeasurement(measurement);
+          setSelected('');
+        }
+          } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <PopupComponent
           open={!!deleteMeasurementId}
           hideButtons
