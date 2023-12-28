@@ -125,20 +125,22 @@ export const ProjectListFlatView = ({
       cellStyle: { width: "36%" },
       render: (rowData: any) => {
         return <><div className="hover:cursor-pointer" onClick={()=>{
-          if(rowData.status === "Draft"){
-
+          if(rowData.status !== "Draft" && rowData.status !== "PendingApproval" ){
+            router.push(`/projects/${rowData._id}/sections`);}
           }
-          else{
-          router.push(`/projects/${rowData._id}/sections`);}
-        }}>
+        }>
           <div className="flex justify-between">
           {truncateString(rowData.projectName, 50)}
 
-{rowData.status === "Draft"?
-<div className=" text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px] " >
-Draft
-</div>
-:""}  
+          {rowData.status === "Draft" ? (
+            <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">
+              Draft
+            </div>
+          ) : rowData.status === "PendingApproval" ? (
+            <div className="text-sm text-white py-[0.5px] bg-[#FFC107] cursor-default px-[4px] rounded-[3px]">
+              Pending Approval
+            </div>
+          ) : ""} 
           </div>
       
           </div></>;
@@ -158,7 +160,7 @@ Draft
       },
       render: (rowData: any) => {
         return (
-          rowData._id === "PRJ697680"?"-":
+          rowData.status === "Draft" ||   rowData.status === "PendingApproval" ?"-":
           <>
           <CapturesFieldContainer>
             <CapturesField>
@@ -373,8 +375,8 @@ Draft
        {rowData.status === "Draft"?
          <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>router.push(`project-onboarding?id=${rowData._id}`)}>
          Click to Resume
-        </div>:rowData.status === "Draft" ?
-        <div className="font-bold text-base text-[#101F4C] text-center cursor-pointer" >
+        </div>:rowData.status === "PendingApproval" ?
+        <div className="font-bold  text-[#101F4C] text-center cursor-pointer" >
           Pending Approval
         </div>
        :""}  
@@ -491,7 +493,7 @@ Draft
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
-                backgroundColor: rowData.status === "Draft" ? "#D9D9D9" : "",
+                backgroundColor: rowData.status === "Draft" ||   rowData.status === "PendingApproval" ? "#D9D9D9" : "",
                 // backgroundColor:
                 //   rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),
