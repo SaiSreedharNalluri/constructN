@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { FormHelperText, Grid, OutlinedInput } from '@mui/material';
 import { computed, useComputed, useSignalEffect } from '@preact/signals-react';
+import { validateName } from '../../../../../utils/utils';
 
 
 const ProjectNameDetails = ({
@@ -28,8 +29,8 @@ const ProjectNameDetails = ({
         value={details.value.name}
         onChange={handleOnChange}
       />
-      {(details.value.name === undefined || details.value.name === '') && (
-        <FormHelperText className='text-[#FF853E]'>Name is required</FormHelperText>
+      {validateName(details.value.name) !== true && (
+        <FormHelperText className='text-[#FF853E]'>Invalid Name</FormHelperText>
       )}
     </Grid>
     <Grid item xs={6}>

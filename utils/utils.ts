@@ -39,6 +39,14 @@ export const getEXIFDataFromImageFile = async (file: File): Promise<ExifReader.T
     return exifData
 }
 
+export const validateName = (name: string): boolean => {
+    return name !== undefined && (/^[a-zA-Z0-9][a-zA-Z0-9._ ]+$/).test(name);
+};
+
+export const validateText = (name: string): boolean => {
+    return name !== undefined && (/^[a-zA-Z ]+$/).test(name);
+};
+
 export const validateLatitude = (latitude: number): boolean => {
     return latitude >= -90 && latitude <= 90 && latitude !== 0;
 };

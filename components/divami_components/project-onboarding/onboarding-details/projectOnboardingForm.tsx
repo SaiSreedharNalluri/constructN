@@ -69,7 +69,9 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnb
               })
               .catch((error) => {
                 console.error('Error creating project:', error);
+                CustomToast('Error creating project', 'error')
                 console.log("error");
+                if (action) action.value = ''
               });
           }
           else {
@@ -77,7 +79,12 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnb
               const result = response.result;
               delete result.users
               projectDetails.value = result
-            })
+            }).catch((error) => {
+              console.error('Error updating project:', error);
+              CustomToast('Error updating project', 'error')
+              console.log("error");
+              if (action) action.value = ''
+            });
             step.value = 1
 
           }
