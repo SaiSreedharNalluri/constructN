@@ -14,7 +14,7 @@ const contentStyle = {
   textAlign: 'left', // Align content text as needed
 };
 
-const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount }: IOnboardingProps) => {
+const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount,showLoader }: IOnboardingProps) => {
   console.log(projectDetails.value);
 
   const bimCount = useSignal(0)
@@ -29,12 +29,21 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
         action!.value = ''
         break
       case 'Next-4':
+        if(showLoader){
+          showLoader.value=true
+          }
         updateProjectInfo({status: 'PendingApproval'}, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
           CustomToast('Submitted project for Review', 'success')
+          if(showLoader){
+            showLoader.value=false
+            }
           setTimeout(() => router.push("/projects"), 1000)
         }).catch((error) => {
           console.error('Error submitting project for review:', error);
           CustomToast('Error submitting project for review', 'error')
+          if(showLoader){
+            showLoader.value=false
+            }
           console.log("error");
           if (action) action.value = ''
         });
@@ -81,19 +90,19 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
     }
   }).catch(err => console.log(err))
 
-  effect(() => {
-    console.log('Action inside Review', 'Step:', step.peek(), 'Action:', action?.value)
-    switch (action!.value) {
-      case 'Back-4':
-        step.value = 3
-        break
-      case 'Next-4':
-        step.value = 5
-        break
-      default:
-        break
-    }
-  })
+  // effect(() => {
+  //   console.log('Action inside Review', 'Step:', step.peek(), 'Action:', action?.value)
+  //   switch (action!.value) {
+  //     case 'Back-4':
+  //       step.value = 3
+  //       break
+  //     case 'Next-4':
+  //       step.value = 5
+  //       break
+  //     default:
+  //       break
+  //   }
+  // })
   function generateGridRow(label: string, values: any) {
     return (
       <div className="grid grid-cols-2 gap-4 p-1">

@@ -39,6 +39,9 @@ import LocalSearch from "../local_component/LocalSearch";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import Delete from "../../../public/divami_icons/delete.svg";
+import { CustomToast } from "../custom-toaster/CustomToast";
+import PopupComponent from "../../popupComponent/PopupComponent";
+import { deleteProject } from "../../../services/project";
 export const ProjectListFlatView = ({
   projects,
   projectActions,
@@ -52,12 +55,31 @@ export const ProjectListFlatView = ({
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
 
   const [projectsState, setProjectsState] = useState(projects);
-
+  const[isAdmin,setisAdmin]=useState(false);
+  const[isPending,setisPending]=useState(false);
+  const[projectId,setProjectId]=useState("");
+  const[isDelete,setDelete]=useState(false);
+  const[role,setRole]=useState("");
   useEffect(() => {
     // setProjectsState([...projects]);
     setProjectsState([...projects]);
   }, [projects]);
+  const onDelete = (projectId: string,role:string) => {
+    if(role==="admin"){
+      deleteProject(projectId).then(res => {
+        window.location.reload();
+        CustomToast(res.message,"success")
+      })
+      .catch((err) => {
+        CustomToast(err, 'error')
+        
+      } )
+    }
+else{
+  CustomToast("Only Admin can delete the project","success")
+}
 
+  }
   const sortBy = (field: string) => {
     if (sortObj) {
       setProjectsState(
@@ -104,6 +126,7 @@ export const ProjectListFlatView = ({
 
     return `--`;
   };
+
   const localizationOptions = {
     body: {
       emptyDataSourceMessage: <LocalSearch />,
@@ -373,10 +396,18 @@ export const ProjectListFlatView = ({
         return (
           <div>
        {rowData.status === "Draft"?
-         <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>router.push(`project-onboarding?id=${rowData._id}`)}>
+         <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>{
+          if(rowData.status==="Draft" && rowData.role==="admin"){
+            router.push(`project-onboarding?id=${rowData._id}`)
+          }
+       else if(rowData.status==="Draft" && rowData.role!=="admin"){
+        // CustomToast("Only Admin can edit this Draft ","info") 
+        setisAdmin(true)
+          }
+         }}>
          Click to Resume
         </div>:rowData.status === "PendingApproval" ?
-        <div className="font-bold  text-[#101F4C] text-center cursor-pointer" >
+        <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>{ setisPending(true)}}>
           Pending Approval
         </div>
        :""}  
@@ -403,9 +434,14 @@ export const ProjectListFlatView = ({
       render: (rowData: any) => {
         return (
          
-          rowData.status === "Draft"?  <TooltipText title="Delete Project" placement="bottom"> 
+          rowData.status === "Draft"|| rowData.status === "PendingApproval"?  <TooltipText title="Delete Project" placement="bottom"> 
           <div>
-          <Image src={Delete} alt="delete" className=" cursor-pointer"></Image>
+          <Image src={Delete} onClick={(e)=>{ 
+            e.stopPropagation(); 
+            setDelete(true)
+            setProjectId(rowData._id)
+            setRole(rowData.role)  ;}} 
+alt="delete" className=" cursor-pointer"></Image>
           </div>
           </TooltipText>
           : <TooltipText  title="Project Menu">
@@ -512,6 +548,56 @@ export const ProjectListFlatView = ({
           />
         </TableWrapper>
       </ThemeProvider>
+        {
+        isAdmin || isPending?<PopupComponent open={isAdmin?isAdmin:isPending}
+        setShowPopUp={isAdmin?setisAdmin:setisPending}
+        modalTitle={isAdmin? "Access Denied !!":"Review in progress !!"}
+        modalmessage={
+        isAdmin?
+        <div className="flex flex-col">
+          <div>
+          1. The project you are trying to access is in draft stage.
+          </div>
+        <div>
+        2. Please reach out to the admin of this project to finish the project setup.
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>:<div className="flex flex-col">
+          <div>
+          1. The project you are trying to access has not been approved.
+          </div>
+        <div>
+        2. You can access the project only after the project has been approved. 
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>}
+        primaryButtonLabel={"Ok"}
+        SecondaryButtonlabel={""}
+        callBackvalue={
+          isAdmin?
+          () => {
+          setisAdmin(false)
+        }:() => {
+          setisPending(false)
+        }}></PopupComponent>:""
+      }
+            {
+        isDelete? <PopupComponent
+        open={isDelete}
+        setShowPopUp={setDelete}
+        modalTitle={"Cancel"}
+        modalmessage={
+         `Are you sure you want to 'Delete Project'?`
+        }
+        primaryButtonLabel={"Yes"}
+        SecondaryButtonlabel={"No"}
+        callBackvalue={()=>{onDelete(projectId,role);setDelete(false)}}
+      />:""
+      }
     </ProjectUsersListContainer>
   );
 };
