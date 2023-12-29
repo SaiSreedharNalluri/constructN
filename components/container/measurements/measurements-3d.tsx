@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import IconButton from '@mui/material/IconButton'
 
@@ -8,7 +8,11 @@ import LinearScaleIcon from '@mui/icons-material/LinearScale'
 
 import HeightIcon from '@mui/icons-material/Height'
 
-import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import PolylineIcon from '@mui/icons-material/Polyline'
 
@@ -24,8 +28,106 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
-import { styled, ToggleButtonGroup, ButtonGroup, Tooltip, ToggleButton, Divider, Checkbox, List, ListItem, ListItemButton } from '@mui/material'
+import { styled, ToggleButtonGroup, ButtonGroup, Tooltip, ToggleButton, Divider, Checkbox, List, ListItem, ListItemButton, Button, OutlinedInput } from '@mui/material'
+import instance from '../../../services/axiosInstance'
+import { API } from '../../../config/config'
+import authHeader from '../../../services/auth-header'
+import ConfirmModal from './confirmModal'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
+import CustomLoader from '../../divami_components/custom_loader/CustomLoader'
+import PopupComponent from '../../popupComponent/PopupComponent'
+import { CustomToast } from '../../divami_components/custom-toaster/CustomToast'
 
+
+const subscribe = (eventName: string, listener: EventListenerOrEventListenerObject) => {
+
+  document.addEventListener(eventName, listener)
+}
+
+const unsubscribe = (eventName: string, listener: EventListenerOrEventListenerObject) => {
+  document.removeEventListener(eventName, listener)
+}
+
+const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetStateAction<never[]>>, setLoading: Dispatch<SetStateAction<boolean>>) => {
+  try{
+    setLoading(true);
+    const resp =  await instance.get(
+      `${API.BASE_URL}/measurements`,
+      {
+        headers: authHeader.authHeader(),
+        params: { snapshot }
+      }
+    )
+    setApiPoints(resp.data.result);
+  }catch{
+    setApiPoints([]);
+    CustomToast('Failed to Load Measurements!',"error");
+  }finally{
+    setLoading(false);
+  }
+};
+
+const getMeasurement = async (measurementId: string) => {
+  return await instance.get(
+    `${API.BASE_URL}/measurements/${measurementId}`,
+    {
+      headers: authHeader.authHeader(),
+    }
+  )
+};
+
+const updateMeasurement = async ({
+  name = '',
+  type = '',
+  snapshot = '',
+  context= {},
+  data = [],
+  measurementId = '',
+  setLoading=()=>{},
+  refetch=()=>{},
+}: { name?: string, type?: string, measurementId?: string; data?:object[]; context?: object; snapshot: string; setLoading: Dispatch<SetStateAction<boolean>>; refetch: Function}) => {
+  try{
+  setLoading(true);
+  await instance.put(
+    `${API.BASE_URL}/measurements/${measurementId}`,
+    {
+      name,
+      type,
+      snapshot,
+      context,
+      data,
+    },
+    {
+      headers: authHeader.authHeader(),
+    }
+  );
+  CustomToast('Measurement Updated Sucessfull!',"success");
+  refetch();
+  }catch{
+    CustomToast('Failed to Update Measurement!',"error");
+  }finally{
+    setLoading(false);
+  }
+};
+
+const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<SetStateAction<boolean>>, refetch: Function=()=>{}) => {
+  try{
+    setLoading(true)
+    await instance.delete(
+    `${API.BASE_URL}/measurements/${measurementId}`,
+    {
+      headers: authHeader.authHeader(),
+    }
+  )
+  refetch();
+  CustomToast('Measurement Sucessfully Deleted!',"success");
+  }catch{
+    CustomToast('Failed to Delete Measurement!',"error");
+  }finally{
+    setLoading(false)
+  }
+};
 
 const Measurements3DView: FC<any> = ({ potreeUtils = {}}) => {
 
@@ -137,26 +239,119 @@ const SegmentButtonGroup = styled(ButtonGroup)({
 });
 
 
-const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => {
 
-  const [render, setRender]=useState(false)
+const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
+
+  const [measurementsLoaded, setMeasurementsLoaded]=useState(false)
   
-  const [points, setPoints]=useState([])
+  const [points, setPoints]= useState<{ _id?: string, removeMarker: Function; position: object; mtype?: string; uuid: string; name?: string, points?: { position: object}[], visible: boolean}[]>([]);
 
-  const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, undoMeasurement, clearAllMeasurements } = potreeUtils || {}
+  const [apiPoints, setApiPoints]= useState([])
+
+  const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, clearAllMeasurements , loadMeasurements } = potreeUtils || {}
 
   const [show, setShow] = useState<boolean>(false)
 
   const [measurementType, setMeasurementType] = useState<string>()
 
+  const [selected, setSelected] = useState<string>('')
 
-  const [selected, setSelected] = useState<string>()
+  const [showModal , setShowModal] = useState(false);
+
+  const [deleteMeasurementId, setDeleteMeasurementId] = useState<string>('');
+
+  const [hideButton, setHideButton] = useState(true);
+
+  const [search ,setSearch] = useState('');
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  const snapshot = router.query.snap as string;
+
+  const onSelect = (measure: { uuid?: string; _id?: string }, fromEvent = false) => {
+    if(fromEvent){
+      setSelected(measure?._id || measure?.uuid || '');
+      setShow(true);
+    }else{
+      setSelected((prem) => ((prem === (measure?._id || measure?.uuid )) ? "" : (measure?._id || '')));
+    };
+  }
 
   useEffect(()=>{
     if(loadMeasurementModule && show){
-      loadMeasurementModule()
+      loadMeasurementModule();
     }
   },[show])
+
+  useEffect(()=>{
+    if(loadMeasurements && !loading){
+      loadMeasurements(apiPoints);
+      setMeasurementsLoaded(!measurementsLoaded)
+    }
+  },[apiPoints.length])
+
+  const refetch = ()=> {
+    getMeasurements(snapshot, setApiPoints, setLoading)
+  }
+
+  useEffect(()=>{
+    (points || []).forEach((point: any)=>{
+      if(point._id === selected || point.uuid === selected){
+        if(point.mtype !== 'Point'){
+          point.lineMaterial.linewidth = 3
+        }else{
+          point.spheres[0]?.material.color.setRGB(255,255,0);
+        }
+        point.color.setRGB(255,255,0);
+      }else{
+        if(point.mtype !== 'Point'){
+          point.lineMaterial.linewidth = 2
+        }else{
+          point.spheres[0]?.material.color.setRGB(1,0,0);
+        }
+        point.color.setRGB(1,0,0);
+      };
+    })
+  },[selected, measurementsLoaded]);
+
+  const mouseMoved = (e: any)=>{
+    const { measure , isClick } = e.detail;
+    onSelect(measure, true);
+    if(!isClick){
+      const formatData = measure.points?.map((point:{position: object})=>(point.position))
+      updateMeasurement({
+        name: measure.name,
+        type: measure.mtype,
+        snapshot,
+        context: {},
+        data: formatData,
+        measurementId: measure._id,
+        setLoading,
+        refetch
+      });
+    }
+  }
+
+  const markerAdded = (e: any) =>{
+    const { measurement } = e.detail
+    onSelect(measurement, true);
+  }
+
+  const showConfirm = () => setShowModal(true);
+  
+  useEffect(()=>{
+    refetch();
+    subscribe("measurement-moved", mouseMoved);
+    subscribe("marker-added", markerAdded);
+    subscribe('measurement-created', showConfirm);
+    return(()=>{
+      unsubscribe("measurement-moved", mouseMoved);
+      unsubscribe("marker-added", markerAdded);
+      unsubscribe("measurement-created", showConfirm);
+    })
+  },[])
   
 
   useEffect(()=>{
@@ -167,6 +362,8 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
       setPoints(getPoints())
     }
   },[loadAddMeasurementsEvents, getPoints])
+
+  const measurement = points.find((point)=>((point._id === selected || point.uuid === selected)));
 
 
   const getIconForType = (type: string) => {
@@ -184,16 +381,30 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
       case 'Area': return <FormatShapesIcon id="rahmanMeasure_area" />
 
       case 'Undo': return <ReplayOutlinedIcon id="rahmanMeasure_undo" onClick={()=>{
-        undoMeasurement();
-        setRender(!render);
+        if(measurement?.points?.length! > 1){
+          measurement?.removeMarker(measurement?.points?.length! - 1);
+      }else{
+        setDeleteMeasurementId(measurement?._id || '');
+      }
       }}/>
 
-      case 'Clear': return <LayersClearOutlinedIcon id="rahmanMeasure_clear" onClick={()=>{
-        clearAllMeasurements();
-        setRender(!render);
+      case 'Clear': return <LayersClearOutlinedIcon id="rahmanMeasure_clear" onClick={()=> {
+        removeMeasurement(measurement);
       }}/>
 
-      case 'Save': return <VerifiedOutlinedIcon />
+      case 'Update': return <VerifiedOutlinedIcon onClick={()=>{
+      const formatData = measurement?.points?.map((point)=>(point.position))
+        updateMeasurement({
+          name: measurement?.name,
+          type: measurement?.mtype,
+          snapshot,
+          context: {},
+          data: formatData,
+          measurementId: measurement?._id,
+          setLoading,
+          refetch
+        });
+      }} />
 
     }
 
@@ -211,7 +422,6 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
         onClick={()=> {
           setMeasurementType(type);
-          setRender(!render);
         }}
         
         aria-label={type} >
@@ -226,7 +436,7 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
   })
 
-  const iconButtons = ['Undo', 'Clear', 'Save'].map((action: string) => {
+  const iconButtons = ['Undo', 'Clear', 'Update'].map((action: string) => {
 
     return (
 
@@ -248,9 +458,32 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
   })
 
-  const handleToggle = (measurement: {visible: boolean}) => () => measurement.visible = !measurement.visible
+  const clearAll = ['Update','Undo'].map((action: string) => {
 
-  const onSelect = () => {}
+    return (
+
+      <Tooltip key={action} title={action} arrow >
+
+        <IconButton
+        
+        onClick={()=> setMeasurementType('')}
+
+          aria-label={action} >
+
+          {getIconForType(action)}
+
+        </IconButton>
+
+      </Tooltip>
+
+    )
+
+  })
+
+  const filteredpoints = points.filter((point) =>
+    point.name?.toLowerCase()?.includes(search?.toLowerCase())
+	);
+
 
   return (
 
@@ -258,15 +491,20 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
       <div
 
-        className='rounded h-4 bg-white w-full cursor-pointer flex align-items-center'
+        className='rounded h-4 bg-white w-full cursor-pointer flex items-center'
 
         style={{ borderRadius: '4px 4px 0 0', border: '1px solid #e2e3e5' }}
 
-        onClick={() => setShow(!show)} >
+        onClick={() =>{
+          setShow(!show);
+          if(show){
+            setSelected('');
+          }
+        }} >
 
-        <div className='pl-4 pt-3 text-xs flex-1 items-center text-gray-600 cursor-pointer'>{show ? 'Hide' : 'Show'} Measurements</div>
+        <div className='pl-4 text-[12px] flex-1 items-center text-gray-600 cursor-pointer'>{show ? 'Hide' : 'Show'} Measurements</div>
 
-        <IconButton size="small" className='w-3 h-4 mt-1 text-l mx-2 pb-3' aria-label="delete">
+        <IconButton size="small" className='w-3 h-4 text-l mx-2' aria-label="delete">
 
           {show ? <KeyboardArrowDownIcon fontSize="inherit" /> : <KeyboardArrowUpIcon fontSize="inherit" />}
 
@@ -276,13 +514,14 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
       {/* <h6 className='px-6 py-1 bg-[#e2e3e5] text-sm rounded-t-md text-gray-700'>Measurements</h6> */}
 
-      { show && <div className={`flex mx-3 mt-3 rounded-md`} style={{border: '1px solid #e2e3e5'}}>
+      { show && <div className={`flex mx-3 mt-3 rounded-md justify-between`} style={{border: '1px solid #e2e3e5'}}>
 
         <SegmentButtonGroup
         
         variant="outlined"
         
         aria-label='text alignment'
+        className='flex justify-between w-full'
 
           >
 
@@ -290,6 +529,7 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
         </SegmentButtonGroup>
 
+      {selected ?<>
         <Divider orientation="vertical" variant="middle" flexItem />
 
         <SegmentButtonGroup
@@ -298,49 +538,61 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
           aria-label='text alignment'>
 
-          {iconButtons}
+          {clearAll}
 
         </SegmentButtonGroup>
+        </>: null}
 
       </div> }
 
-      { show && <List dense className='rounded-md m-4' sx={{ maxWidth: 360, bgcolor: 'background.paper', border: '1px solid #e2e3e5' }} key={points?.length}>
+      {((show || selected) && apiPoints?.length > 0 ) ? <div className='flex mt-2 justify-between mr-4'>
+        <div className='ml-4 text-[12px] text-gray-600 font-medium'>Measurements</div>
+          {hideButton ? <Button variant="text" className='text-xs' onClick={()=>{
+            points?.forEach((measurement: {visible: boolean})=>{
+              measurement.visible = false;
+            });
+            setHideButton(false);
+          }}>
+            Hide All
+          </Button>: <Button variant="text" className='text-xs' onClick={()=>{
+            points?.forEach((measurement)=>{
+              measurement.visible = true;
+            });
+            setHideButton(true);
+          }}>
+            Show All
+          </Button>}
+      </div>: null}
+      {(show || selected) ? <div className="m-4 mt-1">
+        {apiPoints?.length > 0 ? <OutlinedInput
+				size="small"
+				placeholder="Search"
+				onChange={(e) => setSearch(e.target.value)}
+				fullWidth
+			/>: null}
+      </div>: null}
 
-        {points?.length > 0 && points?.map((measurement: {uuid: string; type: string; name: string, visible: boolean }) => {
+      { (show || selected) && <List dense className='rounded-md m-4 mt-1 pb-0  overflow-scroll' sx={{ minWidth: 240, maxWidth: 360, bgcolor: 'background.paper', border: '1px solid #e2e3e5', maxHeight: 360 }} key={points?.length} >
 
-          const measurementId = `checkbox-list-secondary-measurement-${measurement.uuid}`;
+        {points?.length > 0 && filteredpoints?.map((measurement: { type?: string; name?: string, visible?: boolean, mtype?: string, _id?: string }) => {
 
           return (
 
-            measurement && <ListItem
+            measurement && measurement?._id && <ListItem
 
-              key={measurement.uuid}
+              key={measurement._id}
 
-              className={`mt-2${selected === measurement.uuid ? ' bg-orange-100' : ''}`}
+              className={`${selected === measurement._id ? ' bg-orange-100' : ''}`}
 
               secondaryAction={
 
-                <Checkbox
-
-                  edge="start"
-
-                  color="warning"
-
-                  size='small'
-
-                  checked={measurement.visible}
-
-                  onChange={handleToggle(measurement)}
-
-                  className='mr-[12px]'
-
-                  inputProps={{ 'aria-labelledby': measurementId }}
-
-                />
+                measurement.visible ? 
+                <VisibilityIcon onClick={()=>{ measurement.visible = !measurement.visible }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer'/>: 
+                <VisibilityOffIcon onClick={()=>{ measurement.visible = !measurement.visible }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer' />
 
               }
 
-              // onClick={() => onSelect()}
+              onClick={() => onSelect(measurement)}
 
               disablePadding >
 
@@ -348,33 +600,52 @@ const MeasurementTypePicker: FC<any> = ({ onMeasurementChange, potreeUtils}) => 
 
                 <div className='flex items-center' style={{ fontSize: '0.65rem' }}>
 
-                  <div className={`w-3.5 h-3.5 mr-4 [&>*]:w-4 [&>*]:h-4 [&>*]:text-[#7a7a7a]`}> { getIconForType(measurement['type']) } </div>
+                  <div className={`w-3.5 mr-4 [&>*]:text-[#7a7a7a]`}> {getIconForType(measurement.mtype || measurement.name || '') } </div>
 
-                  <div className='px-2 truncate md:text-clip'>{measurement && measurement.name.toUpperCase()}</div>
+                  <div className='px-2 truncate md:text-clip'>{measurement && measurement?.name?.toUpperCase()}</div>
 
                 </div>
 
               </ListItemButton>
 
-              <div onClick={()=>{
-                removeMeasurement(measurement);
-                setRender(!render);
-                }}
-                className='mr-[10px] cursor-pointer'>
-                <CloseIcon
-                    style={{ color:"#101F4C", fontSize: "16px" }}
+                <DeleteIcon
+                    onClick={()=> setDeleteMeasurementId(measurement._id!)}
+                    style={{ fontSize: "18px" }}
                     data-testid={"addIcon"}
+                    className='cursor-pointer mr-2 z-10'
                   />
-              </div>
 
             </ListItem>
 
           )
 
         })}
+        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>{
+          removeMeasurement(measurement);
+          setSelected('');
+        }
+          } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
+        {!!deleteMeasurementId ? <PopupComponent
+          open={!!deleteMeasurementId}
+          hideButtons
+          setShowPopUp={setDeleteMeasurementId}
+          modalTitle={"Delete Measurement"}
+          modalContent={'Are You Sure You Want To Delete?'}
+          modalmessage={""}
+          primaryButtonLabel={"Confirm"}
+          SecondaryButtonlabel={"Cancel"}
+          disableSecondaryButton={loading}
+          disablePrimaryButton={loading}
+          callBackvalue={async () =>{ 
+            await deleteMeasurement(deleteMeasurementId, setLoading, refetch);
+            setDeleteMeasurementId('');
+            setSelected('');
+          }}
+          secondaryCallback={()=> setDeleteMeasurementId('')}
+        />: null}
 
       </List> }
-
+      {loading ? <CustomLoader />: null}
     </div>
 
   )

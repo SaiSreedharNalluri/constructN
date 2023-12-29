@@ -411,7 +411,9 @@ const Index: React.FC<any> = () => {
   }, [router.isReady]);
 
   useEffect(() => {
-    setSearchTableData(projects);
+    setSearchTableData([]
+      .concat(projects)
+      .sort((a: any, b: any) => a.status === 'Draft' || a.status === 'PendingApproval' ? -1 : 1));
   }, [projects]);
 
   const onDeleteIssue = (status: any) => {

@@ -94,6 +94,20 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnb
 
           }
         } else {
+          if(isNameValid.peek() === false) projectDetails.value = {...projectDetails.peek(), ...{name: ''}}
+          if(isAddressValid.peek() === false) {
+            if(projectDetails.peek().address === undefined) {
+              projectDetails.value = {...projectDetails.peek(), ...{address: {city: '', state: '', country: '', zipcode: ''}}}
+            } else {
+                projectDetails.value = {...projectDetails.peek(), ...{
+                  address: {
+                    city: projectDetails.peek().address?.city === undefined ? '' : projectDetails.peek().address?.city,
+                    state: projectDetails.peek().address?.state === undefined ? '' : projectDetails.peek().address?.state,
+                    country: projectDetails.peek().address?.country === undefined ? '' : projectDetails.peek().address?.country,
+                    zipcode: projectDetails.peek().address?.zipcode === undefined ? '' : projectDetails.peek().address?.zipcode
+                  }}}
+            }
+          }
           CustomToast('Fill all the necessary fields', 'error')
           if (action) action.value = ''
         }
