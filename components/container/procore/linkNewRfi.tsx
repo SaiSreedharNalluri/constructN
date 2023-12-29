@@ -23,6 +23,7 @@ const initialValues: {
     drawingNumber:"",
 
     };
+    console.log('checking dewofgutewtyt')
 
 const handleSubmit = () =>{
 
@@ -34,10 +35,6 @@ return(<>
                     <LeftTitleCont>
                         <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
                             <ArrowIcon
-                                onClick={() => {
-                                    let closeNewRFI: IprocoreActions = {action:"closeNewRFI", status:false}
-                                    handleInstance(closeNewRFI)
-                                }}
                                 src={BackArrow}
                                 alt={"close icon"}
                                 data-testid="back-arrow"

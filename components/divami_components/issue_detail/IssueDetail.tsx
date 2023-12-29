@@ -1225,35 +1225,20 @@ const CustomIssueDetailsDrawer = (props: any) => {
       });
   };
   const handleProcoreLinks = () =>{
+    
     setProcorePopup(true)
     setTaskDetail(false)
   }
 
-  const handleInstance= (data:IprocoreActions)=>{
-      switch(data.action){
-        case "setnewRFI":{
-          setnewLinkRFI(data.status)
-          setTaskDetail(false)
-          setProcorePopup(false)
-          break;
-        }
-        case "closeNewRFI":{
-          setProcorePopup(true)
-          setnewLinkRFI(data.status)
-          break;
-        }
-        case "closeProcorePopup":{
-          setProcorePopup(false)
-          setTaskDetail(true)
-          break;
-        }
-      }
+  const  handleCloseProcore=()=>{
+    setProcorePopup(false)
+    setTaskDetail(true);
   }
 
   return (
     <>
    
-      {procorePopup && <ProcoreLink handleInstance={handleInstance}></ProcoreLink>}
+      {procorePopup && <ProcoreLink handleCloseProcore={handleCloseProcore}></ProcoreLink>}
       {taskDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
@@ -1384,10 +1369,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
           callBackvalue={onDeleteIssue}
         />
       )} */}
-    {newRFI ? (<LinkNewRFI handleInstance={handleInstance}>
-      
-    </LinkNewRFI>):
-        (<></>)}
     </>
     
   );
