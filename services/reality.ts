@@ -42,6 +42,18 @@ export const getRealityPositions = async (
   }
 }
 
+export const realityFileExists = async (
+  path: string
+  ) => {
+  try {
+    return await instance.get(path);
+    // return file ? true : false;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export const getRealityPositionsPath = (
   path: string
   ) => {
@@ -52,6 +64,44 @@ export const getRealityImagesPath = (
   path: string
   ) => {
     return `${path}/images`
+}
+
+export const getRealityPointCloudPath = (
+  path: string
+  ) => {
+    return `${path}/pointcloud/cloud.json`
+}
+
+export const getRealityPointCloudPathV2 = (
+  path: string
+  ) => {
+    return `${path}/pointcloud/metadata.json`
+}
+
+export const getOrthoPhotoLayers = async (
+  path: string
+  ) => {
+    try {
+      return await instance.get(
+      `${path}/_layers`
+    ); 
+  } catch (error) {
+    console.log("Error _layers.json:", error);
+  
+  }
+}
+
+export const getMapboxHotspotLayers = async (
+  path: string
+  ) => {
+    try {
+      return await instance.get(
+      `${path}/layers/progress.json`
+    ); 
+  } catch (error) {
+    console.log("Error progress.json:", error);
+  
+  }
 }
 
 

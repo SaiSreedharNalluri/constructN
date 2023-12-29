@@ -7,6 +7,7 @@ import ChangeIcon from './changeIcon';
 import { Map, Marker } from 'react-map-gl';
 import { useRouter } from 'next/router';
 import { getProjectTypes } from '../../services/project';
+import { AWS, MAPBOX } from '../../config/config';
 interface IProps {
   projectData: IProjects;
   updateProjectData: (updateInfo: object) => void;
@@ -44,9 +45,9 @@ const ProjectInfo: React.FC<IProps> = ({
     type: projectData?.type ? projectData?.type : '',
     description: projectData?.description ? projectData?.description : '',
     latitude:
-      projectData?.location != undefined ? projectData?.location[0] : latitude,
+      0,
     longitude:
-      projectData?.location != undefined ? projectData?.location[1] : latitude,
+      0,
     utm: projectData?.utm ? projectData?.utm : '',
   };
   const validationSchema = Yup.object().shape({
@@ -59,7 +60,7 @@ const ProjectInfo: React.FC<IProps> = ({
   return (
     <React.Fragment>
       <div className="w-full row-span-2 overflow">
-        <Image
+        <img
           alt=""
           className=" w-3/4 h-25 border border-solid border-black  cursor-pointer"
           width={1080}
@@ -67,7 +68,7 @@ const ProjectInfo: React.FC<IProps> = ({
           src={
             projectData.coverPhoto
               ? projectData.coverPhoto
-              : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp'
+              : `${AWS.CDN_ATTACHMENTS}/defaults/projectCoverPhoto.webp`
           }
         />
       </div>
@@ -82,6 +83,14 @@ const ProjectInfo: React.FC<IProps> = ({
         {({ isSubmitting }) => (
           <Form>
             <div className="grid grid-cols-2 gap-4 px-6">
+            <div>
+                <label className=" text-sm font-bold ">{'Created On : '+projectData.createdAt.toString().split('T')[0]}</label>
+              
+              </div>
+              <div>
+                <label className=" text-sm font-bold ">{'Created By : '+projectData.email}</label>
+              
+              </div>
               <div>
                 <label className=" text-sm font-bold ">Project Name</label>
                 <Field
@@ -93,7 +102,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="name"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
@@ -131,7 +140,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="description"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
 
@@ -147,7 +156,7 @@ const ProjectInfo: React.FC<IProps> = ({
                     height: '100%',
                   }}
                   mapStyle="mapbox://styles/mapbox/streets-v9"
-                  mapboxAccessToken={process.env.NEXT_PUBLIC_Map_Token}
+                  mapboxAccessToken={MAPBOX.token}
                 >
                   <Marker
                     longitude={initialValues.longitude}
@@ -165,7 +174,7 @@ const ProjectInfo: React.FC<IProps> = ({
                 <ErrorMessage
                   name="description"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div className="grid grid-cols-2  gap-2">
@@ -180,7 +189,7 @@ const ProjectInfo: React.FC<IProps> = ({
                   <ErrorMessage
                     name="latitude"
                     component="div"
-                    className="alert alert-danger"
+                    className="alert alert-danger text-red-600"
                   />
                 </div>
                 <div>
@@ -194,7 +203,7 @@ const ProjectInfo: React.FC<IProps> = ({
                   <ErrorMessage
                     name="latitude"
                     component="div"
-                    className="alert alert-danger"
+                    className="alert alert-danger text-red-600"
                   />
                 </div>
               </div>

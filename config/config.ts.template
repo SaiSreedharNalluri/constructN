@@ -1,0 +1,48 @@
+
+export const MIX_PANEL_TOKEN = "${MIX_PANEL_TOKEN}"
+
+export const MAPBOX = {
+    
+    token: "${MAPBOX_TOKEN}"
+
+}
+
+export const SENTRY = {
+
+    DSN: '${SENTRY_DSN}',
+
+    LOG_INFO: '${SENTRY_LOG_INFO}',
+
+    LOG_ACTIVITY: '${SENTRY_LOG_ACTIVITY}',
+
+    LOG_ERROR: '${SENTRY_LOG_ERROR}',
+
+}
+
+export const INTERCOM = {
+
+    APP_ID: '${INTERCOM_ID}',
+
+}
+
+export const API = {
+
+    BASE_URL: "${BASE_URL}",
+
+    LOCAL_URL: "${LOCAL_URL}",
+
+    PROGRESS_2D_URL: "${PROGRESS_2D_URL}"
+
+}
+
+export const AWS = {
+
+    PROJECTS_BUCKET: "${PROJECTS_BUCKET}",
+
+    ATTACHMENTS_BUCKET: "${ATTACHMENTS_BUCKET}",
+
+    CDN_PROJECTS: "${CDN_PROJECTS}",
+
+    CDN_ATTACHMENTS: "${CDN_ATTACHMENTS}"
+
+}

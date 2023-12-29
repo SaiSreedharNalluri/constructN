@@ -1,9 +1,10 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
+import { API } from '../config/config';
 export const createComment = (projectId: string, commentObj: object) => {
   return instance
     .post(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments`,
+      `${API.BASE_URL}/projects/${projectId}/comments`,
       commentObj,
       {
         headers: authHeader.authHeader(),
@@ -23,7 +24,7 @@ export const editComment = (
 ) => {
   return instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}`,
+      `${API.BASE_URL}/projects/${projectId}/comments/${commentId}`,
       commentObj,
       {
         headers: authHeader.authHeader(),
@@ -39,7 +40,7 @@ export const editComment = (
 export const getCommentsList = async (projectId: string, entityID: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments?entity=${entityID}`,
+      `${API.BASE_URL}/projects/${projectId}/comments?entity=${entityID}`,
       {
         headers: authHeader.authHeader(),
       }
@@ -54,7 +55,7 @@ export const getCommentsList = async (projectId: string, entityID: string) => {
 export const getCommentDetails = (projectId: string, commentId: string) => {
   return instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments${commentId}`,
+      `${API.BASE_URL}/projects/${projectId}/comments${commentId}`,
       {
         headers: authHeader.authHeader(),
       }
@@ -69,7 +70,7 @@ export const getCommentDetails = (projectId: string, commentId: string) => {
 export const deleteComment = async (projectId: string, commentId: string) => {
   return await instance
     .delete(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}`,
+      `${API.BASE_URL}/projects/${projectId}/comments/${commentId}`,
       {
         headers: authHeader.authHeader(),
       }
@@ -88,7 +89,7 @@ export const createCommentReply = (
 ) => {
   return instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}/replies/add`,
+      `${API.BASE_URL}/projects/${projectId}/comments/${commentId}/replies/add`,
       commentObj,
       {
         headers: authHeader.authHeader(),
@@ -109,7 +110,7 @@ export const editCommentReply = (
 ) => {
   return instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}/replies/${repliId}/update`,
+      `${API.BASE_URL}/projects/${projectId}/comments/${commentId}/replies/${repliId}/update`,
       commentObj,
       {
         headers: authHeader.authHeader(),
@@ -129,7 +130,7 @@ export const deleteCommentReply = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/comments/${commentId}/replies/${repliId}/delete`,
+      `${API.BASE_URL}/projects/${projectId}/comments/${commentId}/replies/${repliId}/delete`,
       {},
       {
         headers: authHeader.authHeader(),

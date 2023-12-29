@@ -61,7 +61,9 @@
 
 			const listeners = this._listeners;
 
-			return listeners[type] !== undefined && listeners[type].indexOf(listener) !== - 1;
+			const listnersToString = listeners[ type ].map((listner)=>(listner?.toString()))
+
+			return listeners[ type ] !== undefined && listnersToString.indexOf( listener?.toString() ) !== - 1;
 		}
 
 		removeEventListener(type, listener){
@@ -53871,6 +53873,11 @@
 			this.maxMarkers = Number.MAX_SAFE_INTEGER;
 
 			this.sphereGeometry = new SphereGeometry(0.4, 10, 10);
+			this.lineMaterial = new LineMaterial({
+				color: 0xff0000, 
+				linewidth: 2, 
+				resolution:  new Vector2(1000, 1000),
+			});
 			this.color = new Color(0xff0000);
 
 			this.spheres = [];
@@ -53934,15 +53941,8 @@
 						0, 0, 0,
 				]);
 
-				let lineMaterial = new LineMaterial({
-					color: 0xff0000, 
-					linewidth: 2, 
-					resolution:  new Vector2(1000, 1000),
-				});
 
-				lineMaterial.depthTest = false;
-
-				let edge = new Line2(lineGeometry, lineMaterial);
+				let edge = new Line2(lineGeometry, this.lineMaterial);
 				edge.visible = true;
 
 				this.add(edge);
@@ -56752,17 +56752,6 @@
 			this.vectors.push(vector);
 		}
 
-		hasColors(){
-			for (let name in this.attributes) {
-				let pointAttribute = this.attributes[name];
-				if (pointAttribute.name === PointAttributeNames.COLOR_PACKED) {
-					return true;
-				}
-			}
-
-			return false;
-		};
-
 		hasNormals(){
 			for (let name in this.attributes) {
 				let pointAttribute = this.attributes[name];
@@ -56837,7 +56826,7 @@
 				this.projection = info.srs.authority + ':' + info.srs.horizontal;
 			}
 
-			if (info.srs.wkt) {
+			if (info.srs && info.srs.wkt) {
 				if (!this.projection) this.projection = info.srs.wkt;
 				else this.fallbackProjection = info.srs.wkt;
 			}
@@ -60136,17 +60125,6 @@ void main() {
 			return texture; 
 		}
 
-		static generateMatcapTexture (matcap) {
-		var url = new URL(Potree.resourcePath + "/textures/matcap/" + matcap).href;
-		let texture = new TextureLoader().load( url );
-			texture.magFilter = texture.minFilter = LinearFilter; 
-			texture.needsUpdate = true;
-			// PotreeConverter_1.6_2018_07_29_windows_x64\PotreeConverter.exe autzen_xyzrgbXYZ_ascii.xyz -f xyzrgbXYZ -a RGB NORMAL -o autzen_xyzrgbXYZ_ascii_a -p index --overwrite
-			// Switch matcap texture on the fly : viewer.scene.pointclouds[0].material.matcap = 'matcap1.jpg'; 
-			// For non power of 2, use LinearFilter and dont generate mipmaps, For power of 2, use NearestFilter and generate mipmaps : matcap2.jpg 1 2 8 11 12 13
-			return texture; 
-		}
-
 		disableEvents(){
 			if(this._hiddenListeners === undefined){
 				this._hiddenListeners = this._listeners;
@@ -60535,7 +60513,7 @@ void main() {
 
 				let density = node.geometryNode.density;
 				
-				if(typeof density === "number"){
+				if(typeof density === "number" && !Number.isNaN(density)){
 					let lodOffset = Math.log2(density) / 2 - 1.5;
 
 					let offsetUint8 = (lodOffset + 10) * 10;
@@ -66543,6 +66521,13 @@ void main() {
 					current.byteSize = byteSize;
 					current.numPoints = numPoints;
 				}
+
+				if(current.byteSize === 0n){
+					// workaround for issue #1125
+					// some inner nodes erroneously report >0 points even though have 0 points
+					// however, they still report a byteSize of 0, so based on that we now set node.numPoints to 0
+					current.numPoints = 0;
+				}
 				
 				current.nodeType = type;
 
@@ -71161,7 +71146,6 @@ void main() {
 
 			let changeEvent = new CustomEvent("camerachange");
 
-
 			let endPosition = null;
 			if(position instanceof Array){
 				endPosition = new Vector3(...position);
@@ -71230,434 +71214,449 @@ void main() {
 
 	};
 
-	class Scene$1 extends EventDispatcher{
-
-		constructor(){
-			super();
-
-			this.annotations = new Annotation();
-			
-			this.scene = new Scene();
-			this.sceneBG = new Scene();
-			this.scenePointCloud = new Scene();
-
-			this.cameraP = new PerspectiveCamera(this.fov, 1, 0.1, 1000*1000);
-			this.cameraO = new OrthographicCamera(-1, 1, 1, -1, 0.1, 1000*1000);
-			this.cameraVR = new PerspectiveCamera();
-			this.cameraBG = new Camera();
-			this.cameraScreenSpace = new OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
-			this.cameraMode = CameraMode.PERSPECTIVE;
-			this.overrideCamera = null;
-			this.pointclouds = [];
-
-			this.measurements = [];
-			this.profiles = [];
-			this.volumes = [];
-			this.polygonClipVolumes = [];
-			this.cameraAnimations = [];
-			this.orientedImages = [];
-			this.images360 = [];
-			this.geopackages = [];
-			
-			this.fpControls = null;
-			this.orbitControls = null;
-			this.earthControls = null;
-			this.geoControls = null;
-			this.deviceControls = null;
-			this.inputHandler = null;
-
-			this.view = new View();
-
-			this.directionalLight = null;
-
-			this.initialize();
-		}
-
-		estimateHeightAt (position) {
-			let height = null;
-			let fromSpacing = Infinity;
-
-			for (let pointcloud of this.pointclouds) {
-				if (pointcloud.root.geometryNode === undefined) {
-					continue;
-				}
-
-				let pHeight = null;
-				let pFromSpacing = Infinity;
-
-				let lpos = position.clone().sub(pointcloud.position);
-				lpos.z = 0;
-				let ray = new Ray(lpos, new Vector3(0, 0, 1));
-
-				let stack = [pointcloud.root];
-				while (stack.length > 0) {
-					let node = stack.pop();
-					let box = node.getBoundingBox();
-
-					let inside = ray.intersectBox(box);
-
-					if (!inside) {
-						continue;
-					}
-
-					let h = node.geometryNode.mean.z +
-						pointcloud.position.z +
-						node.geometryNode.boundingBox.min.z;
-
-					if (node.geometryNode.spacing <= pFromSpacing) {
-						pHeight = h;
-						pFromSpacing = node.geometryNode.spacing;
-					}
-
-					for (let index of Object.keys(node.children)) {
-						let child = node.children[index];
-						if (child.geometryNode) {
-							stack.push(node.children[index]);
-						}
-					}
-				}
-
-				if (height === null || pFromSpacing < fromSpacing) {
-					height = pHeight;
-					fromSpacing = pFromSpacing;
-				}
-			}
-
-			return height;
-		}
-		
-		getBoundingBox(pointclouds = this.pointclouds){
-			let box = new Box3();
-
-			this.scenePointCloud.updateMatrixWorld(true);
-			this.referenceFrame.updateMatrixWorld(true);
-
-			for (let pointcloud of pointclouds) {
-				pointcloud.updateMatrixWorld(true);
-
-				let pointcloudBox = pointcloud.pcoGeometry.tightBoundingBox ? pointcloud.pcoGeometry.tightBoundingBox : pointcloud.boundingBox;
-				let boxWorld = Utils.computeTransformedBoundingBox(pointcloudBox, pointcloud.matrixWorld);
-				box.union(boxWorld);
-			}
-
-			return box;
-		}
-
-		addPointCloud (pointcloud) {
-			this.pointclouds.push(pointcloud);
-			this.scenePointCloud.add(pointcloud);
-
-			this.dispatchEvent({
-				type: 'pointcloud_added',
-				pointcloud: pointcloud
-			});
-		}
-
-		addVolume (volume) {
-			this.volumes.push(volume);
-			this.dispatchEvent({
-				'type': 'volume_added',
-				'scene': this,
-				'volume': volume
-			});
-		}
-
-		addOrientedImages(images){
-			this.orientedImages.push(images);
-			this.scene.add(images.node);
-
-			this.dispatchEvent({
-				'type': 'oriented_images_added',
-				'scene': this,
-				'images': images
-			});
-		};
-
-		removeOrientedImages(images){
-			let index = this.orientedImages.indexOf(images);
-			if (index > -1) {
-				this.orientedImages.splice(index, 1);
-
-				this.dispatchEvent({
-					'type': 'oriented_images_removed',
-					'scene': this,
-					'images': images
-				});
-			}
-		};
-
-		add360Images(images){
-			this.images360.push(images);
-			this.scene.add(images.node);
-
-			this.dispatchEvent({
-				'type': '360_images_added',
-				'scene': this,
-				'images': images
-			});
-		}
-
-		remove360Images(images){
-			let index = this.images360.indexOf(images);
-			if (index > -1) {
-				this.images360.splice(index, 1);
-
-				this.dispatchEvent({
-					'type': '360_images_removed',
-					'scene': this,
-					'images': images
-				});
-			}
-		}
-
-		addGeopackage(geopackage){
-			this.geopackages.push(geopackage);
-			this.scene.add(geopackage.node);
-
-			this.dispatchEvent({
-				'type': 'geopackage_added',
-				'scene': this,
-				'geopackage': geopackage
-			});
-		};
-
-		removeGeopackage(geopackage){
-			let index = this.geopackages.indexOf(geopackage);
-			if (index > -1) {
-				this.geopackages.splice(index, 1);
-
-				this.dispatchEvent({
-					'type': 'geopackage_removed',
-					'scene': this,
-					'geopackage': geopackage
-				});
-			}
-		};
-
-		removeVolume (volume) {
-			let index = this.volumes.indexOf(volume);
-			if (index > -1) {
-				this.volumes.splice(index, 1);
-
-				this.dispatchEvent({
-					'type': 'volume_removed',
-					'scene': this,
-					'volume': volume
-				});
-			}
-		};
-
-		addCameraAnimation(animation) {
-			this.cameraAnimations.push(animation);
-			this.dispatchEvent({
-				'type': 'camera_animation_added',
-				'scene': this,
-				'animation': animation
-			});
-		};
-
-		removeCameraAnimation(animation){
-			let index = this.cameraAnimations.indexOf(volume);
-			if (index > -1) {
-				this.cameraAnimations.splice(index, 1);
-
-				this.dispatchEvent({
-					'type': 'camera_animation_removed',
-					'scene': this,
-					'animation': animation
-				});
-			}
-		};
-
-		addPolygonClipVolume(volume){
-			this.polygonClipVolumes.push(volume);
-			this.dispatchEvent({
-				"type": "polygon_clip_volume_added",
-				"scene": this,
-				"volume": volume
-			});
-		};
-		
-		removePolygonClipVolume(volume){
-			let index = this.polygonClipVolumes.indexOf(volume);
-			if (index > -1) {
-				this.polygonClipVolumes.splice(index, 1);
-				this.dispatchEvent({
-					"type": "polygon_clip_volume_removed",
-					"scene": this,
-					"volume": volume
-				});
-			}
-		};
-		
-		addMeasurement(measurement){
-			measurement.lengthUnit = this.lengthUnit;
-			measurement.lengthUnitDisplay = this.lengthUnitDisplay;
-			this.measurements.push(measurement);
-			this.dispatchEvent({
-				'type': 'measurement_added',
-				'scene': this,
-				'measurement': measurement
-			});
-		};
-
-		removeMeasurement (measurement) {
-			let index = this.measurements.indexOf(measurement);
-			if (index > -1) {
-				this.measurements.splice(index, 1);
-				this.dispatchEvent({
-					'type': 'measurement_removed',
-					'scene': this,
-					'measurement': measurement
-				});
-			}
-		}
-
-		addProfile (profile) {
-			this.profiles.push(profile);
-			this.dispatchEvent({
-				'type': 'profile_added',
-				'scene': this,
-				'profile': profile
-			});
-		}
-
-		removeProfile (profile) {
-			let index = this.profiles.indexOf(profile);
-			if (index > -1) {
-				this.profiles.splice(index, 1);
-				this.dispatchEvent({
-					'type': 'profile_removed',
-					'scene': this,
-					'profile': profile
-				});
-			}
-		}
-
-		removeAllMeasurements () {
-			while (this.measurements.length > 0) {
-				this.removeMeasurement(this.measurements[0]);
-			}
-
-			while (this.profiles.length > 0) {
-				this.removeProfile(this.profiles[0]);
-			}
-
-			while (this.volumes.length > 0) {
-				this.removeVolume(this.volumes[0]);
-			}
-		}
-
-		removeAllClipVolumes(){
-			let clipVolumes = this.volumes.filter(volume => volume.clip === true);
-			for(let clipVolume of clipVolumes){
-				this.removeVolume(clipVolume);
-			}
-
-			while(this.polygonClipVolumes.length > 0){
-				this.removePolygonClipVolume(this.polygonClipVolumes[0]);
-			}
-		}
-
-		getActiveCamera() {
-
-			if(this.overrideCamera){
-				return this.overrideCamera;
-			}
-
-			if(this.cameraMode === CameraMode.PERSPECTIVE){
-				return this.cameraP;
-			}else if(this.cameraMode === CameraMode.ORTHOGRAPHIC){
-				return this.cameraO;
-			}else if(this.cameraMode === CameraMode.VR){
-				return this.cameraVR;
-			}
-
-			return null;
-		}
-		
-		initialize(){
-			
-			this.referenceFrame = new Object3D();
-			this.referenceFrame.matrixAutoUpdate = false;
-			this.scenePointCloud.add(this.referenceFrame);
-
-			this.cameraP.up.set(0, 0, 1);
-			this.cameraP.position.set(1000, 1000, 1000);
-			this.cameraO.up.set(0, 0, 1);
-			this.cameraO.position.set(1000, 1000, 1000);
-			//this.camera.rotation.y = -Math.PI / 4;
-			//this.camera.rotation.x = -Math.PI / 6;
-			this.cameraScreenSpace.lookAt(new Vector3(0, 0, 0), new Vector3(0, 0, -1), new Vector3(0, 1, 0));
-			
-			this.directionalLight = new DirectionalLight( 0xffffff, 0.5 );
-			this.directionalLight.position.set( 10, 10, 10 );
-			this.directionalLight.lookAt( new Vector3(0, 0, 0));
-			this.scenePointCloud.add( this.directionalLight );
-			
-			let light = new AmbientLight( 0x555555 ); // soft white light
-			this.scenePointCloud.add( light );
-
-			{ // background
-				let texture = Utils.createBackgroundTexture(512, 512);
-
-				texture.minFilter = texture.magFilter = NearestFilter;
-				texture.minFilter = texture.magFilter = LinearFilter;
-				let bg = new Mesh(
-					new PlaneBufferGeometry(2, 2, 1),
-					new MeshBasicMaterial({
-						map: texture
-					})
-				);
-				bg.material.depthTest = false;
-				bg.material.depthWrite = false;
-				this.sceneBG.add(bg);
-			}
-
-			// { // lights
-			// 	{
-			// 		let light = new THREE.DirectionalLight(0xffffff);
-			// 		light.position.set(10, 10, 1);
-			// 		light.target.position.set(0, 0, 0);
-			// 		this.scene.add(light);
-			// 	}
-
-			// 	{
-			// 		let light = new THREE.DirectionalLight(0xffffff);
-			// 		light.position.set(-10, 10, 1);
-			// 		light.target.position.set(0, 0, 0);
-			// 		this.scene.add(light);
-			// 	}
-
-			// 	{
-			// 		let light = new THREE.DirectionalLight(0xffffff);
-			// 		light.position.set(0, -10, 20);
-			// 		light.target.position.set(0, 0, 0);
-			// 		this.scene.add(light);
-			// 	}
-			// }
-		}
-		
-		addAnnotation(position, args = {}){		
-			if(position instanceof Array){
-				args.position = new Vector3().fromArray(position);
-			} else if (position.x != null) {
-				args.position = position;
-			}
-			let annotation = new Annotation(args);
-			this.annotations.add(annotation);
-
-			return annotation;
-		}
-
-		getAnnotations () {
-			return this.annotations;
-		};
-
-		removeAnnotation(annotationToRemove) {
-			this.annotations.remove(annotationToRemove);
-		}
-	};
+	class Scene$1 extends EventDispatcher {
+	  constructor() {
+	    super();
+
+	    this.annotations = new Annotation();
+
+	    this.scene = new Scene();
+	    this.sceneBG = new Scene();
+	    this.scenePointCloud = new Scene();
+
+	    this.cameraP = new PerspectiveCamera(this.fov, 1, 0.1, 1000 * 1000);
+	    this.cameraO = new OrthographicCamera(-1, 1, 1, -1, 0.1, 1000 * 1000);
+	    this.cameraVR = new PerspectiveCamera();
+	    this.cameraBG = new Camera();
+	    this.cameraScreenSpace = new OrthographicCamera(
+	      -1,
+	      1,
+	      1,
+	      -1,
+	      0.1,
+	      10
+	    );
+	    this.cameraMode = CameraMode.PERSPECTIVE;
+	    this.overrideCamera = null;
+	    this.pointclouds = [];
+
+	    this.measurements = [];
+	    this.profiles = [];
+	    this.volumes = [];
+	    this.polygonClipVolumes = [];
+	    this.cameraAnimations = [];
+	    this.orientedImages = [];
+	    this.images360 = [];
+	    this.geopackages = [];
+
+	    this.fpControls = null;
+	    this.orbitControls = null;
+	    this.earthControls = null;
+	    this.geoControls = null;
+	    this.deviceControls = null;
+	    this.inputHandler = null;
+
+	    this.view = new View();
+
+	    this.directionalLight = null;
+
+	    this.initialize();
+	  }
+
+	  estimateHeightAt(position) {
+	    let height = null;
+	    let fromSpacing = Infinity;
+
+	    for (let pointcloud of this.pointclouds) {
+	      if (pointcloud.root.geometryNode === undefined) {
+	        continue;
+	      }
+
+	      let pHeight = null;
+	      let pFromSpacing = Infinity;
+
+	      let lpos = position.clone().sub(pointcloud.position);
+	      lpos.z = 0;
+	      let ray = new Ray(lpos, new Vector3(0, 0, 1));
+
+	      let stack = [pointcloud.root];
+	      while (stack.length > 0) {
+	        let node = stack.pop();
+	        let box = node.getBoundingBox();
+
+	        let inside = ray.intersectBox(box);
+
+	        if (!inside) {
+	          continue;
+	        }
+
+	        let h =
+	          node.geometryNode.mean.z +
+	          pointcloud.position.z +
+	          node.geometryNode.boundingBox.min.z;
+
+	        if (node.geometryNode.spacing <= pFromSpacing) {
+	          pHeight = h;
+	          pFromSpacing = node.geometryNode.spacing;
+	        }
+
+	        for (let index of Object.keys(node.children)) {
+	          let child = node.children[index];
+	          if (child.geometryNode) {
+	            stack.push(node.children[index]);
+	          }
+	        }
+	      }
+
+	      if (height === null || pFromSpacing < fromSpacing) {
+	        height = pHeight;
+	        fromSpacing = pFromSpacing;
+	      }
+	    }
+
+	    return height;
+	  }
+
+	  getBoundingBox(pointclouds = this.pointclouds) {
+	    let box = new Box3();
+
+	    this.scenePointCloud.updateMatrixWorld(true);
+	    this.referenceFrame.updateMatrixWorld(true);
+
+	    for (let pointcloud of pointclouds) {
+	      pointcloud.updateMatrixWorld(true);
+
+	      let pointcloudBox = pointcloud.pcoGeometry.tightBoundingBox
+	        ? pointcloud.pcoGeometry.tightBoundingBox
+	        : pointcloud.boundingBox;
+	      let boxWorld = Utils.computeTransformedBoundingBox(
+	        pointcloudBox,
+	        pointcloud.matrixWorld
+	      );
+	      box.union(boxWorld);
+	    }
+
+	    return box;
+	  }
+
+	  addPointCloud(pointcloud) {
+	    this.pointclouds.push(pointcloud);
+	    this.scenePointCloud.add(pointcloud);
+
+	    this.dispatchEvent({
+	      type: "pointcloud_added",
+	      pointcloud: pointcloud,
+	    });
+	  }
+
+	  addVolume(volume) {
+	    this.volumes.push(volume);
+	    this.dispatchEvent({
+	      type: "volume_added",
+	      scene: this,
+	      volume: volume,
+	    });
+	  }
+
+	  addOrientedImages(images) {
+	    this.orientedImages.push(images);
+	    this.scene.add(images.node);
+
+	    this.dispatchEvent({
+	      type: "oriented_images_added",
+	      scene: this,
+	      images: images,
+	    });
+	  }
+
+	  removeOrientedImages(images) {
+	    let index = this.orientedImages.indexOf(images);
+	    if (index > -1) {
+	      this.orientedImages.splice(index, 1);
+
+	      this.dispatchEvent({
+	        type: "oriented_images_removed",
+	        scene: this,
+	        images: images,
+	      });
+	    }
+	  }
+
+	  add360Images(images) {
+	    this.images360.push(images);
+	    this.scene.add(images.node);
+
+	    this.dispatchEvent({
+	      type: "360_images_added",
+	      scene: this,
+	      images: images,
+	    });
+	  }
+
+	  remove360Images(images) {
+	    let index = this.images360.indexOf(images);
+	    if (index > -1) {
+	      this.images360.splice(index, 1);
+
+	      this.dispatchEvent({
+	        type: "360_images_removed",
+	        scene: this,
+	        images: images,
+	      });
+	    }
+	  }
+
+	  addGeopackage(geopackage) {
+	    this.geopackages.push(geopackage);
+	    this.scene.add(geopackage.node);
+
+	    this.dispatchEvent({
+	      type: "geopackage_added",
+	      scene: this,
+	      geopackage: geopackage,
+	    });
+	  }
+
+	  removeGeopackage(geopackage) {
+	    let index = this.geopackages.indexOf(geopackage);
+	    if (index > -1) {
+	      this.geopackages.splice(index, 1);
+
+	      this.dispatchEvent({
+	        type: "geopackage_removed",
+	        scene: this,
+	        geopackage: geopackage,
+	      });
+	    }
+	  }
+
+	  removeVolume(volume) {
+	    let index = this.volumes.indexOf(volume);
+	    if (index > -1) {
+	      this.volumes.splice(index, 1);
+
+	      this.dispatchEvent({
+	        type: "volume_removed",
+	        scene: this,
+	        volume: volume,
+	      });
+	    }
+	  }
+
+	  addCameraAnimation(animation) {
+	    this.cameraAnimations.push(animation);
+	    this.dispatchEvent({
+	      type: "camera_animation_added",
+	      scene: this,
+	      animation: animation,
+	    });
+	  }
+
+	  removeCameraAnimation(animation) {
+	    let index = this.cameraAnimations.indexOf(volume);
+	    if (index > -1) {
+	      this.cameraAnimations.splice(index, 1);
+
+	      this.dispatchEvent({
+	        type: "camera_animation_removed",
+	        scene: this,
+	        animation: animation,
+	      });
+	    }
+	  }
+
+	  addPolygonClipVolume(volume) {
+	    this.polygonClipVolumes.push(volume);
+	    this.dispatchEvent({
+	      type: "polygon_clip_volume_added",
+	      scene: this,
+	      volume: volume,
+	    });
+	  }
+
+	  removePolygonClipVolume(volume) {
+	    let index = this.polygonClipVolumes.indexOf(volume);
+	    if (index > -1) {
+	      this.polygonClipVolumes.splice(index, 1);
+	      this.dispatchEvent({
+	        type: "polygon_clip_volume_removed",
+	        scene: this,
+	        volume: volume,
+	      });
+	    }
+	  }
+
+	  addMeasurement(measurement) {
+	    measurement.lengthUnit = this.lengthUnit;
+	    measurement.lengthUnitDisplay = this.lengthUnitDisplay;
+	    this.measurements.push(measurement);
+	    this.dispatchEvent({
+	      type: "measurement_added",
+	      scene: this,
+	      measurement: measurement,
+	    });
+	  }
+
+	  removeMeasurement(measurement) {
+	    let index = this.measurements.indexOf(measurement);
+	    if (index > -1) {
+	      this.measurements.splice(index, 1);
+	      this.dispatchEvent({
+	        type: "measurement_removed",
+	        scene: this,
+	        measurement: measurement,
+	      });
+	    }
+	  }
+
+	  addProfile(profile) {
+	    this.profiles.push(profile);
+	    this.dispatchEvent({
+	      type: "profile_added",
+	      scene: this,
+	      profile: profile,
+	    });
+	  }
+
+	  removeProfile(profile) {
+	    let index = this.profiles.indexOf(profile);
+	    if (index > -1) {
+	      this.profiles.splice(index, 1);
+	      this.dispatchEvent({
+	        type: "profile_removed",
+	        scene: this,
+	        profile: profile,
+	      });
+	    }
+	  }
+
+	  removeAllMeasurements() {
+	    while (this.measurements.length > 0) {
+	      this.removeMeasurement(this.measurements[0]);
+	    }
+
+	    while (this.profiles.length > 0) {
+	      this.removeProfile(this.profiles[0]);
+	    }
+
+	    while (this.volumes.length > 0) {
+	      this.removeVolume(this.volumes[0]);
+	    }
+	  }
+
+	  removeAllClipVolumes() {
+	    let clipVolumes = this.volumes.filter((volume) => volume.clip === true);
+	    for (let clipVolume of clipVolumes) {
+	      this.removeVolume(clipVolume);
+	    }
+
+	    while (this.polygonClipVolumes.length > 0) {
+	      this.removePolygonClipVolume(this.polygonClipVolumes[0]);
+	    }
+	  }
+
+	  getActiveCamera() {
+	    if (this.overrideCamera) {
+	      return this.overrideCamera;
+	    }
+
+	    if (this.cameraMode === CameraMode.PERSPECTIVE) {
+	      return this.cameraP;
+	    } else if (this.cameraMode === CameraMode.ORTHOGRAPHIC) {
+	      return this.cameraO;
+	    } else if (this.cameraMode === CameraMode.VR) {
+	      return this.cameraVR;
+	    }
+
+	    return null;
+	  }
+
+	  initialize() {
+	    this.referenceFrame = new Object3D();
+	    this.referenceFrame.matrixAutoUpdate = false;
+	    this.scenePointCloud.add(this.referenceFrame);
+
+	    this.cameraP.up.set(0, 0, 1);
+	    this.cameraP.position.set(1000, 1000, 1000);
+	    this.cameraO.up.set(0, 0, 1);
+	    this.cameraO.position.set(1000, 1000, 1000);
+	    //this.camera.rotation.y = -Math.PI / 4;
+	    //this.camera.rotation.x = -Math.PI / 6;
+	    this.cameraScreenSpace.lookAt(
+	      new Vector3(0, 0, 0),
+	      new Vector3(0, 0, -1),
+	      new Vector3(0, 1, 0)
+	    );
+
+	    this.directionalLight = new DirectionalLight(0xffffff, 0.5);
+	    this.directionalLight.position.set(10, 10, 10);
+	    this.directionalLight.lookAt(new Vector3(0, 0, 0));
+	    this.scenePointCloud.add(this.directionalLight);
+
+	    let light = new AmbientLight(0x555555); // soft white light
+	    this.scenePointCloud.add(light);
+
+	    {
+	      // background
+	      let texture = Utils.createBackgroundTexture(512, 512);
+
+	      texture.minFilter = texture.magFilter = NearestFilter;
+	      texture.minFilter = texture.magFilter = LinearFilter;
+	      let bg = new Mesh(
+	        new PlaneBufferGeometry(2, 2, 1),
+	        new MeshBasicMaterial({
+	          map: texture,
+	        })
+	      );
+	      bg.material.depthTest = false;
+	      bg.material.depthWrite = false;
+	      this.sceneBG.add(bg);
+	    }
+
+	    // { // lights
+	    // 	{
+	    // 		let light = new THREE.DirectionalLight(0xffffff);
+	    // 		light.position.set(10, 10, 1);
+	    // 		light.target.position.set(0, 0, 0);
+	    // 		this.scene.add(light);
+	    // 	}
+
+	    // 	{
+	    // 		let light = new THREE.DirectionalLight(0xffffff);
+	    // 		light.position.set(-10, 10, 1);
+	    // 		light.target.position.set(0, 0, 0);
+	    // 		this.scene.add(light);
+	    // 	}
+
+	    // 	{
+	    // 		let light = new THREE.DirectionalLight(0xffffff);
+	    // 		light.position.set(0, -10, 20);
+	    // 		light.target.position.set(0, 0, 0);
+	    // 		this.scene.add(light);
+	    // 	}
+	    // }
+	  }
+
+	  addAnnotation(position, args = {}) {
+	    if (position instanceof Array) {
+	      args.position = new Vector3().fromArray(position);
+	    } else if (position.x != null) {
+	      args.position = position;
+	    }
+	    let annotation = new Annotation(args);
+	    this.annotations.add(annotation);
+
+	    return annotation;
+	  }
+
+	  getAnnotations() {
+	    return this.annotations;
+	  }
+
+	  removeAnnotation(annotationToRemove) {
+	    this.annotations.remove(annotationToRemove);
+	  }
+	}
 
 	// http://epsg.io/
 	proj4.defs([
@@ -72465,6 +72464,184 @@ void main() {
 
 	}
 
+	/**
+	 *
+	 * @author roy.mdr / http://...
+	 *
+	 */
+
+	class DXFProfileExporter {
+
+		static toXYZ(points, flatten = false) {
+
+			/*
+			points: {
+				...
+				data: {
+					mileage: [0, 1, 2...], -> one per point
+					position: [0, 0, 0, 1, 1, 1, 2, 2, 2...], -> X, Y, Z
+					rgba: [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2...] -> R, G, B, A
+				},
+				numPoints: Int
+			}
+			*/
+
+			const pointsXYZ = {
+				x: [],
+				y: [],
+				z: [],
+				minX:  Number.MAX_VALUE,
+				minY:  Number.MAX_VALUE,
+				minZ:  Number.MAX_VALUE,
+				maxX: -Number.MAX_VALUE,
+				maxY: -Number.MAX_VALUE,
+				maxZ: -Number.MAX_VALUE,
+				numPoints: 0
+			};
+
+			const pData    = points.data;
+			const pMileage = pData.mileage;
+			const pCoords  = pData.position;
+			const pColor   = pData.rgba;
+
+			for (let pIx = 0; pIx < points.numPoints; pIx++) {
+
+				const poMileage = pMileage[pIx];
+				const poCoordX  = pCoords[ ((pIx * 3) + 0) ];
+				const poCoordY  = pCoords[ ((pIx * 3) + 1) ];
+				const poCoordZ  = pCoords[ ((pIx * 3) + 2) ];
+				// const poColorR  = pColor[ ((pIx * 4) + 0) ];
+				// const poColorG  = pColor[ ((pIx * 4) + 1) ];
+				// const poColorB  = pColor[ ((pIx * 4) + 2) ];
+				// const poColorA  = pColor[ ((pIx * 4) + 3) ];
+
+				if (flatten === true) {
+
+					pointsXYZ.x.push(poMileage);
+					pointsXYZ.y.push(0);
+					pointsXYZ.z.push(poCoordZ);
+
+					// Get boundaries X
+					if (pointsXYZ.maxX < poMileage) pointsXYZ.maxX = poMileage;
+					if (pointsXYZ.minX > poMileage) pointsXYZ.minX = poMileage;
+
+					// Get boundaries Z
+					if (pointsXYZ.maxZ < poCoordZ) pointsXYZ.maxZ = poCoordZ;
+					if (pointsXYZ.minZ > poCoordZ) pointsXYZ.minZ = poCoordZ;
+
+				} else {
+
+					pointsXYZ.x.push(poCoordX);
+					pointsXYZ.y.push(poCoordY);
+					pointsXYZ.z.push(poCoordZ);
+
+					// Get boundaries X
+					if (pointsXYZ.maxX < poCoordX) pointsXYZ.maxX = poCoordX;
+					if (pointsXYZ.minX > poCoordX) pointsXYZ.minX = poCoordX;
+
+					// Get boundaries Y
+					if (pointsXYZ.maxY < poCoordY) pointsXYZ.maxY = poCoordY;
+					if (pointsXYZ.minY > poCoordY) pointsXYZ.minY = poCoordY;
+
+					// Get boundaries Z
+					if (pointsXYZ.maxZ < poCoordZ) pointsXYZ.maxZ = poCoordZ;
+					if (pointsXYZ.minZ > poCoordZ) pointsXYZ.minZ = poCoordZ;
+
+				}
+
+			}
+
+			if (flatten === true) {
+				// Set boundaries Y
+				pointsXYZ.maxY = 0;
+				pointsXYZ.minY = 0;
+			}
+
+			pointsXYZ.numPoints = points.numPoints;
+
+			return pointsXYZ;
+		}
+
+		static plotPCloudPoint(x, y, z) {
+
+			const dxfSection = `0
+POINT
+8
+layer_pointCloud
+10
+${x}
+20
+${y}
+30
+${z}
+`;
+
+			return dxfSection;
+		}
+
+		static toString(points, flatten = false) {
+
+			const pCloud = DXFProfileExporter.toXYZ(points, flatten);
+
+			const dxfHeader = `999
+DXF created from potree
+0
+SECTION
+2
+HEADER
+9
+$ACADVER
+1
+AC1006
+9
+$INSBASE
+10
+0.0
+20
+0.0
+30
+0.0
+9
+$EXTMIN
+10
+${pCloud.minX}
+20
+${pCloud.minY}
+30
+${pCloud.minZ}
+9
+$EXTMAX
+10
+${pCloud.maxX}
+20
+${pCloud.maxY}
+30
+${pCloud.maxZ}
+0
+ENDSEC
+`;
+
+			let dxfBody = `0
+SECTION
+2
+ENTITIES
+`;
+
+			for (let i = 0; i < pCloud.numPoints; i++) {
+				dxfBody += DXFProfileExporter.plotPCloudPoint(pCloud.x[i], pCloud.y[i], pCloud.z[i]);
+			}
+
+			dxfBody += `0
+ENDSEC
+`;
+
+			const dxf = dxfHeader + dxfBody + '0\nEOF';
+
+			return dxf;
+		}
+
+	}
+
 	class CSVExporter {
 		static toString (points) {
 			let string = '';
@@ -72647,8 +72824,8 @@ void main() {
 					view.setUint16(boffset + 18, points.data.pointSourceID[i]);
 				}
 
-				if (points.data.rgba) {
-					let rgba = points.data.rgba;
+				if (points.data.rgba || points.data.color) {
+					let rgba = points.data.rgba ?? points.data.color;
 					view.setUint16(boffset + 20, (rgba[4 * i + 0] * 255), true);
 					view.setUint16(boffset + 22, (rgba[4 * i + 1] * 255), true);
 					view.setUint16(boffset + 24, (rgba[4 * i + 2] * 255), true);
@@ -72913,6 +73090,12 @@ void main() {
 			let backwardIcon = `${exports.resourcePath}/icons/arrow_down.svg`;
 			$('#potree_profile_move_backward').attr('src', backwardIcon);
 
+			let dxf2DIcon = `${exports.resourcePath}/icons/file_dxf_2d.svg`;
+			$('#potree_download_dxf2D_icon').attr('src', dxf2DIcon);
+
+			let dxf3DIcon = `${exports.resourcePath}/icons/file_dxf_3d.svg`;
+			$('#potree_download_dxf3D_icon').attr('src', dxf3DIcon);
+
 			let csvIcon = `${exports.resourcePath}/icons/file_csv_2d.svg`;
 			$('#potree_download_csv_icon').attr('src', csvIcon);
 
@@ -73129,19 +73312,25 @@ void main() {
 				this.hide();
 			});
 
-			let getProfilePoints = () => {
+			let getProfilePoints = (truePosition) => {
 				let points = new Points$1();
 				
 				for(let [pointcloud, entry] of this.pointclouds){
 					for(let pointSet of entry.points){
 
 						let originPos = pointSet.data.position;
-						let trueElevationPosition = new Float32Array(originPos);
+						let truePointPosition = new Float64Array(originPos);
 						for(let i = 0; i < pointSet.numPoints; i++){
-							trueElevationPosition[3 * i + 2] += pointcloud.position.z;
+
+							if (truePosition === true) {
+								truePointPosition[3 * i + 0] += pointcloud.position.x;
+								truePointPosition[3 * i + 1] += pointcloud.position.y;
+							}
+
+							truePointPosition[3 * i + 2] += pointcloud.position.z;
 						}
 
-						pointSet.data.position = trueElevationPosition;
+						pointSet.data.position = truePointPosition;
 						points.add(pointSet);
 						pointSet.data.position = originPos;
 					}
@@ -73150,9 +73339,29 @@ void main() {
 				return points;
 			};
 
+			$('#potree_download_dxf2D_icon').click(() => {
+				
+				const points = getProfilePoints();
+
+				const string = DXFProfileExporter.toString(points, true);
+
+				const blob = new Blob([string], {type: "text/string"});
+				$('#potree_download_profile_dxf2D_link').attr('href', URL.createObjectURL(blob));
+			});
+
+			$('#potree_download_dxf3D_icon').click(() => {
+				
+				const points = getProfilePoints(true);
+
+				const string = DXFProfileExporter.toString(points);
+
+				const blob = new Blob([string], {type: "text/string"});
+				$('#potree_download_profile_dxf3D_link').attr('href', URL.createObjectURL(blob));
+			});
+
 			$('#potree_download_csv_icon').click(() => {
 				
-				let points = getProfilePoints();
+				let points = getProfilePoints(true);
 
 				let string = CSVExporter.toString(points);
 
@@ -73162,7 +73371,7 @@ void main() {
 
 			$('#potree_download_las_icon').click(() => {
 
-				let points = getProfilePoints();
+				let points = getProfilePoints(true);
 
 				let buffer = LASExporter.toLAS(points);
 
@@ -73308,16 +73517,6 @@ void main() {
 			let sm = new MeshNormalMaterial();
 			this.pickSphere = new Mesh(sg, sm);
 			this.scene.add(this.pickSphere);
-
-			{
-				const sg = new SphereGeometry(2);
-				const sm = new MeshNormalMaterial();
-				const s = new Mesh(sg, sm);
-
-				s.position.set(589530.450, 231398.860, 769.735);
-
-				this.scene.add(s);
-			}
 
 			this.viewerPickSphere = new Mesh(sg, sm);
 		}
@@ -76843,12 +77042,8 @@ ENDSEC
 		}
 	};
 
-	// https://support.pix4d.com/hc/en-us/articles/205675256-How-are-yaw-pitch-roll-defined
-	// https://support.pix4d.com/hc/en-us/articles/202558969-How-are-omega-phi-kappa-defined
-
-	function createMaterial(){
-
-		let vertexShader = `
+	function createMaterial() {
+	  let vertexShader = `
 	uniform float uNear;
 	varying vec2 vUV;
 	varying vec4 vDebug;
@@ -76863,7 +77058,7 @@ ENDSEC
 	}
 	`;
 
-		let fragmentShader = `
+	  let fragmentShader = `
 	uniform sampler2D tColor;
 	uniform float uOpacity;
 	varying vec2 vUV;
@@ -76874,611 +77069,472 @@ ENDSEC
 		gl_FragColor.a = uOpacity;
 	}
 	`;
-		const material = new ShaderMaterial( {
-			uniforms: {
-				// time: { value: 1.0 },
-				// resolution: { value: new THREE.Vector2() }
-				tColor: {value: new Texture() },
-				uNear: {value: 0.0},
-				uOpacity: {value: 1.0},
-			},
-			vertexShader: vertexShader,
-			fragmentShader: fragmentShader,
-			side: DoubleSide,
-		} );
+	  const material = new ShaderMaterial({
+	    uniforms: {
+	      tColor: { value: new Texture() },
+	      uNear: { value: 0.0 },
+	      uOpacity: { value: 1.0 },
+	    },
+	    vertexShader: vertexShader,
+	    fragmentShader: fragmentShader,
+	    side: DoubleSide,
+	  });
 
-		material.side = DoubleSide;
+	  material.side = DoubleSide;
 
-		return material;
+	  return material;
 	}
 
 	const planeGeometry = new PlaneGeometry(1, 1);
 	const lineGeometry = new Geometry();
-	var onGoingDownlads = [];
 
 	lineGeometry.vertices.push(
-		new Vector3(-0.5, -0.5, 0),
-		new Vector3( 0.5, -0.5, 0),
-		new Vector3( 0.5,  0.5, 0),
-		new Vector3(-0.5,  0.5, 0),
-		new Vector3(-0.5, -0.5, 0),
+	  new Vector3(-0.5, -0.5, 0),
+	  new Vector3(0.5, -0.5, 0),
+	  new Vector3(0.5, 0.5, 0),
+	  new Vector3(-0.5, 0.5, 0),
+	  new Vector3(-0.5, -0.5, 0)
 	);
 
-	class OrientedImage{
-
-		constructor(id){
-
-			this.id = id;
-			this.fov = 1.0;
-			this.position = new Vector3();
-			this.rotation = new Vector3();
-			this.width = 0;
-			this.height = 0;
-			this.fov = 1.0;
-
-			const material = createMaterial();
-			const lineMaterial = new LineBasicMaterial( { color: 0x00ff00 } );
-			this.mesh = new Mesh(planeGeometry, material);
-			this.line = new Line(lineGeometry, lineMaterial);
-			this.texture = null;
-
-			this.mesh.orientedImage = this;
-		}
-
-		set(position, rotation, dimension, fov){
-
-			let radians = rotation.map(MathUtils.degToRad);
-
-			this.position.set(...position);
-			this.mesh.position.set(...position);
-
-			this.rotation.set(...radians);
-			this.mesh.rotation.set(...radians);
-
-			[this.width, this.height] = dimension;
-			this.mesh.scale.set(this.width / this.height, 1, 1);
-
-			this.fov = fov;
-
-			this.updateTransform();
-		}
-
-		updateTransform(){
-			let {mesh, line, fov} = this;
-
-			mesh.updateMatrixWorld();
-			var dir = new Vector3();
-			mesh.getWorldDirection(dir);
-			// const dir = mesh.getWorldDirection();
-			const alpha = MathUtils.degToRad(fov / 2);
-			const d = -0.5 / Math.tan(alpha);
-			const move = dir.clone().multiplyScalar(d);
-			mesh.position.add(move);
-
-			line.position.copy(mesh.position);
-			line.scale.copy(mesh.scale);
-			line.rotation.copy(mesh.rotation);
-		}
-
-	};
-
-	class OrientedImages extends EventDispatcher{
-
-		constructor(){
-			super();
-
-			this.node = null;
-			this.cameraParams = null;
-			this.imageParams = null;
-			this.images = null;
-			this._visible = true;
-			this.focused = null;
-		}
-
-		set visible(visible){
-			if(this._visible === visible){
-				return;
-			}
-
-			for(const image of this.images){
-				image.mesh.visible = visible;
-				image.line.visible = visible;
-			}
-
-			this._visible = visible;
-			this.dispatchEvent({
-				type: "visibility_changed",
-				images: this,
-			});
-		}
-
-		get visible(){
-			return this._visible;
-		}
-
-
-	};
-
-	class OrientedImageLoader{
-
-		static async loadCameraParams(path){
-			const res = await fetch(path);
-			const text = await res.text();
-
-			const parser = new DOMParser();
-			const doc = parser.parseFromString(text, "application/xml");
-
-			const width = parseInt(doc.getElementsByTagName("width")[0].textContent);
-			const height = parseInt(doc.getElementsByTagName("height")[0].textContent);
-			const f = parseFloat(doc.getElementsByTagName("f")[0].textContent);
-
-			let a = (height / 2)  / f;
-			let fov = 2 * MathUtils.radToDeg(Math.atan(a));
-
-			const params = {
-				path: path,
-				width: width,
-				height: height,
-				f: f,
-				fov: fov,
-			};
-
-			return params;
-		}
-
-		static async loadImageParams(path, tm){
-
-			const response = await fetch(path);
-			if(!response.ok){
-				console.error(`failed to load ${path}`);
-				return;
-			}
-
-
-			const content = await response.text();
-			// const lines = content.split(/\r?\n/);
-			const imageParams = [];
-
-			const imgData = JSON.parse(content);
-
-			imgData.camname.forEach( (imgName, index) => {
-				const rawPos = new Vector4(Number.parseFloat(imgData.camX[index]),
-								Number.parseFloat(imgData.camY[index]),
-								Number.parseFloat(imgData.camZ[index]), 1);
-				rawPos.applyMatrix4(tm);
-
-				const params = {
-					id: imgData.camname[index],
-					x: Number.parseFloat(imgData.camX[index]),
-					y: Number.parseFloat(imgData.camY[index]),
-					z: Number.parseFloat(imgData.camZ[index]),
-					x_tm: rawPos.x,
-					y_tm: rawPos.y,
-					z_tm: rawPos.z,
-					omega: Number.parseFloat(imgData.camRoll[index]),
-					phi: Number.parseFloat(imgData.camPitch[index]),
-					kappa: Number.parseFloat(imgData.camYaw[index])
-				};
-
-				// const whitelist = ["47518.jpg"];
-				// if(whitelist.includes(params.id)){
-				// 	imageParams.push(params);
-				// }
-				imageParams.push(params);
-			});
-
-			// for(let i = 1; i < lines.length; i++){
-			// 	const line = lines[i];
-
-			// 	if(line.startsWith("#")){
-			// 		continue;
-			// 	}
-
-			// 	const tokens = line.split(/\s+/);
-
-			// 	if(tokens.length < 6){
-			// 		continue;
-			// 	}
-
-			// 	const params = {
-			// 		id: tokens[0],
-			// 		x: Number.parseFloat(tokens[1]),
-			// 		y: Number.parseFloat(tokens[2]),
-			// 		z: Number.parseFloat(tokens[3]),
-			// 		omega: Number.parseFloat(tokens[4]),
-			// 		phi: Number.parseFloat(tokens[5]),
-			// 		kappa: Number.parseFloat(tokens[6]),
-			// 	};
-
-			// 	// const whitelist = ["47518.jpg"];
-			// 	// if(whitelist.includes(params.id)){
-			// 	// 	imageParams.push(params);
-			// 	// }
-			// 	imageParams.push(params);
-			// }
-
-			// debug
-			//return [imageParams[50]];
-
-			const width = parseInt(imgData.camPix[0]);
-			const height = parseInt(imgData.camPix[1]);
-			const f = parseFloat(imgData.camFocal);
-
-			let a = (height / 2)  / f;
-			let fov = 2 * MathUtils.radToDeg(Math.atan(a));
-
-			const params = {
-				path: path,
-				width: width,
-				height: height,
-				f: f,
-				fov: fov,
-			};
-
-			return [params, imageParams];
-
-
-		}
-
-		static async load(imageParamsPath, imagesPath, viewer, tm_data){
-
-			const tStart = performance.now();
-
-			// const [cameraParams, imageParams] = await Promise.all([
-			// 	OrientedImageLoader.loadCameraParams(cameraParamsPath),
-			// 	OrientedImageLoader.loadImageParams(imageParamsPath),
-			// ]);
-			let tmatrix, toffset;
-			
-			tmatrix = tm_data.tm;
-			toffset = tm_data.offset;
-
-
-			const [cameraParams, imageParams] = await OrientedImageLoader.loadImageParams(imageParamsPath, tmatrix);
-
-
-			const orientedImageControls = new OrientedImageControls(viewer);
-			const raycaster = new Raycaster();
-
-			const tEnd = performance.now();
-			console.log(tEnd - tStart);
-
-			// const sp = new THREE.PlaneGeometry(1, 1);
-			// const lg = new THREE.Geometry();
-
-			// lg.vertices.push(
-			// 	new THREE.Vector3(-0.5, -0.5, 0),
-			// 	new THREE.Vector3( 0.5, -0.5, 0),
-			// 	new THREE.Vector3( 0.5,  0.5, 0),
-			// 	new THREE.Vector3(-0.5,  0.5, 0),
-			// 	new THREE.Vector3(-0.5, -0.5, 0),
-			// );
-
-			const {width, height} = cameraParams;
-			const orientedImages = [];
-			const sceneNode = new Object3D();
-			sceneNode.name = "oriented_images";
-
-			for(const params of imageParams){
-
-				// const material = createMaterial();
-				// const lm = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
-				// const mesh = new THREE.Mesh(sp, material);
-
-				const {x, y, z, x_tm, y_tm, z_tm, omega, phi, kappa} = params;
-				// const [rx, ry, rz] = [omega, phi, kappa]
-				// 	.map(THREE.Math.degToRad);
-				
-				// mesh.position.set(x, y, z);
-				// mesh.scale.set(width / height, 1, 1);
-				// mesh.rotation.set(rx, ry, rz);
-				// {
-				// 	mesh.updateMatrixWorld();
-				// 	const dir = mesh.getWorldDirection();
-				// 	const alpha = THREE.Math.degToRad(cameraParams.fov / 2);
-				// 	const d = -0.5 / Math.tan(alpha);
-				// 	const move = dir.clone().multiplyScalar(d);
-				// 	mesh.position.add(move);
-				// }
-				// sceneNode.add(mesh);
-
-				// const line = new THREE.Line(lg, lm);
-				// line.position.copy(mesh.position);
-				// line.scale.copy(mesh.scale);
-				// line.rotation.copy(mesh.rotation);
-				// sceneNode.add(line);
-
-				let orientedImage = new OrientedImage(params.id);
-				// orientedImage.setPosition(x, y, z);
-				// orientedImage.setRotation(omega, phi, kappa);
-				// orientedImage.setDimension(width, height);
-				let position = [x, y, z];
-				let rotation = [omega, phi, kappa];
-				let dimension = [width, height];
-				orientedImage.set(position, rotation, dimension, cameraParams.fov);
-				orientedImage.mesh.applyMatrix4(tmatrix);
-				let curMeshPos = orientedImage.mesh.position.clone();
-				orientedImage.mesh.position.set(curMeshPos.x - toffset[0], 
-					curMeshPos.y - toffset[1], curMeshPos.z - toffset[2]);
-				orientedImage.line.applyMatrix4(tmatrix);
-				let curLinePos = orientedImage.line.position.clone();
-				orientedImage.line.position.set(curLinePos.x - toffset[0], 
-					curLinePos.y - toffset[1], curLinePos.z - toffset[2]);
-				// orientedImage.position.set(...[x_tm, y_tm, z_tm]);
-				orientedImage.position.set(x_tm-toffset[0], y_tm-toffset[1], z_tm-toffset[2]);
-				sceneNode.add(orientedImage.mesh);
-				sceneNode.add(orientedImage.line);
-				
-				orientedImages.push(orientedImage);
-			}
-
-			let hoveredElement = null;
-			let clipVolume = null;
-
-			const images = new OrientedImages();
-			images.node = sceneNode;
-			// images.cameraParamsPath = cameraParamsPath;
-			images.imageParamsPath = imageParamsPath;
-			images.cameraParams = cameraParams;
-			images.imageParams = imageParams;
-			images.images = orientedImages;
-			images.hovered = hoveredElement;
-
-			const onMouseMove = (evt) => {
-				const tStart = performance.now();
-				if(hoveredElement){
-					hoveredElement.line.material.color.setRGB(0, 1, 0);
-				}
-				evt.preventDefault();
-				if (images.visible) {
-					//var array = getMousePosition( container, evt.clientX, evt.clientY );
-					const rect = viewer.renderer.domElement.getBoundingClientRect();
-					const [x, y] = [evt.clientX, evt.clientY];
-					const array = [ 
-						( x - rect.left ) / rect.width, 
-						( y - rect.top ) / rect.height 
-					];
-					const onClickPosition = new Vector2(...array);
-					//const intersects = getIntersects(onClickPosition, scene.children);
-					const camera = viewer.scene.getActiveCamera();
-					const mouse = new Vector3(
-						+ ( onClickPosition.x * 2 ) - 1, 
-						- ( onClickPosition.y * 2 ) + 1 );
-					const objects = orientedImages.map(i => i.mesh);
-					raycaster.setFromCamera( mouse, camera );
-					const intersects = raycaster.intersectObjects( objects );
-					let selectionChanged = false;
-		
-					if ( intersects.length > 0){
-						//console.log(intersects);
-						const intersection = intersects[0];
-						const orientedImage = intersection.object.orientedImage;
-						orientedImage.line.material.color.setRGB(1, 0, 0);
-						selectionChanged = hoveredElement !== orientedImage;
-						hoveredElement = orientedImage;
-					}else {
-						hoveredElement = null;
-					}
-		
-					let shouldRemoveClipVolume = clipVolume !== null && hoveredElement === null;
-					let shouldAddClipVolume = clipVolume === null && hoveredElement !== null;
-		
-					if(clipVolume !== null && (hoveredElement === null || selectionChanged)){
-						// remove existing
-						viewer.scene.removePolygonClipVolume(clipVolume);
-						clipVolume = null;
-					}
-					
-					if(shouldAddClipVolume || selectionChanged){
-						const img = hoveredElement;
-						const fov = cameraParams.fov;
-						const aspect  = cameraParams.width / cameraParams.height;
-						const near = 1.0;
-						const far = 1000 * 1000;
-						const camera = new PerspectiveCamera(fov, aspect, near, far);
-						camera.rotation.order = viewer.scene.getActiveCamera().rotation.order;
-						camera.rotation.copy(img.mesh.rotation);
-						{
-							const mesh = img.mesh;
-							const dir = mesh.getWorldDirection();
-							const pos = mesh.position;
-							const alpha = MathUtils.degToRad(fov / 2);
-							const d = 0.5 / Math.tan(alpha);
-							const newCamPos = pos.clone().add(dir.clone().multiplyScalar(d));
-							const newCamDir = pos.clone().sub(newCamPos);
-							const newCamTarget = new Vector3().addVectors(
-								newCamPos,
-								newCamDir.clone().multiplyScalar(viewer.getMoveSpeed()));
-							camera.position.copy(newCamPos);
-						}
-						let volume = new Potree.PolygonClipVolume(camera);
-						let m0 = new Mesh();
-						let m1 = new Mesh();
-						let m2 = new Mesh();
-						let m3 = new Mesh();
-						m0.position.set(-1, -1, 0);
-						m1.position.set( 1, -1, 0);
-						m2.position.set( 1,  1, 0);
-						m3.position.set(-1,  1, 0);
-						volume.markers.push(m0, m1, m2, m3);
-						volume.initialized = true;
-						
-						viewer.scene.addPolygonClipVolume(volume);
-						clipVolume = volume;
-					}
-					const tEnd = performance.now();
-					//console.log(tEnd - tStart);
-				} else {
-					hoveredElement = null;
-					if (clipVolume) {
-						viewer.scene.removePolygonClipVolume(clipVolume);
-						clipVolume = null;
-					}
-				}
-			};
-
-			const moveToImage = async (image, sendEvent = true) => {
-				console.log("move to image " + image.id);
-				viewer.controls.enabled = false;
-
-				// onGoingDownlads.forEach(download => {
-				// 	download.abort();
-				// });
-				// onGoingDownlads = [];
-				if (sendEvent) {
-					const event = new CustomEvent("imageLoad", {
-						detail: {
-							viewer: viewer.canvasId,
-							image
-						}
-					});
-					document.dispatchEvent(event);
-				}
-
-				const mesh = image.mesh;
-				const target = image;
-
-				const newCamPos = image.position.clone();
-				const newCamTarget = mesh.position.clone();
-
-				// viewer.scene.view.setView(newCamPos, newCamTarget, 500, () => {
-				// 	orientedImageControls.capture(image);
-				// });
-				viewer.scene.view.setView(newCamPos, newCamTarget);
-				
-
-				function checkVisibility(object) {
-					return new Promise((resolve, reject) => {
-						var frustum = new Frustum();
-						var cameraViewProjectionMatrix = new Matrix4();
-
-						// every time the camera or objects change position (or every frame)
-						var camera = viewer.scene.cameraP;
-						camera.updateMatrixWorld(); // make sure the camera matrix is updated
-						camera.matrixWorldInverse.getInverse( camera.matrixWorld );
-						cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
-						frustum.setFromMatrix( cameraViewProjectionMatrix );
-
-						// frustum is now ready to check all the objects you need
-						let visibility = frustum.intersectsObject( object );
-
-						console.log('Image : ', visibility);
-						resolve(visibility);
-					})
-				}
-
-				function loadImageTexture(path) {
-					return new Promise((resolve, reject) => {
-						// if (cancelToken) {
-						// 	cancelToken.abort = function() {
-						// 		console.log('Cancelled Image Download: ', path); 
-						// 		reject(null);
-						// 	}
-						// }
-						new TextureLoader().load(path, (texture) => {
-							resolve(texture);
-						});
-					});
-				}
-
-				function updateTexture(texture) {
-					target.texture = texture;
-					target.mesh.material.uniforms.tColor.value = texture;
-					mesh.material.needsUpdate = true;
-				}
-
-				viewer.scene.orientedImages[0].focused = image;
-			
-				const tmpImagePath = `${Potree.resourcePath}/images/loading.jpg`;
-				let texture = await loadImageTexture(tmpImagePath);
-				updateTexture(texture);
-				setTimeout(() => {
-					orientedImageControls.capture(image);
-				}, 100);
-				// console.log('Thumbnail Loaded');
-				// let imgVisibility = await checkVisibility(mesh);
-				// if (!imgVisibility) {
-					// setTimeout(() => {
-						// viewer.fitToScreen();
-						// moveToImage(image, false);
-					// }, 1000);
-				// } else {
-					// console.log('Image Loading');
-					const imagePath = `${imagesPath}/${target.id}`;
-					// var cancelObj = {};
-					// onGoingDownlads.push(cancelObj);
-					let texture_org = await loadImageTexture(imagePath);
-					// onGoingDownlads = [];
-					updateTexture(texture_org);
-					image.texture = texture_org;
-					// console.log('Image Loaded');
-				// }
-					
-			};
-
-			const onMouseClick = (evt) => {
-
-				if(orientedImageControls.hasSomethingCaptured()){
-					return;
-				}
-
-				if(hoveredElement){
-					moveToImage(hoveredElement);
-				}
-			};
-			viewer.renderer.domElement.addEventListener( 'mousemove', onMouseMove, false );
-			viewer.renderer.domElement.addEventListener( 'mousedown', onMouseClick, false );
-
-			viewer.addEventListener("update", () => {
-
-				for(const image of orientedImages){
-					const world = image.mesh.matrixWorld;
-					const {width, height} = image;
-					const aspect = width / height;
-
-					const camera = viewer.scene.getActiveCamera();
-
-					const imgPos = image.mesh.getWorldPosition(new Vector3());
-					const camPos = camera.position;
-					const d = camPos.distanceTo(imgPos);
-
-					const minSize = 1; // in degrees of fov
-					const a = MathUtils.degToRad(minSize);
-					let r = d * Math.tan(a);
-					r = Math.max(r, 1);
-
-
-					image.mesh.scale.set(r * aspect, r, 1);
-					image.line.scale.set(r * aspect, r, 1);
-
-					image.mesh.material.uniforms.uNear.value = camera.near;
-
-				}
-
-			});
-
-			images.moveToImage = moveToImage;
-			images.release = function () {
-				orientedImageControls.release();
-			};
-			return images;
-		}
+	class OrientedImage {
+	  constructor(id) {
+	    this.id = id;
+	    this.fov = 1.0;
+	    this.position = new Vector3();
+	    this.rotation = new Vector3();
+	    this.width = 0;
+	    this.height = 0;
+	    this.fov = 1.0;
+
+	    const material = createMaterial();
+	    const lineMaterial = new LineBasicMaterial({ color: 0x00ff00 });
+	    this.mesh = new Mesh(planeGeometry, material);
+	    this.line = new Line(lineGeometry, lineMaterial);
+	    this.texture = null;
+
+	    this.mesh.orientedImage = this;
+	  }
+
+	  set(position, rotation, dimension, fov) {
+	    let radians = rotation.map(MathUtils.degToRad);
+
+	    this.position.set(...position);
+	    this.mesh.position.set(...position);
+
+	    this.rotation.set(...radians);
+	    this.mesh.rotation.set(...radians);
+
+	    [this.width, this.height] = dimension;
+	    this.mesh.scale.set(this.width / this.height, 1, 1);
+
+	    this.fov = fov;
+
+	    this.updateTransform();
+	  }
+
+	  updateTransform() {
+	    let { mesh, line, fov } = this;
+
+	    mesh.updateMatrixWorld();
+	    var dir = new Vector3();
+	    mesh.getWorldDirection(dir);
+	    const alpha = MathUtils.degToRad(fov / 2);
+	    const d = -0.5 / Math.tan(alpha);
+	    const move = dir.clone().multiplyScalar(d);
+	    mesh.position.add(move);
+
+	    line.position.copy(mesh.position);
+	    line.scale.copy(mesh.scale);
+	    line.rotation.copy(mesh.rotation);
+	  }
 	}
 
-	// let sg = new THREE.SphereGeometry(0.1, 8, 8);
-	// let sgHigh = new THREE.SphereGeometry(1, 128, 128);
+	class OrientedImages extends EventDispatcher {
+	  constructor() {
+	    super();
 
-	// let sm = new THREE.MeshBasicMaterial({side: THREE.BackSide});
-	// let smHovered = new THREE.MeshBasicMaterial({side: THREE.BackSide, color: 0xff0000});
+	    this.node = null;
+	    this.cameraParams = null;
+	    this.imageParams = null;
+	    this.images = null;
+	    this._visible = true;
+	    this.focused = null;
+	  }
 
-	// let raycaster = new THREE.Raycaster();
-	// let currentlyHovered = null;
+	  set visible(visible) {
+	    if (this._visible === visible) {
+	      return;
+	    }
 
-	// let previousView = {
-	// 	controls: null,
-	// 	position: null,
-	// 	target: null,
-	// };
+	    for (const image of this.images) {
+	      image.mesh.visible = visible;
+	      image.line.visible = visible;
+	    }
+
+	    this._visible = visible;
+	    this.dispatchEvent({
+	      type: "visibility_changed",
+	      images: this,
+	    });
+	  }
+
+	  get visible() {
+	    return this._visible;
+	  }
+	}
+
+	class OrientedImageLoader {
+	  static async loadCameraParams(path) {
+	    const res = await fetch(path);
+	    const text = await res.text();
+
+	    const parser = new DOMParser();
+	    const doc = parser.parseFromString(text, "application/xml");
+
+	    const width = parseInt(doc.getElementsByTagName("width")[0].textContent);
+	    const height = parseInt(doc.getElementsByTagName("height")[0].textContent);
+	    const f = parseFloat(doc.getElementsByTagName("f")[0].textContent);
+
+	    let a = height / 2 / f;
+	    let fov = 2 * MathUtils.radToDeg(Math.atan(a));
+
+	    const params = {
+	      path: path,
+	      width: width,
+	      height: height,
+	      f: f,
+	      fov: fov,
+	    };
+
+	    return params;
+	  }
+
+	  static async loadImageParams(path, tm) {
+	    const response = await fetch(path);
+	    if (!response.ok) {
+	      console.error(`failed to load ${path}`);
+	      return;
+	    }
+
+	    const content = await response.text();
+
+	    const imageParams = [];
+
+	    const imgData = JSON.parse(content);
+
+	    imgData.camname.forEach((imgName, index) => {
+	      const rawPos = new Vector4(
+	        Number.parseFloat(imgData.camX[index]),
+	        Number.parseFloat(imgData.camY[index]),
+	        Number.parseFloat(imgData.camZ[index]),
+	        1
+	      );
+	      rawPos.applyMatrix4(tm);
+
+	      const params = {
+	        id: imgData.camname[index],
+	        x: Number.parseFloat(imgData.camX[index]),
+	        y: Number.parseFloat(imgData.camY[index]),
+	        z: Number.parseFloat(imgData.camZ[index]),
+	        x_tm: rawPos.x,
+	        y_tm: rawPos.y,
+	        z_tm: rawPos.z,
+	        omega: Number.parseFloat(imgData.camRoll[index]),
+	        phi: Number.parseFloat(imgData.camPitch[index]),
+	        kappa: Number.parseFloat(imgData.camYaw[index]),
+	      };
+
+	      imageParams.push(params);
+	    });
+
+	    const width = parseInt(imgData.camPix[0]);
+	    const height = parseInt(imgData.camPix[1]);
+	    const f = parseFloat(imgData.camFocal);
+
+	    let a = height / 2 / f;
+	    let fov = 2 * MathUtils.radToDeg(Math.atan(a));
+
+	    const params = {
+	      path: path,
+	      width: width,
+	      height: height,
+	      f: f,
+	      fov: fov,
+	    };
+
+	    return [params, imageParams];
+	  }
+
+	  static async load(imageParamsPath, imagesPath, viewer, tm_data) {
+	    const tStart = performance.now();
+
+	    let tmatrix, toffset;
+
+	    tmatrix = tm_data.tm;
+	    toffset = tm_data.offset;
+
+	    const [cameraParams, imageParams] =
+	      await OrientedImageLoader.loadImageParams(imageParamsPath, tmatrix);
+
+	    const orientedImageControls = new OrientedImageControls(viewer);
+	    const raycaster = new Raycaster();
+
+	    const tEnd = performance.now();
+	    console.log(tEnd - tStart);
+
+	    const { width, height } = cameraParams;
+	    const orientedImages = [];
+	    const sceneNode = new Object3D();
+	    sceneNode.name = "oriented_images";
+
+	    for (const params of imageParams) {
+	      const { x, y, z, x_tm, y_tm, z_tm, omega, phi, kappa } = params;
+	      let orientedImage = new OrientedImage(params.id);
+	      let position = [x, y, z];
+	      let rotation = [omega, phi, kappa];
+	      let dimension = [width, height];
+	      orientedImage.set(position, rotation, dimension, cameraParams.fov);
+	      orientedImage.mesh.applyMatrix4(tmatrix);
+	      let curMeshPos = orientedImage.mesh.position.clone();
+	      orientedImage.mesh.position.set(
+	        curMeshPos.x - toffset[0],
+	        curMeshPos.y - toffset[1],
+	        curMeshPos.z - toffset[2]
+	      );
+	      orientedImage.line.applyMatrix4(tmatrix);
+	      let curLinePos = orientedImage.line.position.clone();
+	      orientedImage.line.position.set(
+	        curLinePos.x - toffset[0],
+	        curLinePos.y - toffset[1],
+	        curLinePos.z - toffset[2]
+	      );
+	      orientedImage.position.set(
+	        x_tm - toffset[0],
+	        y_tm - toffset[1],
+	        z_tm - toffset[2]
+	      );
+	      sceneNode.add(orientedImage.mesh);
+	      sceneNode.add(orientedImage.line);
+
+	      orientedImages.push(orientedImage);
+	    }
+
+	    let hoveredElement = null;
+	    let clipVolume = null;
+
+	    const images = new OrientedImages();
+	    images.node = sceneNode;
+	    images.imageParamsPath = imageParamsPath;
+	    images.cameraParams = cameraParams;
+	    images.imageParams = imageParams;
+	    images.images = orientedImages;
+	    images.hovered = hoveredElement;
+
+	    const onMouseMove = (evt) => {
+	      const tStart = performance.now();
+	      if (hoveredElement) {
+	        hoveredElement.line.material.color.setRGB(0, 1, 0);
+	      }
+	      evt.preventDefault();
+	      if (images.visible) {
+	        const rect = viewer.renderer.domElement.getBoundingClientRect();
+	        const [x, y] = [evt.clientX, evt.clientY];
+	        const array = [
+	          (x - rect.left) / rect.width,
+	          (y - rect.top) / rect.height,
+	        ];
+	        const onClickPosition = new Vector2(...array);
+	        const camera = viewer.scene.getActiveCamera();
+	        const mouse = new Vector3(
+	          +(onClickPosition.x * 2) - 1,
+	          -(onClickPosition.y * 2) + 1
+	        );
+	        const objects = orientedImages.map((i) => i.mesh);
+	        raycaster.setFromCamera(mouse, camera);
+	        const intersects = raycaster.intersectObjects(objects);
+	        let selectionChanged = false;
+
+	        if (intersects.length > 0) {
+	          const intersection = intersects[0];
+	          const orientedImage = intersection.object.orientedImage;
+	          orientedImage.line.material.color.setRGB(1, 0, 0);
+	          selectionChanged = hoveredElement !== orientedImage;
+	          hoveredElement = orientedImage;
+	        } else {
+	          hoveredElement = null;
+	        }
+
+	        let shouldRemoveClipVolume =
+	          clipVolume !== null && hoveredElement === null;
+	        let shouldAddClipVolume =
+	          clipVolume === null && hoveredElement !== null;
+
+	        if (
+	          clipVolume !== null &&
+	          (hoveredElement === null || selectionChanged)
+	        ) {
+	          // remove existing
+	          viewer.scene.removePolygonClipVolume(clipVolume);
+	          clipVolume = null;
+	        }
+
+	        if (shouldAddClipVolume || selectionChanged) {
+	          const img = hoveredElement;
+	          const fov = cameraParams.fov;
+	          const aspect = cameraParams.width / cameraParams.height;
+	          const near = 1.0;
+	          const far = 1000 * 1000;
+	          const camera = new PerspectiveCamera(fov, aspect, near, far);
+	          camera.rotation.order = viewer.scene.getActiveCamera().rotation.order;
+	          camera.rotation.copy(img.mesh.rotation);
+	          {
+	            const mesh = img.mesh;
+	            const dir = mesh.getWorldDirection();
+	            const pos = mesh.position;
+	            const alpha = MathUtils.degToRad(fov / 2);
+	            const d = 0.5 / Math.tan(alpha);
+	            const newCamPos = pos.clone().add(dir.clone().multiplyScalar(d));
+	            const newCamDir = pos.clone().sub(newCamPos);
+	            const newCamTarget = new Vector3().addVectors(
+	              newCamPos,
+	              newCamDir.clone().multiplyScalar(viewer.getMoveSpeed())
+	            );
+	            camera.position.copy(newCamPos);
+	          }
+	          let volume = new Potree.PolygonClipVolume(camera);
+	          let m0 = new Mesh();
+	          let m1 = new Mesh();
+	          let m2 = new Mesh();
+	          let m3 = new Mesh();
+	          m0.position.set(-1, -1, 0);
+	          m1.position.set(1, -1, 0);
+	          m2.position.set(1, 1, 0);
+	          m3.position.set(-1, 1, 0);
+	          volume.markers.push(m0, m1, m2, m3);
+	          volume.initialized = true;
+
+	          viewer.scene.addPolygonClipVolume(volume);
+	          clipVolume = volume;
+	        }
+	        const tEnd = performance.now();
+	        //console.log(tEnd - tStart);
+	      } else {
+	        hoveredElement = null;
+	        if (clipVolume) {
+	          viewer.scene.removePolygonClipVolume(clipVolume);
+	          clipVolume = null;
+	        }
+	      }
+	    };
+
+	    const moveToImage = async (image, sendEvent = true) => {
+	      viewer.controls.enabled = false;
+
+	      
+
+	      const mesh = image.mesh;
+	      const target = image;
+
+	      const newCamPos = image.position.clone();
+	      const newCamTarget = mesh.position.clone();
+
+	      viewer.scene.view.setView(newCamPos, newCamTarget);
+		if (sendEvent) {
+	        const event = new CustomEvent("imageLoad", {
+	          detail: {
+	            viewer: viewer.canvasId,
+	            image,
+	          },
+	        });
+	        document.dispatchEvent(event);
+	      }
+		  
+	      function loadImageTexture(path) {
+		return new Promise((resolve, reject) => {
+			new TextureLoader().load(
+			path,
+			(texture) => {
+				resolve(texture);
+			},
+			undefined,
+			(error) => {
+			new TextureLoader().load(`${Potree.resourcePath}/images/loading.jpg`, (texture) => {
+	            resolve(texture);
+	          });
+			}
+			);
+		});
+		}
+		function updateTexture(texture) {
+	        target.texture = texture;
+	        target.mesh.material.uniforms.tColor.value = texture;
+	        mesh.material.needsUpdate = true;
+	      }
+
+	      viewer.scene.orientedImages[0].focused = image;
+	     const tmpImagePath = `${imagesPath}/thumbnails/${target.id}`;
+		 let texture = await loadImageTexture(tmpImagePath);
+		  updateTexture(texture);
+	      setTimeout(() => {
+	        orientedImageControls.capture(image);
+	      }, 100);
+	      const imagePath = `${imagesPath}/${target.id}`;
+	      let texture_org = await loadImageTexture(imagePath);
+	      updateTexture(texture_org);
+	      image.texture = texture_org;
+	    };
+
+	    const onMouseClick = (evt) => {
+	      if (orientedImageControls.hasSomethingCaptured()) {
+	        return;
+	      }
+
+	      if (hoveredElement) {
+	        moveToImage(hoveredElement);
+	      }
+	    };
+	    viewer.renderer.domElement.addEventListener(
+	      "mousemove",
+	      onMouseMove,
+	      false
+	    );
+	    viewer.renderer.domElement.addEventListener(
+	      "mousedown",
+	      onMouseClick,
+	      false
+	    );
+
+	    viewer.addEventListener("update", () => {
+	      for (const image of orientedImages) {
+	        const world = image.mesh.matrixWorld;
+	        const { width, height } = image;
+	        const aspect = width / height;
+
+	        const camera = viewer.scene.getActiveCamera();
+
+	        const imgPos = image.mesh.getWorldPosition(new Vector3());
+	        const camPos = camera.position;
+	        const d = camPos.distanceTo(imgPos);
+
+	        const minSize = 1; // in degrees of fov
+	        const a = MathUtils.degToRad(minSize);
+	        let r = d * Math.tan(a);
+	        r = Math.max(r, 1);
+
+	        image.mesh.scale.set(r * aspect, r, 1);
+	        image.line.scale.set(r * aspect, r, 1);
+
+	        image.mesh.material.uniforms.uNear.value = camera.near;
+	      }
+	    });
+
+	    images.moveToImage = moveToImage;
+	    images.release = function () {
+	      orientedImageControls.release();
+	    };
+	    return images;
+	  }
+	}
 
 	class Image360{
 
@@ -77491,7 +77547,8 @@ ENDSEC
 			this.course = course;
 			this.pitch = pitch;
 			this.roll = roll;
-			this.mesh = null;
+			this.ringGroup=null;
+			this.visibleRings=[];
 		}
 	};
 
@@ -77506,17 +77563,14 @@ ENDSEC
 
 			this.images = [];
 			this.node = new Object3D();
-
+			this.visibleRings=[];		
 			this.sphere = new Mesh(new SphereGeometry(1, 128, 128), new MeshBasicMaterial({side: BackSide}));
 			this.sphere.visible = false;
 			this.sphere.scale.set(-1000, 1000, 1000);
-			// Potree.debug.focus = this.focus.bind(this);
 			this.focus = this.focus.bind(this);
 			this.unfocus = this.unfocus.bind(this);
 			this.node.add(this.sphere);
 			this._visible = true;
-			// this.node.add(label);
-
 			this.focusedImage = null;
 			this.currentlyHovered = null;
 			this.previousView = {
@@ -77525,24 +77579,8 @@ ENDSEC
 				target: null,
 			};
 			this.raycaster = new Raycaster();
-			this.hoverMaterial = new MeshBasicMaterial({side: BackSide, color: 0xff0000});
-			this.sm = new MeshBasicMaterial({side: BackSide});
-
-			// let elUnfocus = document.createElement("input");
-			// elUnfocus.type = "button";
-			// elUnfocus.value = "unfocus";
-			// elUnfocus.style.position = "absolute";
-			// elUnfocus.style.right = "10px";
-			// elUnfocus.style.bottom = "10px";
-			// elUnfocus.style.zIndex = "10000";
-			// elUnfocus.style.fontSize = "2em";
-			// elUnfocus.addEventListener("click", () => this.unfocus());
-			// this.elUnfocus = elUnfocus;
-
-			// this.domRoot = viewer.renderer.domElement.parentElement;
-			// this.domRoot.appendChild(elUnfocus);
-			// this.elUnfocus.style.display = "none";
-
+			this.hoverMaterial = new MeshBasicMaterial({side: DoubleSide,color:''});
+			this.sm = new MeshBasicMaterial({side: DoubleSide,color:'#FF843F'});
 			viewer.addEventListener("update", () => {
 				this.update(viewer);
 			});
@@ -77550,10 +77588,28 @@ ENDSEC
 
 			this.addEventListener("mousedown", () => {
 				if(this.currentlyHovered && this.currentlyHovered.image360){
-					this.focus(this.currentlyHovered.image360);
+					// this.focus(this.currentlyHovered.image360);
+					const event = new CustomEvent("onRingClick", {
+	                    detail: {
+	                        viewer: this.viewer.canvasId,
+	                        image: this.currentlyHovered.image360
+	                    }
+	                });
+	                document.dispatchEvent(event);
 				}
 			});
-			
+			this.addEventListener("touchend", () => {
+				if(this.currentlyHovered && this.currentlyHovered.image360){
+					// this.focus(this.currentlyHovered.image360);
+					const event = new CustomEvent("onRingClick", {
+	                    detail: {
+	                        viewer: this.viewer.canvasId,
+	                        image: this.currentlyHovered.image360
+	                    }
+	                });
+	                document.dispatchEvent(event);
+				}
+			});
 		};
 
 		set visible(visible){
@@ -77563,7 +77619,7 @@ ENDSEC
 
 
 			for(const image of this.images){
-				image.mesh.visible = visible && (this.focusedImage == null);
+				image.ringGroup.visible = visible && (this.focusedImage == null);
 			}
 
 			this.sphere.visible = visible && (this.focusedImage != null);
@@ -77598,61 +77654,77 @@ ENDSEC
 				position: this.viewer.scene.view.position.clone(),
 				target: this.viewer.scene.view.getPivot(),
 			};
-
 			this.viewer.setControls(this.viewer.orbitControls);
+			this.viewer.orbitControls.isInterior = true;
 			this.viewer.orbitControls.doubleClockZoomEnabled = false;
-
-			for(let image of this.images){
-				image.mesh.visible = false;
+			let index = this.images.findIndex( element => {
+			if (element.file === image360.file) {
+			return true;
 			}
-
-			this.selectingEnabled = false;
-
-			this.sphere.visible = false;
-
-			this.load(image360).then( () => {
-				this.sphere.visible = true;
-				this.sphere.material.map = image360.texture;
-				this.sphere.material.needsUpdate = true;
 			});
+			
+			for(let image of this.images){
+				image.ringGroup.visible=false;
+			}
+			
+			if(index != 0)
+			{
 
-			// { // orientation
+				let i = index - 1;
+				let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
+				let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+				let dist = current.distanceTo(next);
+				while(dist < 3 && i > 0) {
+					i--;
+					next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+					dist = current.distanceTo(next);
+				}
+				if(i>-1)
+				{
+				this.images[i].ringGroup.visible = true;
+				this.visibleRings.push(this.images[i]);
+				}
+				
+			}
+			if(index!=this.images.length-1)
+			{
+				let i = index + 1;
+				let current = new Vector3(this.images[index].position[0], this.images[index].position[1], this.images[index].position[2]);
+				let next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+				let dist = current.distanceTo(next);
+				while(dist < 3 && i<this.images.length-1) {
+					i++;
+					next = new Vector3(this.images[i].position[0], this.images[i].position[1], this.images[i].position[2]);
+					dist = current.distanceTo(next);
+				}
+				if(i<this.images.length)
+				{
+				this.images[i].ringGroup.visible = true;
+				this.visibleRings.push(this.images[i]);	
+				}
+			}
+			this.selectingEnabled = true;
+			
+			this.sphere.visible = false;
+			this.load(image360).then( () => {
+				if (this.sphere) {
+					this.sphere.visible = true;
+					this.sphere.material.map = image360.texture;
+					this.sphere.material.needsUpdate = true;
+				}
+			});
 				let {course, pitch, roll} = image360;
-			// 	this.sphere.rotation.set(
-			// 		THREE.Math.degToRad(+roll + 90),
-			// 		THREE.Math.degToRad(-pitch),
-			// 		THREE.Math.degToRad(-course + 90),
-			// 		"ZYX"
-			// 	);
-
-			// this.sphere.rotation.set(
-			// 	THREE.Math.degToRad(roll),
-			// 	THREE.Math.degToRad(pitch),
-			// 	THREE.Math.degToRad(course),
-			// 	"ZYX"
-			// );
-
-			this.sphere.rotation.set(
+				this.sphere.rotation.set(
 				MathUtils.degToRad(course),
 				MathUtils.degToRad(pitch),
 				MathUtils.degToRad(roll),
 				"XYZ"
 			);
-			// }
-
 			this.sphere.position.set(...image360.position);
-
-			// this.imgViewer.position.set(imgPos.x, imgPos.y, imgPos.z);
-	        // this.sphere.rotation.x = course * (Math.PI / 180);
-	        // this.sphere.rotation.y = pitch * (Math.PI / 180);
-	        // this.sphere.rotation.z = roll * (Math.PI / 180);
-
-
 			let target = new Vector3(...image360.position);
 			let dir = target.clone().sub(this.viewer.scene.view.position).normalize();
 			let move = dir.multiplyScalar(0.000001);
 			let newCamPos = target.clone().sub(move);
-
 			this.viewer.scene.view.setView(
 				newCamPos, 
 				target,
@@ -77667,26 +77739,22 @@ ENDSEC
 
 			this.focusedImage = image360;
 
-			// this.elUnfocus.style.display = "";
 		}
 
 		unfocus(sendEvent = true){
 			this.selectingEnabled = true;
 			this.viewer.setEDLOpacity(1);
 			for(let image of this.images){
-				image.mesh.visible = true;
+				image.ringGroup.visible = false;
 			}
-
 			let image = this.focusedImage;
-
 			if(image === null){
 				return;
 			}
-
-
 			this.sphere.material.map = null;
 			this.sphere.material.needsUpdate = true;
 			this.sphere.visible = false;
+			this.sphere.position.set(this.sphere.position - [...this.images[0].position]);
 
 			let pos = this.viewer.scene.view.position;
 			let target = this.viewer.scene.view.getPivot();
@@ -77695,18 +77763,10 @@ ENDSEC
 			let newCamPos = target.clone().sub(move);
 
 			this.viewer.orbitControls.doubleClockZoomEnabled = true;
+			this.viewer.orbitControls.isInterior = false;
 			this.viewer.setControls(this.previousView.controls);
-
-			// this.viewer.scene.view.setView(
-			// 	this.previousView.position, 
-			// 	this.previousView.target,
-			// 	500
-			// );
-
 			this.focusedImage = null;
-
-			// this.elUnfocus.style.display = "none";
-
+			
 			if (sendEvent) {
 				const event = new CustomEvent("panoUnload", {
 					detail: {
@@ -77719,16 +77779,6 @@ ENDSEC
 		}
 
 		load(image360){
-
-			// return new Promise(resolve => {
-			// 	let texture = new THREE.TextureLoader().load(image360.file, resolve);
-			// 	// texture.wrapS = THREE.RepeatWrapping;
-			// 	// texture.repeat.x = -1;
-			// 	// texture.flipY = false;
-
-			// 	image360.texture = texture;
-			// });
-
 			let resolved = false;
 			return new Promise(resolve => {
 				if (image360.texture) {
@@ -77736,13 +77786,13 @@ ENDSEC
 				} else {
 					new TextureLoader().load(image360.thumbnail,
 						texture => {
-							// if (image360.file == this.focusedImage.file) {
+								//var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
+	                            //image360.texture = sphereMaterial;
 								image360.texture = texture;
 								resolved = true;
 								resolve(null);
 								loadOrgImage.bind(this)();
-							// }
-						},
+							},
 						undefined,
 						err => {
 							loadOrgImage.bind(this)();
@@ -77751,16 +77801,18 @@ ENDSEC
 
 						new TextureLoader().load(image360.file,
 							texture => {
-								// if (image360.file == this.focusedImage.file) {
+									//var sphereMaterial = new MeshBasicMaterial({ map: texture, side: DoubleSide });
+	                            	//image360.texture = sphereMaterial;
 									image360.texture = texture;
-									this.sphere.visible = true;
-									this.sphere.material.map = image360.texture;
-									this.sphere.material.needsUpdate = true;
+									if (this.sphere) {
+										this.sphere.visible = true;
+										this.sphere.material.map = image360.texture;
+										this.sphere.material.needsUpdate = true;
+									}
 									if (!resolved) {
 										resolve(null);
 									}
-								// }
-							});
+								});
 					};
 
 				}
@@ -77772,32 +77824,25 @@ ENDSEC
 			let mouse = this.viewer.inputHandler.mouse;
 			let camera = this.viewer.scene.getActiveCamera();
 			let domElement = this.viewer.renderer.domElement;
-
 			let ray = Potree.Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
-
-			// let tStart = performance.now();
 			this.raycaster.ray.copy(ray);
-			let intersections = this.raycaster.intersectObjects(this.node.children);
-
+			let intersections = this.raycaster.intersectObjects(this.visibleRings.map(image=>{
+				return image.ringGroup.children[1]}));
 			if(intersections.length === 0){
-				// label.visible = false;
-
 				return;
 			}
-
 			let intersection = intersections[0];
-			this.currentlyHovered = intersection.object;
+			if(intersection.object.parent.visible===true)
+			{
+			this.currentlyHovered = intersection.object.parent.children[0];
 			this.currentlyHovered.material = this.hoverMaterial;
-
-			//label.visible = true;
-			//label.setText(currentlyHovered.image360.file);
-			//currentlyHovered.getWorldPosition(label.position);
+			}
+			
 		}
 
 		update(){
 
 			let {viewer} = this;
-
 			if(this.currentlyHovered){
 				this.currentlyHovered.material = this.sm;
 				this.currentlyHovered = null;
@@ -77826,13 +77871,9 @@ ENDSEC
 			tmatrix = tm_data.tm;
 			toffset = tm_data.offset;
 			
-			// let response = await fetch(`${url}/coordinates.txt`);
 			let response = await fetch(url);
 			let text = await response.text();
 			let imgData = JSON.parse(text);
-
-			// let lines = text.split(/\r?\n/);
-			// let coordinateLines = lines.slice(1);
 
 			let images360 = new Images360(viewer);
 
@@ -77842,14 +77883,9 @@ ENDSEC
 				
 				const pos = new Vector4(raw_position[0], raw_position[1], raw_position[2], 1);
 				pos.applyMatrix4(tmatrix);
-
-				const time = 10;
-				// const long = parseFloat(raw_position[0]);
-				// const lat = parseFloat(raw_position[1]);
-				// const alt = parseFloat(raw_position[2]);
 				const long = parseFloat(pos.x - toffset[0]);
 				const lat = parseFloat(pos.y - toffset[1]);
-				const alt = parseFloat(pos.z - toffset[2]);
+				const alt = parseFloat((pos.z - toffset[2]));
 				const course = parseFloat(rotation[0]);
 				const pitch = parseFloat(rotation[1]);
 				const roll = parseFloat(rotation[2]);
@@ -77858,82 +77894,55 @@ ENDSEC
 				let thumbnail = `${imgsUrl}/thumbnails/${imgName}`;
 				let image360 = new Image360(file, thumbnail, long, lat, alt, course, pitch, roll);
 
-				// let xy = params.transform.forward([long, lat]);
-				// let position = [...xy, alt];
 				let position = [long, lat, alt];
 				image360.position = position;
 
 				images360.images.push(image360);
 			});
-			
-			// for(let line of coordinateLines){
 
-			// 	if(line.trim().length === 0){
-			// 		continue;
-			// 	}
+			images360.images.sort(function (a, b) {
+				const getFileNumber = (file) => {
+					const numberPattern = /\d+/g;
+					const numbers = file.match(numberPattern);
+					if (numbers) {
+					return numbers.map((num) => num.padStart(10, '0')).join('');
+					}
+					return file;
+				};
 
-			// 	let tokens = line.split(/\t/);
+				const fileANumber = getFileNumber(a.file);
+				const fileBNumber = getFileNumber(b.file);
+				return fileANumber.localeCompare(fileBNumber);
+			});
 
-			// 	let [filename, time, long, lat, alt, course, pitch, roll] = tokens;
-			// 	time = parseFloat(time);
-			// 	long = parseFloat(long);
-			// 	lat = parseFloat(lat);
-			// 	alt = parseFloat(alt);
-			// 	course = parseFloat(course);
-			// 	pitch = parseFloat(pitch);
-			// 	roll = parseFloat(roll);
-
-			// 	filename = filename.replace(/"/g, "");
-			// 	let file = `${url}/${filename}`;
-
-			// 	let image360 = new Image360(file, time, long, lat, alt, course, pitch, roll);
-
-			// 	// let xy = params.transform.forward([long, lat]);
-			// 	// let position = [...xy, alt];
-			// 	let position = [long, lat, alt];
-			// 	image360.position = position;
-
-			// 	images360.images.push(image360);
-			// }
-
-			Images360Loader.createSceneNodes(images360, params.transform);
-
-			return images360;
+			 Images360Loader.createSceneNodes(images360);
+				return images360;
 
 		}
 
-		static createSceneNodes(images360, transform){
+		static createSceneNodes(images360){
 
 			for(let image360 of images360.images){
 				let {longitude, latitude, altitude} = image360;
-				// let xy = transform.forward([longitude, latitude]);
-
-				let mesh = new Mesh(new SphereGeometry(0.1, 8, 8), new MeshBasicMaterial({side: BackSide}));
-				// mesh.position.set(...xy, altitude);
-				mesh.position.set(longitude, latitude, altitude);
-				mesh.scale.set(1, 1, 1);
-				mesh.material.transparent = true;
-				mesh.material.opacity = 0.75;
-				mesh.image360 = image360;
-
-				{ // orientation
-					var {course, pitch, roll} = image360;
-					mesh.rotation.set(
-						MathUtils.degToRad(+roll + 90),
-						MathUtils.degToRad(-pitch),
-						MathUtils.degToRad(-course + 90),
-						"ZYX"
-					);
-				}
-
-				images360.node.add(mesh);
-
-				image360.mesh = mesh;
+				let ringMesh = new Mesh(new RingGeometry( 0.35, .5, 32 ), new MeshBasicMaterial({side: DoubleSide, color:'#FF843F'}));
+				ringMesh.position.set(longitude, latitude, altitude - 2.0);
+				ringMesh.scale.set(1, 1, 1);
+				ringMesh.material.transparent = true;
+				ringMesh.material.opacity = 0.75;
+				ringMesh.image360 = image360;
+				let circleMesh = new Mesh(new CircleGeometry( .5, 32 ), new MeshBasicMaterial({side:DoubleSide}));
+				circleMesh.position.set(longitude, latitude, altitude - 2.0);
+				circleMesh.scale.set(1, 1, 1);
+				circleMesh.material.transparent = true;
+				circleMesh.material.opacity = 0;
+				circleMesh.image360 = image360;
+				const ringGroup = new Group();
+				ringGroup.add( ringMesh );
+				ringGroup.add( circleMesh );
+				images360.node.add(ringGroup);
+				image360.ringGroup=ringGroup;
 			}
 		}
-
-		
-
 	};
 
 	// This is a generated file. Do not edit.
@@ -80185,7 +80194,7 @@ ENDSEC
 			{ // REMOVE CLIPPING TOOLS
 				clippingToolBar.append(this.createToolIcon(
 					Potree.resourcePath + "/icons/remove.svg",
-					"[title]tt.remove_all_measurement",
+					"[title]tt.remove_all_clipping_volumes",
 					() => {
 
 						this.viewer.scene.removeAllClipVolumes();
@@ -80555,7 +80564,10 @@ ENDSEC
 				["DE", "de"],
 				["JP", "jp"],
 				["ES", "es"],
-				["SE", "se"]
+				["SE", "se"],
+				["ZH", "zh"],
+				["IT", "it"],
+				["CA", "ca"]
 			];
 
 			let elLanguages = $('#potree_languages');
@@ -81817,290 +81829,322 @@ ENDSEC
 	 *
 	 */
 
-	 
-	class OrbitControls extends EventDispatcher{
-		
-		constructor(viewer){
-			super();
-			
-			this.viewer = viewer;
-			this.renderer = viewer.renderer;
+	class OrbitControls extends EventDispatcher {
+	  constructor(viewer) {
+	    super();
 
-			this.scene = null;
-			this.sceneControls = new Scene();
-
-			this.rotationSpeed = 5;
-
-			this.fadeFactor = 20;
-			this.yawDelta = 0;
-			this.pitchDelta = 0;
-			this.panDelta = new Vector2(0, 0);
-			this.radiusDelta = 0;
-
-			this.doubleClockZoomEnabled = true;
-
-			this.tweens = [];
-
-			this.changeEvent = new CustomEvent("camerachange");
-
-			let drag = (e) => {
-				if (e.drag.object !== null) {
-					return;
-				}
-
-				if (e.drag.startHandled === undefined) {
-					e.drag.startHandled = true;
-
-					this.dispatchEvent({type: 'start'});
-				}
-
-				let ndrag = {
-					x: e.drag.lastDrag.x / this.renderer.domElement.clientWidth,
-					y: e.drag.lastDrag.y / this.renderer.domElement.clientHeight
-				};
-
-				if (e.drag.mouse === MOUSE$1.LEFT) {
-					this.yawDelta += ndrag.x * this.rotationSpeed;
-					this.pitchDelta += ndrag.y * this.rotationSpeed;
-
-					this.stopTweens();
-				} else if (e.drag.mouse === MOUSE$1.RIGHT) {
-					this.panDelta.x += ndrag.x;
-					this.panDelta.y += ndrag.y;
-
-					this.stopTweens();
-				}
-
-				document.dispatchEvent(this.changeEvent);
-
-			};
-
-			let drop = e => {
-				this.dispatchEvent({type: 'end'});
-				document.dispatchEvent(this.changeEvent);
-			};
-
-			let scroll = (e) => {
-				let resolvedRadius = this.scene.view.radius + this.radiusDelta;
-
-				this.radiusDelta += -e.delta * resolvedRadius * 0.1;
-
-				this.stopTweens();
-				document.dispatchEvent(this.changeEvent);
-			};
-
-			let dblclick = (e) => {
-				if(this.doubleClockZoomEnabled){
-					this.zoomToLocation(e.mouse);
-				}
-			};
-
-			let previousTouch = null;
-			let touchStart = e => {
-				previousTouch = e;
-			};
-
-			let touchEnd = e => {
-				previousTouch = e;
-			};
-
-			let touchMove = e => {
-				if (e.touches.length === 2 && previousTouch.touches.length === 2){
-					let prev = previousTouch;
-					let curr = e;
-
-					let prevDX = prev.touches[0].pageX - prev.touches[1].pageX;
-					let prevDY = prev.touches[0].pageY - prev.touches[1].pageY;
-					let prevDist = Math.sqrt(prevDX * prevDX + prevDY * prevDY);
-
-					let currDX = curr.touches[0].pageX - curr.touches[1].pageX;
-					let currDY = curr.touches[0].pageY - curr.touches[1].pageY;
-					let currDist = Math.sqrt(currDX * currDX + currDY * currDY);
-
-					let delta = currDist / prevDist;
-					let resolvedRadius = this.scene.view.radius + this.radiusDelta;
-					let newRadius = resolvedRadius / delta;
-					this.radiusDelta = newRadius - resolvedRadius;
-
-					this.stopTweens();
-				}else if(e.touches.length === 3 && previousTouch.touches.length === 3){
-					let prev = previousTouch;
-					let curr = e;
-
-					let prevMeanX = (prev.touches[0].pageX + prev.touches[1].pageX + prev.touches[2].pageX) / 3;
-					let prevMeanY = (prev.touches[0].pageY + prev.touches[1].pageY + prev.touches[2].pageY) / 3;
-
-					let currMeanX = (curr.touches[0].pageX + curr.touches[1].pageX + curr.touches[2].pageX) / 3;
-					let currMeanY = (curr.touches[0].pageY + curr.touches[1].pageY + curr.touches[2].pageY) / 3;
-
-					let delta = {
-						x: (currMeanX - prevMeanX) / this.renderer.domElement.clientWidth,
-						y: (currMeanY - prevMeanY) / this.renderer.domElement.clientHeight
-					};
-
-					this.panDelta.x += delta.x;
-					this.panDelta.y += delta.y;
-
-					this.stopTweens();
-				}
-
-				previousTouch = e;
-			};
-
-			this.addEventListener('touchstart', touchStart);
-			this.addEventListener('touchend', touchEnd);
-			this.addEventListener('touchmove', touchMove);
-			this.addEventListener('drag', drag);
-			this.addEventListener('drop', drop);
-			this.addEventListener('mousewheel', scroll);
-			this.addEventListener('dblclick', dblclick);
-		}
-
-		setScene (scene) {
-			this.scene = scene;
-		}
-
-		stop(){
-			this.yawDelta = 0;
-			this.pitchDelta = 0;
-			this.radiusDelta = 0;
-			this.panDelta.set(0, 0);
-		}
-		
-		zoomToLocation(mouse){
-			let camera = this.scene.getActiveCamera();
-			
-			let I = Utils.getMousePointCloudIntersection(
-				mouse,
-				camera,
-				this.viewer,
-				this.scene.pointclouds,
-				{pickClipped: true});
-
-			if (I === null) {
-				return;
-			}
-
-			let targetRadius = 0;
-			{
-				let minimumJumpDistance = 0.2;
-
-				let domElement = this.renderer.domElement;
-				let ray = Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
-
-				let nodes = I.pointcloud.nodesOnRay(I.pointcloud.visibleNodes, ray);
-				let lastNode = nodes[nodes.length - 1];
-				let radius = lastNode.getBoundingSphere(new Sphere()).radius;
-				targetRadius = Math.min(this.scene.view.radius, radius);
-				targetRadius = Math.max(minimumJumpDistance, targetRadius);
-			}
-
-			let d = this.scene.view.direction.multiplyScalar(-1);
-			let cameraTargetPosition = new Vector3().addVectors(I.location, d.multiplyScalar(targetRadius));
-			// TODO Unused: let controlsTargetPosition = I.location;
-
-			let animationDuration = 600;
-			let easing = TWEEN.Easing.Quartic.Out;
-
-			{ // animate
-				let value = {x: 0};
-				let tween = new TWEEN.Tween(value).to({x: 1}, animationDuration);
-				tween.easing(easing);
-				this.tweens.push(tween);
-
-				let startPos = this.scene.view.position.clone();
-				let targetPos = cameraTargetPosition.clone();
-				let startRadius = this.scene.view.radius;
-				let targetRadius = cameraTargetPosition.distanceTo(I.location);
-
-				tween.onUpdate(() => {
-					let t = value.x;
-					this.scene.view.position.x = (1 - t) * startPos.x + t * targetPos.x;
-					this.scene.view.position.y = (1 - t) * startPos.y + t * targetPos.y;
-					this.scene.view.position.z = (1 - t) * startPos.z + t * targetPos.z;
-
-					this.scene.view.radius = (1 - t) * startRadius + t * targetRadius;
-					this.viewer.setMoveSpeed(this.scene.view.radius);
-					document.dispatchEvent(this.changeEvent);
-				});
-
-				tween.onComplete(() => {
-					this.tweens = this.tweens.filter(e => e !== tween);
-					document.dispatchEvent(this.changeEvent);
-				});
-
-				tween.start();
-			}
-		}
-
-		stopTweens () {
-			this.tweens.forEach(e => e.stop());
-			this.tweens = [];
-		}
-
-		update (delta) {
-			let view = this.scene.view;
-
-			{ // apply rotation
-				let progression = Math.min(1, this.fadeFactor * delta);
-
-				let yaw = view.yaw;
-				let pitch = view.pitch;
-				let pivot = view.getPivot();
-
-				yaw -= progression * this.yawDelta;
-				pitch -= progression * this.pitchDelta;
-
-				view.yaw = yaw;
-				view.pitch = pitch;
-
-				let V = this.scene.view.direction.multiplyScalar(-view.radius);
-				let position = new Vector3().addVectors(pivot, V);
-
-				view.position.copy(position);
-			}
-
-			{ // apply pan
-				let progression = Math.min(1, this.fadeFactor * delta);
-				let panDistance = progression * view.radius * 3;
-
-				let px = -this.panDelta.x * panDistance;
-				let py = this.panDelta.y * panDistance;
-
-				view.pan(px, py);
-			}
-
-			{ // apply zoom
-				let progression = Math.min(1, this.fadeFactor * delta);
-
-				// let radius = view.radius + progression * this.radiusDelta * view.radius * 0.1;
-				let radius = view.radius + progression * this.radiusDelta;
-
-				let V = view.direction.multiplyScalar(-radius);
-				let position = new Vector3().addVectors(view.getPivot(), V);
-				view.radius = radius;
-
-				view.position.copy(position);
-			}
-
-			{
-				let speed = view.radius;
-				this.viewer.setMoveSpeed(speed);
-			}
-
-			{ // decelerate over time
-				let progression = Math.min(1, this.fadeFactor * delta);
-				let attenuation = Math.max(0, 1 - this.fadeFactor * delta);
-
-				this.yawDelta *= attenuation;
-				this.pitchDelta *= attenuation;
-				this.panDelta.multiplyScalar(attenuation);
-				// this.radiusDelta *= attenuation;
-				this.radiusDelta -= progression * this.radiusDelta;
-			}
-
-		}
-	};
+	    this.viewer = viewer;
+	    this.renderer = viewer.renderer;
+
+	    this.scene = null;
+	    this.sceneControls = new Scene();
+
+	    this.rotationSpeed = 5;
+
+	    this.fadeFactor = 20;
+	    this.yawDelta = 0;
+	    this.pitchDelta = 0;
+	    this.panDelta = new Vector2(0, 0);
+	    this.radiusDelta = 0;
+
+	    this.doubleClockZoomEnabled = true;
+		this.isInterior=false;
+	    this.tweens = [];
+
+	    this.changeEvent = new CustomEvent("camerachange");
+
+	    let drag = (e) => {
+	      if (e.drag.object !== null) {
+	        return;
+	      }
+
+	      if (e.drag.startHandled === undefined) {
+	        e.drag.startHandled = true;
+
+	        this.dispatchEvent({ type: "start" });
+	      }
+
+	      let ndrag = {
+	        x: e.drag.lastDrag.x / this.renderer.domElement.clientWidth,
+	        y: e.drag.lastDrag.y / this.renderer.domElement.clientHeight,
+	      };
+
+	      if (e.drag.mouse === MOUSE$1.LEFT) {
+	        this.yawDelta += ndrag.x * this.rotationSpeed;
+	        this.pitchDelta += ndrag.y * this.rotationSpeed;
+
+	        this.stopTweens();
+	      } else if (e.drag.mouse === MOUSE$1.RIGHT) {
+	        this.panDelta.x += ndrag.x;
+	        this.panDelta.y += ndrag.y;
+
+	        this.stopTweens();
+	      }
+
+	      document.dispatchEvent(this.changeEvent);
+	    };
+
+	    let drop = (e) => {
+	      this.dispatchEvent({ type: "end" });
+	      document.dispatchEvent(this.changeEvent);
+	    };
+
+	    let scroll = (e) => {
+	      let resolvedRadius = this.scene.view.radius + this.radiusDelta;
+
+	      this.radiusDelta += -e.delta * resolvedRadius * 0.1;
+
+	      this.stopTweens();
+	      document.dispatchEvent(this.changeEvent);
+	    };
+
+	    let dblclick = (e) => {
+	      if (this.doubleClockZoomEnabled) {
+	        this.zoomToLocation(e.mouse);
+	      }
+	    };
+
+	    let previousTouch = null;
+	    let touchStart = (e) => {
+	      previousTouch = e;
+	    };
+
+	    let touchEnd = (e) => {
+	      previousTouch = e;
+	    };
+
+	    let touchMove = (e) => {
+	      if (e.touches.length === 2 && previousTouch.touches.length === 2) {
+	        let prev = previousTouch;
+	        let curr = e;
+
+	        let prevDX = prev.touches[0].pageX - prev.touches[1].pageX;
+	        let prevDY = prev.touches[0].pageY - prev.touches[1].pageY;
+	        let prevDist = Math.sqrt(prevDX * prevDX + prevDY * prevDY);
+
+	        let currDX = curr.touches[0].pageX - curr.touches[1].pageX;
+	        let currDY = curr.touches[0].pageY - curr.touches[1].pageY;
+	        let currDist = Math.sqrt(currDX * currDX + currDY * currDY);
+
+	        let delta = currDist / prevDist;
+	        let resolvedRadius = this.scene.view.radius + this.radiusDelta;
+	        let newRadius = resolvedRadius / delta;
+	        this.radiusDelta = newRadius - resolvedRadius;
+
+	        this.stopTweens();
+	      } else if (e.touches.length === 3 && previousTouch.touches.length === 3) {
+	        let prev = previousTouch;
+	        let curr = e;
+
+	        let prevMeanX =
+	          (prev.touches[0].pageX +
+	            prev.touches[1].pageX +
+	            prev.touches[2].pageX) /
+	          3;
+	        let prevMeanY =
+	          (prev.touches[0].pageY +
+	            prev.touches[1].pageY +
+	            prev.touches[2].pageY) /
+	          3;
+
+	        let currMeanX =
+	          (curr.touches[0].pageX +
+	            curr.touches[1].pageX +
+	            curr.touches[2].pageX) /
+	          3;
+	        let currMeanY =
+	          (curr.touches[0].pageY +
+	            curr.touches[1].pageY +
+	            curr.touches[2].pageY) /
+	          3;
+
+	        let delta = {
+	          x: (currMeanX - prevMeanX) / this.renderer.domElement.clientWidth,
+	          y: (currMeanY - prevMeanY) / this.renderer.domElement.clientHeight,
+	        };
+
+	        this.panDelta.x += delta.x;
+	        this.panDelta.y += delta.y;
+
+	        this.stopTweens();
+	      }
+
+	      previousTouch = e;
+	    };
+
+	    this.addEventListener("touchstart", touchStart);
+	    this.addEventListener("touchend", touchEnd);
+	    this.addEventListener("touchmove", touchMove);
+	    this.addEventListener("drag", drag);
+	    this.addEventListener("drop", drop);
+	    this.addEventListener("mousewheel", scroll);
+	    this.addEventListener("dblclick", dblclick);
+	  }
+
+	  setScene(scene) {
+	    this.scene = scene;
+	  }
+
+	  stop() {
+	    this.yawDelta = 0;
+	    this.pitchDelta = 0;
+	    this.radiusDelta = 0;
+	    this.panDelta.set(0, 0);
+	  }
+
+	  zoomToLocation(mouse) {
+	    let camera = this.scene.getActiveCamera();
+
+	    let I = Utils.getMousePointCloudIntersection(
+	      mouse,
+	      camera,
+	      this.viewer,
+	      this.scene.pointclouds,
+	      { pickClipped: true }
+	    );
+
+	    if (I === null) {
+	      return;
+	    }
+
+	    let targetRadius = 0;
+	    {
+	      let minimumJumpDistance = 0.2;
+
+	      let domElement = this.renderer.domElement;
+	      let ray = Utils.mouseToRay(
+	        mouse,
+	        camera,
+	        domElement.clientWidth,
+	        domElement.clientHeight
+	      );
+
+	      let nodes = I.pointcloud.nodesOnRay(I.pointcloud.visibleNodes, ray);
+	      let lastNode = nodes[nodes.length - 1];
+	      let radius = lastNode.getBoundingSphere(new Sphere()).radius;
+	      targetRadius = Math.min(this.scene.view.radius, radius);
+	      targetRadius = Math.max(minimumJumpDistance, targetRadius);
+	    }
+
+	    let d = this.scene.view.direction.multiplyScalar(-1);
+	    let cameraTargetPosition = new Vector3().addVectors(
+	      I.location,
+	      d.multiplyScalar(targetRadius)
+	    );
+	    // TODO Unused: let controlsTargetPosition = I.location;
+
+	    let animationDuration = 600;
+	    let easing = TWEEN.Easing.Quartic.Out;
+
+	    {
+	      // animate
+	      let value = { x: 0 };
+	      let tween = new TWEEN.Tween(value).to({ x: 1 }, animationDuration);
+	      tween.easing(easing);
+	      this.tweens.push(tween);
+
+	      let startPos = this.scene.view.position.clone();
+	      let targetPos = cameraTargetPosition.clone();
+	      let startRadius = this.scene.view.radius;
+	      let targetRadius = cameraTargetPosition.distanceTo(I.location);
+
+	      tween.onUpdate(() => {
+	        let t = value.x;
+	        this.scene.view.position.x = (1 - t) * startPos.x + t * targetPos.x;
+	        this.scene.view.position.y = (1 - t) * startPos.y + t * targetPos.y;
+	        this.scene.view.position.z = (1 - t) * startPos.z + t * targetPos.z;
+
+	        this.scene.view.radius = (1 - t) * startRadius + t * targetRadius;
+	        this.viewer.setMoveSpeed(this.scene.view.radius);
+	        document.dispatchEvent(this.changeEvent);
+	      });
+
+	      tween.onComplete(() => {
+	        this.tweens = this.tweens.filter((e) => e !== tween);
+	        document.dispatchEvent(this.changeEvent);
+	      });
+
+	      tween.start();
+	    }
+	  }
+
+	  stopTweens() {
+	    this.tweens.forEach((e) => e.stop());
+	    this.tweens = [];
+	  }
+
+	  update(delta) {
+	    let view = this.scene.view;
+
+	    {
+	      // apply rotation
+	      let progression = Math.min(1, this.fadeFactor * delta);
+
+	      let yaw = view.yaw;
+	      let pitch = view.pitch;
+	      let pivot = view.getPivot();
+
+	      yaw -= progression * this.yawDelta;
+	      pitch -= progression * this.pitchDelta;
+		if (this.isInterior) {
+	      if (pitch < -1 * 0.3) {
+	        pitch = -1 * 0.3;
+	      } else if (pitch > 1.3) {
+	        pitch = 1.3;
+	      }
+	    }	
+	      view.yaw = yaw;
+	      view.pitch = pitch;
+
+	      let V = this.scene.view.direction.multiplyScalar(-view.radius);
+	      let position = new Vector3().addVectors(pivot, V);
+
+	      view.position.copy(position);
+	    }
+
+	    {
+	      // apply pan
+	      let progression = Math.min(1, this.fadeFactor * delta);
+	      let panDistance = progression * view.radius * 3;
+
+	      let px = -this.panDelta.x * panDistance;
+	      let py = this.panDelta.y * panDistance;
+
+	      view.pan(px, py);
+	    }
+
+	    {
+	      // apply zoom
+	      let progression = Math.min(1, this.fadeFactor * delta);
+
+	      // let radius = view.radius + progression * this.radiusDelta * view.radius * 0.1;
+	      let radius = view.radius + progression * this.radiusDelta;
+
+	      let V = view.direction.multiplyScalar(-radius);
+	      let position = new Vector3().addVectors(view.getPivot(), V);
+	      view.radius = radius;
+
+	      view.position.copy(position);
+	    }
+
+	    {
+	      let speed = view.radius;
+	      this.viewer.setMoveSpeed(speed);
+	    }
+
+	    {
+	      // decelerate over time
+	      let progression = Math.min(1, this.fadeFactor * delta);
+	      let attenuation = Math.max(0, 1 - this.fadeFactor * delta);
+
+	      this.yawDelta *= attenuation;
+	      this.pitchDelta *= attenuation;
+	      this.panDelta.multiplyScalar(attenuation);
+	      // this.radiusDelta *= attenuation;
+	      this.radiusDelta -= progression * this.radiusDelta;
+	    }
+	  }
+	}
 
 	/**
 	 * @author mschuetz / http://mschuetz.at
@@ -88413,6 +88457,7 @@ ENDSEC
 			this.measuringTool = new MeasuringTool(this);
 			this.profileTool = new ProfileTool(this);
 			this.volumeTool = new VolumeTool(this);
+			this.propertiesPanel = new PropertiesPanel({}, this);
 
 			}catch(e){
 				this.onCrash(e);

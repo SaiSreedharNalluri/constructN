@@ -1,4 +1,11 @@
-import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
+import {
+    applyOffset,
+    removeOffset,
+    applyTMInverse,
+    applyTM,
+    isMobile
+
+  } from './ViewerDataUtils';
 
 export class ForgeDataVisualization {
     static EXTENSION_ID = "Autodesk.DataVisualization";
@@ -39,6 +46,14 @@ export class ForgeDataVisualization {
 
     setOcclusion(enable) {
         this.dataVizExtn.changeOcclusion(enable);
+    }
+
+    setIs2D(is2D) {
+        this.is2D = is2D;
+    }
+
+    setTM(tm) {
+        this.tm = tm;
     }
 
     setOffset(offset) {
@@ -90,11 +105,11 @@ export class ForgeDataVisualization {
 
     addMediaData(visualizationData) {
         this.mediaMap = visualizationData;
-        this.formatDataMap(this.mediaMap);
+        // this.formatDataMap(this.mediaMap);
     }
 
     setViewableState(viewableList) {
-        console.log("Inside set Viewable state: ", viewableList)
+        console.log("ForgeDataVisualization Inside set Viewable state: ", viewableList)
         if (!viewableList) {
             return;
         }
@@ -110,12 +125,12 @@ export class ForgeDataVisualization {
 
     addIssuesData(issuesList) {
         this.tagMap["Issue"] = issuesList;
-        this.formatDataMap(this.tagMap);
+        // this.formatDataMap(this.tagMap);
     }
 
     addTasksData(tasksList) {
         this.tagMap["Task"] = tasksList;
-        this.formatDataMap(this.tagMap);
+        // this.formatDataMap(this.tagMap);
     }
 
     setTagState(state) {
@@ -127,6 +142,11 @@ export class ForgeDataVisualization {
         }
     }
 
+    updateDataMap() {
+        this.formatDataMap(this.mediaMap);
+        this.formatDataMap(this.tagMap);
+    }
+
     formatDataMap(visualizationData) {
         let dbId = this.viewableLength + 1;
         for (const viewableType in visualizationData) {
@@ -134,41 +154,68 @@ export class ForgeDataVisualization {
             this.viewableDataMap[viewableType] = {};
             switch (viewableType) {
                 case "360 Image":
-                case "Phone Image":
                 case "360 Video":
-                    for (const positionData in visualizationData[viewableType]) {
-                        let positionArray = visualizationData[viewableType][positionData].position;
-                        let dbIdObject = {
-                            dbId: dbId++,
-                            type: viewableType,
-                            id: positionData,
-                            position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                    for(const reality of visualizationData[viewableType]) {
+                        for (const positionData in reality.position) {
+                            let positionArray = reality.position[positionData].position;
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: reality.id,
+                                imageName: positionData,
+                                // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                                position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
+                                
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;
+                            // this.viewableState[viewableType] = true;
                         }
-                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;
-                        // this.viewableState[viewableType] = true;
                     }
                     break;
                 case "Drone Image":
+                case "Phone Image":
+                    for(const reality of visualizationData[viewableType]) {
+                        reality.position["camname"].forEach((imageName, index) => {
+                            let positionArray = [];
+                            positionArray[0] = reality.position["camX"][index];
+                            positionArray[1] = reality.position["camY"][index];
+                            positionArray[2] = reality.position["camZ"][index];
+
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: reality.id,
+                                imageName: imageName,
+                                // position: this.applyOffset({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.offset),
+                                position: this.getViewerPosition({x: positionArray[0], y: positionArray[1], z: positionArray[2]}, this.tm, this.offset),
+                                
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;
+                        })
+                    }
                     break;
                 case "Issue":
                 case "Task":
                     for (const trackerData of visualizationData[viewableType]) {
-                        console.log("Inside data visualization: ", trackerData);
-                        let tag = trackerData.context.tag;
-                        let dbIdObject = {
-                            dbId: dbId++,
-                            type: viewableType,
-                            id: trackerData._id,
-                            position: this.applyOffset(tag.tagPosition, this.offset),
+                        // console.log("Inside data visualization: ", trackerData);
+                        if(trackerData.context) {
+                            let tag = trackerData.context.tag;
+                            let dbIdObject = {
+                                dbId: dbId++,
+                                type: viewableType,
+                                id: trackerData._id,
+                                // position: this.applyOffset(tag.tagPosition, this.offset),
+                                position: this.getViewerPosition(tag.tagPosition, this.tm, this.offset),
+                            }
+                            this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
+                            // this.tagState[viewableType] = true;
                         }
-                        this.dbIdArray[dbIdObject.dbId] = dbIdObject;;
-                        // this.tagState[viewableType] = true;
                     }
                     break;
             }   
             this.viewableLength = dbId - 1;
         }
-        console.log("Viewable data map: ", this.viewableLength);
+        console.log("ForgeDataVisualization Viewable data map: ", this.viewableLength);
     }
 
     removeDataMap(type) {
@@ -178,6 +225,7 @@ export class ForgeDataVisualization {
     
     updateData() {
         this.removeViewableData();
+        this.updateDataMap();
         this.getNewViewableData();
         this.loadViewableData();
         this.addListeners();
@@ -192,20 +240,17 @@ export class ForgeDataVisualization {
         let highlightUrl = ""
         switch (iconType) {
             case 'Drone Image':
-                iconUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
-                highlightUrl ="https://img.icons8.com/material-outlined/24/null/new-moon.png";
-            break;
             case '360 Video':
                 iconUrl = "/icons/360VideoWalkInViewer.svg";
                 highlightUrl = "/icons/360VideoWalkInViewer.svg";
             break;
             case '360 Image':
-                iconUrl = "/icons/360ImageInViewer.svg";
-                highlightUrl = "/icons/360ImageInViewer.svg";
+                iconUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';
+                highlightUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';
                 break;
             case 'Phone Image':
-                iconUrl = "/icons/phoneImageInViewer.svg";
-                highlightUrl = "/icons/phoneImageInViewer.svg";
+                iconUrl = "/customicons/PhoneImageIconWoBorder.svg";
+                highlightUrl = "/customicons/PhoneImageIconWoBorder.svg";
                 break;
             case 'Issue':
                 iconUrl = "/icons/issuesInViewer.svg";
@@ -234,8 +279,13 @@ export class ForgeDataVisualization {
             case '360 Image':
                 viewableData.spriteSize = 48;
                 break;
+            case 'Drone Image':
             case '360 Video':
-                viewableData.spriteSize = 12;
+                if (isMobile()) {
+                    viewableData.spriteSize = 25;
+                  } else {
+                    viewableData.spriteSize = 12;
+                  }
                 break;
             case 'Phone Image':
                 viewableData.spriteSize = 48;
@@ -272,16 +322,20 @@ export class ForgeDataVisualization {
 
             this.viewableDataMap[dbIdObject.type].viewableData.addViewable(viewable);
         }
-        console.log("Viewable data map: ", this.viewableDataMap);
+        console.log(" ForgeDataVisualization Viewable data map: ", this.viewableDataMap);
     }
 
     async loadViewableData() {
         let combinedState = {...this.viewableState, ...this.tagState}
         for (let viewableType in this.viewableDataMap) {
             if(combinedState[viewableType]) {
-                console.log("Awaiting viewable data finish: ", viewableType);
-                await this.viewableDataMap[viewableType].viewableData.finish(); 
-                this.dataVizExtn.addViewables(this.viewableDataMap[viewableType].viewableData);
+                try{
+                    console.log(" ForgeDataVisualization Awaiting viewable data finish: ", viewableType);
+                    await this.viewableDataMap[viewableType].viewableData.finish(); 
+                    this.dataVizExtn.addViewables(this.viewableDataMap[viewableType].viewableData);
+                } catch(e) {
+                    console.log(e)
+                }
             }
         }
     }
@@ -289,6 +343,8 @@ export class ForgeDataVisualization {
 
     refreshViewableData() {
         this.removeViewableData();
+        this.removeExistingVisualizationData();
+        this.updateDataMap();
         this.getNewViewableData();
         this.loadViewableData();
     }
@@ -297,8 +353,8 @@ export class ForgeDataVisualization {
     async createTempViewable(type, event) {
 
         let viewport = this.viewer.container.getBoundingClientRect();
-        let canvasX = event.originalEvent.clientX - viewport.left;
-        let canvasY = event.originalEvent.clientY - viewport.top;
+        let canvasX = isMobile() ? event.originalEvent.pointers[0].pageX - viewport.left : event.originalEvent.clientX - viewport.left;
+        let canvasY = isMobile() ? event.originalEvent.pointers[0].pageY - viewport.top: event.originalEvent.clientY - viewport.top;
         let result = this.viewer.clientToWorld(canvasX, canvasY);
 
         if (result) {
@@ -320,11 +376,10 @@ export class ForgeDataVisualization {
             this.dataVizExtn.addViewables(viewableData);
 
 
-            dbIdObject.position = this.removeOffset(dbIdObject.position, this.offset);
+            dbIdObject.position = this.getGlobalPosition(dbIdObject.position, this.tm, this.offset);
             this.handlerFunction(event, dbIdObject);
         }
     }
-
     clearTempViewables() {
         this.removeViewableData();
         this.getNewViewableData();
@@ -362,7 +417,7 @@ export class ForgeDataVisualization {
     }
 
     onSpriteClickedOut(event) {
-        console.log("Inside sprite clicked out selection : ", event.dbId);
+        // console.log("Inside sprite clicked out selection : ", event.dbId);
         // event.hasStopped = true;
         this.handleSelectionOut(event.dbId);
     
@@ -371,7 +426,7 @@ export class ForgeDataVisualization {
     handleSelectionOut(tagId) {
         const viewablesToUpdate = [tagId];
         this.dataVizExtn.invalidateViewables(viewablesToUpdate, (viewable) => {
-            console.log("Inside invalidate for selection out : ", viewable);
+            // console.log("Inside invalidate for selection out : ", viewable);
             return {
                 scale: 1.0, // Restore the viewable size
                 url: "/icons/issuesInViewer.svg",
@@ -380,7 +435,7 @@ export class ForgeDataVisualization {
     }
 
     handleSelection(tagId) {
-        console.log("Inside handle selection : ", tagId);
+        // console.log("Inside handle selection : ", tagId);
         this.dataVizExtn.clearHighlightedViewables();
         this.dataVizExtn.highlightViewables(tagId);
         // const viewablesToUpdate = [tagId];
@@ -395,30 +450,73 @@ export class ForgeDataVisualization {
 
     passToViewerHandler(event) {
         
-        let dbObject = this.dbIdArray[event.dbId];
+        let dbObject = structuredClone(this.dbIdArray[event.dbId]);
         // console.log("Inside selected dbId object: ", this.dbIdMap, dbObject);
 
         if (dbObject) {
-            dbObject.position = this.removeOffset(dbObject.position, this.offset);
+            dbObject.position = this.getGlobalPosition(dbObject.position, this.tm, this.offset);
             this.handlerFunction(event, dbObject);
         }
     }
 
-    applyOffset(position, offset) {
-        return {
-            x: position.x - offset[0],
-            y: position.y - offset[1],
-            z: position.z - offset[2],
+    getViewerPosition(position, tm, offset) {
+        // console.log("Inside get viewer posistion: ", position, tm, offset);
+
+
+        let _position;
+        if(this.is2D) {
+            _position = applyTMInverse(position, tm);
+            _position = applyOffset(_position, offset);
+        } else {
+            _position = applyOffset(position, offset);
         }
+        return _position;
     }
 
-    removeOffset(position, offset) {
-        return {
-            x: position.x + offset[0],
-            y: position.y + offset[1],
-            z: position.z + offset[2],
+    getGlobalPosition(position, tm, offset) {
+        let _position;
+        if(this.is2D) {
+            _position = applyTM(position, tm);
+            _position = removeOffset(_position, offset);
+        } else {
+            _position = removeOffset(position, offset);
         }
+        return _position;
     }
+
+    // applyOffset(position, offset) {
+    //     return {
+    //         x: position.x - offset[0],
+    //         y: position.y - offset[1],
+    //         z: position.z - offset[2],
+    //     }
+    // }
+
+    // removeOffset(position, offset) {
+    //     return {
+    //         x: position.x + offset[0],
+    //         y: position.y + offset[1],
+    //         z: position.z + offset[2],
+    //     }
+    // }
+
+    // worldToimage(position, tm) {
+    //     const a = new THREE.Vector4(position.x, position.y, position.z, 1);
+    //     const matrixInv = new THREE.Matrix4();
+    //     matrixInv.copy(tm).invert();
+    //     a.applyMatrix4(matrixInv);
+    //     // console.log("matrix values: ", tm, matrixInv, a);
+    //     // return [Math.ceil(a.x), Math.ceil(a.y)]
+    //     return a;
+    // }
+
+    // imageToWorld(position, tm) {
+    //     const a = new THREE.Vector4(position.x, position.y, position.z, 1);
+    //     a.applyMatrix4(tm);
+    //     // console.log("matrix values: ", tm, a);
+    //     // return [Math.ceil(a.x), Math.ceil(a.y)]
+    //     return a;
+    // }
 
     removeExistingVisualizationData() {
         if(this.viewableDataMap && Object.keys(this.viewableDataMap).length > 0) {
@@ -429,8 +527,8 @@ export class ForgeDataVisualization {
             this.viewableLength = 0;
             console.log("Inside remove layers in dataviz layer: ", this.viewableDataMap, this.dbIdArray, this.viewableLength);
         }
-        this.removeListeners();
-        
+        this.removeViewableData();
+        // this.removeListeners(); 
     }
 
     removeViewableData() {

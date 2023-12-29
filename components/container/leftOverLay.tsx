@@ -1,82 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { ChildrenEntity, IStructure } from '../../models/IStructure';
-import Treelist from './treeList';
-import { useRouter } from 'next/router';
-import { AxiosResponse } from 'axios';
-import { getStructureHierarchy, getStructureList } from '../../services/structure';
-import * as Yup from 'yup';
-import { Formik, Form, Field } from 'formik';
+import React, { useEffect, useState } from "react";
+import { ChildrenEntity, IStructure } from "../../models/IStructure";
+import Treelist from "./treeList";
+import { useRouter } from "next/router";
+import { AxiosResponse } from "axios";
+import {
+  getStructureHierarchy,
+  getStructureList,
+} from "../../services/structure";
+import * as Yup from "yup";
+import { Formik, Form, Field } from "formik";
+import ProjectHierarchy from "../divami_components/project-hierarchy/ProjectHierarchy";
+
 interface IProps {
   getStructureData: (structure: ChildrenEntity) => void;
   getStructure: (Structure: ChildrenEntity) => void;
+  setHierarchy: any;
+  handleNodeSelection: any;
+  selectedNodes: any;
+  handleNodeExpand: any;
+  expandedNodes: any;
+  treeData: any;
 }
-const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
+const LeftOverLay: React.FC<IProps> = ({
+  treeData,
+  getStructureData,
+  getStructure,
+  setHierarchy,
+  handleNodeSelection,
+  selectedNodes,
+  handleNodeExpand,
+  expandedNodes,
+}) => {
   let router = useRouter();
-  let [state, setState] = useState<ChildrenEntity[]>([]);
+  let [state, setState] = useState<ChildrenEntity[] | any[]>(treeData);
   let [stateFilter, setStateFilter] = useState<ChildrenEntity[]>([]);
-  const [selector,setSelector]=useState('');
-  useEffect(() => {
-    if (router.isReady) {
-      if(router.query.structId!==undefined)
-          setSelector(router.query.structId.toString());
-      getStructureHierarchy(router.query.projectId as string)
-        .then((response: AxiosResponse<any>) => {
-          setState([...response.data.result]);
-          setStateFilter([...response.data.result]);
-          // if(selector.length<1){
-          //   let index =response.data.result.findIndex((structData:IStructure)=>{
-                
-          //     return ((structData.designs!==undefined )&& (structData.designs.length>0))
-          //   })
-          //   if(index>0)
-          //   setSelector(response.data.result[index]._id);
-          //   else
-          //   setSelector(response.data.result[0]._id);
-           
-          //   //to find structure with data and set
-          // }
-          
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-        getStructureList(router.query.projectId as string)
-        .then((response) => {
-         
-          if (response.data.result.length > 0) {
-            if (router.query.structId !== undefined) {
-              let structs: IStructure[] = response.data.result;
-              let temp_struct:IStructure|undefined=structs?.find((e) => {
-                console.log('finding structure: ', e._id);
-                if (e._id === router.query.structId) {
-                  return e;
-                }
-              });
-              if(temp_struct!==undefined)
-              setSelector(temp_struct._id
-              );
-            } else{
-              let index =response.data.result.findIndex((structData:IStructure)=>{
-                
-                return ((structData.designs!==undefined )&& (structData.designs.length>0))
-              })
-              if(index>0)
-              setSelector(response.data.result[index]._id);
-              else
-              setSelector(response.data.result[0]._id);
-              //console.log("first struct=",index);
-            } 
-          }
-        })
-        .catch((error) => {
-          console.error('failed to load data');
-        });
-    }
-  }, [router.isReady, router.query.projectId,router.query.structId]);
+  const [selector, setSelector] = useState("");
+
+  // useEffect(() => {
+  //   setState(treeData);
+  // }, [treeData]);
   const schema = Yup.object().shape({
     searchQuery: Yup.string()
-      .required('A search query is required')
-      .min(3, 'Search query must be at least 3 characters long'),
+      .required("A search query is required")
+      .min(3, "Search query must be at least 3 characters long"),
   });
 
   function filterBy(arr: ChildrenEntity[], query: string) {
@@ -95,10 +61,14 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
         }, [])
       : arr;
   }
+  // const [selected, setSelected] = useState<string[]>([]);
+  // const handleNodeSelection = (nodeIds: any) => {
+  //   setSelected(nodeIds);
+  // };
   return (
     <React.Fragment>
-      <Formik
-        initialValues={{ searchQuery: '' }}
+      {/* <Formik
+        initialValues={{ searchQuery: "" }}
         validationSchema={schema}
         onSubmit={(values, actions) => {
           actions.setSubmitting(false);
@@ -112,20 +82,47 @@ const LeftOverLay: React.FC<IProps> = ({ getStructureData, getStructure }) => {
               name="searchQuery"
               placeholder="Search"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setFieldValue('searchQuery', event.target.value);
+                setFieldValue("searchQuery", event.target.value);
                 setState(filterBy(stateFilter, event.target.value));
               }}
             />
           </Form>
         )}
-      </Formik>
+      </Formik> */}
 
-      <div>
-        {state.length === 0 ? (
-          'no structures found for this project'
-        ) : (
-          <Treelist initialSelector={selector} treeList={state} getStructureData={getStructureData} />
-        )}
+      <div
+        style={{
+          overflow: "hidden",
+          height: "100%",
+        }}
+      >
+        {
+          <ProjectHierarchy
+            handleSearch={(event: React.ChangeEvent<HTMLInputElement>) => {
+              // setFieldValue("searchQuery", event.target.value);
+          //    console.log("Robn", filterBy(treeData, event.target.value))
+              let newData = filterBy(state,event.target.value)
+          //    setState(newData);
+          //    return data
+          //    set
+              
+              return newData
+            }}
+            title={"Project Hierarchy"}
+            onCloseHandler={() => {
+              // setOpenSelectLayer(false)
+              setHierarchy(false);
+            }}
+            treeData={state}
+            setHierarchy={setHierarchy}
+            getStructureData={getStructureData}
+            handleNodeSelection={handleNodeSelection}
+            selectedNodes={selectedNodes}
+            handleNodeExpand={handleNodeExpand}
+            expandedNodes={expandedNodes}
+          />
+          // <Treelist initialSelector={selector} treeList={state} getStructureData={getStructureData} />
+        }
       </div>
     </React.Fragment>
   );

@@ -1,11 +1,11 @@
 import router from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
-import { toast } from 'react-toastify';
 import ChangePassword from '../../components/container/changePassword';
-import Header from '../../components/container/header';
+import Header from '../../components/divami_components/header/Header';
 import UserProfile from '../../components/container/userProfile';
 import { IUser } from '../../models/IUser';
+import { CustomToast } from "../../components/divami_components/custom-toaster/CustomToast"
 import {
   getUserProfile,
   updateProfileAvatar,
@@ -14,7 +14,6 @@ import {
 const Index: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [userDetails, setUserDetails] = useState<IUser>();
-
   useEffect(() => {
     if (router.isReady) {
       getUserProfile()
@@ -24,7 +23,7 @@ const Index: React.FC = () => {
           }
         })
         .catch((error) => {
-          toast.error('unable to load the data');
+          CustomToast('unable to load the data',"error");
         });
     }
   }, []);
@@ -33,7 +32,7 @@ const Index: React.FC = () => {
     formData.append('file', e.file);
     updateProfileAvatar(formData).then((response) => {
       if (response.success === true) {
-        toast.success('user profile pic updated successfully');
+        CustomToast('user profile pic updated successfully',"success");
         setUserDetails(response?.result);
         const fileInput = document.getElementById(
           'file-upload'
@@ -54,23 +53,22 @@ const Index: React.FC = () => {
       .then((response) => {
         if (response?.success === true) {
           setUserDetails(response?.result);
-          toast.success('user profile updated successfully');
+          CustomToast('user profile updated successfully',"success");
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+        CustomToast(error?.message,"error");
         }
       });
   };
-
   return (
     <div>
       <div>
         <Header />
       </div>
       <div>
-        <div className="w-full  calc-h overflow-y-auto ">
+        <div className="w-full mt-1  calc-h overflow-y-auto ">
           <Tabs
             selectedIndex={tabIndex}
             onSelect={(index) => {

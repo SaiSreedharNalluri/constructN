@@ -1,7 +1,7 @@
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { IProjectUsers } from '../../models/IProjects';
+import { IProjectUsers,IProjectUserList } from '../../models/IProjects';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik';
 import { role, roleData } from '../../utils/constants';
@@ -11,11 +11,14 @@ import Image from 'next/image';
 import router from 'next/router';
 import { toast } from 'react-toastify';
 import { assignProjectUser } from '../../services/project';
+import { Type } from 'react-toastify/dist/utils';
+import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
+import { AWS } from '../../config/config';
 interface IProps {
-  projectUsers: IProjectUsers[];
-  setProjectUsers: React.Dispatch<React.SetStateAction<IProjectUsers[]>>;
+  projectUsers: IProjectUserList[];
+  setProjectUsers: React.Dispatch<React.SetStateAction<IProjectUserList[]>>;
   deassignProjectUser: (e: string) => void;
-  updateUserRole: (e: { email: 'string'; role: 'string' }) => void;
+  updateUserRole: (e: { email: string; role: string }) => void;
 }
 const ProjectUserAdd: React.FC<IProps> = ({
   projectUsers,
@@ -55,17 +58,18 @@ const ProjectUserAdd: React.FC<IProps> = ({
     userInfo: { email: string; role: string },
     { resetForm }: FormikHelpers<{ email: string; role: string }>
   ) => {
+    userInfo.email = userInfo.email.toLocaleLowerCase();
     assignProjectUser(userInfo, router.query.projectId as string)
       .then((response) => {
         if (response?.success === true) {
-          toast.success(response?.message);
+          CustomToast(response?.message,"success");
           resetForm();
           setProjectUsers(response?.result);
         }
       })
       .catch((error) => {
         if (error.success === false) {
-          toast.error(error?.message);
+          CustomToast(error?.message,"error");
         }
       });
   };
@@ -91,7 +95,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
                 <ErrorMessage
                   name="email"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
@@ -130,18 +134,17 @@ const ProjectUserAdd: React.FC<IProps> = ({
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200  text-gray-500 uppercase ">
                       <th className="px-6 py-3 text-left font-medium">Name</th>
+                      <th className="px-6 py-3 text-left font-medium">Email</th>
                       <th className="px-6 py-3 text-left font-medium">Role</th>
-                      <th className="px-6 py-3 text-left font-medium">
-                        Delete
-                      </th>
+                      <th className="px-6 py-3 text-left font-medium">Delete</th>
                       <th className="px-6 py-3 text-left font-medium">Edit</th>
                     </tr>
                   </thead>
                   <tbody>
                     {projectUsers &&
-                      projectUsers.map((pUserData: any) => {
+                      projectUsers.map((pUserData: IProjectUserList) => {
                         return (
-                          <tr key={pUserData._id}>
+                          <tr key={pUserData.user._id}>
                             <td className="px-6  border-b border-gray-200">
                               <div className="flex  text-gray-900">
                                 <div className="w-6 h-6 mt-2 mr-2 mb-2 rounded-full overflow-hidden border-1 dark:border-white border-gray-900">
@@ -149,7 +152,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
                                     src={
                                       pUserData.user.avatar
                                         ? pUserData.user.avatar
-                                        : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/user_icon_def_01.png'
+                                        : `${AWS.CDN_ATTACHMENTS}/defaults/user_icon_def_01.png`
                                     }
                                     alt=""
                                     className={`w-full h-full cursor-pointer object-cover `}
@@ -163,6 +166,11 @@ const ProjectUserAdd: React.FC<IProps> = ({
                               </div>
                             </td>
                             <td className="px-6  border-b border-gray-200">
+                              <div className="flex  text-gray-900">
+                                    {pUserData.user.email}
+                              </div>
+                            </td>
+                            <td className="px-6  border-b border-gray-200">
                               <div className="flex items-center">
                                 <select
                                   disabled
@@ -171,7 +179,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
                                   defaultValue={pUserData.role}
                                   onChange={(e: any) => {
                                     updateUserRole({
-                                      email: pUserData.user.email,
+                                      email:pUserData.user.email,
                                       role: e.target.value,
                                     });
                                     const fileInput = document.getElementById(
@@ -257,7 +265,7 @@ const ProjectUserAdd: React.FC<IProps> = ({
           }}
         >
           <h1 className=" font-bold">Delete confirmation</h1>
-          <p className="mt-2">Are you sure you want to delete this item?</p>
+          <p className="mt-2">Are you sure you want to delete this User?</p>
           <div className="grid grid-cols-2 gap-x-4 mt-4">
             <button
               onClick={() => {

@@ -3,7 +3,8 @@ export interface IReality {
     job: string;
     capture: string;
     snapshot: string;
-    completedDateTime: Date;
+    completedDateTime?: Date | string;
+    realityType?:string[];
     status: string;
     type: string;
     mode: string;
@@ -16,7 +17,14 @@ export interface IActiveReality {
     mode: string,
 }
 
-type RealityMode = "360 Video" | "360 Image" | "Phone Image" | "Drone Image";
+type RealityMode = "360 Video" | "360 Image" | "Phone Image" | "Drone Image" | "Stages";
+export interface ILayer {
+    name: string,
+    isSelected: boolean,
+    children?: ILayer[],
+    realities?: IReality[],
+    filters?: any[]
+}
 export type IActiveRealityMap = {
-    [key in RealityMode]: [IReality];
+    [key in RealityMode]: ILayer
 };

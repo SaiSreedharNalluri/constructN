@@ -1,3 +1,4 @@
+import { API } from "../config/config";
 import authHeader from "./auth-header";
 import instance from "./axiosInstance";
 
@@ -7,7 +8,7 @@ export const getStructureDesigns = async (
 ) => {
     try {
       const params = new URLSearchParams([['structure', structureId]]);
-      return await instance.get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/designs`, {
+      return await instance.get(`${API.BASE_URL}/projects/${projectId}/designs`, {
         headers: authHeader.authHeader(),
         params
       });
@@ -30,3 +31,23 @@ export const getDesignTM = async (
 
   }
 };
+
+export const getDesignPointCloudTM = async (
+  path: string
+) => {
+try {
+    return await instance.get(
+    `${path}/pointcloud/tm.json`
+  ); 
+} catch (error) {
+  console.log("Error TmJson:", error);
+  return {}
+
+}
+};
+
+export const getDesignPointCloudPath = (
+  path: string
+  ) => {
+    return `${path}/pointcloud/cloud.json`
+}

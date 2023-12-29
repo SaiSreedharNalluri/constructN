@@ -1,9 +1,10 @@
-import instance from './axiosInstance';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import authHeader from "./auth-header";
+import { API } from "../config/config";
 export const createIssue = (projectId: string, issueObj: object) => {
   return instance
     .post(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues`,
+      `${API.BASE_URL}/projects/${projectId}/issues`,
       issueObj,
       {
         headers: authHeader.authHeader(),
@@ -19,7 +20,7 @@ export const createIssue = (projectId: string, issueObj: object) => {
 export const getIssuesList = async (projectId: string, structureId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues?structure=${structureId}`,
+      `${API.BASE_URL}/projects/${projectId}/issues?structure=${structureId}`,
       {
         headers: authHeader.authHeader(),
       }
@@ -33,7 +34,7 @@ export const getIssuesList = async (projectId: string, structureId: string) => {
 };
 export const getIssuesTypes = async (projectId: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/types`, {
+    .get(`${API.BASE_URL}/projects/${projectId}/issues/types`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -46,7 +47,7 @@ export const getIssuesTypes = async (projectId: string) => {
 export const getIssuesPriority = async (projectId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/priority`,
+      `${API.BASE_URL}/projects/${projectId}/issues/priority`,
       {
         headers: authHeader.authHeader(),
       }
@@ -61,7 +62,7 @@ export const getIssuesPriority = async (projectId: string) => {
 export const getIssuesStatus = async (projectId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/status`,
+      `${API.BASE_URL}/projects/${projectId}/issues/status`,
       {
         headers: authHeader.authHeader(),
       }
@@ -73,10 +74,25 @@ export const getIssuesStatus = async (projectId: string) => {
       throw error.response.data;
     });
 };
+
+export const getIssueTags = async (projectId: string) => {
+ 
+    return await instance
+    .get(`${API.BASE_URL}/projects/${projectId}/tags`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
+
 export const deleteIssue = async (projectId: string, IssueId: string) => {
   return await instance
     .delete(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/${IssueId}`,
+      `${API.BASE_URL}/projects/${projectId}/issues/${IssueId}`,
       {
         headers: authHeader.authHeader(),
       }
@@ -95,7 +111,7 @@ export const editIssue = (
 ) => {
   return instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/${issueId}`,
+      `${API.BASE_URL}/projects/${projectId}/issues/${issueId}`,
       issueObj,
       {
         headers: authHeader.authHeader(),
@@ -114,7 +130,7 @@ export const createIssueWithAttachments = (
 ) => {
   return instance
     .post(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/issues/addissueWithScreenshotAndAttachment`,
+      `${API.BASE_URL}/projects/${projectId}/issues/addissueWithScreenshotAndAttachment`,
       issueObj,
       {
         headers: authHeader.authHeader(),
@@ -124,14 +140,14 @@ export const createIssueWithAttachments = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      throw error.response;
     });
 };
 
 export const getIssuesPriorityList = async (projectId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/priority-list/get`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/priority-list/get`,
       {
         headers: authHeader.authHeader(),
       }
@@ -147,7 +163,7 @@ export const getIssuesPriorityList = async (projectId: string) => {
 export const getIssueTypeList = async (projectId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/type-list/get`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/type-list/get`,
       {
         headers: authHeader.authHeader(),
       }
@@ -163,7 +179,7 @@ export const getIssueTypeList = async (projectId: string) => {
 export const getIssueStatusList = async (projectId: string) => {
   return await instance
     .get(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/status-list/get`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/status-list/get`,
       {
         headers: authHeader.authHeader(),
       }
@@ -182,7 +198,7 @@ export const updateIssueTypeListApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/type-list/update`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/type-list/update`,
       { issueTypeList },
       {
         headers: authHeader.authHeader(),
@@ -202,7 +218,7 @@ export const updateIssuePriorityListApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/priority-list/update`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/priority-list/update`,
       { issuePriorityList },
       {
         headers: authHeader.authHeader(),
@@ -222,7 +238,7 @@ export const updateIssueStatusListApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/status-list/update`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/status-list/update`,
       { issueStatusList },
       {
         headers: authHeader.authHeader(),
@@ -242,7 +258,7 @@ export const addIssuePriorityApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/priority-list/push`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/priority-list/push`,
       { issuePriorityList },
       {
         headers: authHeader.authHeader(),
@@ -261,7 +277,7 @@ export const removePriorityTypeApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/priority-list/pop`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/priority-list/pop`,
       { issuePriorityList },
       {
         headers: authHeader.authHeader(),
@@ -281,7 +297,7 @@ export const addIssueTypeApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/type-list/push`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/type-list/push`,
       { issueTypeList },
       {
         headers: authHeader.authHeader(),
@@ -300,7 +316,7 @@ export const removeIssueTypeApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/type-list/pop`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/type-list/pop`,
       { issueTypeList },
       {
         headers: authHeader.authHeader(),
@@ -320,7 +336,7 @@ export const addIssueStatusApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/status-list/push`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/status-list/push`,
       { issueStatusList },
       {
         headers: authHeader.authHeader(),
@@ -340,7 +356,7 @@ export const removeIssueStatusItemApi = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/issue/status-list/pop`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/issue/status-list/pop`,
       { issueStatusList },
       {
         headers: authHeader.authHeader(),

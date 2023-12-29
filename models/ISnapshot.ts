@@ -1,16 +1,16 @@
 import { IActiveReality, IReality } from "./IReality";
 
 export interface ISnapshot {
-  _id: string;
+  _id?: string;
   date: string;
   progress: number;
   project: string;
   createdAt: string;
   updatedAt: string;
-  __v: number;
+  __v?: number;
   structure: string;
   status: string;
-  visualization: [];
+  visualizations?: [];
   reality?: [IReality];
 }
 

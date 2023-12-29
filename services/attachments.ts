@@ -1,9 +1,10 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
+import { API } from '../config/config';
 export const createAttachment = (entityID: string, attachmentObj: object) => {
   return instance
     .post(
-      `${process.env.NEXT_PUBLIC_HOST}/attachments?entity=${entityID}`,
+      `${API.BASE_URL}/attachments?entity=${entityID}`,
       attachmentObj,
       {
         headers: authHeader.authHeader(),
@@ -18,7 +19,7 @@ export const createAttachment = (entityID: string, attachmentObj: object) => {
 };
 export const getAttachmentsList = async (entityID: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/attachments?entity=${entityID}`, {
+    .get(`${API.BASE_URL}/attachments?entity=${entityID}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -30,7 +31,7 @@ export const getAttachmentsList = async (entityID: string) => {
 };
 export const getAttachment = async (attachmentId: string) => {
   return await instance
-    .get(`${process.env.NEXT_PUBLIC_HOST}/attachments/${attachmentId}`, {
+    .get(`${API.BASE_URL}/attachments/${attachmentId}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {
@@ -42,7 +43,7 @@ export const getAttachment = async (attachmentId: string) => {
 };
 export const deleteAttachment = async (attachmentId: string) => {
   return await instance
-    .delete(`${process.env.NEXT_PUBLIC_HOST}/attachments/${attachmentId}`, {
+    .delete(`${API.BASE_URL}/attachments/${attachmentId}`, {
       headers: authHeader.authHeader(),
     })
     .then((response) => {

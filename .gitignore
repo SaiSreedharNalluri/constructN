@@ -29,6 +29,9 @@ yarn-error.log*
 .env.local
 .env.development
 .env.production
+.env.staging
+.env.prod-us
+.env.qa-us
 
 # vercel
 .vercel
@@ -36,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# new relic
+newrelic_agent.log
+*.log
+.env.backup
+
+/config/config.ts

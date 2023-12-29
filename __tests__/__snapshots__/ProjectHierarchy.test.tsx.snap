@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders component unchanged 1`] = `
+<div>
+  <div
+    class="css-jg9knl"
+  >
+    <div
+      class="css-1bdfr09"
+    >
+      <div
+        class="css-pqcd7p"
+        style="color: rgb(16, 31, 75); text-align: center;"
+      >
+        Project Hierarchy
+      </div>
+      <img
+        alt="close Icon"
+        class="css-4g6ai3"
+        data-nimg="1"
+        decoding="async"
+        height="40"
+        loading="lazy"
+        src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+        srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+        style="color: transparent;"
+        width="40"
+      />
+    </div>
+    <div
+      class="css-7r3r5t"
+    >
+      <div
+        class="MuiFormControl-root MuiTextField-root css-1s2z0n5-MuiFormControl-root-MuiTextField-root"
+        data-testid="search"
+      >
+        <div
+          class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-adornedStart css-1q6at85-MuiInputBase-root-MuiOutlinedInput-root"
+        >
+          <img
+            alt="search"
+            data-nimg="1"
+            decoding="async"
+            height="40"
+            loading="lazy"
+            src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+            srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+            style="color: transparent;"
+            width="40"
+          />
+          <input
+            aria-invalid="false"
+            class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputAdornedStart css-1o9s3wi-MuiInputBase-input-MuiOutlinedInput-input"
+            id="search"
+            placeholder="Search"
+            type="text"
+            value=""
+          />
+          <fieldset
+            aria-hidden="true"
+            class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+          >
+            <legend
+              class="css-ihdtdm"
+            >
+              <span
+                class="notranslate"
+              >
+                ​
+              </span>
+            </legend>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+    <div
+      class="css-1hlpyp9"
+      style="overflow: auto; height: 63vh;"
+    >
+      <ul
+        aria-label="rich object"
+        aria-multiselectable="false"
+        class="MuiTreeView-root css-vbuvlb-MuiTreeView-root"
+        id=":r3:"
+        role="tree"
+        tabindex="0"
+      >
+        <li
+          aria-expanded="false"
+          class="MuiTreeItem-root css-28ckyw-MuiTreeItem-root"
+          data-testid="treeItem"
+          id=":r3:-STR468587"
+          role="treeitem"
+          style="border-bottom: 1px solid #D9D9D9;"
+          tabindex="-1"
+        >
+          <div
+            class="css-1g86id8-MuiTreeItem-content MuiTreeItem-content"
+          >
+            <div
+              class="MuiTreeItem-iconContainer"
+            />
+            <div
+              class="MuiTreeItem-label"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="label"
+              >
+                <span>
+                  Adani Koregaon Park
+                </span>
+                <span
+                  class="css-1nd4bm0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                    data-testid="addIcon"
+                    focusable="false"
+                    style="cursor: pointer; font-size: 14px;"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;

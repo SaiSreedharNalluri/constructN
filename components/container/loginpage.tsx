@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-import { Formik, Form, ErrorMessage } from 'formik';
-import showPwdImg from '../../public/icons/show-password.svg';
-import hidePwdImg from '../../public/icons/hide-password.svg';
-import SubmitButtons from '../core/buttons/submitButton';
-import InputPassword from '../core/Input/inputPassword';
-import InputText from '../core/Input/inputText';
-import InputCheckBox from '../core/Input/inputCheckBox';
-import NextImage from '../core/Image';
-import Image from 'next/image';
-import OkButton from '../core/buttons/okButton';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import * as Yup from "yup";
+import { Formik, Form, ErrorMessage } from "formik";
+import showPwdImg from "../../public/icons/show-password.svg";
+import hidePwdImg from "../../public/icons/hide-password.svg";
+import SubmitButtons from "../core/buttons/submitButton";
+import InputPassword from "../core/Input/inputPassword";
+import InputText from "../core/Input/inputText";
+import InputCheckBox from "../core/Input/inputCheckBox";
+import NextImage from "../core/Image";
+import Image from "next/image";
+import OkButton from "../core/buttons/okButton";
+import { useRouter } from "next/router";
 interface IProps {
   loading: boolean;
   buttonName: string;
@@ -24,12 +24,12 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
     email: string;
     password: string;
   } = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   };
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Please Enter The Email !'),
-    password: Yup.string().required('Please Enter The Password!'),
+    email: Yup.string().required("Please Enter The Email !"),
+    password: Yup.string().required("Please Enter The Password!"),
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   return (
@@ -41,16 +41,22 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
 
       <div className=" absolute  2xl:w-1/5 xl:w-1/4 lg:w-1/4    md:w-2/4 px-4 sm:w-1/2   top-0 bg-opacity-50  h-full right-0 place-items-center  bg-gray-300 ">
         <div className="grid grid-cols-1 gap-2 border   my-50 border-solid place-content-center border-gray-500 rounded-3xl ">
-          <h2 className="text-center text-xl">User Login</h2>
+          <h2 className="text-center text-xl" data-testid="login-text">
+            User Login
+          </h2>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={handleLogin}
           >
-            <Form className=" grid grid-cols-1 gap-y-4 px-4">
+            <Form method="POST" className=" grid grid-cols-1 gap-y-4 px-4">
               <div>
                 <InputText type="email" placeholderName="Email" name="email" />
-                <ErrorMessage name="email" component="div" className="" />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="alert alert-danger text-red-600"
+                />
               </div>
               <div className="relative">
                 <InputPassword
@@ -61,7 +67,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                 <div className="absolute p-3 inset-y-0 right-0">
                   <Image
                     alt=""
-                    title={isRevealPwd ? 'Hide password' : 'Show password'}
+                    title={isRevealPwd ? "Hide password" : "Show password"}
                     src={isRevealPwd ? hidePwdImg : showPwdImg}
                     onClick={() => setIsRevealPwd((prevState) => !prevState)}
                   />
@@ -69,11 +75,16 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                 <ErrorMessage
                   name="password"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
-                <div className="text-gray-500 cursor-pointer ml-4 lg:ml-0" onClick={() => { router.push("reset-password") }}>
+                <div
+                  className="text-gray-500 cursor-pointer ml-4 lg:ml-0"
+                  onClick={() => {
+                    router.push("reset-password");
+                  }}
+                >
                   Forgot Password
                 </div>
               </div>
@@ -84,13 +95,17 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleLogin }) => {
                   buttonName="Register"
                   disabled={false}
                   clickTheOkButton={() => {
-                    router.push('/register');
+                    // router.push('/register');
+                    router.push("/signup");
                   }}
                 />
               </div>
               {message && (
                 <div className="form-group">
-                  <div className="alert alert-danger" role="alert">
+                  <div
+                    className="alert alert-danger text-red-600 font-bold mb-2"
+                    role="alert"
+                  >
                     {message}
                   </div>
                 </div>

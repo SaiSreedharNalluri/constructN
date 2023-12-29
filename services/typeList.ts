@@ -1,5 +1,6 @@
 import instance from './axiosInstance';
 import authHeader from './auth-header';
+import { API } from '../config/config';
 export const updateTypeLists = async (
   typeListObj: Object,
   projectId: string,
@@ -7,7 +8,7 @@ export const updateTypeLists = async (
 ) => {
   return await instance
     .put(
-      `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/typeLists/${typelistId}`,
+      `${API.BASE_URL}/projects/${projectId}/typeLists/${typelistId}`,
       typeListObj,
       {
         headers: authHeader.authHeader(),

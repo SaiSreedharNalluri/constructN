@@ -5,6 +5,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import ChangeIcon from '../../components/container/changeIcon';
 import React from 'react';
 import * as Yup from 'yup';
+import { AWS } from '../../config/config';
 interface IProps {
   userDetails: IUser;
   handleImageUPload: (e: any) => void;
@@ -54,7 +55,7 @@ const UserProfile: React.FC<IProps> = ({
                       src={
                         userDetails?.avatar
                           ? userDetails?.avatar
-                          : 'https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/user_icon_def_01.png'
+                          : `${AWS.CDN_ATTACHMENTS}/defaults/user_icon_def_01.png`
                       }
                       alt=""
                       width={720}
@@ -94,7 +95,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="firstName"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                     <div className="gap-10 px-10 py-2">
@@ -110,7 +111,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="lastName"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                     <div className=" gap-10 px-10  py-2">
@@ -127,7 +128,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="email"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                     <div className=" gap-10 px-10 py-2">
@@ -141,7 +142,7 @@ const UserProfile: React.FC<IProps> = ({
                       <ErrorMessage
                         name="date"
                         component="div"
-                        className="alert alert-danger"
+                        className="alert alert-danger text-red-600"
                       />
                     </div>
                   </div>

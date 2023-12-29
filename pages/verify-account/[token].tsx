@@ -1,51 +1,47 @@
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import NextImage from '../../components/core/Image';
-import { verifyEmail } from '../../services/userAuth';
-const VerifyEmail: React.FC = () => {
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { CustomToast } from "../../components/divami_components/custom-toaster/CustomToast"
+import NextImage from "../../components/core/Image";
+import { ResendEmailVerification, verifyEmail } from "../../services/userAuth";
+import AccountVerify from "../../components/divami_components/account_page/AccountVerify";
+import AccountNotVerify from "../../components/divami_components/account_message/AccountNotVerify";
+import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
+
+const VerifyUserEmail = () => {
   const router = useRouter();
-  const [checkResponse, setCheckResponse] = useState<any>();
+  const [checkPage, setCheckPage] = useState<boolean>(false);
+  const [uniqueToken, setUniqueToken] = useState<any>("");
+  const[showLoading,setShowLoading] = useState(true)
   useEffect(() => {
     if (router.isReady) {
+      setUniqueToken(router.query.token);
       verifyEmail(router.query.token as string)
         .then((response) => {
           if (response.success === true) {
-            toast.success(response.message);
-            toast.info('Redirecting ... ');
-            setTimeout(() => {
-              router.push('/login');
-            }, 5000);
+            CustomToast(response.message,"success");
+            setCheckPage(true);
+            setShowLoading(false)
+            router.push("/account_success");
           }
         })
         .catch((error) => {
-          toast.error(error.message);
-          setCheckResponse(error.success)
-        });
+          setShowLoading(false)
+          CustomToast(error.message,"error");
+      });
     }
   }, [router]);
-  console.log(checkResponse);
   return (
-    <React.Fragment>
-      <div className=" w-full  ">
-        <NextImage
-          src="https://constructn-attachments.s3.ap-south-1.amazonaws.com/Login/login02.png"
-          className="h-screen w-screen" />
-        <div className=" absolute  top-1/2 bg-opacity-50 left-1/3 rounded p-2  bg-gray-300 ">
-          <div >
-            <div>
-              {checkResponse === false ?
-                <div className='flex' ><p>Failed to verify user. Invalid token</p>  <div className="mt-1 ml-2">
-                  <svg className="spinner" viewBox="0 0 40 40">
-                    <circle cx="20" cy="20" r="18" ></circle>
-                  </svg>
-                </div>
-                </div> : ""}
-            </div>
-          </div>
-        </div>
-      </div>
-    </React.Fragment>
+    <>{
+      showLoading ?<CustomLoader/>:
+      (<div>{checkPage ? (
+        <AccountVerify />
+      ) : (
+        <AccountNotVerify uniqueToken={uniqueToken} />
+      )}</div>)
+    }
+      
+    </>
   );
 };
-export default VerifyEmail;
+
+export default VerifyUserEmail;

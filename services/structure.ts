@@ -1,8 +1,9 @@
-import instance from './axiosInstance';
-import authHeader from './auth-header';
+import instance from "./axiosInstance";
+import authHeader from "./auth-header";
+import { API } from "../config/config";
 export const getStructureList = async (projectId: string) => {
   return await instance.get(
-    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures`,
+    `${API.BASE_URL}/projects/${projectId}/structures`,
     {
       headers: authHeader.authHeader(),
     }
@@ -10,7 +11,7 @@ export const getStructureList = async (projectId: string) => {
 };
 export const getStructureHierarchy = async (projectId: string) => {
   return await instance.get(
-    `${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/structures/hierarchy`,
+    `${API.BASE_URL}/projects/${projectId}/structures/hierarchy`,
     {
       headers: authHeader.authHeader(),
     }

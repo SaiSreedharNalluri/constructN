@@ -1,36 +1,40 @@
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import NextImage from '../../components/core/Image';
-import { resetPasswordToken } from '../../services/userAuth';
-import ResetPassword from '../../components/container/resetPassword';
+import React, { useEffect, useState } from "react";
+import ResetPassword from "../../components/divami_components/reset-password/ResetPassword";
+import { useRouter } from "next/router";
+import { CustomToast } from "../../components/divami_components/custom-toaster/CustomToast";
+import { validatePasswordToken } from "../../services/userAuth";
+import TokenNotVerify from "../../components/divami_components/reset-password/verificationLinkExpired/TokenNotVerifyFailed";
+import CustomLoader from "../../components/divami_components/custom_loader/CustomLoader";
 
-const ResetPasswords: React.FC = () => {
-    const router = useRouter();
-    const [checkResponse, setCheckResponse] = useState<any>(false);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [message, setMessage] = useState<string>('');
-    const handleResetPassword = (formPassword: any) => {
-        setMessage("");
-        setLoading(true);
-        resetPasswordToken(router.query.token as string, formPassword.password as string).then((response) => {
-            if (response.success === true) {
-                toast.info('Redirecting ... ');
-                setTimeout(() => {
-                    toast.info(' reset password completed');
-                    router.push('/login');
-                }, 5000);
-            }
-        }).catch((error) => {
-            if (error.success === false) {
-                toast.error(error.message);
-                setCheckResponse(error.success)
-            }
+const ResetPasswordPage = () => {
+  const router = useRouter();
+  const [checkPage, setCheckPage] = useState<boolean>(false);
+  const[showLoading,setShowLoading] = useState(true)
+  useEffect(() => {
+    if (router.isReady) {
+    validatePasswordToken(router.query.token as string)
+        .then((response) => {
+          if (response.success === true) {
+            setCheckPage(true);
+            setShowLoading(false)
+           }
+        })
+        .catch((error) => {
+          setShowLoading(false)
+          CustomToast(error.message,"error");
         });
     }
-    return (
-        <ResetPassword message={message} loading={loading} handleResetPassword={handleResetPassword}></ResetPassword>
-    )
-}
-export default ResetPasswords;
+  }, [router]);
+  return (
+    <div>
+      {
+      showLoading ?<CustomLoader/>:
+      (<div>{checkPage ?
+        ( <ResetPassword />):(<div><TokenNotVerify/></div>)}</div>)
+    }
+     
+    </div>
+  );
+};
 
+export default ResetPasswordPage;

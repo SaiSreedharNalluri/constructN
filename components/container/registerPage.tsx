@@ -1,20 +1,39 @@
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-import { Formik, Form, ErrorMessage } from 'formik';
-import showPwdImg from '../../public/icons/show-password.svg';
-import hidePwdImg from '../../public/icons/hide-password.svg';
-import SubmitButtons from '../core/buttons/submitButton';
-import InputPassword from '../core/Input/inputPassword';
-import InputText from '../core/Input/inputText';
-import NextImage from '../core/Image';
-import Image from 'next/image';
-import router from 'next/router';
+import React, { useState } from "react";
+import * as Yup from "yup";
+import { Formik, Form, ErrorMessage } from "formik";
+import showPwdImg from "../../public/icons/show-password.svg";
+import hidePwdImg from "../../public/icons/hide-password.svg";
+import SubmitButtons from "../core/buttons/submitButton";
+import InputPassword from "../core/Input/inputPassword";
+import InputText from "../core/Input/inputText";
+import NextImage from "../core/Image";
+import Image from "next/image";
+import router from "next/router";
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 interface IProps {
   loading: boolean;
-  message: string;
-  handleRegister: (e: object) => void;
+  handleRegister: (
+    e: FormValues,
+    {
+      resetForm,
+    }: {
+      resetForm: (nextValues?: Partial<FormValues>) => void;
+    }
+  ) => void;
 }
-const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
+const Registerpage: React.FC<IProps> = ({
+  loading,
+  handleRegister,
+}: {
+  loading: any;
+  handleRegister: any;
+}) => {
   const initialValues: {
     firstName: string;
     lastName: string;
@@ -22,37 +41,41 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
     password: string;
     confirmPassword: string;
   } = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   };
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string()
-      .required('First name is required')
-      .matches(/[a-zA-Z]/, 'Atleast one letter is reqired')
-      .matches(/^[^0-9]+$/, 'Number is not allowed'),
+      .required("First name is required")
+      .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
+      .matches(/^[^0-9]+$/, "Number is not allowed"),
     lastName: Yup.string()
-      .required('Last name is required')
-      .matches(/[a-zA-Z]/, 'Atleast one letter is reqired')
-      .matches(/^([^0-9]*)$/, 'Number is not allowed'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
+      .required("Last name is required")
+      .matches(/[a-zA-Z]/, "Atleast one letter is reqired")
+      .matches(/^([^0-9]*)$/, "Number is not allowed"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string()
-      .required('Password is required')
-      .min(8, 'Minimum 8 characters required')
-      .matches(/[0-9]/, 'Password requires a number')
-      .matches(/[a-z]/, 'Password requires a lowercase letter')
-      .matches(/[A-Z]/, 'Password requires an uppercase letter')
-      .matches(/[^\w]/, 'Password requires a symbol'),
+      .required("Password is required")
+      .min(8, "Minimum 8 characters required")
+      .matches(/[0-9]/, "Password requires a number")
+      .matches(/[a-z]/, "Password requires a lowercase letter")
+      .matches(/[A-Z]/, "Password requires an uppercase letter")
+      .matches(/[^\w\s]/, "Password requires a symbol")
+      .matches(
+        /^[^\s].*[^\s]$/,
+        "Spaces are not allowed at the beginning, end of the password"
+      ),
     confirmPassword: Yup.string()
-      .required('Confirm password is required')
-      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+      .required("Confirm password is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
   });
   const [isRevealPwd, setIsRevealPwd] = useState(false);
   const [isCRevealPwd, setIsCRevealPwd] = useState(false);
-  const [active, setActive] = useState('');
+  const [active, setActive] = useState("");
   const h = (e: any) => {
     setIsRevealPwd(!isRevealPwd);
     setActive(e.target.id);
@@ -83,7 +106,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="firstName"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div>
@@ -95,7 +118,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="lastName"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
               <div>
@@ -103,7 +126,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="email"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
               <div className="relative">
@@ -115,7 +138,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <div className="absolute p-3 inset-y-0 right-0">
                   <Image
                     alt=""
-                    title={isRevealPwd ? 'Hide password' : 'Show password'}
+                    title={isRevealPwd ? "Hide password" : "Show password"}
                     src={isRevealPwd ? hidePwdImg : showPwdImg}
                     onClick={() => setIsRevealPwd((prevState) => !prevState)}
                   />
@@ -123,7 +146,7 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="password"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger  text-red-600"
                 />
               </div>
 
@@ -135,13 +158,13 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 />
                 <div
                   className={`${
-                    active === 'confirm password'
+                    active === "confirm password"
                   } absolute p-3 inset-y-0 right-0`}
                   id="confirm password"
                 >
                   <Image
                     alt=""
-                    title={isCRevealPwd ? 'Hide password' : 'Show password'}
+                    title={isCRevealPwd ? "Hide password" : "Show password"}
                     src={isCRevealPwd ? hidePwdImg : showPwdImg}
                     onClick={() => setIsCRevealPwd((prevState) => !prevState)}
                   />
@@ -149,26 +172,26 @@ const Loginpage: React.FC<IProps> = ({ message, loading, handleRegister }) => {
                 <ErrorMessage
                   name="confirmPassword"
                   component="div"
-                  className="alert alert-danger"
+                  className="alert alert-danger text-red-600"
                 />
               </div>
               <div className="py-2 grid grid-cols-1 gap-2">
                 <SubmitButtons buttonName="Register" disabled={loading} />
               </div>
-              {message && (
-                <div className="form-group">
-                  <div className="alert alert-danger" role="alert">
-                    {message}
-                  </div>
-                </div>
-              )}
             </Form>
           </Formik>
-          <button onClick={()=>router.push('/login')}>Back To Login</button>
+          <button
+            onClick={() =>
+              // router.push('/login')
+              router.push("/login")
+            }
+          >
+            Back To Login
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default Loginpage;
+export default Registerpage;

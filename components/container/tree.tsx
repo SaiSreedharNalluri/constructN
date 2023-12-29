@@ -43,10 +43,7 @@ const Tree: React.FC<IProps> = ({
               structure._id === clickedStruct ? 'bg-white' : ''
             } justify-between border-b border-solid border-gray-400 p-1`}
           >
-            <div
-              className={`flex margin${depth}`}
-             
-            >
+            <div className={`flex margin${depth}`}>
               <div
                 className="hover:bg-gray-300 px-2 hover:rounded-full"
                 onClick={() => {
@@ -58,10 +55,12 @@ const Tree: React.FC<IProps> = ({
               >
                 {getICon()}
               </div>
-              <div  onClick={() => {
-                getStructureData(structure);
-              }}>
-              <p className={`text-sm cursor-pointer `}>{structure.name} </p>
+              <div
+                onClick={() => {
+                  getStructureData(structure);
+                }}
+              >
+                <p className={`text-sm cursor-pointer `}>{structure.name} </p>
               </div>
             </div>
           </div>

@@ -1,0 +1,26 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+  pre_build:
+    commands:
+        - DATE=$(date '+%Y%m%d%H%M%S')
+        - envsubst < config/config.ts.template > config/config.ts
+        - npm i --legacy-peer-deps        
+        - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_NUMBER.dkr.ecr.$REGION.amazonaws.com/$IMAGE_REPO_NAME
+        - envsubst < ecs/task-definition.json > ecs/task-definition1.json
+        - envsubst < Dockerfile.template > Dockerfile
+  build:
+    commands:
+          - npm run build
+          - docker build -t $IMAGE_REPO_NAME .
+  post_build:
+    commands:
+        - docker tag $IMAGE_REPO_NAME:latest $ACCOUNT_NUMBER.dkr.ecr.$REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
+        - docker push $ACCOUNT_NUMBER.dkr.ecr.$REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
+        - docker tag $IMAGE_REPO_NAME:latest $ACCOUNT_NUMBER.dkr.ecr.$REGION.amazonaws.com/$IMAGE_REPO_NAME:$DATE
+        - docker push $ACCOUNT_NUMBER.dkr.ecr.$REGION.amazonaws.com/$IMAGE_REPO_NAME:$DATE
+        - aws ecs register-task-definition --family $TASK_DEFINITION_NAME --region $REGION --cli-input-json file:///$CODEBUILD_SRC_DIR/ecs/task-definition1.json
+        - TASK_REVISION=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION_NAME --region $REGION)
+        - aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --region $REGION --task-definition $TASK_DEFINITION_NAME
