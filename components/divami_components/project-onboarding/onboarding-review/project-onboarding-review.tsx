@@ -21,6 +21,8 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
   const drawingsCount = useSignal(0)
   const totalCount = useSignal(0)
 
+  const showPopup = useSignal(false)
+
   useSignalEffect(() => {
     console.log('Action inside review', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
     switch (action!.value) {
@@ -81,19 +83,7 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
     }
   }).catch(err => console.log(err))
 
-  effect(() => {
-    console.log('Action inside Review', 'Step:', step.peek(), 'Action:', action?.value)
-    switch (action!.value) {
-      case 'Back-4':
-        step.value = 3
-        break
-      case 'Next-4':
-        step.value = 5
-        break
-      default:
-        break
-    }
-  })
+
   function generateGridRow(label: string, values: any) {
     return (
       <div className="grid grid-cols-2 gap-4 p-1">

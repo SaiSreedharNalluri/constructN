@@ -123,7 +123,7 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboar
         </div>
 
         <div className='flex w-[25vw] items-center mr-4 justify-center'>
-          Drawings <Link href='#' target='_blank' className='text-xs !text-orange-600 !underline ml-4'>Good Sheet vs Bad Sheet</Link>
+          Drawings <Link href='https://help.constructn.ai/en/articles/8238555-floor-plans-for-interior-captures' target='_blank' className='text-xs !text-orange-600 !underline ml-4'>Good Sheet vs Bad Sheet</Link>
         </div>
 
         <div className='flex w-[9rem] group-hover:opacity-100 opacity-0 items-center'>
