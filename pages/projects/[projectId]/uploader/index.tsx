@@ -28,6 +28,7 @@ import moment from "moment";
 import { AxiosError } from "axios";
 import { IBaseResponse } from "../../../../models/IBaseResponse";
 import { ProjectData } from "../../../../state/appState/state";
+import authHeader from "../../../../services/auth-header";
 interface IProps {}
 const Index: React.FC<IProps> = () => {
   const router = useRouter();
@@ -292,7 +293,8 @@ const Index: React.FC<IProps> = () => {
       let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url), {name: captureId});
       WorkerManager.createWorker(captureId,worker)
       worker.onmessage = onMessageFromWorker;
-      worker.postMessage(uploadFiles);
+      let headerValue = authHeader.authHeader()
+      worker.postMessage({uploadFiles,headerValue});
     }
   }
 
