@@ -69,6 +69,8 @@ export interface IAsset {
     metrics?: { [key: string]: string | number | { metric: string}}
 
     compare?: boolean
+
+    status?: 'Active' | 'Inactive'
     
 }
 
