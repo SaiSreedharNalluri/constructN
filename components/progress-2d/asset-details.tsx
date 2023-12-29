@@ -13,14 +13,19 @@ import AssetTimeline from './asset-timeline'
 import { toast } from 'react-toastify'
 
 import { API } from '../../config/config'
+
 import Metrics from './metrics-details'
+
+import authHeader from '../../services/auth-header'
+
+const headers = {headers: authHeader.authHeader()}
 
 
 const fetchAssetDetails = (assetId: string, date: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets/${assetId}?date=${date}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets/${assetId}?date=${date}`, headers)
 
     } catch (error) { throw error }
 
@@ -30,7 +35,7 @@ const updateAssetDetails = (assetId: string, data: Partial<IAsset>) => {
 
     try {
 
-        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, data)
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, data, headers)
 
     } catch (error) { throw error }
 
@@ -40,7 +45,7 @@ const changeAssetStage = (assetId: string, stage: string, date: Date) => {
 
     try {
 
-        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}/change-stage`, { stage, date })
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}/change-stage`, { stage, date }, headers)
 
     } catch (error) { throw error }
 
@@ -50,7 +55,7 @@ const removeAssetStage = (assetId: string, stage: string) => {
 
     try {
 
-        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}/remove-stage`, { stage })
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}/remove-stage`, { stage }, headers)
 
     } catch (error) { throw error }
 
