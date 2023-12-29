@@ -1,6 +1,8 @@
 import React, { ChangeEvent } from 'react';
 import { FormHelperText, Grid, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import PopupComponent from '../../../../popupComponent/PopupComponent';
+import router from "next/router";
 const ProjectTypeDetails = ({
   type, isTypeValid
 }: any) => {
@@ -13,6 +15,22 @@ const ProjectTypeDetails = ({
     const { name, value } = event.target
     type.value = { ...type.value, [name as string]: value }
   }
+
+  const showPopUp = useSignal(false)
+
+  const renderPopup = useComputed(() => showPopUp.value === true ? <PopupComponent
+    isUploader={false}
+    open={showPopUp.value}
+    setShowPopUp={(state: boolean) => { showPopUp.value = state }}
+    modalTitle={"Attention"}
+    modalmessage={"Please contact 'support@constructn.ai' for Visual Documentation. Do you want to continue with only 'Visual Documentation?"}
+    primaryButtonLabel={"Contact Support"}
+    SecondaryButtonlabel={"Visual Documentation"}
+    callBackvalue={() => {
+      showPopUp.value = false
+      router.push("/projects")
+    }}
+  /> : <></>)
 
   const renderContent = useComputed(() => <Grid container spacing={2} justifyContent="space-between" className='mt-[4px]'>
     <Grid item xs={3}>
@@ -56,11 +74,16 @@ const ProjectTypeDetails = ({
         onChange={(e) => handleProjectIntend('projectIntend', e.target.value)} >
         <MenuItem value="Visual Documentation">Visual Documentation</MenuItem>
         <MenuItem value="Progress Monitoring">Progress Monitoring</MenuItem>
+        <MenuItem value="Both">Both</MenuItem>
       </Select>
     </Grid>
+    {renderPopup}
   </Grid>)
 
   const handleProjectIntend = (field: string, value: string) => {
+    if(value === 'Both') {
+      showPopUp.value = true
+    }
     type.value = {
       ...type.value,
       metaDetails: {
