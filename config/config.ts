@@ -34,8 +34,6 @@ export const API = {
 
     PROGRESS_2D_URL: 'https://api-progress-2d.qa-devops.constructn.ai/api',
 
-    STAGE_URL: 'https://api.dev2.constructn.ai/api/v1'
-
 }
 
 export const AWS = {
