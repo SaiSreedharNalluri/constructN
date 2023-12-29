@@ -1,12 +1,13 @@
 import React from 'react'
 import { IOnboardingProps } from '../projectOnboarding'
-import { effect, useComputed, useSignal, useSignalEffect } from '@preact/signals-react'
+import { Signal, effect, useComputed, useSignal, useSignalEffect } from '@preact/signals-react'
 import { getStructureList } from '../../../../services/structure';
 import { IStructure } from '../../../../models/IStructure';
 import { IDesign } from '../../../../models/IDesign';
 import { CustomToast } from '../../custom-toaster/CustomToast';
 import router from "next/router";
 import { updateProjectInfo } from '../../../../services/project';
+import PopupComponent from '../../../popupComponent/PopupComponent';
 
 
 const contentStyle = {
@@ -16,10 +17,24 @@ const contentStyle = {
 
 const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount,showLoader }: IOnboardingProps) => {
   console.log(projectDetails.value);
-
   const bimCount = useSignal(0)
   const drawingsCount = useSignal(0)
   const totalCount = useSignal(0)
+
+  const showPopUp = useSignal(false)
+
+  const renderPopup = useComputed(() => showPopUp.value === true ? <PopupComponent
+    open={showPopUp.value}
+    setShowPopUp={(state: boolean) => { showPopUp.value = state }}
+    modalTitle={"Success"}
+    modalmessage={"The project has been successfully created. You can access the project only after the project has been approved. You will receive an email once the project is ready to use."}
+    primaryButtonLabel={"Ok"}
+    SecondaryButtonlabel={""}
+    callBackvalue={() => {
+      showPopUp.value = false
+      router.push("/projects")
+    }}
+  /> : <></>)
 
   useSignalEffect(() => {
     console.log('Action inside review', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -38,6 +53,7 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
             showLoader.value=false
             }
           setTimeout(() => router.push("/projects"), 1000)
+          showPopUp.value = true
         }).catch((error) => {
           console.error('Error submitting project for review:', error);
           CustomToast('Error submitting project for review', 'error')
@@ -90,19 +106,6 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
     }
   }).catch(err => console.log(err))
 
-  // effect(() => {
-  //   console.log('Action inside Review', 'Step:', step.peek(), 'Action:', action?.value)
-  //   switch (action!.value) {
-  //     case 'Back-4':
-  //       step.value = 3
-  //       break
-  //     case 'Next-4':
-  //       step.value = 5
-  //       break
-  //     default:
-  //       break
-  //   }
-  // })
   function generateGridRow(label: string, values: any) {
     return (
       <div className="grid grid-cols-2 gap-4 p-1">
@@ -116,6 +119,7 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
             </p>
           ))}
         </div>
+        {renderPopup}
       </div>
     );
   }

@@ -43,16 +43,23 @@ import { getCookie } from 'cookies-next'
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 
 import { IUser } from '../../../../models/IUser'
+
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader'
+
 import Progress2dAssets from '../../../../components/viewer/progress-2d-assets'
+
 import { ForgeDataVizUtils } from '../../../../utils/forge-utils'
+
+import authHeader from '../../../../services/auth-header'
+
+const headers = {headers: authHeader.authHeader()}
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
 
     try {
 
-        return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/${structureId}/viewer-data`)
+        return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/${structureId}/viewer-data`, headers)
 
     } catch (error) { throw error }
 
@@ -60,7 +67,7 @@ const fetchViewerData = (projectId: string, structureId: string) => {
 
 const fetchStructureHierarchy = (projectId: string) => {
 
-    try { return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/hierarchy`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/hierarchy`, headers) } catch (error) { throw error }
 
 }
 
@@ -68,7 +75,7 @@ const fetchAssetCategories = (projectId: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
 
     } catch (error) { throw error }
 
@@ -78,7 +85,7 @@ const fetchAssets = (structureId: string, category: string, date: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}&date=${date}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}&date=${date}`, headers)
 
     } catch (error) { throw error }
 
@@ -88,7 +95,7 @@ const createAsset = (asset: Partial<IAsset>, date: string) => {
 
     try {
 
-        return instance.post(`${API.PROGRESS_2D_URL}/assets?date=${date}`, asset)
+        return instance.post(`${API.PROGRESS_2D_URL}/assets?date=${date}`, asset, headers)
 
     } catch (error) { throw error }
 
@@ -98,7 +105,7 @@ const updateAsset = (assetId: string, asset: Partial<IAsset>) => {
 
     try {
 
-        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset)
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset, headers)
 
     } catch (error) { throw error }
 }
@@ -107,14 +114,14 @@ const deleteAsset = (assetId: string) => {
 
     try {
 
-        return instance.delete(`${API.PROGRESS_2D_URL}/assets/${assetId}`)
+        return instance.delete(`${API.PROGRESS_2D_URL}/assets/${assetId}`, headers)
 
     } catch (error) { throw error }
 }
 
 const autodeskAuth = () => {
 
-    try { return instance.get(`${API.BASE_URL}/aps/getAPSToken`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/aps/getAPSToken`, headers) } catch (error) { throw error }
 
 }
 
