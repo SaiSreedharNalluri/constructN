@@ -244,7 +244,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
 
-                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} /></div>}
+                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} asset={asset} /></div>}
 
                     </div>
                 }

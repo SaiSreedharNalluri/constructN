@@ -1,4 +1,4 @@
-import { Button, TableRow, TableHead, TableContainer, TableCell, TableBody, Table, Select, MenuItem } from "@mui/material";
+import { Button, TableRow, TableHead, TableContainer, TableCell, TableBody, Table, Select, MenuItem, styled } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import Input from "@mui/material/OutlinedInput";
 import { IAsset, IAssetStage } from "../../models/IAssetCategory";
@@ -8,6 +8,9 @@ import { toast } from "react-toastify";
 import authHeader from "../../services/auth-header";
 
 const headers = {headers: authHeader.authHeader()}
+import { Checkbox } from "@mui/material";
+import PopupComponent from "../popupComponent/PopupComponent";
+import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 
 interface Stage extends IAssetStage {
 	id?: string;
@@ -22,7 +25,7 @@ interface SetProgressProps {
 	key?: string;
 }
 
-const updateAssetDetails = (assetId: string, data: { [key: string]: string | number | object; }) => {
+const updateAssetDetails = (assetId: string, data: { [key: string]: string | number | object | undefined; }) => {
 	try {
 		return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, data, headers);
 	} catch (error) {
@@ -85,16 +88,32 @@ const onSave = async ({
 	}
 };
 
+
+const onStatusToggle = async ({assetId ='', status, setLoading, refetchAssets }: { assetId: string , status: string, setLoading: Dispatch<SetStateAction<boolean>>, refetchAssets: () => void }) =>{
+	try {
+		setLoading(true);
+		await updateAssetDetails(assetId, {status: status });
+		CustomToast('Status Updated successfully!', 'success');
+		refetchAssets();
+	}catch{
+		CustomToast('Status Updated Failed!', 'error');
+	}finally{
+		setLoading(false);
+	}
+}
+
 export default function Metrics({
 	stages = [],
 	assetId = "",
 	metrics = {},
 	refetchAssets = ()=>{},
+	asset,
 }: {
 	stages: Stage[];
 	assetId: string;
 	metrics: { [key: string]: string | number | { metric: string} };
 	refetchAssets: () => void,
+	asset: IAsset,
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
@@ -104,6 +123,8 @@ export default function Metrics({
 	const [stageValues, setStageValues] = useState<Stage[]>([
 		...(formatStageData || []),
 	]);
+
+	const [showConfirmation, setShowConfirmation] = useState('');
 
 	const [loading, setLoading] = useState(false);
 
@@ -164,22 +185,7 @@ export default function Metrics({
 										align="center"
 										className="w-1/6 p-0"
 									>
-										<Select
-											id="unit-select"
-											labelId="unit-select"
-											value={row.uom}
-											size="small"
-											onChange={(val) =>
-												setProgress({
-													id: row.id,
-													val: val.target.value,
-													stageValues,
-													setStageValues,
-													key: 'uom'
-												})}
-										>
-											<MenuItem value={row.uom}>{row.uom}</MenuItem>
-										</Select>
+										{row.uom}
 									</TableCell>
 								</TableRow>
 							))}
@@ -187,7 +193,26 @@ export default function Metrics({
 					</Table>
 				</TableContainer>
 			)}
-			<div className="mt-4 flex justify-end">
+			{showConfirmation ? <PopupComponent
+			open={!!showConfirmation}
+        	setShowPopUp={setShowConfirmation}
+        	modalTitle={"Confirmation"}
+			modalmessage={<div className="ml-2">Are you want to make this Asset <span className="font-semibold text-[#F1742E]">{asset.status ==='Active' ? 'InActive': 'Active'}</span> ?</div>}
+        	primaryButtonLabel={"Confirm"}
+        	SecondaryButtonlabel={"Cancel"}
+        	callBackvalue={()=>{
+				onStatusToggle({ assetId, status: asset.status ==='Active'? 'InActive': 'Active', setLoading , refetchAssets });
+			}}
+        	/>: null}
+			<div className="mt-4 flex justify-between">
+				<div>
+					<Checkbox sx={{
+						'&.Mui-checked': {
+						color: '#F1742E',
+						},
+					}} checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
+						<span className="font-semibold pt-1" >Active</span>
+				</div>
 				{stageValues.length > 0 ? (
 					<Button
 						size="small"
