@@ -86,8 +86,9 @@ export const ProjectListCardView = ({
   const[role,setRole]=useState("");
   const onDelete = (projectId: string,role:string) => {
     if(role==="admin"){
-      deleteProject(projectId).then(res => {
-        window.location.reload();
+      deleteProject(projectId).then((res) => {
+        const updatedProjects = projectsData.filter((project: any) => project._id !== projectId);          
+        setProjectsData(updatedProjects);
         CustomToast(res.message,"success")
       })
       .catch((err) => {
@@ -376,7 +377,7 @@ else{
         isDelete? <PopupComponent
         open={isDelete}
         setShowPopUp={setDelete}
-        modalTitle={"Cancel"}
+        modalTitle={"'Attention'"}
         modalmessage={
          `Are you sure you want to 'Delete Project'?`
         }

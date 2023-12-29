@@ -67,7 +67,8 @@ export const ProjectListFlatView = ({
   const onDelete = (projectId: string,role:string) => {
     if(role==="admin"){
       deleteProject(projectId).then(res => {
-        window.location.reload();
+       const updatedProjects = projectsState.filter((project: any) => project._id !== projectId);          
+        setProjectsState(updatedProjects);
         CustomToast(res.message,"success")
       })
       .catch((err) => {
@@ -589,7 +590,7 @@ alt="delete" className=" cursor-pointer"></Image>
         isDelete? <PopupComponent
         open={isDelete}
         setShowPopUp={setDelete}
-        modalTitle={"Cancel"}
+        modalTitle={"'Attention'"}
         modalmessage={
          `Are you sure you want to 'Delete Project'?`
         }
