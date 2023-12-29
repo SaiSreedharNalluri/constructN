@@ -33,10 +33,15 @@ const Progress2dAssets = ({
 				<div className="text-[11px] mt-[4px] font-semibold text-[#999999]">
 					{(row?.progress?.stage as IAssetStage)?.name || "-"}
 				</div>
-				<div className="text-[11px] mt-[2px] text-[#ccc]">
-					{moment(new Date(row.updatedAt)).format(
-						"DD MMM, yyyy HH:mm"
-					) || "-"}
+				<div className="flex justify-between">
+					<div className="text-[11px] mt-[2px] text-[#ccc]">
+						{moment(new Date(row.updatedAt)).format(
+							"DD MMM, yyyy HH:mm"
+						) || "-"}
+					</div>
+					<div className="text-[11px] mt-[2px] text-[#ccc] mr-2">
+						{row.status}
+					</div>
 				</div>
 			</div>
 		);

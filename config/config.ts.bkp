@@ -28,7 +28,7 @@ export const INTERCOM = {
 
 export const API = {
 
-    BASE_URL: 'https://api.qa-us.constructn.ai/api/v1',
+    BASE_URL: 'https://api.dev2.constructn.ai/api/v1',
 
     LOCAL_URL: 'http://localhost:3001/api/v1',
 

@@ -10,7 +10,7 @@ import { CustomToast } from "../../../../../components/divami_components/custom-
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
 import MapLoading from "../../../../../components/container/mapLoading";
-import Header from "../../../../../components/divami_components/header/Header";
+import Header from "../../../../../components/container/MultiverseHeader/Header";
 import SidePanelMenu from "../../../../../components/divami_components/side-panel/SidePanel";
 import ToolBarMenuWrapper from "../../../../../components/container/toolbarViewer/ToolBarMenuWrapper";
 import { IDesignMap } from "../../../../../models/IDesign";
@@ -20,7 +20,7 @@ import { ISnapshot } from "../../../../../models/ISnapshot";
 import { Issue } from "../../../../../models/Issue";
 import { ChildrenEntity, IStructure } from "../../../../../models/IStructure";
 import { ITasks } from "../../../../../models/Itask";
-import { IToolResponse, ITools } from "../../../../../models/ITools";
+import { IContext, IToolResponse, IToolbarAction, ITools } from "../../../../../models/ITools";
 import ChevronLeftIcon from "../../../../../public/divami_icons/chevronLeft.svg";
 import ChevronRightIcon from "../../../../../public/divami_icons/chevronRight.svg";
 import { deleteAttachment } from "../../../../../services/attachments";
@@ -59,8 +59,11 @@ import { getSectionsList } from "../../../../../services/sections";
 import CustomLoggerClass from "../../../../../components/divami_components/custom_logger/CustomLoggerClass";
 import { getGenViewerData } from "../../../../../services/genviewer";
 import { IGenData } from "../../../../../models/IGenData";
-import { MqttConnector } from "../../../../../utils/MqttConnector";
+import { MqttConnector, OnMessageCallbak } from "../../../../../utils/MqttConnector";
 import Iframe from "../../../../../components/container/Iframe"
+import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
+import { responsiveFontSizes } from "@mui/material";
+import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
 interface IProps { }
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -122,9 +125,15 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
   marginLeft: "58px",
   zIndex: 0,
 }));
+export type toolBarHandle = {
+  selectToolRef: (handleMenuInstance: any) => void;
+  RouterIssueRef: (handleMenuInstance: any) => void;
+};
+type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
 const Index: React.FC<IProps> = () => {
   const customLogger = new CustomLoggerClass();
+  const ref = React.useRef<toolBarHandle>(null);
   const router = useRouter();
   let [currentViewMode, setViewMode] = useState("Design"); //Design/ Reality
   const [currentProjectId, setActiveProjectId] = useState("");
@@ -154,6 +163,7 @@ const Index: React.FC<IProps> = () => {
   const [currentViewType, setViewType] = useState(""); //plan,elevational,xsectional,bim
   const [currentViewLayers, setViewLayers] = useState<string[]>([]); //360Image, 360Video, phoneImage, droneImage
   const [clickedTool, setClickedTool] = useState<ITools>();
+  const [toolUpdate, setToolUpdate] = useState<IToolbarAction>();
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
@@ -172,9 +182,7 @@ const Index: React.FC<IProps> = () => {
   const [selectedDesign, setSelectedDesign] = useState("");
   const [selectedReality, setSelectedReality] = useState("");
 
-  const [currentContext, setCurrentContext] = useState<IToolResponse>({
-    type: "Task",
-  });
+  const [currentContext, setCurrentContext] = useState<IToolbarAction>();
   const [hierarchy, setHierarchy] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
@@ -188,9 +196,12 @@ const Index: React.FC<IProps> = () => {
 
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
   const [initData, setInintData] = useState<IGenData>();
+  const [multiverseIsReady, setMultiverseIsReady] = useState(false);
+  const [mViewerStatus, setMViewerStatus] = useState<multiverseViewerStatusTypes>("NotAvailable");
 
-  console.log("view types", initData)
+  let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
+
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
@@ -221,55 +232,57 @@ const Index: React.FC<IProps> = () => {
     numberOfFilters: 0,
   });
 
-  const closeIssueCreate = () => {
-    setOpenCreateIssue(false);
-    setHighlightCreateIcon(false);
-  };
-  const issueSubmit = (formdata: Issue) => {
-    issuesList.push(formdata);
-    // if (structure) {
-    //   getIssues(structure._id);
-    // }
+  // const closeIssueCreate = () => {
+  //   setOpenCreateIssue(false);
+  //   setHighlightCreateIcon(false);
+  //   conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
 
-    setIssueList(structuredClone(issuesList));
-    setIssueFilterList(structuredClone(issuesList));
-    // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
-    // toolClicked(myTool);
-    closeIssueCreate();
-  };
+  // };
+  // const issueSubmit = (formdata: Issue) => {
+  //   issuesList.push(formdata);
+  //   // if (structure) {
+  //   //   getIssues(structure._id);
+  //   // }
 
-  const closeTaskCreate = () => {
-    setOpenCreateTask(false);
-    setHighlightCreateTaskIcon(false)
-  };
-  const closeIssueList = () => {
-    setOpenIssueView(false);
-  };
+  //   setIssueList(structuredClone(issuesList));
+  //   setIssueFilterList(structuredClone(issuesList));
+  //   // let myTool : ITools ={toolName:'issue',toolAction:'issueCreated'};
+  //   // toolClicked(myTool);
+  //   closeIssueCreate();
+  // };
 
-  const closeTaskDetails = () => {
-    setOpenTaskDetails(false);
-    delete router.query.tsk
-    //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
-    router.push(router);
-  };
-  const closeIssueDetails = () => {
-    setOpenIssueDetails(false);
-    delete router.query.iss
-    //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
-    router.push(router);
-  };
+  // const closeTaskCreate = () => {
+  //   setOpenCreateTask(false);
+  //   setHighlightCreateTaskIcon(false)
+  // };
+  // const closeIssueList = () => {
+  //   setOpenIssueView(false);
+  // };
 
-  const taskSubmit = (formdata: any) => {
-    tasksList.push(formdata);
-    let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
-    setTasksList(structuredClone(tasksList));
-    setTaskFilterList(structuredClone(tasksList));
-    // if (structure) {
-    //   getTasks(structure._id);
-    // }
-    // toolClicked(myTool);
-    closeTaskCreate();
-  };
+  // const closeTaskDetails = () => {
+  //   setOpenTaskDetails(false);
+
+  //   //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)   
+
+  // };
+  // const closeIssueDetails = () => {
+  //   setOpenIssueDetails(false);
+  //   // delete router.query.iss
+  //   //router.replace(`/projects/${router?.query?.projectId}/structure?structId=${router?.query?.structId}`)
+  //   // router.push(router);
+  // };
+
+  // const taskSubmit = (formdata: any) => {
+  //   tasksList.push(formdata);
+  //   let myTool: ITools = { toolName: "task", toolAction: "taskCreated" };
+  //   setTasksList(structuredClone(tasksList));
+  //   setTaskFilterList(structuredClone(tasksList));
+  //   // if (structure) {
+  //   //   getTasks(structure._id);
+  //   // }
+  //   // toolClicked(myTool);
+  //   closeTaskCreate();
+  // };
 
   useEffect(() => {
     if (router.isReady && router.query?.projectId) {
@@ -340,10 +353,10 @@ const Index: React.FC<IProps> = () => {
           if (list.length > 0) {
             let structs: IStructure[] = list;
 
-            if (router.query.structId !== undefined) {
+            if (router.query.structureId !== undefined) {
               setStructure(
                 structs.find((e) => {
-                  if (e._id === router.query.structId) {
+                  if (e._id === router.query.structureId) {
                     return e;
                   }
                 })
@@ -487,8 +500,8 @@ const Index: React.FC<IProps> = () => {
 
   const getStructureData = (structure: ChildrenEntity) => {
     setStructure(getCurrentStructureFromStructureList(structure));
-    getIssues(structure._id);
-    getTasks(structure._id);
+    // getIssues(structure._id);
+    // getTasks(structure._id);
   };
 
   useEffect(() => {
@@ -497,18 +510,17 @@ const Index: React.FC<IProps> = () => {
         project,
         ...getBreadCrumbsData(structure),
       ]);
-      getIssues(structure._id);
-      getTasks(structure._id);
+      // getIssues(structure._id);
+      // getTasks(structure._id);
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
+    // if (router.isReady && structure) {
+    //   //router.query.structId = structure?._id;
+    //   router.query.structureId = structure?._id;
 
-    if (router.isReady && structure) {
-      console.log("routerrrrrrrrr3", router)
-      router.query.structId = structure?._id;
-      console.log("routerrrrrrrrr4", router)
-      router.push(router);
-    }
+    //   router.push(router);
+    //}
   }, [structure, project]);
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -520,142 +532,93 @@ const Index: React.FC<IProps> = () => {
     return currentStructure;
   };
 
-  const updateRealityMap = (realityMap: IActiveRealityMap) => {
-    console.log("realitymap",realityMap)
-    setActiveRealityMap(realityMap);
-    if (currentViewLayers.length > 0) {
-      currentViewLayers.length = 0;
-    }
-    Object.keys(realityMap).map((key) => {
-      currentViewLayers.push(key);
-    });
-    Object.values(realityMap).map((val: any) => {
-      val.realities?.forEach((reality: any) => {
-        reality.realityType?.forEach((rType: any) => {
-          if (viewTypes.findIndex((typ) => typ === rType) == -1) {
-            viewTypes.push(rType);
-          }
-        });
-      });
-    });
-    setViewTypes(structuredClone(viewTypes));
-    //console.log("MyViewTypeList-->r",viewTypes);
-  };
-  const updatedSnapshot = (snapshot: ISnapshot) => {
-    setSnapshot(snapshot);
-    if (router.isReady) {
-      router.query.snap = snapshot._id;
-      router.push(router);
-    }
-  };
+  // const updateRealityMap = (realityMap: IActiveRealityMap) => {
+  //   setActiveRealityMap(realityMap);
+  //   if (currentViewLayers.length > 0) {
+  //     currentViewLayers.length = 0;
+  //   }
+  //   Object.keys(realityMap).map((key) => {
+  //     currentViewLayers.push(key);
+  //   });
+  //   Object.values(realityMap).map((val: any) => {
+  //     val.realities?.forEach((reality: any) => {
+  //       reality.realityType?.forEach((rType: any) => {
+  //         if (viewTypes.findIndex((typ) => typ === rType) == -1) {
+  //           viewTypes.push(rType);
+  //         }
+  //       });
+  //     });
+  //   });
+  //   setViewTypes(structuredClone(viewTypes));
+  //   //console.log("MyViewTypeList-->r",viewTypes);
+  // };
   useEffect(() => {
-    console.log("Snapshot Set")
     if (router.query.iss !== null) {
 
       let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
-        setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
-        setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
+        // setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
+        // setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
         setOpenIssueDetails(true);
       }
     }
     else if (router.query.tsk !== null) {
       let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
       if (sel_tsk) {
-        setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
-        setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
+        // setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
+        // setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
         setOpenTaskDetails(true);
       }
     }
 
 
   }, [snapshot]);
-  useEffect(() => {
 
-  })
-  const updateDesignMap = (designMap: IDesignMap) => {
+  // const updateDesignMap = (designMap: IDesignMap) => {
 
 
-    setDesignMap(designMap);
-    setViewTypes([]);
+  //   setDesignMap(designMap);
+  //   setViewTypes([]);
 
-    Object.keys(designMap).forEach((key) => {
-      if (viewTypes.findIndex((k) => k === key) === -1) {
-        setViewTypes((prevViewTypes) => [...prevViewTypes, key]);
-      }
-    });
-  };
+  //   Object.keys(designMap).forEach((key) => {
+  //     if (viewTypes.findIndex((k) => k === key) === -1) {
+  //       setViewTypes((prevViewTypes) => [...prevViewTypes, key]);
+  //     }
+  //   });
+  // };
 
-  useEffect(() => {
-    const list: any = [];
-    const types: any = [];
-    if (activeRealityMap) {
-      for (const key in activeRealityMap) {
-        activeRealityMap[key as keyof IActiveRealityMap].realities?.forEach(
-          (item: any) => {
-            item.realityType?.forEach((each: any) => {
-              if (!list.includes(each)) {
-                list.push(each);
-              }
-            });
-          }
-        );
-      }
-    }
-    let realityKeys = list.reduce((a: any, v: any) => ({ ...a, [v]: v }), {});
+  // const activeClass = (e: any) => {
+  //   setViewerType(e.currentTarget.id);
+  // };
+  // const renderSwitch = (param: string) => {
+  //   switch (param) {
+  //     case "potree":
+  //       return <MapLoading></MapLoading>;
 
-    Object.keys({ ...designMap, ...realityKeys }).map((key) => {
-      types.push(key);
-    });
-    setDesignAndRealityMaps(types);
+  //     case "plan Drawings":
+  //       // setGenData()
+  //       break;
+  //       return (
+  //         structure && (
+  //           ''
+  //         )
+  //       );
+  //     case "BIM":
+  //       // setGenData();
+  //       break;
+  //       return (
+  //         snapshot &&
+  //         structure && (
+  //           <div className="overflow-x-hidden overflow-y-hidden">
 
-    if (isObjectEmpty(activeRealityMap)) {
-      setRealityAvailable(false);
-    }
-    else {
-      setRealityAvailable(true);
-    }
+  //           </div>
+  //         )
+  //       );
 
-    if (isObjectEmpty(designMap)) {
-      setDesignAvailable(false);
-    }
-    else {
-      setDesignAvailable(true);
-    }
-
-  }, [activeRealityMap, designMap]);
-  const activeClass = (e: any) => {
-    setViewerType(e.currentTarget.id);
-  };
-  const renderSwitch = (param: string) => {
-    switch (param) {
-      case "potree":
-        return <MapLoading></MapLoading>;
-
-      case "plan Drawings":
-        // setGenData()
-        break;
-        return (
-          structure && (
-            ''
-          )
-        );
-      case "BIM":
-        // setGenData();
-        break;
-        return (
-          snapshot &&
-          structure && (
-            <div className="overflow-x-hidden overflow-y-hidden">
-
-            </div>
-          )
-        );
-
-      default:
-        break;
-    }
-  };
+  //     default:
+  //       break;
+  //   }
+  // };
   const closeStructurePage = (e: any) => {
     if (
       rightrefContainer.current &&
@@ -669,9 +632,9 @@ const Index: React.FC<IProps> = () => {
     }
   };
 
-  const rightNavCollapse = () => {
-    setRightNav(!rightNav);
-  };
+  // const rightNavCollapse = () => {
+  //   setRightNav(!rightNav);
+  // };
 
   const onChangeData = () => {
     if (leftNav) {
@@ -681,70 +644,140 @@ const Index: React.FC<IProps> = () => {
     }
   };
 
-  const toolClicked = (toolInstance: ITools) => {
-    let newLayers = _.cloneDeep(currentViewLayers);
-    switch (toolInstance.toolName) {
-      case "viewType":
-        setViewType(toolInstance.toolAction);
-        //setClickedTool(toolInstance);
-        break;
-      case "viewMode":
-        currentViewMode = toolInstance.toolAction;
-        setViewMode(toolInstance.toolAction);
-        break;
-      case "issue":
-        switch (toolInstance.toolAction) {
-          case "issueView":
-            //console.log('trying to open issue View');
-            setOpenIssueView(true);
+  const toolClicked = (toolInstance: IToolbarAction) => {
+    console.log("toolInstrance", toolInstance)
+    // let newLayers = _.cloneDeep(currentViewLayers);
+    switch (toolInstance.type) {
+      case "setViewType":
+        router.query.type = toolInstance.data as string;
+        router.push(router);
+        switch (toolInstance.data) {
+          case "Plan Drawings":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
             break;
-          case "issueCreate":
-          //setOpenCreateIssue(true);
-          case "issueCreateSuccess":
-          case "issueCreateFail":
-          case "issueSelect":
-          //setSearchParams({iss:toolInstance.response?.id as string});
-          // console.log("Helll");
-          // router.query.iss=toolInstance.response?.id;
-          // router.push(router)
-          case "issueShow":
-          case "issueHide":
-          case "issueRemoved":
-            setClickedTool(toolInstance);
+          case "BIM":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
+            break;
+          case "pointCloud":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
             break;
         }
         break;
-      case "progress":
-        switch (toolInstance.toolAction) {
-          case "progressView":
-            //todo
+
+      case "setStructure":
+        //conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":'+JSON.stringify(response.result)+'}')
+
+        break;
+
+      case "setCompareMode":
+
+        switch (toolInstance.data) {
+          case "noCompare":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
-          case "progressCreate":
-          case "progressShow":
-          case "progressHide":
-            setClickedTool(toolInstance);
+          case "compareDesign":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
+          case "compareReality":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+            break;
+
         }
         break;
-      case "task":
-        switch (toolInstance.toolAction) {
-          case "taskView":
-            //todo
+      case "setViewMode":
+        switch (toolInstance.data) {
+          case "Design":
+            if (initData?.structure.isExterior) {
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
+            }
+            else {
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
+            }
+
             break;
-          case "taskCreate":
-          case "taskCreateSuccess":
-          case "taskCreateFail":
-          case "taskShow":
-          case "taskHide":
-          case "taskSelect":
-          //setSearchParams({tsk:toolInstance.response?.id as string});
-          // router.query.tsk=toolInstance.response?.id;
-          // router.push(router)
-          case "taskRemoved":
-            setClickedTool(toolInstance);
+          case "Reality":
+            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
             break;
+
         }
 
+        break;
+      case "viewIssueList":
+
+        setOpenIssueView(true);
+        break;
+      case "createIssue":
+
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
+        // conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(),appEventsCB)
+        break;
+
+      case "showIssue":
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"'+toolInstance.toolAction+'","data":" "}');
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showIssue","data":" "}');
+        break;
+      case "hideIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
+        break;
+      case "selectIssue":
+        console.log("select issue publish")
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case "removedIssue":
+        (async () => {
+          const issueDetelteStatus = await deleteTheIssue(toolInstance.data);
+          if (issueDetelteStatus) {
+            let issueId = (toolInstance.data as { _id: any })._id;
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(issueId) + '}')
+          }
+        })();
+        break;
+      case "viewTaskList":
+        //setOpenIssueView(true);
+        break;
+      case "createFailIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
+        break;
+      case "createSuccessIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case "editIssue":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case "createTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
+        break;
+      case "createFailTask":
+        break;
+      case "createSuccessTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case "selectTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case "showTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}');
+        break;
+      case "hideTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
+        break;
+      case "editTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case "removedTask":
+        (async () => {
+          const TaskDetelteStatus = await deleteTheTask(toolInstance.data);
+          console.log(TaskDetelteStatus)
+          if (TaskDetelteStatus) {
+            let taskId = (toolInstance.data as { _id: any })._id;
+            console.log("issueId", taskId)
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
+          }
+        })();
+        // setClickedTool(toolInstance);
+        break;
+      case "setViewLayers":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "addViewLayer":
         // newLayers.push(toolInstance.toolAction);
@@ -755,273 +788,20 @@ const Index: React.FC<IProps> = () => {
         // newLayers.splice(newLayers.indexOf(toolInstance.toolAction), 1);
         // setViewLayers(newLayers);
         break;
-      case "compareReality":
-      case "compareDesign":
-        setClickedTool(toolInstance);
+      case "setFullScreenMode":
         break;
-      case "fullScreen":
-        if (toolInstance.toolAction === "true") {
-        }
+      case "closeIssueDrawer":
+        delete router.query.iss
+        router.push(router)
+      case "closeTaskDrawer":
+        delete router.query.tsk
+        router.push(router)
+
       default:
         break;
     }
   };
 
-  const toolResponse = (data: ITools) => {
-    switch (data.toolName) {
-      case "viewMode":
-        setViewMode(data.toolAction);
-        break;
-      case "viewType":
-        setViewType(data.toolAction);
-      case "Issue":
-        if (data.toolAction === "createIssue") {
-          //   html2canvas(document.getElementById('TheView')||document.body).then(function(canvas) {
-          //     //window.open('','_blank')?.document.body.appendChild(canvas);
-          //     //canvas.toDataURL('image/png');
-
-          // });
-          if (data.response != undefined) setCurrentContext(data.response);
-          setOpenCreateIssue(true);
-        } else if (data.toolAction === "selectIssue") {
-          // issue detail view open logic comes here
-          if (data.response != undefined) {
-            setCurrentContext(data.response);
-            //setOpenIssueDetails(true);
-            // console.log(router,"Router Obj")
-            router.query.iss = data.response?.id;
-            delete router.query.tsk;
-            router.push(router);
-          }
-        }
-        break;
-      case "Task":
-        if (data.toolAction === "createTask") {
-          if (data.response != undefined) setCurrentContext(data.response);
-          setOpenCreateTask(true);
-        } else if (data.toolAction === "selectTask") {
-          // task detail view open logic comes here
-          if (data.response != undefined) {
-            setCurrentContext(data.response);
-            //setOpenTaskDetails(true);
-            // console.log(router,"Router Obj")
-            router.query.tsk = data.response?.id;
-            delete router.query.iss;
-            router.push(router)
-          }
-        }
-        break;
-      default:
-        break;
-    }
-  };
-console.log("designreal",designMap)
-  useEffect(() => {
-    if (currentViewMode === "Design" && designAndRealityMaps.length) {
-      if (currentViewType != "Plan Drawings" && currentViewType != "BIM") {
-        if (designAndRealityMaps.includes(selectedDesign)) {
-          setViewType(selectedDesign);
-        } else {
-          if (designAndRealityMaps.includes("Plan Drawings")) {
-            setViewType("Plan Drawings");
-            setSelectedDesign("Plan Drawings");
-          } else if (designAndRealityMaps.includes("BIM")) {
-            setViewType("BIM");
-            setSelectedDesign("BIM");
-          } else {
-            const val =
-              designMap && Object.keys(designMap)?.length
-                ? Object.keys(designMap)[0]
-                : "";
-            if (val) {
-              setViewType(val);
-              setSelectedDesign(val);
-            } else {
-              setViewMode("Reality");
-            }
-          }
-        }
-      } else if (!designAndRealityMaps.includes(currentViewType)) {
-        if (designAndRealityMaps.includes("Plan Drawings")) {
-          setViewType("Plan Drawings");
-          setSelectedDesign("Plan Drawings");
-        } else if (designAndRealityMaps.includes("BIM")) {
-          setViewType("BIM");
-          setSelectedDesign("BIM");
-        } else {
-          const val =
-            designMap && Object.keys(designMap)?.length
-              ? Object.keys(designMap)[0]
-              : "";
-          if (val) {
-            setViewType(val);
-            setSelectedDesign(val);
-          } else {
-            setViewMode("Reality");
-            CustomToast("No Design Found, Contact Support", "error");
-          }
-        }
-      }
-    } else if (currentViewMode === "Reality" && designAndRealityMaps.length) {
-      if (currentViewType != "pointCloud" && currentViewType != "orthoPhoto") {
-        if (designAndRealityMaps.includes(selectedReality)) {
-          setViewType(selectedReality);
-        } else {
-          if (designAndRealityMaps.includes("pointCloud")) {
-            setViewType("pointCloud");
-            setSelectedReality("pointCloud");
-          } else if (designAndRealityMaps.includes("orthoPhoto")) {
-            setViewType("orthoPhoto");
-            setSelectedReality("orthoPhoto");
-          } else {
-            // setViewType(designAndRealityMaps[0]);
-            const arr =
-              activeRealityMap &&
-                activeRealityMap[
-                  `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-                ]?.realities?.length &&
-                activeRealityMap[
-                  `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-                ].realities![0].realityType?.length
-                ? activeRealityMap[
-                  `${Object.keys(
-                    activeRealityMap
-                  )[0] as keyof IActiveRealityMap
-                  }`
-                ].realities![0].realityType
-                : [];
-            if (arr && arr.length) {
-              setViewType(arr[0]);
-              setSelectedReality(arr[0]);
-            } else {
-              setViewMode("Design");
-              CustomToast("Reality Not Found, Contact Support", "error");
-            }
-          }
-        }
-      } else if (!designAndRealityMaps.includes(currentViewType)) {
-        if (designAndRealityMaps.includes("pointCloud")) {
-          setViewType("pointCloud");
-          setSelectedReality("pointCloud");
-        } else if (designAndRealityMaps.includes("orthoPhoto")) {
-          setViewType("orthoPhoto");
-          setSelectedReality("orthoPhoto");
-        } else {
-          // setViewType(designAndRealityMaps[0]);
-          const arr =
-            activeRealityMap &&
-              activeRealityMap[
-                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-              ]?.realities?.length &&
-              activeRealityMap[
-                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap}`
-              ].realities![0].realityType?.length
-              ? activeRealityMap[
-                `${Object.keys(activeRealityMap)[0] as keyof IActiveRealityMap
-                }`
-              ].realities![0].realityType
-              : [];
-          if (arr && arr.length) {
-            setViewType(arr[0]);
-            setSelectedReality(arr[0]);
-          } else {
-            setViewMode("Design");
-          }
-        }
-      }
-    }
-    setShowIssueMarkups(true);
-    setShowTaskMarkups(true);
-    toolClicked({ toolName: "issue", toolAction: "issueShow" });
-    toolClicked({ toolName: "task", toolAction: "taskShow" });
-  }, [currentViewMode, designAndRealityMaps]);
-
-  useEffect(() => {
-
-    if (
-      designMap &&
-      Object.keys(designMap)?.length &&
-      Object.keys(designMap).includes(currentViewType)
-    ) {
-      if (selectedDesign !== currentViewType)
-        setSelectedDesign(currentViewType);
-
-      toolClicked({ toolName: "viewType", toolAction: currentViewType });
-    } else if (currentViewType) {
-      //console.log(currentViewType, "Here ...",selectedReality)
-      if (selectedReality && selectedReality !== currentViewType)
-        setSelectedReality(currentViewType);
-      toolClicked({ toolName: "viewType", toolAction: currentViewType });
-    }
-    if (router.isReady) {
-      router.query.type = currentViewType;
-      router.push(router);
-    }
-
-  }, [currentViewType]);
-
-  useEffect(() => {
-    let obj: any = activeRealityMap;
-
-    for (const key in obj) {
-      if (obj[key].children?.length) {
-        obj[key] = {
-          ...obj[key],
-          children: obj[key]?.children.map((each: any) => {
-            return {
-              ...each,
-              isSelected: true,
-            };
-          }),
-        };
-      } else {
-        obj[key] = {
-          ...obj[key],
-          isSelected: true,
-          children: obj[key].children?.length
-            ? obj[key]?.children.map((each: any) => {
-              return {
-                ...each,
-                isSelected: true,
-              };
-            })
-            : [],
-        };
-      }
-    }
-
-    setActiveRealityMap(obj);
-    setLayersUpdated(!layersUpdated);
-  }, [currentViewMode, currentViewType]);
-
-  const getIssues = (structureId: string, isDownload?: boolean) => {
-    // setIssueLoader(true)
-    if (structureId && router.query.projectId) {
-      getIssuesList(router.query.projectId as string, structureId)
-        .then((response: any) => {
-          if (isDownload) {
-            // response.blob().then((blob: any) => {
-            // Creating new object of PDF file
-            const data = response.result;
-            const fileURL = window.URL.createObjectURL(new Blob(data));
-            // Setting various property values
-            let alink = document.createElement("a");
-            alink.href = fileURL;
-            alink.download = "SamplePDF.pdf";
-            alink.click();
-            // });
-          } else {
-            setIssueList(response.result);
-            setIssueFilterList(response.result);
-          }
-        })
-        .catch((error: any) => {
-          if (error.success === false) {
-            CustomToast(error?.message, "error");
-          }
-        });
-    }
-  };
 
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
@@ -1034,29 +814,30 @@ console.log("designreal",designMap)
         }
       });
   };
-  const getTasks = (structureId: string) => {
-    if (structureId && router.query.projectId) {
-      getTasksList(router.query.projectId as string, structureId)
-        .then((response: any) => {
-          setTasksList(response.result);
-          setTaskFilterList(response.result);
-        })
-        .catch((error: any) => {
-          if (error.success === false) {
-            CustomToast(error?.message, "error");
-          }
-        });
-    }
-  };
+  // const getTasks = (structureId: string) => {
+  //   if (structureId && router.query.projectId) {
+  //     getTasksList(router.query.projectId as string, structureId)
+  //       .then((response: any) => {
+  //         setTasksList(response.result);
+  //         setTaskFilterList(response.result);
+  //       })
+  //       .catch((error: any) => {
+  //         if (error.success === false) {
+  //           CustomToast(error?.message, "error");
+  //         }
+  //       });
+  //   }
+  // };
 
   const handleOnIssueSort = (sortMethod: string) => {
+
     switch (sortMethod) {
       case "Last Updated":
         setIssueList(
           issuesList.sort((a, b) => {
-            if (a.updatedAt > b.updatedAt) {
+            if (a.dueDate > b.dueDate) {
               return 1;
-            } else if (b.updatedAt > a.updatedAt) {
+            } else if (b.dueDate > a.dueDate) {
               return -1;
             }
             return 0;
@@ -1140,6 +921,7 @@ console.log("designreal",designMap)
   };
 
   const handleOnTasksSort = (sortMethod: string) => {
+
     switch (sortMethod) {
       case "Last Updated":
         setIssueList(
@@ -1346,58 +1128,45 @@ console.log("designreal",designMap)
       numberOfFilters: 0,
     });
   };
-  const deleteTheIssue = (issueObj: any, callback?: any) => {
-    deleteIssue(router.query.projectId as string, issueObj._id)
-      .then((response: any) => {
-        if (response.success === true) {
-          CustomToast(response.message, "success");
-          _.remove(issueFilterList, { _id: issueObj._id });
-          setIssueList(issueFilterList);
-          if (callback && response.message !== "Failed to delete Issue") {
-            callback();
-          }
-          const issueMenuInstance: ITools = {
-            toolName: "issue",
-            toolAction: "issueRemoved",
-          };
+  const deleteTheIssue = async (issueObj: any): Promise<boolean> => {
+    try {
+      const response: any = await deleteIssue(router.query.projectId as string, issueObj._id);
 
-          toolClicked(issueMenuInstance);
-        }
-      })
-      .catch((error: any) => {
-        if (!error.success && error.message === "Forbidden Access") {
-          CustomToast("You do not have access,Contact Admin", "error");
-        } else {
-          CustomToast("Task could not be deleted", "error");
-        }
-      });
+      if (response.success === true) {
+        CustomToast(response.message, "success");
+        return true;
+      }
+
+    } catch (error: any) {
+      if (!error.success && error.message === "Forbidden Access") {
+        CustomToast("You do not have access, Contact Admin", "error");
+      } else {
+        CustomToast("Issue could not be deleted", "error");
+      }
+      return false;
+    }
+    return false;
   };
 
-  const deleteTheTask = (taskObj: any, callback?: any) => {
-    deleteTask(router.query.projectId as string, taskObj._id)
-      .then((response: any) => {
-        if (response.success === true) {
-          CustomToast(response.message, "success");
-          _.remove(taskFilterList, { _id: taskObj._id });
-          setTasksList(taskFilterList);
-          if (callback && response.message !== "Failed to delete Issue") {
-            callback();
-          }
-          const taskMenuInstance: ITools = {
-            toolName: "task",
-            toolAction: "taskRemoved",
-          };
 
-          toolClicked(taskMenuInstance);
-        }
-      })
-      .catch((error: any) => {
-        if (!error.success && error.message === "Forbidden Access") {
-          CustomToast("You do not have access,Contact Admin", "error");
-        } else {
-          CustomToast("Task could not be deleted", "error");
-        }
-      });
+  const deleteTheTask = async (taskObj: any): Promise<boolean> => {
+    try {
+      const response: any = await deleteTask(router.query.projectId as string, taskObj._id)
+      if (response.success === true) {
+        CustomToast(response.message, "success");
+        return true;
+      }
+    }
+    catch (error: any) {
+      if (!error.success && error.message === "Forbidden Access") {
+        CustomToast("You do not have access, Contact Admin", "error");
+      } else {
+        CustomToast("Issue could not be deleted", "error");
+      }
+      return false;
+    }
+    return false
+
   };
 
   const clickIssueEditSubmit = (editObj: any, issueObj: any) => {
@@ -1484,52 +1253,15 @@ console.log("designreal",designMap)
           const result = response.data.result;
           const resultArray: any = Array.isArray(result) ? result : [result];
           setState([...resultArray]);
-          setStateFilter([...response.data.result]);
+          //setStateFilter([...response.data.result]);
           // if (selector.length < 1) setSelector(response.data.result[0]._id);
         })
         .catch((error) => {
           console.log("error", error);
         });
     }
-  }, [router.isReady, router.query.projectId, router.query.structId]);
+  }, [router.isReady, router.query.projectId]);
 
-  //To Be used by Shivram
-
-  // const searchParams = useSearchParams();
-  // useEffect(()=>{
-  //   //const currentParams = Object.fromEntries([...searchParams]);
-  //   //console.log(currentParams);
-  //   console.log("structure=",searchParams.get('structure'),"task=",searchParams.get('task'),"type=",searchParams.get('type'));
-  //   if(searchParams.get('type')!==null&&searchParams.get('type')!==currentViewType)
-  //   {
-  //     console.log('Must Change ViewType',searchParams.get('type'));
-  //     //setClickedTool({toolAction:searchParams.get('type')||'',toolName:'viewType'});
-  //     setViewType(searchParams.get('type')||'');
-  //     //setClickedTool({toolAction:'issueHide',toolName:'issue'});
-  //   }
-  //   if(searchParams.get('structure')!==null&&searchParams.get('structure')!==structure?._id)
-  //   {
-  //     console.log('Must Change Structure',searchParams.get('structure'));
-
-  //     const temp_str=structuresList.find((str)=> searchParams.get('structure')===str._id)
-  //     temp_str&&setStructure(temp_str);
-
-  //   }
-  //   if(searchParams.get('task')!==null)
-  //   {
-  //     console.log('Must Load Task',searchParams.get('task'));
-  //     setClickedTool({toolAction:'taskSelect',toolName:'task',response:tasksList.find((t)=>t._id===searchParams.get('task'))});
-  //     setCurrentContext(tasksList.find((t)=>t._id===searchParams.get('task'))?.context||{type:'Task'});
-  //     setOpenTaskDetails(true);
-  //   }
-  //   else if(searchParams.get('issue')!==null)
-  //   {
-  //     console.log('Must Load Issue',searchParams.get('issue'));
-  //     setClickedTool({toolAction:'issueSelect',toolName:'issue',response:tasksList.find((t)=>t._id===searchParams.get('issue'))});
-  //     setCurrentContext(issuesList.find((t)=>t._id===searchParams.get('issue'))?.context||{type:'Issue'});
-  //     setOpenIssueDetails(true);
-  //   }
-  // },[searchParams,structure,currentViewType]);
 
   const getBreadCrumbs = () => {
     //let structTemp :IStructure = structure;
@@ -1569,88 +1301,302 @@ console.log("designreal",designMap)
   const createCancel = () => {
     if (highlightCreateIcon) {
       setHighlightCreateIcon(false)
-      toolClicked({
-        toolName: "issue",
-        toolAction: "issueCreateFail"
-      })
+      // toolClicked({
+      //   toolName: "issue",
+      //   toolAction: "issueCreateFail"
+      // })
     }
     if (highlightCreateTaskIcon) {
       setHighlightCreateTaskIcon(false)
-      toolClicked({
-        toolName: "task",
-        toolAction: "taskCreateFail"
-      })
+      // toolClicked({
+      //   toolName: "task",
+      //   toolAction: "taskCreateFail"
+      // })
     }
   }
 
   useEffect(() => {
-    if (router.query.iss != null) {
-      let sel_iss: Issue | undefined = issuesList.find((t) => t._id === router.query.iss)
+    if (router.query.iss !== null && initData) {
+      let sel_iss: Issue | undefined = initData?.currentIssueList.find((t) => t._id === router.query.iss)
       if (sel_iss) {
-        setClickedTool({ toolAction: 'issueSelect', toolName: 'issue', response: sel_iss });
-        setCurrentContext({ ...sel_iss?.context, id: router.query.iss as string });
-        setOpenIssueDetails(true);
+        handleMenuInstance.type = "selectIssue"
+        handleMenuInstance.data = sel_iss._id
+        if (ref && ref.current) {
+          ref.current?.RouterIssueRef(handleMenuInstance) // useRef for passing Router Issue/Task
+        }
+      }
+      else {
+        delete router.query.iss
       }
 
     }
 
-  }, [issuesList, router.query.iss, router.query.snap]);
+  }, [router.query.iss, router.query.snap]);
 
   useEffect(() => {
     if (router.query.tsk != null) {
       let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
       if (sel_tsk) {
-        setClickedTool({ toolAction: 'taskSelect', toolName: 'task', response: sel_tsk });
-        setCurrentContext({ ...sel_tsk?.context, id: router.query.tsk as string });
-        setOpenTaskDetails(true);
+        handleMenuInstance.type = "selectIssue"
+        handleMenuInstance.data = sel_tsk._id
+        if (ref && ref.current) {
+          ref.current?.RouterIssueRef(handleMenuInstance)
+        }
       }
 
     }
 
-  }, [tasksList, router.query.tsk, router.query.snap]);
+  }, [router.query.tsk, router.query.snap]);
+
+
+
+  // const updateRouter = (type: String, snap: String) => {
+  //   if (type !== router.query.type) router.query.type = String(type);
+  //   if (snap !== router.query.snap) router.query.snap = snap as string;
+
+  //   router.push(router);
+
+  // }
+  const updateITRouter = (type: String, id: string) => {
+    console.log("updateITRouter",type,id,router)
+    if (type === "selectIssue") {
+      delete router.query.tsk
+      router.query.iss = id;
+    }
+    if (type === "selectTask") {
+      delete router.query.iss
+      router.query.tsk = id
+    }
+    router.push(router)
+  }
   useEffect(() => {
 
+    if (router.isReady) {
+      getGenViewerData(router.query.projectId as string, router.query.structureId as string)
+        .then((response) => {
+          if (response.success === true) {
+            // if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
+            //   router.query.type = response.result.data?.currentViewType as string;
+            //   router.query.snap = response.result.data?.currentSnapshotBase._id as string;
+            //   router.push(router);
+            // }
+            let vData:IGenData = response.result; 
+            if(router.query.type&& router.query.type!== vData.currentViewType)
+              vData.currentViewType = router.query.type.toString()
+            if(router.query.snap&& router.query.snap!== vData.currentSnapshotBase._id)
+            {
+              let urlSnap:ISnapshot|undefined=vData.snapshotList.find((snp:ISnapshot)=>{
+                if(snp._id===router.query.snap?.toString())
+                {
+                  return snp;
+                }
+              });
+              if(urlSnap)
+                vData.currentSnapshotBase=urlSnap;
+            }
 
-    getGenViewerData(router.query.projectId as string, router.query.structureId as string)
-      .then((response) => {
-        if (response.success === true) {
-          console.log('IGendata API Response', response.result);
-          setInintData(response.result);
-          console.log("resp",response.result)
+            setInintData(vData);
+            // if(initData && router.query.iss || router.query.tsk){
 
-        }
-      })
-      .catch((error) => {
-        console.log("Error in loading data: 1 ", error);
-        // CustomToast("failed to load data","error");
-      });
+            //   handleMenuInstance.data = router.query.iss as string || router.query.tsk as string;
+            //   if(router.query.iss){
+            //     handleMenuInstance.type = "selectIssue"
+            //     handleMenuInstance.data = router.query.iss as string 
+            //   } 
+            //   if(router.query.tsk){
+            //     handleMenuInstance.type = "selectTask"
+            //     handleMenuInstance.data = router.query.tsk as string;
+            //   } 
+            //   if (ref && ref.current) {
+            //     ref.current?.RouterIssueRef(handleMenuInstance) // useRef for passing Router Issue/Task
+            //   }
+            // }
+            if (mViewerStatus === "Waiting") {
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
+              console.log("Handshake setGenData", response.result)
+              setMViewerStatus("Connected")
+            }
+            else if (mViewerStatus === "Connected") {
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(response.result) + '}')
 
-  }, [structure])
-  
-  console.log("function is working outside",currentViewType)
-  const setGenData = (currentViewType:string) => {
-    console.log("function is working",currentViewType)
-    
+            }
+          }
+        })
+        .catch((error) => {
+          console.log("Error in loading data: 1 ", error);
+        });
+    }
+  }, [router.isReady,router.query.structureId])
+
+
+
+  useEffect(() => {
+
     if (initData) {
-      let pdata: IGenData = initData
-      if (pdata) {
+      if (initData.structure.designs?.length) {
+        setDesignAvailable(true)
+      }
+      else {
+        setDesignAvailable(false)
+      }
+      if (initData.currentSnapshotBase.reality?.length) {
+        setRealityAvailable(true)
+      }
+      else {
+        setRealityAvailable(false)
+      }
+      if (mViewerStatus === "Waiting") {
+        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        console.log("Handshake setGenData", initData)
+        setMViewerStatus("Connected")
+      }
+      updateURLQuery(initData as IGenData)
+      if (initData.currentViewType === "Plan Drawings" || initData.currentViewType === "BIM") {
+        currentViewMode !== "Design" ? setViewMode("Design") : null;
+      }
+      else {
+        currentViewMode !== "Reality" ? setViewMode("Reality") : null;
+      }
+    }
+
+  }, [initData])
+
+  useEffect(() => {
     
-          pdata.currentViewType = "Plan Drawings"
+    if (mViewerStatus === "Waiting") {
+      if (initData) {
+        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        console.log("Handshake setGenData", initData)
+        setMViewerStatus("Connected")
         
       }
-      console.log("current data pdata", pdata)
-      const timeoutId = setTimeout(() => {
-        console.log("string dataaa",JSON.stringify(pdata))
-      conn?.publishMessage("abc", `{"type":"setGenData","data":${JSON.stringify(pdata)}}`)
-    },3000)
+
+      else {
+        if (router.isReady) {
+          getGenViewerData(router.query.projectId as string, router.query.structureId as string)
+            .then((response) => {
+              if (response.success === true) {
+
+                setInintData(response.result);
+
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
+                console.log("Handshake setGenData", response.result)
+                setMViewerStatus("Connected")
+
+              }
+            })
+            .catch((error) => {
+              console.log("Error in loading data: 1 ", error);
+            });
+
+        }
+      }
+    }
+    else if (mViewerStatus === "Connected") {
+      setMultiverseIsReady(true)
+    }
+  }, [mViewerStatus])
+
+
+
+  const multiverseHandShakeEventsCB: OnMessageCallbak = (msg: Buffer, packer: any): void => {
+    const message = JSON.parse(msg.toString())
+    console.log("Handshake data Rec on APP", JSON.parse(msg.toString()))
+    if (message.type === "getAuthToken") {
+      console.log("yes Handshake Rec getAuthToken")
+      const userObj: any = getCookie('user');
+      let user = null;
+      if (userObj) user = JSON.parse(userObj);
+      if (user) {
+        console.log("Going to send Handshake setAuth");
+        conn.publishMessage(MqttConnector.getMultiverseHandShakeString(), '{"type":"setAuthToken","data":' + JSON.stringify(user) + '}');
+      }
 
     }
+    else if (message.type === "READY") {
+      setMultiverseIsReady(true);
+      setMViewerStatus("Waiting");
+      console.log("READY, Handshake")
+      if (initData) {
+
+        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        console.log("READY, Handshake setGenData", initData);
+        setMViewerStatus("Connected");
+      }
+
+
+    }
+
+  }
+
+  const updateURLQuery = (newData: IGenData) => {
+
+    if (router) {
+      console.log("callback trying to update router");
+      // (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
+      // (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
+      // (router.query.projectId !== newData.structure.project) ? router.query.projectId = newData.structure.project : null;
+      // (router.query.type !== newData.currentViewType) ? router.query.type = newData.currentViewType : null;
+      // (router.query.snap !== newData.currentSnapshotBase._id) ? router.query.snap = newData.currentSnapshotBase._id : null;
+      router.push({pathname:router.pathname,query:
+        {...router.query,projectId:newData.structure.project,structureId:newData.structure._id,type:newData.currentViewType,snap:newData.currentSnapshotBase._id}},
+        undefined,{});
+    }
+
+  }
+  const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
+    const message = JSON.parse(msg.toString())
+    console.log("callback data", JSON.parse(msg.toString()))
+
+    // if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
+    //   updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
+    // }
+    // if(message.type === "selectIssue" || message.type === "selectTask"){
+    //   updateITRouter(message.type,message.data.id) //Router current Task/Issue
+    // }
+    if (message.type === "syncGenViewer") {
+      setInintData(message.data);     
+      // updateURLQuery(message.data as IGenData);
+      //setViewMode(message.data.viewMode);
+      
+    }
+    else if (message.type === "selectIssue" || message.type === "selectTask" || message.type === "createIssue" || message.type === "createTask") {
+      // updateITRouter(message.type, message.data.id)
+      handleMenuInstance.data = message;
+      handleMenuInstance.type = message.type
+      if (ref && ref.current) {
+        ref.current?.selectToolRef(handleMenuInstance)
+      }
+
+      setCurrentContext(message as IToolbarAction)
+
+    }
+
   }
 
   useEffect(()=>{
-    console.log("vvviwejjnsj",currentViewType)
-    setGenData(currentViewType)
-  },[router.query.structureId,structure,router.isReady])
+    if(currentContext){
+    if(currentContext?.type === "selectIssue" ||  currentContext?.type === "selectTask"){
+      let a=currentContext.data as IContext
+      if(a.id !== undefined){
+
+      updateITRouter(currentContext.type,a.id as string)
+      }
+    
+    }
+    setCurrentContext(undefined)
+  }
+  },[currentContext])
+  useEffect(() => {
+    conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(), appEventsCB)
+    conn.subscribeTopic(MqttConnector.getMultiverseHandShakeString(), multiverseHandShakeEventsCB)
+    return () => {
+      conn.unSubscribeTopic(MqttConnector.getMultiverseRecTopicString());
+      conn.unSubscribeTopic(MqttConnector.getMultiverseHandShakeString());
+    }
+  }, [])
+
+
 
   return (
     <div className=" w-full  h-full">
@@ -1778,93 +1724,19 @@ console.log("designreal",designMap)
               className={`fixed drop-shadow toolbarWidth  ${"visible"} `}
             >
               {isDesignAvailable || isRealityAvailable ?
-                <ToolBarMenuWrapper 
-                initData={initData}
-                setViewType={setViewType}
-                currentLayersList={activeRealityMap}
-                currentTypesList={designAndRealityMaps}
-                updateDesignMap={updateDesignMap}
-                toolClicked={toolClicked}
-                designMap={designMap}
-                
+                <ToolBarMenuWrapper
+                  initData={initData}
+                  toolClicked={toolClicked}
+                  toolUpdate={toolUpdate}
+                  ref={ref}
                 ></ToolBarMenuWrapper>
-                // <ToolBarMenuWrapper
-                // initData={initData}
-                //   updateDesignMap={updateDesignMap}
-                //   issuesList={issuesList}
-                //   tasksList={tasksList}
-                //   setTasksList={setTasksList}
-                //   toolClicked={toolClicked}
-                //   viewMode={currentViewMode}
-                //   handleOnFilter={handleOnIssueFilter}
-                //   currentProject={currentProjectId}
-                //   currentStructure={structure}
-                //   currentSnapshot={snapshot}
-                //   currentTypesList={designAndRealityMaps}
-                //   designMap={designMap}
-                //   currentLayersList={activeRealityMap}
-                //   closeFilterOverlay={closeFilterOverlay}
-                //   closeTaskFilterOverlay={closeTaskFilterOverlay}
-                //   handleOnTaskFilter={handleOnTaskFilter}
-                //   contextInfo={currentContext}
-                //   openCreateIssue={openCreateIssue}
-                //   setHighlightCreateIcon={setHighlightCreateIcon}
-                //   highlightCreateIcon={highlightCreateIcon}
-                //   highlightCreateTaskIcon={highlightCreateTaskIcon}
-                //   setHighlightCreateTaskIcon={setHighlightCreateTaskIcon}
-                //   openCreateTask={openCreateTask}
-                //   selectedLayersList={currentViewLayers}
-                //   deleteTheTask={deleteTheTask}
-                //   issuePriorityList={issuePriorityList}
-                //   issueStatusList={issueStatusList}
-                //   issueTypesList={issueTypesList}
-                //   taskPriorityList={tasksPriotityList}
-                //   taskStatusList={tasksStatusList}
-                //   taskFilterState={taskFilterState}
-                //   issueFilterState={issueFilterState}
-                //   setIssueFilterState={setIssueFilterState}
-                //   closeIssueCreate={closeIssueCreate}
-                //   closeTaskCreate={closeTaskCreate}
-                //   deleteTheIssue={deleteTheIssue}
-                //   openIssueDetails={openIssueDetails}
-                //   openTaskDetails={openTaskDetails}
-                //   closeTaskDetails={closeTaskDetails}
-                //   closeIssueDetails={closeIssueDetails}
-                //   setIssueList={setIssueList}
-                //   getIssues={getIssues}
-                //   getTasks={getTasks}
-                //   handleOnIssueSort={handleOnIssueSort}
-                //   handleOnTasksSort={handleOnTasksSort}
-                //   issueSubmit={issueSubmit}
-                //   taskSubmit={taskSubmit}
-                //   selectedType={currentViewType}
-                //   deleteTheAttachment={deleteTheAttachment}
-                //   setActiveRealityMap={setActiveRealityMap}
-                //   setLayersUpdated={setLayersUpdated}
-                //   layersUpdated={layersUpdated}
-                //   setViewType={setViewType}
-                //   projectUsers={projectUsers}
-                //   issueLoader={issueLoader}
-                //   setIssueLoader={setIssueLoader}
-                //   setShowIssueMarkups={setShowIssueMarkups}
-                //   setShowTaskMarkups={setShowTaskMarkups}
-                //   showIssueMarkups={showIssueMarkups}
-                //   showTaskMarkups={showTaskMarkups}
-                //   isDesignAvailable={isDesignAvailable}
-                //   isRealityAvailable={isRealityAvailable}
-                // /> : <></>
-              :<></>}
+
+                : <></>}
             </div></div></div>
 
-        <div className="ml-10 mt-9">
-          <Iframe
-            toolRes={toolResponse}
-            updateSnapshot={updatedSnapshot}
-            updateRealityMap={updateRealityMap}
-            structure={structure}
-            updateDesignMap={updateDesignMap}>
-
-          </Iframe>
+        <div>
+          {initData && <Iframe></Iframe>}
+          {!multiverseIsReady && <CustomLoader />}
         </div>
 
       </div>

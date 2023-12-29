@@ -38,7 +38,7 @@ import { SortDescIcon } from "./SortDescIcon";
 import LocalSearch from "../local_component/LocalSearch";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import { TooltipText } from "../side-panel/SidePanelStyles";
-
+import Delete from "../../../public/divami_icons/delete.svg";
 export const ProjectListFlatView = ({
   projects,
   projectActions,
@@ -122,12 +122,25 @@ export const ProjectListFlatView = ({
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "32%" },
+      cellStyle: { width: "36%" },
       render: (rowData: any) => {
         return <><div className="hover:cursor-pointer" onClick={()=>{
-          router.push(`/projects/${rowData._id}/sections`);
+          if(rowData.status === "Draft" || rowData.status === 'PendingApproval'){
+
+          }
+          else{
+          router.push(`/projects/${rowData._id}/sections`);}
         }}>
+          <div className="flex justify-between">
           {truncateString(rowData.projectName, 50)}
+
+{rowData.status === "Draft" || rowData.status === 'PendingApproval'?
+<div className=" text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px] " >
+{rowData.status}
+</div>
+:""}  
+          </div>
+      
           </div></>;
       },
     },
@@ -145,6 +158,8 @@ export const ProjectListFlatView = ({
       },
       render: (rowData: any) => {
         return (
+          rowData._id === "PRJ697680"?"-":
+          <>
           <CapturesFieldContainer>
             <CapturesField>
               <TooltipText title="360 Image">
@@ -216,9 +231,10 @@ export const ProjectListFlatView = ({
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
+          </>
         );
       },
-      cellStyle: { width: "25%" },
+      cellStyle: { width: "20%" },
     },
     {
       title: <CustomColumnTitle>Users</CustomColumnTitle>,
@@ -317,7 +333,7 @@ export const ProjectListFlatView = ({
         lineHeight: "8px",
         color: "#101F4C",
       },
-      cellStyle: { width: "28%" },
+      cellStyle: { width: "14%" },
 
       customSort: () => sortByLastUpdated(),
       render: (rowData: any) => {
@@ -326,6 +342,46 @@ export const ProjectListFlatView = ({
           ? "N/A"
           : moment(rowData.lastUpdated).format('DD MMM YYYY')}
         </>;
+      },
+    },
+    // {
+    //   title: "",
+    //   field: "",
+
+    //   cellStyle: { width: "16%" },
+    //   render: (rowData: any) => {
+    //     return   <div>
+    //     {rowData._id==="PRJ697680"?
+    //      <div className="font-bold text-base text-[#101F4C] text-center" onClick={()=>router.push("project-onboarding")}>
+    //      Click to Resume
+    //     </div>:rowData._id==="PRJ69768" ?
+    //     <div className="font-bold text-base text-[#101F4C] text-center" >
+    //       Pending Approval
+    //     </div>
+    //    :""}  
+    //    </div>
+    //   },
+    // },
+    {
+
+
+      cellStyle: { width: "16%" },
+      sorting: false,
+      render: (rowData: any) => {
+        return (
+          <div>
+       {rowData.status === "Draft" || rowData.status === 'PendingApproval'?
+         <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>router.push(`project-onboarding?id=${rowData._id}`)}>
+         Click to Resume
+        </div>:rowData.status === "Draft" || rowData.status === 'PendingApproval' ?
+        <div className="font-bold text-base text-[#101F4C] text-center cursor-pointer" >
+          Pending Approval
+        </div>
+       :""}  
+       </div>
+            
+          
+        );
       },
     },
     {
@@ -344,17 +400,25 @@ export const ProjectListFlatView = ({
       sorting: false,
       render: (rowData: any) => {
         return (
-          <TooltipText  title="Project Menu">
-            <div>
-          <CustomMenu
-            hoveringOver={hoveringOver}
-            imageSrc={MoreActions}
-            menuOptions={projectActions}
-            data={rowData}
-            id="rowMenu"
-          />
+         
+          rowData.status === "Draft" || rowData.status === 'PendingApproval'?  <TooltipText title="Delete Project" placement="bottom"> 
+          <div>
+          <Image src={Delete} alt="delete" className=" cursor-pointer"></Image>
           </div>
           </TooltipText>
+          : <TooltipText  title="Project Menu">
+             <div>
+             <CustomMenu
+             hoveringOver={hoveringOver}
+             imageSrc={MoreActions}
+             menuOptions={projectActions}
+             data={rowData}
+             id="rowMenu"
+           />
+           </div>
+           </TooltipText>
+            
+          
         );
       },
     },
@@ -427,6 +491,7 @@ export const ProjectListFlatView = ({
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
+                backgroundColor: rowData.status === "Draft" || rowData.status === 'PendingApproval' ? "#D9D9D9" : "",
                 // backgroundColor:
                 //   rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),

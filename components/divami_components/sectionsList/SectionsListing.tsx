@@ -85,7 +85,10 @@ import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, De
 import instance from "../../../services/axiosInstance";
 import { API } from "../../../config/config";
 import { toast } from "react-toastify";
+import authHeader from "../../../services/auth-header";
 // import { ISections } from "../../../models/ISections";
+
+const headers = {headers: authHeader.authHeader()}
 
 interface RowData {
   tableData: { id: number };
@@ -99,7 +102,7 @@ const fetchAssetCategories = (projectId: string) => {
 
   try {
 
-      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
 
   } catch (error) { throw error }
 
@@ -984,11 +987,11 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           isImageThere={true}
           SecondaryButtonlabel={"No"}
           callBackvalue={isCaptureAvailable? ()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure`,
-            query: { structId: id },
+            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`
+            //query: { structId: id },
           }):()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure`,
-            query: { structId: id },
+            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`//,
+            //query: { structId: id },
           }) }
         />
         )
