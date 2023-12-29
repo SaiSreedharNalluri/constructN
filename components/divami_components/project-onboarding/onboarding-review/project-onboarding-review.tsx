@@ -15,8 +15,8 @@ const contentStyle = {
   textAlign: 'left', // Align content text as needed
 };
 
-const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount }: IOnboardingProps) => {
-
+const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount,showLoader }: IOnboardingProps) => {
+  console.log(projectDetails.value);
   const bimCount = useSignal(0)
   const drawingsCount = useSignal(0)
   const totalCount = useSignal(0)
@@ -44,11 +44,22 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
         action!.value = ''
         break
       case 'Next-4':
+        if(showLoader){
+          showLoader.value=true
+          }
         updateProjectInfo({status: 'PendingApproval'}, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
+          CustomToast('Submitted project for Review', 'success')
+          if(showLoader){
+            showLoader.value=false
+            }
+          setTimeout(() => router.push("/projects"), 1000)
           showPopUp.value = true
         }).catch((error) => {
           console.error('Error submitting project for review:', error);
           CustomToast('Error submitting project for review', 'error')
+          if(showLoader){
+            showLoader.value=false
+            }
           console.log("error");
           if (action) action.value = ''
         });
@@ -94,7 +105,6 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
       totalCount.value = total
     }
   }).catch(err => console.log(err))
-
 
   function generateGridRow(label: string, values: any) {
     return (

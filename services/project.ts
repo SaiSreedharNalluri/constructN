@@ -245,3 +245,16 @@ export const createProject = (formData: any) => {
       throw error?.response?.data;
     });
 };
+
+export const deleteProject = (formData: any) => {
+  return instance
+    .delete(`${API.BASE_URL}/projects/${formData}`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response?.data;
+    })
+    .catch((error) => {
+      throw error?.response?.data;
+    });
+};

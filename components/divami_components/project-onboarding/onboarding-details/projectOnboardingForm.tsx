@@ -11,7 +11,7 @@ import { useComputed, useSignals } from '@preact/signals-react/runtime';
 import { CustomToast } from '../../custom-toaster/CustomToast';
 
 
-const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnboardingProps) => {
+const ProjectOnboardingForm = ({ step, action, projectId, projectDetails,showLoader }: IOnboardingProps) => {
   const onboardingProjectCoverPhoto = useSignal<File | null>(null);
   const onboardingProjectprojectLogo = useSignal<File | null>(null);
   const isNameValid = useSignal(false);
@@ -59,33 +59,59 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails }: IOnb
           formdata.append('logo', onboardingProjectprojectLogo?.peek());
           formdata.append('coverPhoto', onboardingProjectCoverPhoto?.peek());
           if (projectDetails.peek()._id === undefined) {
+            if(showLoader){
+            showLoader.value=true
+            }
             createProject(formdata)
               .then((res) => {
                 const result = res.result;
                 delete result.users
                 projectDetails.value = result
+                if(showLoader){
+                  showLoader.value=false
+                  }
                 step.value = 1
                 projectId.value = projectDetails.peek()._id ?? ''
               })
               .catch((error) => {
                 console.error('Error creating project:', error);
                 CustomToast('Error creating project', 'error')
+                if(showLoader){
+                  showLoader.value=false
+                  }
                 console.log("error");
                 if (action) action.value = ''
               });
           }
           else {
+            if(showLoader){
+              showLoader.value=true
+              }
             updateProjectInfo(formdata, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
               const result = response.result;
               delete result.users
               projectDetails.value = result
+              if(showLoader){
+                showLoader.value=false
+                }
+             step.value = 1
             }).catch((error) => {
-              console.error('Error updating project:', error);
-              CustomToast('Error updating project', 'error')
-              console.log("error");
+              if(error.success===false){
+                CustomToast(error.message,"error")
+                if(showLoader){
+                  showLoader.value=false
+                  }
+              }
+              else{
+                console.error('Error updating project:', error);
+                CustomToast('Error updating project', 'error')
+                if(showLoader){
+                  showLoader.value=false
+                  }
+                console.log("error");
+              }
               if (action) action.value = ''
             });
-            step.value = 1
 
           }
         } else {

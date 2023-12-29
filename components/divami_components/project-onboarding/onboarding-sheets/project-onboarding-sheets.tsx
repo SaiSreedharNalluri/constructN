@@ -37,7 +37,7 @@ const deleteStructure = (projectId: string, structureId: string) => {
 
 }
 
-const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboardingProps) => {
+const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader }: IOnboardingProps) => {
 
   useSignalEffect(() => {
     console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -74,31 +74,54 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboar
   }, [])
 
   const _onAdd = (name: string, parent: string) => {
-
+    if(showLoader){
+      showLoader.value=true
+      }
     createStructure(projectId.peek(), name, parent, 'Interior', false)
       .then(res => {
         fetchStructureHierarchy(projectId.value).then(res => {
           if (res.data.result) {
             setHierarchy(res.data.result)
             CustomToast('Added level successfully.', 'success')
+            if(showLoader){
+              showLoader.value=false
+              }
           }
         }).catch(err => console.log(err))
       })
-      .catch(err => CustomToast('Failed to create level.', 'error'))
+      .catch(err =>{
+         CustomToast('Failed to create level.', 'error');
+         if(showLoader){
+          showLoader.value=false
+          }
+        })
 
   }
 
   const _onDelete = (structure: string) => {
-
+    if(showLoader){
+      showLoader.value=true
+      }
     deleteStructure(projectId.peek(), structure).then(res => {
+      if(showLoader){
+        showLoader.value=true
+        }
       fetchStructureHierarchy(projectId.value).then(res => {
         if (res.data.result) {
           setHierarchy(res.data.result)
           CustomToast('Deleted level successfully.', 'success')
+          if(showLoader){
+            showLoader.value=false
+            }
         }
       }).catch(err => console.log(err))
     })
-    .catch(err => CustomToast('Failed to delete level.', 'error'))
+    .catch(err => {
+      CustomToast('Failed to delete level.', 'error')
+      if(showLoader){
+        showLoader.value=false
+        }
+    } )
 
   }
 

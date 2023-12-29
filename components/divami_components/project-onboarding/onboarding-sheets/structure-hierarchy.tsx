@@ -30,6 +30,10 @@ import { CustomToast } from '../../custom-toaster/CustomToast'
 
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
+import { TruncatedString } from "../../../../utils/utils";
+
+import { TooltipText } from "../../../divami_components/side-panel/SidePanelStyles";
+
 type UploadProgress = {
     sent: number
     total: number
@@ -166,9 +170,12 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                         )
                     }
+<TooltipText title={name.length > 50 ?name:""} placement="right"> 
+<div>
+<TruncatedString text={name}   maxLength={50} suffixLength={0}></TruncatedString>
+    </div>          
 
-                    <span>{name}</span>
-
+</TooltipText> 
                 </div>
 
                 <div className='flex w-[20vw] items-center justify-center mr-4'>
