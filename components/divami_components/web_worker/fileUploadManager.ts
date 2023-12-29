@@ -1,8 +1,15 @@
 import _ from "lodash";
 import { IUploadFile, UploadStatus, UploadType } from "../../../models/IUploader";
-interface fileInfo{ status: string; fileName: string;errorMessage?:string }
-self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>[]>) => {
-    const filesList = event.data
+import axios from "axios";
+import { API } from "../../../config/config";
+interface eventType
+{ headerValue: {
+    Authorization: string;
+}; 
+uploadFiles:IUploadFile<UploadType>[] 
+}
+self.onmessage = async (event: MessageEvent<eventType>) => {
+    const filesList = event.data.uploadFiles
     const completedFileList: IUploadFile<UploadType>[] = []
     if(filesList?.length===0) {
         return;
@@ -15,11 +22,19 @@ self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>[]>) => {
     self.postMessage({filesList,completedFileList})
      
 
-    function uploadTask(i: number) {
+    async function uploadTask(i: number) {
+        await axios.put( `${API.BASE_URL}/rawimages/${filesList[i].uploadObject._id}`,{status: 'Started'}, {
+            headers: event.data.headerValue,
+          }).then((response) => {
+            return response.data;
+          })
+          .catch((error) => {
+            return error.response;
+          });
         const worker = new Worker(new URL('./fileUploaderWorker.ts', import.meta.url));
         worker.postMessage(filesList[i]);
         worker.onmessage = (event) => {
-            const { status, id, fileName, errorMessage } = event.data;
+            const { status, id, errorMessage } = event.data;
             let file = filesList.find((e) => { return e.uploadObject._id === id; });
             if (file) {
                 file.status = status;
