@@ -174,12 +174,12 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
 
       <div style={{ textAlign: "left", marginTop: "20px" }}>
         <a
-          href={`#`}
+          href={`https://help.constructn.ai/en/articles/8756456-bim-and-floor-plan-requirements`}
           target="_blank"
           rel="noopener noreferrer"
           style={{ fontSize: "1.2em", color: "blue" }}
         >
-          Instructions/Tips for Upload Floor Plans
+          Please visit the following link for detailed guidance on selecting the appropriate BIM for your upload.
         </a>
       </div>
 
