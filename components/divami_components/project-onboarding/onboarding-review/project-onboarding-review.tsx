@@ -15,26 +15,30 @@ const contentStyle = {
   textAlign: 'left', // Align content text as needed
 };
 
-const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount,showLoader }: IOnboardingProps) => {
-  console.log(projectDetails.value);
+const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, usersCount, showLoader }: IOnboardingProps) => {
+
   const bimCount = useSignal(0)
   const drawingsCount = useSignal(0)
   const totalCount = useSignal(0)
 
   const showPopUp = useSignal(false)
 
-  const renderPopup = useComputed(() => showPopUp.value === true ? <PopupComponent
+  const renderPopup = useComputed(() => <PopupComponent
     open={showPopUp.value}
     setShowPopUp={(state: boolean) => { showPopUp.value = state }}
     modalTitle={"Success"}
-    modalmessage={"The project has been successfully created. You can access the project only after the project has been approved. You will receive an email once the project is ready to use."}
+    modalmessage={<>
+      <div>Thank you very much for taking the time to provide us with the details!</div>
+      <br></br>
+      <div>Our team will review and enable the project at the earliest.</div>
+    </>}
     primaryButtonLabel={"Ok"}
     SecondaryButtonlabel={""}
     callBackvalue={() => {
       showPopUp.value = false
-      router.push("/projects")
+      // router.push("/projects")
     }}
-  /> : <></>)
+  />)
 
   useSignalEffect(() => {
     console.log('Action inside review', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -44,25 +48,21 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
         action!.value = ''
         break
       case 'Next-4':
-        if(showLoader){
-          showLoader.value=true
-          }
-        updateProjectInfo({status: 'PendingApproval'}, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
-          CustomToast('Submitted project for Review', 'success')
-          if(showLoader){
-            showLoader.value=false
-            }
-          setTimeout(() => router.push("/projects"), 1000)
-          showPopUp.value = true
-        }).catch((error) => {
-          console.error('Error submitting project for review:', error);
-          CustomToast('Error submitting project for review', 'error')
-          if(showLoader){
-            showLoader.value=false
-            }
-          console.log("error");
-          if (action) action.value = ''
-        });
+        // if (showLoader) showLoader.value = true
+        showPopUp.value = true
+        action!.value = ''
+        // updateProjectInfo({status: 'PendingApproval'}, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
+        //   if(showLoader) showLoader.value=false
+        //   showPopUp.value = true
+        // }).catch((error) => {
+        //   console.error('Error submitting project for review:', error);
+        //   CustomToast('Error submitting project for review', 'error')
+        //   if(showLoader){
+        //     showLoader.value=false
+        //     }
+        //   console.log("error");
+        //   if (action) action.value = ''
+        // });
         break
       default:
         break
@@ -70,18 +70,18 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
   })
 
   const renderContent = useComputed(() => <><div className="shadow-md rounded-md p-4 mb-4 ">
-  {generateGridRow("Project Name", [projectDetails.value.name])}
-  {generateGridRow("Project Nickname", [projectDetails.value.nickName ? projectDetails.value.nickName : "N/A"])}
-  {generateGridRow("Project ID", [projectDetails.value.metaDetails?.projectId])}
-  {generateGridRow("Project Address", [
-    `${projectDetails.value.address?.line1 ? projectDetails.value.address.line1 : ""}`,
-    `${projectDetails.value.address?.city} ,${projectDetails.value.address?.state},${projectDetails.value.address?.country}`,
-    `${projectDetails.value.address?.zipcode}`,
-  ])}
-  {generateGridRow("Drawings Uploaded", [drawingsCount.value == 0 ? 'NO' : 'YES'])}
-  {generateGridRow("No, of Drawings Uploaded", [drawingsCount.value])}
-  {generateGridRow("BIM Uploaded", [bimCount.value == 0 ? 'NO' : 'YES'])}
-</div></>)
+    {generateGridRow("Project Name", [projectDetails.value.name])}
+    {generateGridRow("Project Nickname", [projectDetails.value.nickName ? projectDetails.value.nickName : "N/A"])}
+    {generateGridRow("Project ID", [projectDetails.value.metaDetails?.projectId])}
+    {generateGridRow("Project Address", [
+      `${projectDetails.value.address?.line1 ? projectDetails.value.address.line1 : ""}`,
+      `${projectDetails.value.address?.city} ,${projectDetails.value.address?.state},${projectDetails.value.address?.country}`,
+      `${projectDetails.value.address?.zipcode}`,
+    ])}
+    {generateGridRow("Drawings Uploaded", [drawingsCount.value == 0 ? 'NO' : 'YES'])}
+    {generateGridRow("No, of Drawings Uploaded", [drawingsCount.value])}
+    {generateGridRow("BIM Uploaded", [bimCount.value == 0 ? 'NO' : 'YES'])}
+  </div></>)
 
   getStructureList(projectId.value).then(res => {
     if (res.data.success === true) {
@@ -98,7 +98,6 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
           }
           else if (design.type == 'BIM') bim++
         })
-        console.log(total, bim, drawings)
       })
       bimCount.value = bim
       drawingsCount.value = drawings
@@ -119,7 +118,6 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
             </p>
           ))}
         </div>
-        {renderPopup}
       </div>
     );
   }
@@ -128,6 +126,7 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
       <div>
         <div className="col-span-4">
           {renderContent}
+          {renderPopup}
         </div>
       </div>
     </div></>

@@ -1,7 +1,8 @@
 import React, { ChangeEvent } from 'react';
-import { FormHelperText, Grid, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
+import { FormHelperText, Grid, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import PopupComponent from '../../../../popupComponent/PopupComponent';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import router from "next/router";
 const ProjectTypeDetails = ({
   type, isTypeValid
@@ -21,7 +22,16 @@ const ProjectTypeDetails = ({
   const renderPopup = useComputed(() => showPopUp.value === true ? <PopupComponent
     isUploader={false}
     open={showPopUp.value}
-    setShowPopUp={(state: boolean) => { showPopUp.value = state }}
+    setShowPopUp={(state: boolean) => {
+      showPopUp.value = state
+      type.value = {
+        ...type.value,
+        metaDetails: {
+          ...type.value.metaDetails,
+          projectIntend: 'Visual Documentation',
+        },
+      };
+    }}
     modalTitle={"Attention"}
     modalmessage={"Please contact 'support@constructn.ai' for Visual Documentation. Do you want to continue with only 'Visual Documentation?"}
     primaryButtonLabel={"Contact Support"}
@@ -41,6 +51,9 @@ const ProjectTypeDetails = ({
         className="outline-none"
         name='projectId'
         value={type.value.metaDetails?.projectId}
+        endAdornment={<Tooltip title='This is your internal project ID for easy discovery on ConstructN'>
+          <InfoOutlinedIcon htmlColor='#7a7a7a' fontSize='small' className='cursor-pointer' />
+        </Tooltip>}
         onChange={(e) => handleProjectIntend('projectId', e.target.value)}
       />
     </Grid>
@@ -81,7 +94,7 @@ const ProjectTypeDetails = ({
   </Grid>)
 
   const handleProjectIntend = (field: string, value: string) => {
-    if(value === 'Both') {
+    if (value === 'Both' || value === 'Progress Monitoring') {
       showPopUp.value = true
     }
     type.value = {
