@@ -90,8 +90,8 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
     <Grid item xs={4.5} className='flex flex-col mt-[0px]'>
       <div>Measurement System*</div>
       <RadioGroup row value={latlngDetails.value.measurement || "US"} onChange={handleMeasurementChange} >
-        <FormControlLabel className='[&>span]:text-sm' value="US" control={<Radio size='small' />} label="US (ft,pound)" />
-        <FormControlLabel className='[&>span]:text-sm' value="Metric" control={<Radio size='small' />} label="Metric System (m,kg)" />
+        <FormControlLabel className='[&>span]:text-sm' value="US" control={<Radio size='small' style={{color:latlngDetails.value.measurement==="US"?"#FF843F":""}}/>} label="US (ft,pound)" />
+        <FormControlLabel className='[&>span]:text-sm' value="Metric" control={<Radio size='small' style={{color:latlngDetails.value.measurement==="Metric"?"#FF843F":""}} />} label="Metric System (m,kg)" />
       </RadioGroup>
       {(latlngDetails.value.measurement === undefined) && (
         <FormHelperText className='text-[#FF853E]'>Measurement is required</FormHelperText>
