@@ -986,10 +986,13 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           callBackvalue={isCaptureAvailable? ()=> router.push({
             pathname: `/projects/${router?.query?.projectId as string}/structure`,
             query: { structId: id },
-          }):()=> router.push({
+          }):()=> {
+            router.push({
             pathname: `/projects/${router?.query?.projectId as string}/structure`,
             query: { structId: id },
-          }) }
+          })
+        setProcessing(false)
+        }}
         />
         )
       :""}
