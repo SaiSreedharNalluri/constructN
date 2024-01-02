@@ -119,7 +119,11 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                     onChange && onChange(res.data.result)
 
-                    toast.success('Updated asset stage successfully!', { autoClose: 5000 })
+                    if(!(name !== actualName || description !== actualDecription)) {
+
+                        toast.success('Updated asset stage successfully!', { autoClose: 5000 })
+                    
+                    }
 
                     // setLoading(false)
 
@@ -127,7 +131,11 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                     setLoading(false)
 
-                    toast.error('Failed to update asset stage!', { autoClose: 5000 })
+                    if(!(name !== actualName || description !== actualDecription)) {
+
+                        toast.error('Failed to update asset stage!', { autoClose: 5000 })
+                    
+                    }
 
                 })
 
@@ -139,8 +147,8 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                         updateAssetDetails(assetId, { name, description}).then(res => {
         
                             if(onChange) onChange(res.data.result)
-        
-                            toast.success('Updated asset details successfully!', { autoClose: 5000 })
+
+                            toast.success('Updated asset details successfully!', { autoClose: 5000 });
         
                             // setLoading(false)
         
@@ -151,6 +159,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                             setLoading(false)
         
                             toast.error('Failed to update asset details!', { autoClose: 5000 })
+
         
                         })
         

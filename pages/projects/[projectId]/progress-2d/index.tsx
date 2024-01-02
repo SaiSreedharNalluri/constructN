@@ -52,6 +52,10 @@ import { ForgeDataVizUtils } from '../../../../utils/forge-utils'
 
 import authHeader from '../../../../services/auth-header'
 
+import { useRouter as Router  } from 'next/router'
+
+import PopupComponent from '../../../../components/popupComponent/PopupComponent'
+
 const headers = {headers: authHeader.authHeader()}
 
 
@@ -133,6 +137,8 @@ const fetchImagesData = (path: string) => {
 
 const Progress2DPage: React.FC<any> = () => {
 
+    const nextRouter = Router();
+
     const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
 
     const _compareForge = useRef<Autodesk.Viewing.GuiViewer3D>()
@@ -194,6 +200,8 @@ const Progress2DPage: React.FC<any> = () => {
     const projectId = useRef<string>()
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
+
+    const [showPopup, setShowPopup] = useState<boolean>(false)
 
     const [selectedTab , setSelectedTab] = useState('stages') 
 
@@ -294,6 +302,15 @@ const Progress2DPage: React.FC<any> = () => {
                 LightBoxInstance.save(data.data.result)
 
                 const snapshots = LightBoxInstance.viewerData().snapshots
+
+                const drawings = LightBoxInstance.viewerData().structure.designs['Plan Drawings']
+                
+                if (!drawings || drawings.length == 0) {
+
+                    setShowPopup(true);
+
+                    return
+                }
 
                 if (!snapshots || snapshots.length == 0) {
 
@@ -910,6 +927,57 @@ const Progress2DPage: React.FC<any> = () => {
             )
 
         else return <></>
+    }
+
+
+    if(showPopup){
+        return (<>
+        <div>
+            <Header showBreadcrumbs breadCrumbData={[]} showFirstElement={true} />
+        </div>
+        {showPopup && <PopupComponent
+        
+            showButton={false}
+
+            open={showPopup} 
+
+            hideButtons 
+            
+            setShowPopUp={setShowPopup}
+
+            primaryButtonLabel={""} 
+            
+            SecondaryButtonlabel={""}
+            
+            secondaryCallback={async () => { 
+                await nextRouter.push('/projects/[projectId]/sections',`/projects/${params['projectId']}/sections`);
+                setShowPopup(false);
+            }}
+
+
+            modalTitle={'Plan Drawings not available!'}
+            
+            modalmessage={
+            <>
+                <div className='text-base'>Plan drawings not available. Please change level</div>
+                <div className='flex justify-center'>
+                <Button
+                onClick={async () => { 
+                    await nextRouter.push('/projects/[projectId]/sections',`/projects/${params['projectId']}/sections`);
+                    setShowPopup(false);
+                }}
+                className='bg-[#F1742E] h-[40px] text-base text-[#fff] mt-[20px] normal-case hover:bg-[#F1742E]'
+                style={{ fontFamily: "Open Sans" }}
+                >
+                Okay
+                </Button>
+                </div>
+            </>}
+            
+            width={'458px'} backdropWidth={true}
+            
+            />}
+        </>)
     }
 
     return (
