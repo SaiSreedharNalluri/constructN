@@ -802,9 +802,12 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         color: "#101F4C",
       },
       cellStyle: { width: "20%" },
-   
+    
       render: (rowData: any) => {
-        return <div className="cursor-pointer">{
+
+        const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
+
+        return (rowData.status !== 'Not Started' && planeDrawingsAvailable) ? <div className="cursor-pointer">{
           <TooltipText title="2D Progress">
             <div className="flex justify-center">
               <Progress2DImageIcon
@@ -822,7 +825,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
               ></Progress2DImageIcon>
             </div>
           </TooltipText>
-          }</div>;
+          }</div>: 'Not Available';
       },
     },
   ];

@@ -116,6 +116,7 @@ function Progress2DStage(
 
     }) {
 
+
     const totalValueMetrics = assets.reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
     },0)
@@ -138,9 +139,9 @@ function Progress2DStage(
 
     const getProgress = (): number | number[] => {
 
-        const baseProgress = stage.assets.length == 0 ? 0 : (totalCompletedMetrics * 100 / totalValueMetrics)
+        const baseProgress = stage.assets.length == 0 ? 0 : (totalCompletedMetrics * 100 / (totalValueMetrics || 1))
 
-        const compareProgress = stage.assetsCompare.length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / totalValueMetrics)
+        const compareProgress = stage.assetsCompare.length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (totalValueMetrics || 1))
 
         if(!compare) return baseProgress
 
@@ -166,7 +167,7 @@ function Progress2DStage(
 
     }
 
-    const _progressLabelFormatter = (value: number) => `${value.toFixed(1)}%`
+    const _progressLabelFormatter = (value: number) => `${(value || 0).toFixed(1)}%`
 
     return (<>
 
@@ -216,7 +217,7 @@ function Progress2DStage(
                 <div className='flex justify-between w-full'>
 
 
-                    <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue()}%</Typography>
+                    <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
                         <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } /> : assetValue} {edit? null: stage.uom}</Typography>
                         {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={()=>setEdit(false)} />}
