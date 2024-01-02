@@ -81,11 +81,11 @@ const fetchAssetCategories = (projectId: string) => {
 
 }
 
-const fetchAssets = (structureId: string, category: string, date: string) => {
+const fetchAssets = (structureId: string, category: string, date: string, isSupportUser: boolean) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}&date=${date}`, headers)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets`, { headers: headers.headers, params:{ structure: structureId, category, date , status: !isSupportUser ? 'Active' : null } })
 
     } catch (error) { throw error }
 
@@ -683,7 +683,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id] = { assets: [], assetsCompare: [], ...stage, visible: true })
 
-        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase().date).then(res => {
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase().date, isSupportUser).then(res => {
 
             if (res.data.success) {
 
@@ -750,7 +750,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id].assetsCompare = [])
 
-        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotCompare().date).then(res => {
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotCompare().date, isSupportUser).then(res => {
 
             if (res.data.success) {
 
