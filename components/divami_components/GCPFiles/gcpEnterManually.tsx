@@ -190,7 +190,7 @@ const GcpEnterManually: React.FC<any> = () => {
 
     if (uploaderState.gcpType === GCPType.UTM) {
       if (heading === "Zone") {
-        (selectedItem as utmLocation).zone = value;
+        (selectedItem as utmLocation).zone = value.toUpperCase();
       } else {
         (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] =
           Number(value);
