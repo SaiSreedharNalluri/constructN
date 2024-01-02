@@ -45,7 +45,11 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
   }
 
   const onSaveClick = () => {
+    if(step.value === 5) {
+      return
+    }
     saveState.value = true
+    if (action) action.value = `Save-${step.value}`
   }
 
   return (

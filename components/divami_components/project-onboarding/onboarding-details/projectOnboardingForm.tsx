@@ -48,6 +48,7 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLo
       case 'Back-0':
         router.push("/projects");
         break
+      case 'Save-0':
       case 'Next-0':  
         if (isLatLngValid.peek() === true && isAddressValid.peek() === true && isTypeValid.peek() === true && isNameValid.peek() === true) {
           const formData = projectDetails
@@ -63,7 +64,7 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLo
                 delete result.users
                 projectDetails.value = result
                 if(showLoader !== undefined) showLoader.value = false
-                step.value = 1
+                if(action!.peek() !== 'Save-0') step.value = 1
                 projectId.value = projectDetails.peek()._id ?? ''
               })
               .catch((error) => {
@@ -81,7 +82,7 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLo
               delete result.users
               projectDetails.value = result
               if(showLoader !== undefined) showLoader.value = false
-              step.value = 1
+              if(action!.peek() !== 'Save-0') step.value = 1
             }).catch((error) => {
               if (error.success === false) {
                 CustomToast(error.message, "error")
