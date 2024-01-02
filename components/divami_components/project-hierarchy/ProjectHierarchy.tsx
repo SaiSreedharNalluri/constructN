@@ -414,7 +414,7 @@ isCaptureAvailable || isProcessing ?(
           imageSrc={info}
           isImageThere={true}
           SecondaryButtonlabel={"No"}
-          callBackvalue={isCaptureAvailable?(e:any) => {onLabelClick(e, id);setCaptureAvailable(false)}:(e:any) => {onLabelClick(e, id)}}
+          callBackvalue={isCaptureAvailable?(e:any) => {onLabelClick(e, id);setCaptureAvailable(false)}:(e:any) => {onLabelClick(e, id);setProcessing(false)}}
         />
         )
       :""}
