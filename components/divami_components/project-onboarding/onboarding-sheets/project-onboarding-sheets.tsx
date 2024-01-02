@@ -13,6 +13,7 @@ import { useComputed, useSignalEffect } from '@preact/signals-react'
 import { IOnboardingProps } from '../projectOnboarding'
 
 import { CustomToast } from '../../custom-toaster/CustomToast'
+import Link from 'next/link'
 
 const headers = { headers: authHeader.authHeader() }
 
@@ -36,7 +37,7 @@ const deleteStructure = (projectId: string, structureId: string) => {
 
 }
 
-const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboardingProps) => {
+const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader }: IOnboardingProps) => {
 
   useSignalEffect(() => {
     console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -73,31 +74,54 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboar
   }, [])
 
   const _onAdd = (name: string, parent: string) => {
-
+    if(showLoader){
+      showLoader.value=true
+      }
     createStructure(projectId.peek(), name, parent, 'Interior', false)
       .then(res => {
         fetchStructureHierarchy(projectId.value).then(res => {
           if (res.data.result) {
             setHierarchy(res.data.result)
             CustomToast('Added level successfully.', 'success')
+            if(showLoader){
+              showLoader.value=false
+              }
           }
         }).catch(err => console.log(err))
       })
-      .catch(err => CustomToast('Failed to create level.', 'error'))
+      .catch(err =>{
+         CustomToast('Failed to create level.', 'error');
+         if(showLoader){
+          showLoader.value=false
+          }
+        })
 
   }
 
   const _onDelete = (structure: string) => {
-
+    if(showLoader){
+      showLoader.value=true
+      }
     deleteStructure(projectId.peek(), structure).then(res => {
+      if(showLoader){
+        showLoader.value=true
+        }
       fetchStructureHierarchy(projectId.value).then(res => {
         if (res.data.result) {
           setHierarchy(res.data.result)
           CustomToast('Deleted level successfully.', 'success')
+          if(showLoader){
+            showLoader.value=false
+            }
         }
       }).catch(err => console.log(err))
     })
-    .catch(err => CustomToast('Failed to delete level.', 'error'))
+    .catch(err => {
+      CustomToast('Failed to delete level.', 'error')
+      if(showLoader){
+        showLoader.value=false
+        }
+    } )
 
   }
 
@@ -122,10 +146,10 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy }: IOnboar
         </div>
 
         <div className='flex w-[25vw] items-center mr-4 justify-center'>
-          Drawings
+          Drawings <Link href='https://help.constructn.ai/en/articles/8238555-floor-plans-for-interior-captures' target='_blank' className='text-xs !text-orange-600 !underline ml-4'>Good Sheet vs Bad Sheet</Link>
         </div>
 
-        <div className='flex w-[14rem] group-hover:opacity-100 opacity-0 items-center'>
+        <div className='flex w-[9rem] group-hover:opacity-100 opacity-0 items-center'>
           
         </div>
 

@@ -16,6 +16,7 @@ import { getProjectDetails, updateProjectInfo } from '../../../services/project'
 import { useRouter } from 'next/router'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { IStructure } from '../../../models/IStructure'
+import CustomLoader from '../custom_loader/CustomLoader'
 
 export type IOnboardingProps = {
   step: Signal<number>
@@ -23,7 +24,8 @@ export type IOnboardingProps = {
   projectId: Signal<string>
   hierarchy?: Signal<IStructure[]>
   projectDetails: Signal<IProjects>
-  usersCount?:Signal<number>
+  usersCount?: Signal<number>
+  showLoader?: Signal<boolean>
 }
 
 const ProjectOnboarding = () => {
@@ -34,18 +36,22 @@ const ProjectOnboarding = () => {
   const projectId = useSignal('')
   const structureId = useSignal('')
   const hierarchy = useSignal([])
-  const projectDetails: any = useSignal({type: 'Residential'})
+  const showLoader = useSignal(false)
+  const projectDetails: any = useSignal({ type: 'Residential' })
+
   const router = useRouter()
 
   useEffect(() => {
     if (router.isReady && router.query.id) {
       getProjectDetails(router.query.id as string).then((res) => {
-      const result=res.data.result;
-      delete result.users
-      projectDetails.value = result        
+        const result = res.data.result;
+        delete result.users
+        projectDetails.value = result
       })
     }
   }, [router.query])
+
+  const renderLoader = useComputed(() => showLoader.value == true ? <CustomLoader/> : <></>)
 
   const mainContent = useComputed(() => {
 
@@ -56,24 +62,30 @@ const ProjectOnboarding = () => {
           step={step}
           projectId={projectId}
           action={action}
-          projectDetails={projectDetails} /></>
-  
+          projectDetails={projectDetails}
+          showLoader={showLoader}
+        /></>
+
       case 1:
         return <><ProjectOnboardingSheets
           step={step}
           projectId={projectId}
           action={action}
           hierarchy={hierarchy}
-          projectDetails={projectDetails} /></>
-  
+          projectDetails={projectDetails}
+          showLoader={showLoader}
+        /></>
+
       case 2:
         return <><ProjectOnboardingBIM
           step={step}
           projectId={projectId}
           hierarchy={hierarchy}
           action={action}
-          projectDetails={projectDetails} /></>
-  
+          projectDetails={projectDetails}
+          showLoader={showLoader}
+        /></>
+
       case 3:
         return <><ProjectOnboardingUsers
           step={step}
@@ -81,8 +93,9 @@ const ProjectOnboarding = () => {
           action={action}
           projectDetails={projectDetails}
           usersCount={usersCount}
-          /></>
-  
+          showLoader={showLoader}
+        /></>
+
       case 4:
         return <><ProjectOnboardingReview
           step={step}
@@ -90,8 +103,9 @@ const ProjectOnboarding = () => {
           action={action}
           projectDetails={projectDetails}
           usersCount={usersCount}
-          /></>
-  
+          showLoader={showLoader}
+        /></>
+
       default:
         return <></>;
     }
@@ -119,6 +133,7 @@ const ProjectOnboarding = () => {
             </footer></div>
         </div>
       </div>
+      {renderLoader}
     </div>
   )
 }

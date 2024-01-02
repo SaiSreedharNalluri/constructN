@@ -50,7 +50,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
 
     const removeStructurePopup = useSignal(false)
 
-    const currentStructure = useRef<IStructure>()
+    const currentStructure = useSignal<IStructure | undefined>(undefined)
 
     const fileToUpload = useSignal<File | undefined>(undefined)
 
@@ -60,7 +60,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
 
     const uploadProgress = useSignal<UploadProgress>({sent: 0, total: 0, percentage: -1})
 
-    const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.current!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete ))
+    const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.value!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete ))
 
     const renderAddSheetPopup = useComputed(() => addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
         setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Add Drawing'}
@@ -69,17 +69,17 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
         backdropWidth={true} showButton={false}
     /> : <></>)
 
-    const addStructureFormJSX = useComputed(() => renderAddStructureForm(addStructurePopup, currentStructure.current?._id, newStructureName, onAdd))
+    const addStructureFormJSX = useComputed(() => renderAddStructureForm(addStructurePopup, currentStructure.value?._id, newStructureName, onAdd))
 
     const renderAddStructurePopup = useComputed(() => addStructurePopup.value === true ? <PopupComponent open={addStructurePopup.value} hideButtons
         setShowPopUp={(state: boolean) => addStructurePopup.value = state}
-        modalTitle={`Add sublevel for ${currentStructure.current?.name}`}
+        modalTitle={`Add sublevel for ${currentStructure.value?.name}`}
         modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} width={'60%'} backdropWidth={true} showButton={false}
         modalContent={addStructureFormJSX}
     /> : <></>)
 
-    const removeStructureFormJSX = useComputed(() => renderDeleteStructureForm(removeStructurePopup, currentStructure.current!, onDelete))
+    const removeStructureFormJSX = useComputed(() => renderDeleteStructureForm(removeStructurePopup, currentStructure.value!, onDelete))
 
     const renderRemoveStructurePopup = useComputed(() => removeStructurePopup.value === true ? <PopupComponent open={removeStructurePopup.value} hideButtons
         setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Delete level'}
@@ -93,9 +93,9 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
         <div className='p-4 min-w-[20vw] bg-white' >
 
             <Tree treeData={hierarchy} parent={undefined}
-                onAdd={(structure: IStructure) => { currentStructure.current = structure; addStructurePopup.value = true }}
-                onDelete={(structure: IStructure) => {  currentStructure.current = structure; removeStructurePopup.value = true }}
-                addSheet={(structure: IStructure) => { currentStructure.current = structure; addSheetPopup.value = true }} />
+                onAdd={(structure: IStructure) => { currentStructure.value = structure; addStructurePopup.value = true }}
+                onDelete={(structure: IStructure) => { currentStructure.value = structure; removeStructurePopup.value = true }}
+                addSheet={(structure: IStructure) => { currentStructure.value = structure; addSheetPopup.value = true }} />
 
             {renderAddSheetPopup}
 
@@ -198,7 +198,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
                     <Chip label='Add Sublevel' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined'
                         icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onAdd(node)} />
 
-                    <Chip label='Delete Level' size='small' color='error' clickable className='mr-2 text-[12px]' variant='outlined'
+                    <Chip label='Delete Level' size='small' color='error' clickable className={`mr-2 text-[12px] opacity-${node.parent === null ? 0 : 100}`} variant='outlined'
                         icon={<RemoveOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onDelete(node)} />
 
                 </div>
@@ -323,7 +323,7 @@ const renderAddStructureForm = (
         <div className='flex justify-between mt-6'>
 
             <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'
-                onClick={() => { showPopup.value = false }}>
+                onClick={() => { showPopup.value = false; setTimeout(() => newStructureName.value = '', 1000) }}>
                 Discard
             </Button>
 
@@ -331,6 +331,7 @@ const renderAddStructureForm = (
                 color='warning' onClick={() => {
                     onAdd(newStructureName.value, parent)
                     showPopup.value = false
+                    setTimeout(() => newStructureName.value = '', 1000)
                 }} >
                 Save
             </Button>

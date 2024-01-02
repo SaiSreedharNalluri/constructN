@@ -1,7 +1,7 @@
 import router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { IProjects } from "../../../models/IProjects";
-import { getProjects, getProjectsList } from "../../../services/project";
+import { deleteProject, getProjects, getProjectsList } from "../../../services/project";
 import userCount from "../../../public/divami_icons/userCount.svg";
 import updatedAtIcon from "../../../public/divami_icons/updatedAtIcon.svg";
 import {
@@ -54,6 +54,8 @@ import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { Tooltip } from "@mui/material";
+import { CustomToast } from "../custom-toaster/CustomToast";
+import PopupComponent from "../../popupComponent/PopupComponent";
 export const ProjectListCardView = ({
   projects,
   projectActions,
@@ -63,13 +65,13 @@ export const ProjectListCardView = ({
   const customLogger = new CustomLoggerClass();
   const [projectsData, setProjectsData] = useState(
     projects?.length
-      ? projects.map((each: any, index: number) => {
-          return {
-            ...each,
-            showActionsCard: index == 1 ? true : false,
-          };
-        })
-      : []
+   ? projects.map((each: any, index: number) => {
+      return {
+        ...each,
+        showActionsCard: index == 1 ? true : false,
+      };
+    })
+: []
   );
 
   useEffect(() => {
@@ -77,12 +79,31 @@ export const ProjectListCardView = ({
     setProjectsData(projects);
   }, [projects]);
 
+  const[isAdmin,setisAdmin]=useState(false);
+  const[isPending,setisPending]=useState(false);
+  const[isDelete,setDelete]=useState(false);
+  const[projectId,setProjectId]=useState("");
+  const[role,setRole]=useState("");
+  const onDelete = (projectId: string,role:string) => {
+    if(role==="admin"){
+      deleteProject(projectId).then((res) => {
+        const updatedProjects = projectsData.filter((project: any) => project._id !== projectId);          
+        setProjectsData(updatedProjects);
+        CustomToast(res.message,"success")
+      })
+      .catch((err) => {
+        CustomToast(err, 'error')
+        
+      } )
+    }
+else{
+  CustomToast("Only Admin can delete the project","success")
+}
+
+  }
   const Card = ({ each }: any) => {
     const [isFlipped, setIsFlipped] = useState(true);
-const handleDeleteProject=(id:string)=>{
-console.log(id);
 
-}
     return (
       <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
         <ProjectCard
@@ -137,29 +158,35 @@ console.log(id);
         <ProjectCard
           onClick={(e: any) => {
             e.stopPropagation();
-            if(each.status==="Draft"){
+            if(each.status==="Draft" && each.role==="admin"){
               router.push(`project-onboarding?id=${each._id}`)
             }
-            else if(each.status==="PendingApproval"){
-
+         else if(each.status==="Draft" && each.role!=="admin"){
+          setisAdmin(true)
             }
-            else{
+            else if(each.status==="PendingApproval"){              
+              setisPending(true)
+            }
+        
+            else if (each.status !== "Draft" && each.status !== "PendingApproval"){
               router.push(`/projects/${each._id}/sections`);
             }
            
             customLogger.logInfo("Project Card - Sections");
           }}
-          className={each.status==="Draft"|| each.status==="PendingApproval"?"bg-[#D9D9D9]":""}
+          className={each.status==="Draft" || each.status === 'PendingApproval'?"bg-[#D9D9D9]":""}
         >
           <ProjectTopLeftBg />
           <ProjectTopRightBg />
           <ProjectBottomLeftBg />
           <ProjectBottomRightBg />
-          {each.status==="Draft"?
+          {each.status==="Draft" || each.status === 'PendingApproval'?
           <Tooltip title="Delete Project" placement="bottom">
           <Image className="float-right" width={15} height={17} src={Delete} alt=""  onClick={(e) => {
-            // e.stopPropagation(); // Stop event bubbling to prevent triggering the card click
-            handleDeleteProject(each._id); // Call the delete function when the delete icon is clicked
+            e.stopPropagation(); 
+            setDelete(true)
+            setProjectId(each._id)
+            setRole(each.role)
           }}></Image>
           </Tooltip>:
           <Tooltip title="Project Menu" placement="bottom">
@@ -204,7 +231,7 @@ console.log(id);
             </ProjectNameTitle>
           </Tooltip>
 
-        {each.status==="Draft" ||each.status==="PendingApproval" ?"":<>  <CapturesText>Captures so far</CapturesText>
+        {each.status==="Draft" || each.status === 'PendingApproval'?"":<>  <CapturesText>Captures so far</CapturesText>
           <CaptureImageContainer>
             <CaptureImageIcon src={Capture360photo} alt=""></CaptureImageIcon>
             <CaptureName>360 Image - </CaptureName>
@@ -273,14 +300,12 @@ console.log(id);
            {each.status==="Draft"?
             <div className="font-bold text-base text-[#101F4C] text-center" >
             Click to Resume
-           </div>:
-           each.status==="PendingApproval" ?
+           </div>: each.status === 'PendingApproval' ?
            <div className="font-bold text-base text-[#101F4C] text-center" >
-             Pending Approval
            </div>
           :""}  
           </div>
-<div className="absolute bottom-[10px] left-[40%] font-bold text-base text-[#C24200] ">{each.status==="Draft"? <div className="">Draft</div> :""}</div>
+<div className="absolute bottom-[10px] text-center w-[90%] font-bold text-base text-[#C24200] ">{each.status==="Draft" || each.status === 'PendingApproval'? <div className="">{each.status}</div> :""}</div>
         </ProjectCard>
       </ReactCardFlip>
     );
@@ -311,6 +336,56 @@ console.log(id);
         </ShowErrorContainer>
          </div>
       )}
+      {
+        isAdmin || isPending?<PopupComponent open={isAdmin?isAdmin:isPending}
+        setShowPopUp={isAdmin?setisAdmin:setisPending}
+        modalTitle={isAdmin? "Access Denied !!":"Review in progress !!"}
+        modalmessage={
+        isAdmin?
+        <div className="flex flex-col">
+          <div>
+          1. The project you are trying to access is in draft stage.
+          </div>
+        <div>
+        2. Please reach out to the admin of this project to finish the project setup.
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>:<div className="flex flex-col">
+          <div>
+          1. The project you are trying to access has not been approved.
+          </div>
+        <div>
+        2. You can access the project only after the project has been approved. 
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>}
+        primaryButtonLabel={"Ok"}
+        SecondaryButtonlabel={""}
+        callBackvalue={
+          isAdmin?
+          () => {
+          setisAdmin(false)
+        }:() => {
+          setisPending(false)
+        }}></PopupComponent>:""
+      }
+      {
+        isDelete? <PopupComponent
+        open={isDelete}
+        setShowPopUp={setDelete}
+        modalTitle={"'Attention'"}
+        modalmessage={
+         `Are you sure you want to 'Delete Project'?`
+        }
+        primaryButtonLabel={"Yes"}
+        SecondaryButtonlabel={"No"}
+        callBackvalue={()=>{onDelete(projectId,role);setDelete(false)}}
+      />:""
+      }
     </ProjectCardsContainer>
   );
 };

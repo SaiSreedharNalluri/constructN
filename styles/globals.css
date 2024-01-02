@@ -730,9 +730,9 @@ td {
   border-radius: 60px !important;
 }
 
-.css-vqmohf-MuiButtonBase-root-MuiRadio-root.Mui-checked {
+/* .css-vqmohf-MuiButtonBase-root-MuiRadio-root.Mui-checked {
   color: #FF843F;
-}
+} */
 
 .input-no-arrows input::-webkit-inner-spin-button,
 .input-no-arrows input::-webkit-outer-spin-button {
