@@ -377,7 +377,7 @@ const Index: React.FC<any> = () => {
               }
             })
             console.log(sortedProjects)
-            setProjects(sortedProjects);
+            setProjects(sortedProjects.sort((a: any, b: any) => a.status === 'Draft' || a.status === 'PendingApproval' ? -1 : 1));
           }
           setShowLoading(false);
         })

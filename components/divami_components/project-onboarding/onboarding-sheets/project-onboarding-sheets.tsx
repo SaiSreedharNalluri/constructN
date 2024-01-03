@@ -13,6 +13,7 @@ import { useComputed, useSignalEffect } from '@preact/signals-react'
 import { IOnboardingProps } from '../projectOnboarding'
 
 import { CustomToast } from '../../custom-toaster/CustomToast'
+
 import Link from 'next/link'
 
 const headers = { headers: authHeader.authHeader() }
@@ -145,11 +146,11 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
           Level Name
         </div>
 
-        <div className='flex w-[25vw] items-center mr-4 justify-center'>
+        <div className='flex w-[25vw] items-center mr-4'>
           Drawings <Link href='https://help.constructn.ai/en/articles/8238555-floor-plans-for-interior-captures' target='_blank' className='text-xs !text-orange-600 !underline ml-4'>Good Sheet vs Bad Sheet</Link>
         </div>
 
-        <div className='flex w-[9rem] group-hover:opacity-100 opacity-0 items-center'>
+        <div className='flex w-[13rem] group-hover:opacity-100 opacity-0 items-center'>
           
         </div>
 

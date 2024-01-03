@@ -34,12 +34,13 @@ const ProjectTypeDetails = ({
       };
     }}
     modalTitle={"Attention"}
-    modalmessage={"Please contact 'support@constructn.ai' for Visual Documentation. Do you want to continue with only 'Visual Documentation?"}
+    modalmessage={"Please contact support@constructn.ai for this option. Do you want to continue with only 'Visual Documentation'?"}
     primaryButtonLabel={"Contact Support"}
     SecondaryButtonlabel={"Visual Documentation"}
     callBackvalue={() => {
       showPopUp.value = false
-      router.push("/projects")
+      // router.push("/projects")
+      window.location.href = 'mailto:support@constructn.ai'
     }}
   /> : <></>)
 

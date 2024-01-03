@@ -63,7 +63,7 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         type='number'
         className="outline-none"
         inputProps={{ step: 0.1 }}
-        placeholder={'Choose from -90 to 90'}
+        placeholder={'Choose from -80 to 84'}
         value={latlngDetails.value.location?.coordinates?.[1]}
         onChange={(e: any) => handleOnChange(e, 'latitude')}
       />

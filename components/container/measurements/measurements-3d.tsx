@@ -414,7 +414,6 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
           name: measurement?.name,
           type: measurement?.mtype,
           snapshot,
-          context: {},
           data: formatData,
           measurementId: measurement?._id,
           setLoading,

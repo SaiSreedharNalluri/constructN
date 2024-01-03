@@ -58,9 +58,9 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
 
     const uploadComplete = useSignal(false)
 
-    const uploadProgress = useSignal<UploadProgress>({sent: 0, total: 0, percentage: -1})
+    const uploadProgress = useSignal<UploadProgress>({ sent: 0, total: 0, percentage: -1 })
 
-    const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.value!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete ))
+    const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.value!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete))
 
     const renderAddSheetPopup = useComputed(() => addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
         setShowPopUp={(state: boolean) => addSheetPopup.value = state} modalTitle={'Add Drawing'}
@@ -170,15 +170,15 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                         )
                     }
-<TooltipText title={name.length > 50 ?name:""} placement="right"> 
-<div>
-<TruncatedString text={name}   maxLength={50} suffixLength={0}></TruncatedString>
-    </div>          
+                    <TooltipText title={name.length > 50 ? name : ""} placement="right">
+                        <div>
+                            <TruncatedString text={name} maxLength={50} suffixLength={0}></TruncatedString>
+                        </div>
 
-</TooltipText> 
+                    </TooltipText>
                 </div>
 
-                <div className='flex w-[20vw] items-center justify-center mr-4'>
+                <div className='flex w-[25vw] items-center'>
 
                     <Stack direction='row' spacing={1}>
 
@@ -193,16 +193,16 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                 </div>
 
-                <div className='flex group-hover:opacity-100 opacity-0 items-center'>
+                <div className='flex w-[13rem] group-hover:opacity-100 opacity-0 items-center'>
 
                     <Chip label='Add Sublevel' size='small' color='info' clickable className='mr-2 text-[12px]' variant='outlined'
                         icon={<AddOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onAdd(node)} />
 
-                    <Chip label='Delete Level' size='small' color='error' clickable className={`mr-2 text-[12px] opacity-${node.parent === null ? 0 : 100}`} variant='outlined'
-                        icon={<RemoveOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onDelete(node)} />
+                    {node.parent !== null && <Chip label='Delete Level' size='small' color='error' clickable className='mr-2 text-[12px]' variant='outlined'
+                        icon={<RemoveOutlinedIcon className='w-[16px] h-[16px]' />} onClick={() => onDelete(node)} />}
 
                 </div>
-                
+
                 <MoreVertIcon className='group-hover:opacity-0 opacity-100' htmlColor='#c2c3c5' fontSize='small' />
 
             </div>
@@ -247,19 +247,21 @@ const renderAddSheetForm = (
 
         uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
             // console.log(`${percentage}%`)
-            uploadProgress.value = {sent, total, percentage}
+            uploadProgress.value = { sent, total, percentage }
         })
             .onError((error: any) => {
                 console.error(error)
                 uploadStatus.value = false
                 CustomToast('Failed to upload.', 'error', false)
+                fileToUpload.value = undefined
             })
             .onComplete(() => {
                 uploadStatus.value = false
                 showPopup.value = false
-                uploadProgress.value = {sent: 0, total: 0, percentage: -1}
+                uploadProgress.value = { sent: 0, total: 0, percentage: -1 }
                 CustomToast(`Added drawing to ${structure.name} successfully.`, 'success')
                 onSheetAdded()
+                fileToUpload.value = undefined
             })
 
         uploadStatus.value = true
@@ -284,22 +286,22 @@ const renderAddSheetForm = (
 
         {uploadProgress.value.percentage !== -1 && uploadStatus.value == true &&
             <div className='mt-8 w-[400px] py-4 px-8'>
-            <div className='flex justify-between'>
-              <div className='text-[12px]'>{`${(uploadProgress.value.sent / (1024 * 1024)).toFixed(1)} MB / ${(uploadProgress.value.total / (1024 * 1024)).toFixed(1)} MB`}</div>
-              <div className='text-[12px]'>{`${(uploadProgress.value.percentage).toFixed(1)}%`}</div>
+                <div className='flex justify-between'>
+                    <div className='text-[12px]'>{`${(uploadProgress.value.sent / (1024 * 1024)).toFixed(1)} MB / ${(uploadProgress.value.total / (1024 * 1024)).toFixed(1)} MB`}</div>
+                    <div className='text-[12px]'>{`${(uploadProgress.value.percentage).toFixed(1)}%`}</div>
+                </div>
+                <LinearProgress className='mt-4' color='warning' variant="determinate" value={uploadProgress.value.percentage} />
             </div>
-            <LinearProgress className='mt-4' color='warning' variant="determinate" value={uploadProgress.value.percentage} />
-          </div>
         }
 
         <div className='flex justify-between mt-6'>
 
             <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'
-                onClick={() => { showPopup.value = false }}>
+                onClick={() => { showPopup.value = false; fileToUpload.value = undefined }}>
                 Discard
             </Button>
 
-            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' color='warning' 
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' color='warning'
                 disabled={fileToUpload.value === undefined || uploadStatus.value == true} onClick={() => proceedUpload()} >
                 Upload
             </Button>

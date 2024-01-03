@@ -48,7 +48,7 @@ export const validateText = (name: string): boolean => {
 };
 
 export const validateLatitude = (latitude: number): boolean => {
-    return latitude >= -90 && latitude <= 90 && latitude !== 0;
+    return latitude >= -80 && latitude <= 84 && latitude !== 0;
 };
 
 export const validateLongitude = (longitude: number): boolean => {

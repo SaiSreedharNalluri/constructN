@@ -20,9 +20,9 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
 
   const fileToUpload = useSignal<File | undefined>(undefined)
   const existingBIM = useSignal(
-    hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 ?
+    hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 && hierarchy!.value[0].designs![0].type === 'BIM' ?
       hierarchy!.value[0].designs![0].name : undefined)
-  const uploadComplete = useSignal(hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0)
+  const uploadComplete = useSignal(hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 && hierarchy!.value[0].designs![0].type === 'BIM')
   const isUploading = useSignal(false)
   const uploadProgress = useSignal<UploadProgress>({ sent: 0, total: 0, percentage: -1 })
   const showPopUp = useSignal(false)
@@ -88,7 +88,7 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
     open={showPopUp.value}
     setShowPopUp={(state: boolean) => { showPopUp.value = state }}
     modalTitle={"Warning"}
-    modalmessage={"Are you sure you do not want to proceed without BIM?"}
+    modalmessage={`${isUploading.value == true ? 'BIM upload in progress. Clicking next will discard the file. ' : ''}Are you sure you want to proceed without BIM?`}
     primaryButtonLabel={"Yes"}
     SecondaryButtonlabel={"Discard"}
     callBackvalue={() => {
@@ -138,9 +138,12 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
         console.error(error)
       })
       .onComplete(() => {
-        isUploading.value = false
-        uploadProgress.value = { sent: 0, total: 0, percentage: -1 }
-        uploadComplete.value = true
+        getStructureHierarchy(projectId.peek()).then((res => {
+          isUploading.value = false
+          uploadProgress.value = { sent: 0, total: 0, percentage: -1 }
+          uploadComplete.value = true
+          if(hierarchy) hierarchy.value = res.data.result
+        })).catch(err => console.log(err))
       })
     isUploading.value = true
     uploader.start()
