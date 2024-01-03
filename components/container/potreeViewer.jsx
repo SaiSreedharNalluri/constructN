@@ -46,7 +46,7 @@ function PotreeViewer(props) {
           {isSupportUser.current ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
-              <Measurements3DView potreeUtils={potreeUtils} />
+              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} />
             </div>
           ) : (
             ""
