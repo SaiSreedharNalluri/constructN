@@ -59,11 +59,11 @@ export interface DialogTitleProps {
 }
 export interface PopupComponentProps {
   modalTitle: string;
-  modalmessage: string;
+  modalmessage: string | JSX.Element;
   primaryButtonLabel: string;
   SecondaryButtonlabel: string;
   callBackvalue?: any;
-  setShowPopUp: (value: boolean) => void;
+  setShowPopUp: (value: any) => void;
   open: boolean;
   modalContent?: any;
   hideButtons?: boolean;
@@ -78,6 +78,9 @@ export interface PopupComponentProps {
   setShowbutton?: any;
   projectId?: string;
   isUploader?:boolean,
+  disableSecondaryButton?: boolean;
+  disablePrimaryButton?: boolean;
+  secondaryCallback?: any;
   isShowWarningText?:boolean,
   isCancelCallBack?:boolean
 handleCancel?:(value:boolean)=>void
@@ -158,6 +161,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     imageSrc,
     isImageThere,
     isUploader = true,
+    disableSecondaryButton = false,
+    disablePrimaryButton = false,
+    secondaryCallback,
     isShowWarningText = true,
     handleCancel,
     isCancelCallBack,
@@ -179,6 +185,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     }
     if (setShowbutton) {
       setShowbutton(false);
+    }
+    if(secondaryCallback){
+      secondaryCallback()
     }
   };
   return (
@@ -235,6 +244,7 @@ const PopupComponent = (props: PopupComponentProps) => {
               <Button
                 variant={paddingStyle ? "outlined" : "text"}
                 // autoFocus
+                disabled={disableSecondaryButton}
                 onClick={()=>{
                  
                   if(isCancelCallBack)
@@ -262,6 +272,7 @@ const PopupComponent = (props: PopupComponentProps) => {
               <Button
                 variant="contained"
                 onClick={() => callBackvalue("Delete")}
+                disabled={disablePrimaryButton}
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
