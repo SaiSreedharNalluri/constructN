@@ -35,7 +35,7 @@ import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
-
+import jsPDF from "jspdf";
 import _ from "lodash";
 import {
   createAttachment,
@@ -117,7 +117,9 @@ import {
   SecondContDueDate,
   ThirdContDueDate,
   ProcoreLogo,
+  
 } from "./IssueDetailStyles";
+import "jspdf-autotable";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
@@ -129,7 +131,8 @@ import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
 import procore from "../../../public/divami_icons/procore.svg";
 import ProcoreLink from "../../container/procore/procoreLinks";
-import LinkNewRFI from "../../container/procore/linkNewRfi";
+import LinkNewRFI from "../../container/procore/newRFI/linkNewRfi";
+import { Key } from "@mui/icons-material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -1225,35 +1228,91 @@ const CustomIssueDetailsDrawer = (props: any) => {
       });
   };
   const handleProcoreLinks = () =>{
+    
     setProcorePopup(true)
     setTaskDetail(false)
   }
 
-  const handleInstance= (data:IprocoreActions)=>{
-      switch(data.action){
-        case "setnewRFI":{
-          setnewLinkRFI(data.status)
-          setTaskDetail(false)
-          setProcorePopup(false)
-          break;
-        }
-        case "closeNewRFI":{
-          setProcorePopup(true)
-          setnewLinkRFI(data.status)
-          break;
-        }
-        case "closeProcorePopup":{
-          setProcorePopup(false)
-          setTaskDetail(true)
-          break;
-        }
-      }
+  const  handleCloseProcore=()=>{
+    setProcorePopup(false)
+    setTaskDetail(true);
   }
 
+
+console.log(selectedIssue);
+
+
+
+const convertObjectToPdf = () => {
+  console.log("button action");
+  
+  // Sample object data
+  const data:any = selectedIssue;
+
+  // Create a new jsPDF instance
+  const pdf = new jsPDF();
+
+  // Set font size and style
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica", "normal");
+
+  // Define table headers
+  const headers = ["Key", "Value"];
+
+  // Initialize table data array
+  const tableData = [];
+ 
+  const imgData = selectedIssue.screenshot;
+  pdf.addImage(imgData, "JPEG",50,50, 100, 100)
+   
+
+  // Iterate over object properties and push key-value pairs to tableData
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      if(key === 'assignees'){
+       let assignee=data[key].map((item:any)=>{
+        return item.fullName
+       }) 
+       tableData.push([key,assignee])
+      }
+      if(key === 'owner'){
+       tableData.push([key,data[key].fullName])
+       }
+       if(key === 'createdAt' || 'updatedAt' || 'context' || 'tags'){
+        return;
+       }
+      else{
+        tableData.push([key, data[key]]);
+      }
+      
+    }
+  }
+
+  // Set table column widths and autoTable options
+  const columnWidths = [50, 140];
+
+  // Add table headers and data to PDF using jspdf-autotable
+  (pdf as any).autoTable({
+    head: [headers],
+    body: tableData,
+    startY: 150,
+    margin: { top: 100 },
+    columnStyles: { 0: { cellWidth: columnWidths[0] } },
+  });
+
+  // Save the PDF
+  console.log("pdfff",pdf)
+  pdf.save("object_data.pdf");
+};
+
+
+
+
+  
   return (
     <>
    
-      {procorePopup && <ProcoreLink handleInstance={handleInstance}></ProcoreLink>}
+      {procorePopup && <ProcoreLink handleCloseProcore={handleCloseProcore}></ProcoreLink>}
       {taskDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
@@ -1268,6 +1327,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   alt={"close icon"}
                   data-testid="back-arrow"
                 />
+                <button onClick={convertObjectToPdf}>Convert to PDF</button>
               </div>
 
               <DarkToolTip
@@ -1384,10 +1444,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
           callBackvalue={onDeleteIssue}
         />
       )} */}
-    {newRFI ? (<LinkNewRFI handleInstance={handleInstance}>
-      
-    </LinkNewRFI>):
-        (<></>)}
     </>
     
   );
