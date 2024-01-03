@@ -137,7 +137,7 @@ export default function Metrics({
 					</div>
 				))
 			) : (
-				<TableContainer style={{ maxHeight: 360 }}>
+				<TableContainer style={{ maxHeight: 324 }}>
 					<Table aria-label="table" stickyHeader>
 						<TableHead>
 							<TableRow>
