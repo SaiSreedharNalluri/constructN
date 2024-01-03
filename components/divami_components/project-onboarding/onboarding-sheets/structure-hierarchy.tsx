@@ -63,7 +63,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
     const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.value!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete ))
 
     const renderAddSheetPopup = useComputed(() => addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
-        setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Add Drawing'}
+        setShowPopUp={(state: boolean) => addSheetPopup.value = state} modalTitle={'Add Drawing'}
         modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} modalContent={addSheetFormJSX}
         backdropWidth={true} showButton={false}

@@ -21,6 +21,7 @@ const ProjectTypeDetails = ({
 
   const renderPopup = useComputed(() => showPopUp.value === true ? <PopupComponent
     isUploader={false}
+    hideCloseButton={true}
     open={showPopUp.value}
     setShowPopUp={(state: boolean) => {
       showPopUp.value = state

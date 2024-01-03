@@ -68,7 +68,7 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLo
               })
               .catch((error) => {
                 console.error('Error creating project:', error);
-                CustomToast('Error creating project', 'error')
+                CustomToast(error.message, 'error')
                 if(showLoader !== undefined) showLoader.value = false
                 console.log("error");
                 if (action) action.value = ''

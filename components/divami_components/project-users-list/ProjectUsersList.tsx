@@ -74,6 +74,7 @@ import { TooltipText } from "../side-panel/SidePanelStyles";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { getCookie } from "cookies-next";
 export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => {
   const customLogger = new CustomLoggerClass();
   const [tableData, setTableData] = useState<any>([]);
@@ -357,6 +358,9 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
       });
     }
   }, [router.isReady, router.query.projectId]);
+  const userObj: any = getCookie('user');
+  let user :any= null;
+  if (userObj) user = JSON.parse(userObj);
 
   const formHandler = (event: any) => {
     setOpenDrawer(true);
@@ -412,6 +416,8 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
   const handleMouseLeave = () => {
     setIsHover(null);
   };  
+
+
   return (
     <ProjectUsersListContainer>
       <TableHeader>
@@ -565,39 +571,42 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
       </TableCell>
      
       <TableCell  width="10%">
-     {isHover===rowData._id? <div className="flex items-center">
-            {/* <TooltipText title="chat" > 
-             <div className="flex" >
-             <ChatIconImage src={ChatIcon} alt="" />
-             </div>
-            </TooltipText> */}
-            <TooltipText title="Deassign">
-              <div className="flex ">
-                <RemoveIconImage
-                  src={RemoveIcon}
-                  alt=""
-                  onClick={() => {
-                    setshowPopUp(true);
-                    setEmailId(rowData);
-                  }}
-                />
-              </div>
-            </TooltipText>
-            <TooltipText title="Edit">
-              <div className="flex ">
-                <EditIconImage
-                  src={Edit}
-                  alt=""
-                  onClick={() => {
-                    setShowEdit(true);
-                    setSelectedRowData(rowData);
-                  customLogger.logInfo("Edit User Role")  
-                  }}
-                  className="cursor-pointer"
-                />
-              </div>
-            </TooltipText>
-          </div>:""}
+     {isHover===rowData._id? 
+     rowData._id===user._id?"":<div className="flex items-center">
+     {/* <TooltipText title="chat" > 
+      <div className="flex" >
+      <ChatIconImage src={ChatIcon} alt="" />
+      </div>
+     </TooltipText> */}
+     <TooltipText title="Deassign">
+       <div className="flex ">
+         <RemoveIconImage
+           src={RemoveIcon}
+           alt=""
+           onClick={() => {
+             setshowPopUp(true);
+             setEmailId(rowData);
+           }}
+         />
+       </div>
+     </TooltipText>
+     <TooltipText title="Edit">
+       <div className="flex ">
+         <EditIconImage
+           src={Edit}
+           alt=""
+           onClick={() => {
+             setShowEdit(true);
+             setSelectedRowData(rowData);
+           customLogger.logInfo("Edit User Role")  
+           }}
+           className="cursor-pointer"
+         />
+       </div>
+     </TooltipText>
+   </div>
+     
+:""}
       </TableCell>
     
         </TableRow>

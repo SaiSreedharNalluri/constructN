@@ -36,7 +36,7 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
     SecondaryButtonlabel={""}
     callBackvalue={() => {
       showPopUp.value = false
-      // router.push("/projects")
+      router.push("/projects")
     }}
   />)
 
@@ -51,18 +51,18 @@ const ProjectOnboardingReview = ({ step, action, projectId, projectDetails, user
         // if (showLoader) showLoader.value = true
         showPopUp.value = true
         action!.value = ''
-        // updateProjectInfo({status: 'PendingApproval'}, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
-        //   if(showLoader) showLoader.value=false
-        //   showPopUp.value = true
-        // }).catch((error) => {
-        //   console.error('Error submitting project for review:', error);
-        //   CustomToast('Error submitting project for review', 'error')
-        //   if(showLoader){
-        //     showLoader.value=false
-        //     }
-        //   console.log("error");
-        //   if (action) action.value = ''
-        // });
+        updateProjectInfo({status: 'PendingApproval'}, projectId.value = projectDetails.peek()._id ?? '' as string).then((response: any) => {
+          if(showLoader) showLoader.value=false
+          showPopUp.value = true
+        }).catch((error) => {
+          console.error('Error submitting project for review:', error);
+          CustomToast('Error submitting project for review', 'error')
+          if(showLoader){
+            showLoader.value=false
+            }
+          console.log("error");
+       if (action) action.value = ''
+        });
         break
       default:
         break

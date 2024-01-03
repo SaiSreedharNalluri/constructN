@@ -55,6 +55,7 @@ export interface DialogTitleProps {
   children?: React.ReactNode;
   isUploader:boolean,
   onClose: () => void;
+  hideCloseButton:boolean
 }
 export interface PopupComponentProps {
   modalTitle: string;
@@ -77,17 +78,17 @@ export interface PopupComponentProps {
   setShowbutton?: any;
   projectId?: string;
   isUploader?:boolean,
-  isUploaderFinal?:boolean;
   disableSecondaryButton?: boolean;
   disablePrimaryButton?: boolean;
   secondaryCallback?: any;
   isShowWarningText?:boolean,
   isCancelCallBack?:boolean
 handleCancel?:(value:boolean)=>void
+hideCloseButton?:boolean
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children,isUploader, onClose, ...other } = props;
+  const { children,isUploader,hideCloseButton, onClose, ...other } = props;
 
   return (
     <DialogTitle
@@ -124,10 +125,7 @@ export function BootstrapDialogTitle(props: DialogTitleProps) {
             },
           }}
         >
-          {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
-          {
-            isUploader && <CloseIcon src={closeWithCircle} alt={"close icon"} />
-          }
+         {hideCloseButton===true ?<CloseIcon src={closeWithCircle} alt={"close icon"} />:isUploader===false?"":<CloseIcon src={closeWithCircle} alt={"close icon"} />}
           
         </IconButton>
       ) : null}
@@ -163,13 +161,13 @@ const PopupComponent = (props: PopupComponentProps) => {
     imageSrc,
     isImageThere,
     isUploader = true,
-    isUploaderFinal = true,
     disableSecondaryButton = false,
     disablePrimaryButton = false,
     secondaryCallback,
     isShowWarningText = true,
     handleCancel,
-    isCancelCallBack
+    isCancelCallBack,
+    hideCloseButton=false
   } = props;
   const handleClosePopup=()=>{
     if(isUploader === false)
@@ -216,6 +214,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             }
           }}
           isUploader={isUploader}
+          hideCloseButton={hideCloseButton}
         >
           {modalTitle}
         </BootstrapDialogTitle>
@@ -258,7 +257,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 }}
                 style={{
                   color: "#F1742E",
-                  width: isUploader  ? "180px":"fit-content",
+                  width: isUploader===false ? "fit-content":"180px",
                   height: "40px",
                   textTransform: "none",
                   marginBottom: "22px",
