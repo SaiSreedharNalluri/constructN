@@ -48,7 +48,7 @@ export const validateLongitude = (longitude: number): boolean => {
 };
 
 export const validateAltitudeOrElevation = (altitude: number): boolean => {
-    return altitude !== 0 && Number(altitude) > 0;
+    return !isNaN(altitude) && typeof altitude === 'number';
 };
 
 export const validateEasting = (easting: number): boolean => {
@@ -67,25 +67,24 @@ export const getInitialGCPList = (isUTM: boolean): IGCP => {
     let minimumGCPPoints=4;
     let gcplist:IGCP={};
     if(isUTM){
-        console.log('checked isutm')
         gcplist.utmLocation=[]
         for( let i=0; i<minimumGCPPoints; i++){
 
             gcplist.utmLocation.push({
                 easting: 0,
                 northing: 0,
-                elevation: 0,
-                zone: ""
+                elevation: undefined,
+                zone: " "
+               
             })
         }
     }else{
-        console.log('checked latlng')
         gcplist.location=[]
         for( let i=0; i<minimumGCPPoints; i++){
             gcplist.location.push({
                 coordinates: [0,0],
                 type: "point",
-                elevation: 0,
+                elevation: undefined,
             })
         }
     }
