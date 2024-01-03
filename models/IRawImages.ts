@@ -21,7 +21,7 @@ export type RawImageCreateResp = { putSignedURL:string } & RawImage
 export interface utmLocation {
     northing: number;
     easting: number;
-    zone: string
+    zone?: string
     elevation?: number,
 }
 
@@ -39,14 +39,6 @@ export interface location {
   coordinates: [number, number] //long lat
   elevation?: number,
 }
-  
-export interface utmLocation {
-  northing: number;
-  easting: number;
-  zone: string
-  elevation?: number,
-}
-  
 export interface metaData{
   fileSize:number,
   uploadExpireTime?:string

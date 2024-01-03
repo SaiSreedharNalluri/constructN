@@ -74,7 +74,7 @@ export const getInitialGCPList = (isUTM: boolean): IGCP => {
                 easting: 0,
                 northing: 0,
                 elevation: undefined,
-                zone: " "
+                zone: undefined
                
             })
         }

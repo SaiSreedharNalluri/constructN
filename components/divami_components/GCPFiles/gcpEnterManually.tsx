@@ -220,7 +220,7 @@ const GcpEnterManually: React.FC<any> = () => {
   };
   useEffect(() => {
     validateInitialValues();
-  }, [uploaderState.gcpType]);
+  }, []);
   const validateInitialValues = () => {
    
     if (uploaderState.gcpType === GCPType.UTM && uploaderState.gcpList.utmLocation)
@@ -329,15 +329,15 @@ const GcpEnterManually: React.FC<any> = () => {
                           : ""
                       }`}
                       value = {
-                        headings.length === 4 ? 
-                        (heading === "Easting" && item.easting) ||
-                        (heading === "Northing" && item.northing) ||
-                        (heading === "Zone" && item.zone)||
-                        (heading === "Elevation" && item.elevation)
-                         :
-                        (heading === "Longitude" && item.coordinates[0]) ||
-                        (heading === "Latitude" && item.coordinates[1]) ||
-                        (heading === "Altitude" && item.elevation)
+                        headings.length === 4
+                          ? (heading === "Zone" && item.zone !== ' ') ? item.zone :
+                            ((heading === "Easting" && item.easting) ||
+                              (heading === "Northing" && item.northing) ||
+                              (heading === "Elevation" && item.elevation))
+                          : (heading === "Zone" && item.zone !== ' ') ? item.zone :
+                            ((heading === "Longitude" && item.coordinates[0]) ||
+                              (heading === "Latitude" && item.coordinates[1]) ||
+                              (heading === "Altitude" && item.elevation))
                       }
                       onChange={(e) => handleInputChange(e, index, heading)}
                       onKeyDown={ heading === "Zone" ?()=>{ } : (evt) => evt.key === 'e' && evt.preventDefault() }
