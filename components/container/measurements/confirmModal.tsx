@@ -35,7 +35,7 @@ const createMeasurement = async ({ name = '', type = '', snapshot = '', context 
   }
 };
 
-const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, refetch =()=>{}, setLoading=()=>{} , loading=false, setSelected =()=>{}, apiPoints= []}: {setShow?: Dispatch<SetStateAction<boolean>>, show?: boolean, measurement: {name?: string; points?: object[]; uuid?: string}; onCancel: Function, refetch: Function, setLoading: Dispatch<SetStateAction<boolean>>, loading?: boolean ,setSelected?: Dispatch<SetStateAction<string>>, apiPoints: {name: string}[]}) => {
+const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, refetch =()=>{}, setLoading=()=>{} , getContext=()=>{}, setActiveMeasure =()=>{}, loading=false, setSelected =()=>{}, apiPoints= []}: {setShow?: Dispatch<SetStateAction<boolean>>, show?: boolean, measurement: {name?: string; points?: object[]; uuid?: string}; onCancel: Function,setActiveMeasure: Dispatch<SetStateAction<string>>, refetch: Function, setLoading: Dispatch<SetStateAction<boolean>>, loading?: boolean ,setSelected?: Dispatch<SetStateAction<string>>, apiPoints: {name: string}[] , getContext: Function }) => {
     const router = useRouter();
     const snapshot = router.query.snap as string;
     const [name, setName] = useState('');
@@ -72,7 +72,8 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
               toast.error("Name Already Exists Please Choose a Different Name");
               return;
             }
-            await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected});
+            await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected, context : { id: getContext().id , image: getContext().image, type: getContext().type }});
+            setActiveMeasure('');
             refetch();
           }}
           secondaryCallback={onCancel}

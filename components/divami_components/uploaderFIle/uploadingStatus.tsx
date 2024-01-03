@@ -8,7 +8,7 @@ const UploadingStatusIcon:React.FC=()=>{
     return(<React.Fragment>
          <div className='w-[10%] h-[5%] md:w-[109.78px] md:h-[104px]'>
           {
-            uploaderState.isReading ? (<CircularProgress color="warning" size={'60%'} style={{ margin: '20px' }}/>):(<Image src={uploaderIcon} alt={"uploader icon"} className='h-[70%] w-[70%] md:h-[66.94px] md:w-[66.94px]'/>)
+            uploaderState.isReading ? (<CircularProgress color="warning" size={'40%'} style={{ margin: '20px' }}/>):(<Image src={uploaderIcon} alt={"uploader icon"} className='h-[70%] w-[70%] md:h-[66.94px] md:w-[66.94px]'/>)
           }
           
       

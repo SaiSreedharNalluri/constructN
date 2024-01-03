@@ -89,7 +89,7 @@ export default function HierarchyPicker({ hierarchy, selected, onSelect, onClose
 
                     <StructureHierarchy
 
-                        structure={selected._id}
+                        structure={selected ? selected._id : ''}
 
                         hierarchy={hierarchy}
 

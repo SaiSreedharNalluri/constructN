@@ -986,6 +986,7 @@ export const PotreeViewerUtils = () => {
             measure.name = point.name;
             measure.mtype = point.type;
             measure._id = point._id;
+            measure.context = point.context;
             point.data.forEach((position)=>{
                 measure.addMarker(new THREE.Vector3(position.x, position.y, position.z));
             });
@@ -1012,9 +1013,6 @@ export const PotreeViewerUtils = () => {
     }
 
     const getPoints=()=>(_viewer?.scene?.measurements || [])
-    const mmoved= (e) => {
-        console.log('marker moved')
-    }
 
     const markerdropped= (e) => {
         publish('marker-added', e);
@@ -1027,18 +1025,14 @@ export const PotreeViewerUtils = () => {
     }
 
     const markeremoved= (e) => {
-        if(!['Point','Height'].includes(e.measurement.name) && !e.measurement?._id){
+        if(!['Point','Height'].includes(e.measurement.name) && !e.measurement?._id && e?.measurement?.points?.length > 0){
             publish('measurement-created', { measure: e.measurement });
         }
     }
 
-    const assetremoved= (e) => {
-        console.log('asset removed')
-    }
-
 
     const myevent = (e) => {
-        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_moved', mmoved)
+        publish('setactive-measurement', { measure: e.measurement })
         _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_removed', markeremoved)
         _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_dropped', markerdropped)
     }
@@ -1052,9 +1046,6 @@ export const PotreeViewerUtils = () => {
     const loadAddMeasurementsEvents = () => {
         if(!_viewer?.scene?.hasEventListener('measurement_added', myevent)){
             _viewer?.scene?.addEventListener('measurement_added', myevent);
-        }
-        if(!_viewer?.scene?.hasEventListener('measurement_removed', assetremoved)){
-            _viewer?.scene?.addEventListener('measurement_removed', assetremoved)
         }
     }
 
@@ -2394,5 +2385,6 @@ export const PotreeViewerUtils = () => {
         removeMeasurement,
         clearAllMeasurements,
         loadMeasurements,
+        handleContext,
     };
 };

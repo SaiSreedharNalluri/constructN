@@ -49,7 +49,7 @@ const unsubscribe = (eventName: string, listener: EventListenerOrEventListenerOb
   document.removeEventListener(eventName, listener)
 }
 
-const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetStateAction<never[]>>, setLoading: Dispatch<SetStateAction<boolean>>) => {
+const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetStateAction<[] | {name: string}[]>>, setLoading: Dispatch<SetStateAction<boolean>>) => {
   try{
     setLoading(true);
     const resp =  await instance.get(
@@ -59,7 +59,7 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
         params: { snapshot }
       }
     )
-    setApiPoints(resp.data.result);
+    setApiPoints([...(resp.data.result || [])]);
   }catch{
     setApiPoints([]);
     CustomToast('Failed to Load Measurements!',"error");
@@ -81,12 +81,11 @@ const updateMeasurement = async ({
   name = '',
   type = '',
   snapshot = '',
-  context= {},
   data = [],
   measurementId = '',
   setLoading=()=>{},
   refetch=()=>{},
-}: { name?: string, type?: string, measurementId?: string; data?:object[]; context?: object; snapshot: string; setLoading: Dispatch<SetStateAction<boolean>>; refetch: Function}) => {
+}: { name?: string, type?: string, measurementId?: string; data?:object[]; snapshot: string; setLoading: Dispatch<SetStateAction<boolean>>; refetch: Function}) => {
   try{
   setLoading(true);
   await instance.put(
@@ -95,7 +94,6 @@ const updateMeasurement = async ({
       name,
       type,
       snapshot,
-      context,
       data,
     },
     {
@@ -129,10 +127,10 @@ const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<Set
   }
 };
 
-const Measurements3DView: FC<any> = ({ potreeUtils = {}}) => {
+const Measurements3DView: FC<any> = ({ potreeUtils = {}, realityMap ={}}) => {
 
   return (<div id='rahmanMeasurement'>
-            <MeasurementTypePicker potreeUtils={potreeUtils} />
+            <MeasurementTypePicker potreeUtils={potreeUtils} realityMap={realityMap} />
           </div>)
 
 }
@@ -240,15 +238,15 @@ const SegmentButtonGroup = styled(ButtonGroup)({
 
 
 
-const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
+const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
 
   const [measurementsLoaded, setMeasurementsLoaded]=useState(false)
   
   const [points, setPoints]= useState<{ _id?: string, removeMarker: Function; position: object; mtype?: string; uuid: string; name?: string, points?: { position: object}[], visible: boolean}[]>([]);
 
-  const [apiPoints, setApiPoints]= useState([])
+  const [apiPoints, setApiPoints]= useState<{name: string}[] | []>([])
 
-  const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, clearAllMeasurements , loadMeasurements } = potreeUtils || {}
+  const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, getContext , loadMeasurements , handleContext} = potreeUtils || {}
 
   const [show, setShow] = useState<boolean>(false)
 
@@ -264,18 +262,23 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
 
   const [search ,setSearch] = useState('');
 
+  const [activeMeasure, setActiveMeasure] = useState('');
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
   const snapshot = router.query.snap as string;
 
-  const onSelect = (measure: { uuid?: string; _id?: string }, fromEvent = false) => {
+  const onSelect = (measure: { uuid?: string; _id?: string , context?: object }, fromEvent = false) => {
     if(fromEvent){
       setSelected(measure?._id || measure?.uuid || '');
       setShow(true);
     }else{
       setSelected((prem) => ((prem === (measure?._id || measure?.uuid )) ? "" : (measure?._id || '')));
+      if(measure?.context){
+        handleContext(measure?.context);
+      }
     };
   }
 
@@ -290,7 +293,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
       loadMeasurements(apiPoints);
       setMeasurementsLoaded(!measurementsLoaded)
     }
-  },[apiPoints.length])
+  },[apiPoints])
 
   const refetch = ()=> {
     getMeasurements(snapshot, setApiPoints, setLoading)
@@ -325,7 +328,6 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
         name: measure.name,
         type: measure.mtype,
         snapshot,
-        context: {},
         data: formatData,
         measurementId: measure._id,
         setLoading,
@@ -340,18 +342,32 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
   }
 
   const showConfirm = () => setShowModal(true);
+
+  const setActiveMeasurement = (e: any) =>{
+    const { measure } = e.detail;
+    if(!measure?._id){
+      setActiveMeasure(measure);
+    }
+  };
   
   useEffect(()=>{
-    refetch();
     subscribe("measurement-moved", mouseMoved);
     subscribe("marker-added", markerAdded);
     subscribe('measurement-created', showConfirm);
+    subscribe('setactive-measurement', setActiveMeasurement);
     return(()=>{
       unsubscribe("measurement-moved", mouseMoved);
       unsubscribe("marker-added", markerAdded);
       unsubscribe("measurement-created", showConfirm);
+      subscribe('setactive-measurement', setActiveMeasurement);
     })
   },[])
+
+  const mapReality = JSON.stringify(realityMap)
+
+  useEffect(()=>{
+    refetch();
+  },[mapReality])
   
 
   useEffect(()=>{
@@ -421,6 +437,9 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
         className={measurementType == type?" bg-[#F1742E] text-[#fff]":""}
 
         onClick={()=> {
+          if(activeMeasure){
+            removeMeasurement(activeMeasure);
+          }
           setMeasurementType(type);
         }}
         
@@ -620,9 +639,10 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils}) => {
           )
 
         })}
-        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} onCancel={()=>{
+        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} setActiveMeasure={setActiveMeasure} getContext={getContext} onCancel={()=>{
           removeMeasurement(measurement);
           setSelected('');
+          setActiveMeasure('');
         }
           } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <PopupComponent

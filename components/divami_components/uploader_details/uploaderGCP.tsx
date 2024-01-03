@@ -7,11 +7,12 @@ import { GCPType } from "../../../models/IGCP";
 import Image from "next/image";
 import { AWS } from "../../../config/config";
 const UploaderGCP = () => {
-  const [selectedOption, setSelectedOption] = useState("Upload File");
-  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
-  const [textareaValue, setTextareaValue] = useState<string>(""); 
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
+  const [selectedOption, setSelectedOption] = useState("Upload File");
+  const [selectedFileName, setSelectedFileName] = useState<string>(uploaderState.gcpList.base64ImageName ? uploaderState.gcpList.base64ImageName : "");
+  const [textareaValue, setTextareaValue] = useState<string>(uploaderState.gcpList.description ? uploaderState.gcpList.description : ""); 
+
   
 
   const handleFirstOptionChange = (event: any) => {
@@ -20,7 +21,7 @@ const UploaderGCP = () => {
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(event.target.value);
-    uploaderAction.setGCPList({...uploaderState.gcpList,description:textareaValue as string},uploaderState.gcpType)
+    uploaderAction.setGCPDescription(textareaValue)
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target;
@@ -35,9 +36,8 @@ const UploaderGCP = () => {
 
         reader.onload = (e) => {
           const base64Data = e.target?.result;
-            uploaderAction.setGCPList({...uploaderState.gcpList, base64Code: base64Data as string},uploaderState.gcpType)
-            //console.log(uploaderAction.setGCPList({...uploaderState.gcpList, base64Code: base64Data as string},uploaderState.gcpType))
-         };
+          uploaderAction.setGCPBase64(base64Data as string, selectedFile.name)
+        };
           reader.readAsDataURL(selectedFile);
       } else {
         console.log("Please select a valid JPG or PNG file.");
@@ -127,6 +127,7 @@ const UploaderGCP = () => {
             className="border border-gray-300 p-1"
             style={{ width: "60%",height:"100px" }}
             placeholder="Enter text up to 120 characters"
+            value={textareaValue}
             onChange={handleTextareaChange} 
           ></textarea>
           <div>
@@ -141,7 +142,7 @@ const UploaderGCP = () => {
               className="border border-gray-300 p-2 ml-[8px]"
               placeholder=".jpg or .png files only"
               style={{ width: "300px", height: "40px" }}
-              value={selectedFileName || ""}
+              value={selectedFileName}
               readOnly
             />
             <label

@@ -1,32 +1,17 @@
-import Box from "@mui/material/Box";
 import { Badge } from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-//import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
 import helpIcon from "../../../public/divami_icons/Help.svg";
-import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
-import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
-
 import Notification from "../../../public/divami_icons/Notification.svg";
-import clip from "../../../public/divami_icons/clip.svg";
 import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
-
 import { useRouter } from "next/router";
-import { getCookie, removeCookies, setCookie, deleteCookie } from "cookies-next";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
 import DesignRealitySwitch from "../../container/designRealitySwitch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import  uploadIcon from '../../../public/divami_icons/uploadIcon.svg'
-import {
-  faQuestion,
-  faRightFromBracket,
-  faSignOut,
-  faLifeRing,
-  faTicket,
-  faInfoCircle,
-  faClone,
-} from "@fortawesome/free-solid-svg-icons";
+import {faSignOut} from "@fortawesome/free-solid-svg-icons";
 
 import {
   HeaderContainer,
@@ -41,7 +26,6 @@ import {
   ProfileImgIcon,
   ProfileImgSecIcon,
   ProfileImgIconDefault,
-  ProjectSelectorContainer,
   HeaderSupportImageContainer,
   HeaderUploaderImageContainer,
 } from "./HeaderStyles";
@@ -59,17 +43,12 @@ import {
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
-import CustomSelect from "../custom-select/CustomSelect";
 import { getProjectDetails, getProjectsList } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import Link from "next/link";
-import { Circle, Rectangle } from "@mui/icons-material";
-import { json } from "stream/consumers";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { getUserProfile } from "../../../services/userAuth";
-import NotificationDrawer from "../custom-drawer/notification-drawer";
-import { truncate } from "fs/promises";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import * as Sentry from "@sentry/nextjs";
 import { hasCommonElement } from "../../../services/axiosInstance";
@@ -84,7 +63,6 @@ import { ChildrenEntity, IStructure } from "../../../models/IStructure";
 import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
 import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
-import { IJobs } from "../../../models/IJobs";
 import { ProjectCounts } from "../../../models/IUtils";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
@@ -278,8 +256,8 @@ const Header: React.FC<any> = ({
     Sentry.setTag("CompanyName", null);
     Sentry.setTag("ProjectId", null);
     deleteCookie("user");
-    removeCookies('projectData');
-    removeCookies('isProjectTimeZone');
+    deleteCookie('projectData');
+    deleteCookie('isProjectTimeZone');
     localStorage.removeItem('uploaededData')
     // router.push("/login");
     router.push("/login");
@@ -439,8 +417,7 @@ const Header: React.FC<any> = ({
   const [url,setUrl]=useState('')
   let WorkerManager = WebWorkerManager.getInstance()
   const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
-   const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
-    
+  const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
     if (
       (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
       workerExists ||
@@ -473,36 +450,31 @@ const Header: React.FC<any> = ({
        window.removeEventListener("beforeunload", beforeUnloadHandler);
        window.removeEventListener('popstate', popStateHandler)
      })
-   }, [url,uploaderState.step])
+   }, [url,uploaderState.step,workerExists])
 
   useEffect(() => {
     // Calculate project counts when the component mounts or when the originalArray changes
     const calculateProjectCounts = () => {
-      const counts:any = {};
+      const counts:ProjectCounts = {};
+      let uploadingcount:number = 0;
       appState.inProgressPendingUploads.forEach(jobInfo => {
         const projectId = jobInfo.project as string;
 
         if (!counts[projectId]) {
           counts[projectId] = 1;
+          uploadingcount++
         } else {
           counts[projectId]++;
+          uploadingcount++
         }
       });
 
       setProjectUplObj(counts);
+      setUploaderCount(uploadingcount)
     };
     calculateProjectCounts();
     }, [appState.inProgressPendingUploads]);
-  useEffect(()=>{
-    if(Object?.keys(projectUplObj).length>0)
-    {
-      setUploaderCount(Object.keys(projectUplObj).length)
-    }
-    else{
-      setUploaderCount(0)
-    }
-  },[projectUplObj])
-  return (
+    return (
     <>
       <HeaderContainer ref={headerRef}>
         {!hideSidePanel && (
@@ -618,15 +590,14 @@ const Header: React.FC<any> = ({
             <TooltipText title="Uploader" onClick={() => {
               if (openUploader) {
                 setOpenUploader(false);
-                customLogger.logInfo("Notifications Hide")
+                customLogger.logInfo("Uploader Hide")
               } else {
-                customLogger.logInfo("Notifications Show")
+                customLogger.logInfo("Uploader Show")
                 setOpenUploader(true);
                 setOpenNotication(false);
                 setMenuLoading(false);
                 setSupportMenu(false);
                 setOpenProfile(false);
-                clearNotificationsCount();
               }
             }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
@@ -643,7 +614,7 @@ const Header: React.FC<any> = ({
 
             {openUploader && (
               <div>
-                 <CustomDrawer paddingStyle={true} variant="persistent">
+                 <CustomDrawer onClose={handleUploaderClose}>
                  <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplObj={projectUplObj}/></div>
                 </CustomDrawer>
               </div>
@@ -676,7 +647,7 @@ const Header: React.FC<any> = ({
               </TooltipText>
             )}
             {openProfile ? (
-              <CustomDrawer paddingStyle={true} variant="persistent">
+              <CustomDrawer onClose={handleProfileClose}>
                 <div>
                   <UserProfile
                     handleProfileClose={handleProfileClose}
@@ -740,7 +711,7 @@ const Header: React.FC<any> = ({
 
             {openNotification && (
               <div>
-                <NotificationDrawer variant="persistent">
+                <CustomDrawer onClose={handleNotificationClose}>
                   <div>
                     <Notifications
                       notifications={notifications}
@@ -753,7 +724,7 @@ const Header: React.FC<any> = ({
                   </div>
 
                   <div></div>
-                </NotificationDrawer>
+                </CustomDrawer>
               </div>
             )}
           </HeaderNotificationImageContainer>

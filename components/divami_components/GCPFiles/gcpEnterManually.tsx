@@ -106,8 +106,8 @@ const GcpEnterManually: React.FC<any> = () => {
             errorsToReduce += 1;
           }
         });
-      const newErrorCount = uploaderState.errorCount - errorsToReduce;
-        uploaderAction.setErrorCount(newErrorCount);
+      // const newErrorCount = uploaderState.errorCount - errorsToReduce;
+      //   uploaderAction.setErrorCount(newErrorCount);
 
     updatedGCPList.splice(index, 1);
 
@@ -138,7 +138,7 @@ const GcpEnterManually: React.FC<any> = () => {
       // Update error count
       const newErrorCount = Object.values(newErrors).filter((error) => error !== "").length;
      
-      uploaderAction.setErrorCount(newErrorCount);
+      // uploaderAction.setErrorCount(newErrorCount);
 
       return newErrors;
     });
@@ -168,7 +168,7 @@ const GcpEnterManually: React.FC<any> = () => {
        const isValid = true; // Modify this line based on your validation logic
         if (!isValid) {
           const errorCountReduced = uploaderState.errorCount - 1;
-          uploaderAction.setErrorCount(errorCountReduced);
+          // uploaderAction.setErrorCount(errorCountReduced);
         }
         return isValid;
     
