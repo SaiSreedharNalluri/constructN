@@ -17,13 +17,6 @@ import { API } from '../../config/config'
 import Metrics from './metrics-details'
 import authHeader from '../../services/auth-header'
 
-
-const headers = {
-    headers: authHeader.authHeader(),
-}
-
-import authHeader from '../../services/auth-header'
-
 const headers = {headers: authHeader.authHeader()}
 
 
