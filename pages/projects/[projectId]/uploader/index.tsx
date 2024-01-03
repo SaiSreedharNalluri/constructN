@@ -65,9 +65,9 @@ const Index: React.FC<IProps> = () => {
       console.log("TestingUploader: getJobs", response.data.result)
       let jobs: IJobs[] = response.data.result;
       uploaderAction.setCaptureJobs(jobs)
-      uploaderAction.setIsLoading(false)
     }).catch((error)=>{
-      console.log("Error: ", error)
+      console.log("TestingUploader: Error: ", error)
+      uploaderAction.setIsLoading(false)
     })
   }
 
@@ -86,6 +86,7 @@ const Index: React.FC<IProps> = () => {
     }
     if (appState.currentProjectData) {
       uploaderAction.setProject(appState.currentProjectData.project);
+      refreshJobs(appState.currentProjectData.project._id)
     }
 
     return () => {
@@ -105,14 +106,14 @@ const Index: React.FC<IProps> = () => {
     }
   }, [uploaderState.updateJobs])
 
-  /**
-   * UseEffect to update jobs when route is ready
-   */
-  useEffect(()=>{
-    if (router.isReady){
-      refreshJobs(router.query.projectId as string)
-    }
-  },[router.isReady, router.query.projectId])
+  // /**
+  //  * UseEffect to update jobs when route is ready
+  //  */
+  // useEffect(()=>{
+  //   if (router.isReady){
+  //     refreshJobs(router.query.projectId as string)
+  //   }
+  // },[router.isReady, router.query.projectId])
 
   /**
    * useEffect to show loading animation
@@ -151,9 +152,12 @@ const Index: React.FC<IProps> = () => {
           }
         }, {})
         uploaderAction.setRawImagesMap(rawImagesMap);
+        uploaderAction.setIsLoading(false)
+      }).catch(() => {
+        uploaderAction.setIsLoading(false)
       })
     } else {
-
+      uploaderAction.setIsLoading(false)
     }
   }, [uploaderState.pendingUploadJobs])
 
@@ -460,7 +464,7 @@ const Index: React.FC<IProps> = () => {
             }
              </div>
         </header>
-     {!uploaderState.isLoading?  
+     { uploaderState.isLoading === false ?  
     <div>
         <main className={`overflow-y-auto  ${setThecalHeight()} `}>
           <div>
