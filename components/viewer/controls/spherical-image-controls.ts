@@ -45,6 +45,8 @@ export class SphericalImageControls extends IControls {
 
     protected enableControls = () => {
 
+        console.log('Coming Here', this._targetEl)
+
         this._targetEl.addEventListener('pointerdown', this.onPointerDown)
 
         this._targetEl.addEventListener('wheel', this.onDocumentMouseWheel)
@@ -217,6 +219,8 @@ export class SphericalImageControls extends IControls {
     }
 
     private onKeyDown = (event: KeyboardEvent) => {
+
+        console.log('Coming Here')
 
         switch (event.code) {
 

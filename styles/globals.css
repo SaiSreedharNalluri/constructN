@@ -94,7 +94,9 @@
 .calc-h112 {
   height: calc(100vh - 112px);
 }
-
+.calc-h130 {
+  height: calc(100vh - 177px);
+}
 .calc-h400 {
   height: calc(100vh - 400px);
 }
@@ -210,7 +212,15 @@
   right: 0 !important;
   left: auto !important;
 }
-
+.css-1ivzdzj-MuiModal-root-MuiDrawer-root {
+  position: fixed;
+  z-index: 1300;
+  right: 0;
+  bottom: 0;
+  top: 60px;
+  left: 0;
+  z-index: 1200;
+}
 .logout-button::before {
   content: "";
   display: block;
@@ -629,7 +639,7 @@ td {
 }
 
 .calc-h184 {
-  height: calc(100vh - 184px);
+  height: calc(100vh - 154px);
 }
 
 .calc-h319 {
@@ -705,11 +715,6 @@ td {
 .user-card:hover {
   transform: scaleX(1.12);
 }
-
-.css-1ex1afd-MuiTableCell-root {
-  /* border-bottom: none; */
-}
-
 .mini-loader-parent {
   width: 100%;
   /* //z height: 100%; */

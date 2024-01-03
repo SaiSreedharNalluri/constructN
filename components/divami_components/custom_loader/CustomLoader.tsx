@@ -1,16 +1,14 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import { LoaderContainer, LoaderImage } from "./CustomLoaderStyles";
-import closeIcon from "../../../public/divami_icons/ConstructLoader.svg";
-import IssuesHighlightedIcon from "../../../public/divami_icons/IssuesHighlightedIcon.svg";
+import { LoaderContainer } from "./CustomLoaderStyles";
 import SpreadLoader from "../../../public/SpreadLoader.json";
 import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import('lottie-react'), {
   ssr: false,
 })
-
-const CustomLoader = () => {
-  const animationContainerRef = React.useRef<any>(null);
+interface IProps{
+  isLoadingClose?:boolean
+}
+const CustomLoader:React.FC<IProps> = ({isLoadingClose=false}) => {
   const [isLoading,setLoading]=React.useState(false);
   const defaultOptions = {
     loop: true,
@@ -26,9 +24,12 @@ const CustomLoader = () => {
     const time1 = setTimeout(()=>{
       setLoading(true)
     },1000);
-    const timeO = setTimeout(()=>{
-      setLoading(false)
-    },15000);
+    if(isLoadingClose === false)
+    {
+      setTimeout(()=>{
+        setLoading(false)
+      },15000);
+    }
   },[]);
   return (
     <>

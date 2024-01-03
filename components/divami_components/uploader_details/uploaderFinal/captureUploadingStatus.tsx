@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUploaderContext } from "../../../../state/uploaderState/context";
-import { TruncatedString, getPathToRoot, getStructureIdFromModelOrString } from "../../../../utils/utils";
+import { TruncatedString, getCaptureIdFromModelOrString, getPathToRoot, getStructureIdFromModelOrString } from "../../../../utils/utils";
 import { useAppContext } from "../../../../state/appState/context";
 import { TooltipText } from "../../side-panel/SidePanelStyles";
 import { IStructure } from "../../../../models/IStructure";
@@ -15,7 +15,14 @@ import { ICapture } from "../../../../models/ICapture";
 import ErrorIcon from '@mui/icons-material/Error';
 import CircularProgress from '@mui/material/CircularProgress';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Delete from "../../../../public/divami_icons/delete.svg";
 import PopupComponent from "../../../popupComponent/PopupComponent";
+import { UploadStatus, UploaderModalMessage, UploaderModalPrimaryButton, UploaderModalSecondaryButton, UploaderModalTitle } from "../../../../models/IUploader";
+import { UploaderPopups } from "../../../../state/uploaderState/state";
+interface fileData {
+  status: UploadStatus;
+  fileName: string;
+}
 interface Iprops {
   isUploading: boolean;
   isUploadedOn: boolean;
@@ -48,8 +55,6 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const { state: appState, appContextAction } = useAppContext();
-  const [popUpHeading,setPopUPHeading] =useState('')
-  const [popUpConfirm,setPopUPConfirm] =useState('')
   /**
    * If isUploading true case, get data from uploaderState.pendingUploadJobs
    * If isUploading false case, get data from uploaderState.pendingProcessJobs
@@ -116,22 +121,18 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       case JobStatus.uploaded:
       return(<CheckCircleIcon style={{ color: "green" }} />)
       case JobStatus.pendingUpload:
-        return (<CircularProgress color="warning" size={"28px"} thickness={5}/>)
+        return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
       case JobStatus.uploadFailed:
         return (<ErrorIcon color="error" />)
       default:
-          return (<CircularProgress color="warning" size={"28px"} thickness={5}/>) 
+          return (<CircularProgress color="warning" size={"24px"} thickness={5}/>) 
     } 
   }
   return (
     <React.Fragment>
-      <div
-        className={`w-full my-2 ${
-          isUploadedOn ? "bg-white" : "bg-[#FFECE2] "
-        } rounded-3xl h-[280px]  `}
-        style={{ boxShadow: " 0px 4px 4px 0px #00000040" }}
-      >
-        <div className="relative top-[20px]  w-[90%] mx-auto  h-[175px] ">
+      <div className="calc-h130 bg-[#FFECE2] rounded-3xl shadow-[0px 4px 4px 0px #00000040] overflow-y-auto"
+       >
+        <div className="relative top-[20px]  w-[90%] mx-auto">
                  <div style={{
                         fontSize: "16px",
                         fontWeight: "700",
@@ -141,7 +142,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                         color: "#101f4c",
                         marginLeft:"14px"
           }}>
-          {isUploading?<p>Uploads In Progress</p>: <p >Past Uploads Pending Processing </p> }  
+          {isUploading?<p>Uploads In Progress</p>: <p >Pending Processing </p> }  
           </div>
           <div className="overflow-x-hidden h-full mt-[12px]" style={{
                         fontSize: "14px",
@@ -178,34 +179,26 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     className=" text-left w-[18%]">
                     Capture Date
                   </th>
-                  {isUploading && (
-                    <th
-                      className="text-left w-[18%]"
-                    >
-                      Uploading
-                    </th>
-                  )}
-                  {isUploadedOn && (
-                    <th
+                  <th
                       className="pl-2 text-left w-[18%]"
                     >
-                      Uploaded On
+                      Uploaded Date
                     </th>
-                  )}
-                  {
-                    isUploading && (
-                      <th
-                        className="pl-2 text-left w-[18%]"
-                      >
-                        
-                      </th>
-                    )
-                  }
-                </tr>
+                 
+                      <><th
+                          className="pl-2 text-left w-[9%]"
+                        >
+
+                        </th>
+                        <th
+                          className="pl-2 text-left w-[9%]"
+                        >
+
+                        </th></>
+            </tr>
               </thead>
               <tbody
                 className="bg-grey-light flex flex-col items-center  overflow-y-auto w-full"
-                style={{ height: "150px" }}
               >
                 {data.map((job, index) => (
                   <tr
@@ -263,14 +256,21 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     >
                       {getTheProjectDateAndTime(job.updatedAt)}
                     </td>
-                    {
-                      isUploading &&<td
-                      className="pl-2 w-[18%] flex items-center"
+                    <td
+                        className="pl-2 w-[9%] flex items-center"
+                      >
+                        {getCaptureStatus(job.status)}
+                      </td>
+                    <td
+                        className="pl-2 w-[9%] flex items-center"
                     >
-                      {getCaptureStatus(job.status)}
-                    </td>
-                    }
-                    
+                      {
+                        job.status === JobStatus.uploadFailed &&(<Image src={Delete} alt={""} onClick={(e)=>{
+                          e.stopPropagation()
+                          uploaderAction.deleteJob(job)
+                          }}/>)
+                      }
+                     </td>
                   </tr>
                 ))}
               </tbody>

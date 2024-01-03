@@ -15,6 +15,7 @@ import { getGenViewerData } from "../../../../../services/genviewer";
 import TimeLineComponent from "../../../../../components/divami_components/timeline-container/TimeLineComponent";
 import { ISnapshot } from "../../../../../models/ISnapshot";
 import { CustomToast } from "../../../../../components/divami_components/custom-toaster/CustomToast";
+import { isMobile } from "../../../../../utils/ViewerDataUtils";
 
 const StructPage: React.FC = () => {
     //const [initData,setInintData] = useState<IGenData>(sampleGenData);
@@ -31,7 +32,7 @@ const StructPage: React.FC = () => {
     let [snapshotCompareList, setSnapshotCompareList] = useState<ISnapshot[]>([]);
     const [offset, setOffset] = useState(1);
     const [compareOffset, setCompareOffset] = useState(1);
-    const pageSize = 10;
+    const [pageSize,setPageSize] = useState(5);
     const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0);
     let [isFullScreenMode, setFullScreenMode] = useState(false);
   
@@ -90,8 +91,16 @@ const StructPage: React.FC = () => {
               console.log('IGendata API Response',response.result);
               //setInintData(response.result);
               window.dispatchEvent(new CustomEvent('notifyViewer',{detail:{action:{type:'setStructure',data:response.result}}}));
+              setSnapshotList(response.result.snapshotList.slice(0,(pageSize)).sort(
+                (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
+              ));
+              setSnapshotCompareList(response.result.snapshotList.slice(0,(pageSize)).sort(
+                (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
+              ));
+              setSnapshotListCal(response.result.snapshotList);
               setBaseSnapshot(response.result.currentSnapshotBase);
               setCompareSnapshot(response.result.currentSnapshotCompare);
+              setTotalSnaphotsCount(response.result.snapshotList.length);
             }
           })
           .catch((error) => {
@@ -112,10 +121,10 @@ const StructPage: React.FC = () => {
                 setInintData(response.result);
                 setBaseSnapshot(response.result.currentSnapshotBase);
                 setCompareSnapshot(response.result.currentSnapshotCompare);
-                setSnapshotList(response.result.snapshotList.slice(0,9).sort(
+                setSnapshotList(response.result.snapshotList.slice(0,(pageSize)).sort(
                   (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
                 ));
-                setSnapshotCompareList(response.result.snapshotList.slice(0,9).sort(
+                setSnapshotCompareList(response.result.snapshotList.slice(0,(pageSize)).sort(
                   (a:ISnapshot, b:ISnapshot) => new Date(a.date).getTime() - new Date(b.date).getTime()
                 ));
                 setSnapshotListCal(response.result.snapshotList);
@@ -158,7 +167,7 @@ useEffect(()=>{
 },[initData]);
 
 useEffect(() => {
-  setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+  setTotalPages(Math.ceil(totalSnaphotsCount / pageSize));
 }, [totalSnaphotsCount]);
 
 // const setPrevList = () => {

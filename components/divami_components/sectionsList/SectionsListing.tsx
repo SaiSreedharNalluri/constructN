@@ -252,9 +252,9 @@ const[isProcessing,setProcessing]=useState(false);
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string
 
-      fetchAssetCategories(projectId).then(res => {
-        if(res.data.success) setHasProgress2D(res.data.result.length > 0)
-      }).catch(e => console.log(e))
+      // fetchAssetCategories(projectId).then(res => {
+      //   if(res.data.success) setHasProgress2D(res.data.result.length > 0)
+      // }).catch(e => console.log(e))
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
@@ -556,7 +556,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         color: "#101F4C",
         cursor:"default"
       },
-      cellStyle: { width: "28%" },
+      cellStyle: { width: "38%" },
       render: (rowData: any) => {
         // router.push(`/projects/${id}/sections`);
         
@@ -788,46 +788,43 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
     },
 
 
-    {
-      title: "Progress 2D",
-      field: "has2dProgress",
-      sorting: false,
-      headerStyle: {
-        borderBottom: "1px solid #FF843F",
-        fontFamily: "Open Sans",
-        fontStyle: "normal",
-        fontWeight: "500",
-        fontSize: "14px",
-        lineHeight: "20px",
-        color: "#101F4C",
-      },
-      cellStyle: { width: "20%" },
-    
-      render: (rowData: any) => {
-
-        const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
-
-        return (rowData.status !== 'Not Started' && planeDrawingsAvailable) ? <div className="cursor-pointer">{
-          <TooltipText title="2D Progress">
-            <div className="flex justify-center">
-              <Progress2DImageIcon
-                src={Progress2DImage}
-                alt={""}
-                onClick={() => {
-                  if(hasProgress2D) {
-                    router.push({
-                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-                      query: { structId: rowData._id },
-                    })} else {
-                      toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
-                    }
-                }}
-              ></Progress2DImageIcon>
-            </div>
-          </TooltipText>
-          }</div>: 'Not Available';
-      },
-    },
+    // {
+    //   title: "Progress 2D",
+    //   field: "has2dProgress",
+    //   sorting: false,
+    //   headerStyle: {
+    //     borderBottom: "1px solid #FF843F",
+    //     fontFamily: "Open Sans",
+    //     fontStyle: "normal",
+    //     fontWeight: "500",
+    //     fontSize: "14px",
+    //     lineHeight: "20px",
+    //     color: "#101F4C",
+    //   },
+    //   cellStyle: { width: "20%" },
+   
+    //   render: (rowData: any) => {
+    //     return <div className="cursor-pointer">{
+    //       <TooltipText title="2D Progress">
+    //         <div className="flex justify-center">
+    //           <Progress2DImageIcon
+    //             src={Progress2DImage}
+    //             alt={""}
+    //             onClick={() => {
+    //               if(hasProgress2D) {
+    //                 router.push({
+    //                   pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+    //                   query: { structId: rowData._id },
+    //                 })} else {
+    //                   toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
+    //                 }
+    //             }}
+    //           ></Progress2DImageIcon>
+    //         </div>
+    //       </TooltipText>
+    //       }</div>;
+    //   },
+    // },
   ];
 
 
@@ -990,12 +987,15 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           isImageThere={true}
           SecondaryButtonlabel={"No"}
           callBackvalue={isCaptureAvailable? ()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`
-            //query: { structId: id },
-          }):()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`//,
-            //query: { structId: id },
-          }) }
+            pathname: `/projects/${router?.query?.projectId as string}/structure`,
+            query: { structId: id },
+          }):()=> {
+            router.push({
+            pathname: `/projects/${router?.query?.projectId as string}/structure`,
+            query: { structId: id },
+          })
+        setProcessing(false)
+        }}
         />
         )
       :""}

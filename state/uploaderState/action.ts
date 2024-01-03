@@ -4,7 +4,8 @@ import { IProjectUserList, IProjects } from "../../models/IProjects";
 import { RawImage } from "../../models/IRawImages";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { IUploadFile } from "../../models/IUploader";
-import { UploaderFinishState, captureRawImageMap, fileWithExif } from "./state";
+import { PopupVisibility } from "../../models/Poppup";
+import { UploaderFinishState, UploaderPopups, captureRawImageMap, fileWithExif } from "./state";
 
 export enum UploaderActionType {
     startNewUpload,
@@ -21,6 +22,8 @@ export enum UploaderActionType {
     skipGCP,
     setGCPType,
     setGCPList,
+    setGCPDescription,
+    setGCPBase64,
     setExtractedFileValue,
     setIsNextEnabled,
     changeUploadinitiate,
@@ -35,7 +38,9 @@ export enum UploaderActionType {
     refreshJobs,
     setErrorCount,
     setResetUploaderState,
-    setUploadCompletionState
+    setUploadCompletionState,
+    setIsShowPopup,
+    deleteJob
 }
 
 export interface refreshJobs {
@@ -127,6 +132,16 @@ export interface setGCPList{
   payload:{list: IGCP, type: UTMType | LONGLATType};
 }
 
+export interface setGCPDescription{
+    type:UploaderActionType.setGCPDescription;
+    payload:{description: string};
+}
+
+export interface setGCPBase64{
+    type:UploaderActionType.setGCPBase64;
+    payload:{base64: string, imageName: string};
+}
+
 export interface setCaptureJobs {
     type: UploaderActionType.setCaptureJobs
     payload: {jobs: IJobs[]}
@@ -174,7 +189,16 @@ export interface setErrorCount{
 
 export interface setResetUploaderState{
   type: UploaderActionType.setResetUploaderState
- 
+}
+
+export interface setIsShowPopup{
+  type: UploaderActionType.setIsShowPopup,
+  payload: { popupVisibility: PopupVisibility}
+}
+
+export interface deleteJob{
+  type: UploaderActionType.deleteJob,
+  payload: { job: IJobs}
 }
 
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
@@ -237,6 +261,12 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setGCPList:(list:IGCP, type: UTMType | LONGLATType)=>{
           dispatch({type:UploaderActionType.setGCPList, payload:{list:list, type: type}})
         },
+        setGCPDescription:(description: string)=>{
+            dispatch({type:UploaderActionType.setGCPDescription, payload:{description: description}})
+        },
+        setGCPBase64:(base64: string, imageName: string)=>{
+            dispatch({type:UploaderActionType.setGCPBase64, payload:{base64: base64, imageName: imageName}})
+        },
         setGCPType:(type: UTMType | LONGLATType)=>{
             dispatch({type:UploaderActionType.setGCPType, payload:{ type: type}})
         },
@@ -269,8 +299,13 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         },
         setUploadCompletionState:(status: UploaderFinishState)=>{
             dispatch({type:UploaderActionType.setUploadCompletionState, payload: {status: status}})
-          },
-
+        },
+        setIsShowPopup: (popupVisibility: PopupVisibility) => {
+          dispatch({type: UploaderActionType.setIsShowPopup, payload: {popupVisibility: popupVisibility}})
+        },
+        deleteJob: (job: IJobs) => {
+          dispatch({type: UploaderActionType.deleteJob, payload: {job: job}})
+        }
       }
     }
 }
@@ -293,6 +328,8 @@ export type UploaderActions =
   | changeUploadinitiate
   | setGCPList
   | setGCPType
+  | setGCPBase64
+  | setGCPDescription
   | setCaptureJobs
   | setRawImagesMap
   | chageIsReading
@@ -304,3 +341,5 @@ export type UploaderActions =
   | setErrorCount
   | setResetUploaderState
   | setUploadCompletionState
+  | setIsShowPopup
+  | deleteJob

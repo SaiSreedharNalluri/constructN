@@ -20,3 +20,26 @@ export interface UploadProgress {
 }
 
 export type UploadType = RawImage
+
+export enum UploaderModalTitle{
+    UploadCompleteWithErrors = 'Oops, We Hit a Snag',
+    uploadDeleteJob='Confirm Discard',
+    warning='Warning',
+    uploadFileLimit='File Limit Exceeded'
+}
+export enum UploaderModalPrimaryButton{
+    UploadCompleteWithErrorsPButton='Skip and Process',
+    uploadDeleteJobPButton = 'Yes',
+    skipFilesAndContinue= 'Skip Files and Continue',
+    ok='OK'
+}
+export enum UploaderModalSecondaryButton{
+    UploadCompleteWithErrorsSButton = 'Discard',
+    uploadDeleteJobSButton = 'Cancel' 
+}
+export enum UploaderModalMessage{
+    UploadCompleteWithErrorsModalMessage = '',
+    uploadDeleteJob=`Are you sure you want to discard ? 
+    This action is irreversible, and all data will be lost.`
+
+}
