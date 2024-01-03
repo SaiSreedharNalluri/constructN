@@ -19,6 +19,7 @@ import Delete from "../../../../public/divami_icons/delete.svg";
 import PopupComponent from "../../../popupComponent/PopupComponent";
 import { UploadStatus, UploaderModalMessage, UploaderModalPrimaryButton, UploaderModalSecondaryButton, UploaderModalTitle } from "../../../../models/IUploader";
 import { UploaderPopups } from "../../../../state/uploaderState/state";
+import { RawImageStatus } from "../../../../models/IRawImages";
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -115,15 +116,27 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       }
     );
   };
-  const getCaptureStatus =(jobStatus:JobStatus)=>{
-    switch(jobStatus)
+
+  const getRawImagesStatus = (job: IJobs) => {
+    let rawImages = uploaderState.rawImagesMap[getCaptureIdFromModelOrString(job.captures[0])]
+    let rawImagesStatus = rawImages ? rawImages.reduce<boolean>((prevValue, currentValue): boolean => {
+      return prevValue = prevValue || currentValue.status === RawImageStatus.initiated
+    }, false) : false
+    return rawImagesStatus
+  }
+  const getCaptureStatus =(job: IJobs)=>{
+    switch(job.status)
     {
       case JobStatus.uploaded:
       return(<CheckCircleIcon style={{ color: "green" }} />)
       case JobStatus.pendingUpload:
         return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
       case JobStatus.uploadFailed:
-        return (<ErrorIcon color="error" />)
+        if (getRawImagesStatus(job)) {
+          return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
+        } else {
+          return (<ErrorIcon color="error" />)
+        }
       default:
           return (<CircularProgress color="warning" size={"24px"} thickness={5}/>) 
     } 
@@ -259,13 +272,13 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     <td
                         className="pl-2 w-[9%] flex items-center"
                       >
-                        {getCaptureStatus(job.status)}
+                        {getCaptureStatus(job)}
                       </td>
                     <td
                         className="pl-2 w-[9%] flex items-center"
                     >
                       {
-                        job.status === JobStatus.uploadFailed &&(<Image src={Delete} alt={""} onClick={(e)=>{
+                        !getRawImagesStatus(job) &&(<Image src={Delete} alt={""} onClick={(e)=>{
                           e.stopPropagation()
                           uploaderAction.deleteJob(job)
                           }}/>)
