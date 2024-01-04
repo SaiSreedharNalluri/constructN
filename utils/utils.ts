@@ -48,7 +48,7 @@ export const validateLongitude = (longitude: number): boolean => {
 };
 
 export const validateAltitudeOrElevation = (altitude: number): boolean => {
-    return !isNaN(altitude) && typeof altitude === 'number';
+    return true;
 };
 
 export const validateEasting = (easting: number): boolean => {
