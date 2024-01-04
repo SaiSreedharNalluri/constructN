@@ -291,9 +291,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         removeWorker:(captureId: string) => {
             dispatch({type:UploaderActionType.removeWorker, payload:{ captureId: captureId}})
         },
-        setErrorCount:(errorCount:number)=>{
-          dispatch({type:UploaderActionType.setErrorCount,payload:{errorCount:errorCount}})
-        },
+        // setErrorCount:(errorCount:number)=>{
+        //   dispatch({type:UploaderActionType.setErrorCount,payload:{errorCount:errorCount}})
+        // },
         setResetUploaderState:()=>{
           dispatch({type:UploaderActionType.setResetUploaderState})
         },

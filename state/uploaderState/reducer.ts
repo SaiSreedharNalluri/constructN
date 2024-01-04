@@ -230,11 +230,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 }
             }
             return state
-        case UploaderActionType.setErrorCount:
-            return{
-                ...state,
-                errorCount:action.payload.errorCount
-            } 
+        // case UploaderActionType.setErrorCount:
+        //     return{
+        //         ...state,
+        //         errorCount:action.payload.errorCount
+        //     } 
         case UploaderActionType.setResetUploaderState:
             return resetUploaderState();
         case UploaderActionType.deleteJob:
@@ -313,14 +313,14 @@ const getUTMValidationErrorCount = (utm: utmLocation): number => {
     let errorCount = validateEasting(utm.easting) ? 0 : 1;
     errorCount += validatingNorthing(utm.northing) ? 0 : 1;
     errorCount += validateUTMZone(utm.zone) ? 0 : 1;
-    errorCount += utm.elevation ? validateAltitudeOrElevation(utm.elevation) ?  0 : 1 : 1;
+    errorCount += utm.elevation !== undefined ? validateAltitudeOrElevation(utm.elevation) ?  0 : 1 : 1;
     return errorCount
 }
 
 const getLongLatValidationErrorCount = (latLng: location): number => {
     let errorCount = validateLongitude(latLng.coordinates[0]) ? 0 : 1;
     errorCount += validateLatitude(latLng.coordinates[1]) ? 0 : 1;
-    errorCount += latLng.elevation ? validateAltitudeOrElevation(latLng.elevation) ?  0 : 1 : 1;
+    errorCount += latLng.elevation !== undefined ? validateAltitudeOrElevation(latLng.elevation) ?  0 : 1 : 1;
     return errorCount
 }
 

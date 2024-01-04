@@ -16,14 +16,14 @@ const GcpEnterManually: React.FC<any> = () => {
     const newGcp: utmLocation = {
       easting: 0,
       northing: 0,
-      zone: " ",
-      elevation: undefined
+      elevation: 0,
+      zone: "",
     };
 
     const newLatLngGcp: location = {
       coordinates: [0, 0],
       type: "point",
-      elevation: undefined,
+      elevation: 0,
     };
 
     let gcpList: IGCP = {};
@@ -76,11 +76,7 @@ const GcpEnterManually: React.FC<any> = () => {
             const { coordinates, elevation } = item;
   const isValidLongitude = validateInput(coordinates[0], "Longitude", index);
   const isValidLatitude = validateInput(coordinates[1], "Latitude", index);
-  let isValidAltitude = false
-  if( elevation !== undefined)
-  {
-   isValidAltitude = validateInput(elevation, "Altitude", index);
-  }
+  const isValidAltitude = validateInput(elevation !== undefined ? elevation : 0, "Altitude", index);
 
   const identifierLongitude = `${index}-Longitude`;
   const identifierLatitude = `${index}-Latitude`;
@@ -138,7 +134,13 @@ const GcpEnterManually: React.FC<any> = () => {
         ...prevErrors,
         [identifier]: isValid ? "" : `${identifier} is invalid`,
       };
-     return newErrors;
+
+      // Update error count
+      const newErrorCount = Object.values(newErrors).filter((error) => error !== "").length;
+     
+      // uploaderAction.setErrorCount(newErrorCount);
+
+      return newErrors;
     });
   };
 
@@ -165,7 +167,8 @@ const GcpEnterManually: React.FC<any> = () => {
       default:
        const isValid = true; // Modify this line based on your validation logic
         if (!isValid) {
-          uploaderState.errorCount - 1;
+          const errorCountReduced = uploaderState.errorCount - 1;
+          // uploaderAction.setErrorCount(errorCountReduced);
         }
         return isValid;
     
@@ -177,6 +180,8 @@ const GcpEnterManually: React.FC<any> = () => {
     index: number,
     heading: string
   ) => {
+    const value = e.target.value;
+    const identifier = `${index}-${heading}`;
     const updatedGCPList =
       uploaderState.gcpType === GCPType.UTM
         ? [...(uploaderState.gcpList.utmLocation as utmLocation[])]
@@ -185,24 +190,27 @@ const GcpEnterManually: React.FC<any> = () => {
 
     if (uploaderState.gcpType === GCPType.UTM) {
       if (heading === "Zone") {
-        (selectedItem as utmLocation).zone = e.target.value.toUpperCase();
+        (selectedItem as utmLocation).zone = value.toUpperCase();
       } else {
         (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] =
-          Number(e.target.value);
+          Number(value);
       }
     } else {
       if (heading === "Longitude") {
-        (selectedItem as location).coordinates[0] = Number(e.target.value);
+        const parsedValue = value;
+        (selectedItem as location).coordinates[0] = Number(parsedValue);
       } else if (heading === "Latitude") {
-        (selectedItem as location).coordinates[1] = Number(e.target.value);
+        const parsedValue = value;
+        (selectedItem as location).coordinates[1] = Number(parsedValue);
       } else if (heading === "Altitude") {
-        (selectedItem as location).elevation = Number(e.target.value);
+        const parsedValue = value;
+        (selectedItem as location).elevation = Number(parsedValue);
       } else {
-        (selectedItem as any)[heading.toLowerCase() as keyof location] = e.target.value;
+        (selectedItem as any)[heading.toLowerCase() as keyof location] = value;
       }
     }
     const isValid = validateInput(e.target.value, heading, index);
-    updateErrorMessages(`${index}-${heading}`, isValid);
+    updateErrorMessages(identifier, isValid);
 
     uploaderAction.setGCPList(
       {
@@ -219,6 +227,7 @@ const GcpEnterManually: React.FC<any> = () => {
     );
   };
   useEffect(() => {
+    
     validateInitialValues();
   }, []);
   const validateInitialValues = () => {
@@ -233,6 +242,7 @@ const GcpEnterManually: React.FC<any> = () => {
       };
       uploaderState?.gcpList?.utmLocation.forEach(
         (item: utmLocation, index: number) => {
+          
           Object.keys(item).forEach((rawHeading: string) => {
             const heading: any = headingMappings[rawHeading] || rawHeading;
             const value: any =
@@ -245,25 +255,30 @@ const GcpEnterManually: React.FC<any> = () => {
                 : heading === "Elevation"
                 ? item.elevation
                 : undefined;
+           
             const isValid = validateInput(value, heading, index);
             const identifier = `${index}-${heading}`;
+            
             updateErrorMessages(identifier, isValid);
           });
         }
       );
     } else if ( uploaderState.gcpType === GCPType.LONGLAT && uploaderState.gcpList.location) 
     {
-        uploaderState.gcpList.location.forEach(
+      const headingMappings: { [key: string]: string } = {
+        "coordinates[0]": "Longitude",
+        "coordinates[1]": "Latitude",
+        elevation: "Altitude",
+      };
+
+      uploaderState.gcpList.location.forEach(
         (item: location, index: number) => {
           Object.keys(item).forEach((rawHeading: string) => {
             const { coordinates, elevation } = item;
   const isValidLongitude = validateInput(coordinates[0], "Longitude", index);
   const isValidLatitude = validateInput(coordinates[1], "Latitude", index);
-  let isValidAltitude = false
-  if( elevation !== undefined)
-  {
-   isValidAltitude = validateInput(elevation, "Altitude", index);
-  }
+  const isValidAltitude = validateInput(elevation !== undefined ? elevation : 0, "Altitude", index);
+
   const identifierLongitude = `${index}-Longitude`;
   const identifierLatitude = `${index}-Latitude`;
   const identifierAltitude = `${index}-Altitude`;
@@ -276,8 +291,20 @@ const GcpEnterManually: React.FC<any> = () => {
     }
   };
 
-  const renderTable = (data: any, headings: any) => {
-    return( 
+  const getItemKeyValue = (item: any, heading: any) => {
+    // console.log("TestingUploader getItemValue ", item, heading.toLowerCase(), item[heading.toLowerCase()])
+    if(item[heading.toLowerCase()] !== undefined) {
+      return item[heading.toLowerCase()] //? item[heading.toLowerCase()] : ""
+    } else if (heading === "Longitude") {
+      return item.coordinates[0] //? item.coordinates[0] : ""
+    } else if (heading === "Latitude") {
+      return item.coordinates[1] //? item.coordinates[1] : ""
+    } else if (heading === "Altitude") {
+      return item.elevation //? item.elevation : ""
+    }
+  }
+
+  const renderTable = (data: any, headings: any) => (
     <div>
       <table>
         <thead className=" sticky top-0 bg-white ">
@@ -305,42 +332,19 @@ const GcpEnterManually: React.FC<any> = () => {
                     <input
                       id={`${subIndex}`}
                       type={heading === "Zone" ? "text" : "number"}
-                      placeholder = {heading.toLowerCase()}
-                      className = { headings.length === 4 ?`mt-1 ml-2 border ${
-                        !validateInput(
-                         (heading === "Easting" && item.easting) ||
-                            (heading === "Northing" && item.northing) ||
-                            (heading === "Zone" && item.zone)||
-                            (heading === "Elevation" && item.elevation),
-                          heading,
-                          index
-                        )
-                          ? "border-red-500"
-                          : " "
-                      }`:`mt-1 ml-2 border ${
-                        !validateInput(
-                            (heading === "Longitude" && item.coordinates[0]) ||
-                            (heading === "Latitude" && item.coordinates[1]) ||
-                            (heading === "Altitude" && item.elevation),
+                      placeholder={heading.toLowerCase()}
+                      className={`mt-1 ml-2 border ${
+                        !validateInput(getItemKeyValue(item, heading),
                           heading,
                           index
                         )
                           ? "border-red-500"
                           : ""
                       }`}
-                      value = {
-                        headings.length === 4
-                          ? (heading === "Zone" && item.zone !== ' ') ? item.zone :
-                            ((heading === "Easting" && item.easting) ||
-                              (heading === "Northing" && item.northing) ||
-                              (heading === "Elevation" && item.elevation))
-                          : (heading === "Zone" && item.zone !== ' ') ? item.zone :
-                            ((heading === "Longitude" && item.coordinates[0]) ||
-                              (heading === "Latitude" && item.coordinates[1]) ||
-                              (heading === "Altitude" && item.elevation))
+                      value={
+                        getItemKeyValue(item, heading)
                       }
                       onChange={(e) => handleInputChange(e, index, heading)}
-                      onKeyDown={ heading === "Zone" ?()=>{ } : (evt) => evt.key === 'e' && evt.preventDefault() }
                     />
                     {errorMessages[`${heading}`] && (
                       <div className="text-red-500 text-xs mt-1">
@@ -359,8 +363,8 @@ const GcpEnterManually: React.FC<any> = () => {
           ))}
         </tbody>
       </table>
-    </div>)
-  }
+    </div>
+  );
 
   return (
     <div>
