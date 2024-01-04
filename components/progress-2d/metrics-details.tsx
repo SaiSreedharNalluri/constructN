@@ -42,8 +42,6 @@ const setProgress = ({
 }: SetProgressProps) => {
 	const index = stageValues.findIndex((stage) => stage.id === id);
 
-	if(key==='metric' && (val as number) < 0) return
-
 	setStageValues(() => {
 		stageValues[index] = { ...(stageValues[index] || {}), [key]: val };
 		return [...(stageValues || [])];
@@ -170,14 +168,15 @@ export default function Metrics({
 											size="small"
 											type="number"
 											disabled={loading}
-											onChange={(val) =>
+											onChange={(val) =>{
 												setProgress({
 													id: row.id,
-													val: val.target.value,
+													val: +val.target.value < 0 ? +val.target.value * -1: val.target.value,
 													stageValues,
 													setStageValues,
 													key: 'metric'
-												})
+												});
+											}
 											}
 										/>
 									</TableCell>
