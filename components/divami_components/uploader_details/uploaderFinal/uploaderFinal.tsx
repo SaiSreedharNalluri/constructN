@@ -150,13 +150,18 @@ const UploaderFinal: React.FC = () => {
          </div>
         { uploaderState.selectedJob && (
         <div className="w-[30%] calc-h130 ml-[30px] overflow-x-hidden bg-[#FFECE2] rounded-3xl overflow-y-auto" style={{ boxShadow: " 0px 4px 4px 0px #00000040" }}>
-          <div className=" mt-2 ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black sticky top-0 bg-[#FFECE2]">
+          <div className=" mt-2 ml-[30px] font-open-sans italic font-normal text-base leading-5 text-black">
                       Uploading progress for{" "}
                       <span className="font-bold not-italic">
                       { gethierarchyPath(uploaderState.selectedJob?.structure)}
                       </span>{" "}
                     </div>
-            {isCustomLoader?<div className="flex justify-center items-center h-1/2"><CircularProgress  color="warning" size={"28px"} thickness={5}></CircularProgress></div> :fileProgressList &&
+            {isCustomLoader?
+            <div className="flex justify-center items-center h-1/2">
+              <CircularProgress  color="warning" size={"28px"} thickness={5}>
+              </CircularProgress>
+              </div> :<div className="calc-h255 overflow-y-auto mt-[10px]">
+                {fileProgressList &&
               fileProgressList.length > 0 &&
               fileProgressList.map((fileProgressObj: fileData) => {
                 return (
@@ -168,9 +173,10 @@ const UploaderFinal: React.FC = () => {
                         <FileStatus status={fileProgressObj.status} />
                       </div>
                     </div>
-                 
-                );
+                  );
               })}
+              </div>
+              }
           </div>
          )} 
        

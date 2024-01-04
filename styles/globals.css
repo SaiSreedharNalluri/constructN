@@ -84,7 +84,9 @@
 .calc-h223 {
   height: calc(100vh - 223px);
 }
-
+.calc-h255 {
+  height: calc(100vh - 255px);
+}
 .calc-h295 {
   height: calc(70vh - 295px);
 }
