@@ -4,6 +4,7 @@ import { PotreeInstance } from "./PotreeWrapper";
 import { isMobile } from "./ViewerDataUtils";
 import { getDesignPointCloudPath, getDesignPointCloudTM } from "../services/design";
 import { getStructurePath } from "./S3Utils";
+import { CustomToast } from "../components/divami_components/custom-toaster/CustomToast";
 
 export const PotreeViewerUtils = () => {
 
@@ -1012,9 +1013,26 @@ export const PotreeViewerUtils = () => {
     
     }
 
-    const getPoints=()=>(_viewer?.scene?.measurements || [])
+    const getPoints=()=>(_viewer?.scene?.measurements || []);
+
+    const isOriginPoints = (points)=>{
+        let isOrigin = true;
+        points.forEach((point)=>{
+            if(point.position.x !==0 || point.position.y !== 0 || point.position.z !== 0){
+                isOrigin = false;
+                return;
+            }
+        })
+        return isOrigin;
+    }
 
     const markerdropped= (e) => {
+        if(isOriginPoints(e.measurement.points) && ['Point','Height'].includes(e.measurement.name)){
+            removeMeasurement(e.measurement);
+            CustomToast('Place on point cloud to measure','error');
+            return;
+        };
+        if(isOriginPoints(e.measurement.points)) return;
         publish('marker-added', e);
         if(e.measurement.name === 'Point' && !e.measurement?._id){
             publish('measurement-created', { measure: e.measurement })
@@ -1025,6 +1043,11 @@ export const PotreeViewerUtils = () => {
     }
 
     const markeremoved= (e) => {
+        if(isOriginPoints(e.measurement.points) && !['Point','Height'].includes(e.measurement.name)){
+            removeMeasurement(e.measurement);
+            CustomToast('Place on point cloud to measure','error');
+            return;
+        };
         if(!['Point','Height'].includes(e.measurement.name) && !e.measurement?._id && e?.measurement?.points?.length > 0){
             publish('measurement-created', { measure: e.measurement });
         }

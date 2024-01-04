@@ -807,7 +807,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
 
     //     const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
         
-    //     return (rowData.status !== 'Not Started' && planeDrawingsAvailable) ? <div className="cursor-pointer">{
+    //     return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
     //       <TooltipText title="2D Progress">
     //         <div className="flex justify-center">
     //           <Progress2DImageIcon

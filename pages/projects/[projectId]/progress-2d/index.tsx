@@ -969,7 +969,7 @@ const Progress2DPage: React.FC<any> = () => {
                 className='bg-[#F1742E] h-[40px] text-base text-[#fff] mt-[20px] normal-case hover:bg-[#F1742E]'
                 style={{ fontFamily: "Open Sans" }}
                 >
-                Okay
+                Ok
                 </Button>
                 </div>
             </>}
