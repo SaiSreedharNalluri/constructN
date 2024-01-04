@@ -73,8 +73,8 @@ export const getInitialGCPList = (isUTM: boolean): IGCP => {
             gcplist.utmLocation.push({
                 easting: 0,
                 northing: 0,
-                elevation: undefined,
-                zone: undefined
+                elevation: 0,
+                zone: ''
                
             })
         }
@@ -84,7 +84,7 @@ export const getInitialGCPList = (isUTM: boolean): IGCP => {
             gcplist.location.push({
                 coordinates: [0,0],
                 type: "point",
-                elevation: undefined,
+                elevation: 0,
             })
         }
     }
