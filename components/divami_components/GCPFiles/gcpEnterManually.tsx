@@ -190,7 +190,7 @@ const GcpEnterManually: React.FC<any> = () => {
 
     if (uploaderState.gcpType === GCPType.UTM) {
       if (heading === "Zone") {
-        (selectedItem as utmLocation).zone = value;
+        (selectedItem as utmLocation).zone = value.toUpperCase();
       } else {
         (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] =
           Number(value);
@@ -291,6 +291,19 @@ const GcpEnterManually: React.FC<any> = () => {
     }
   };
 
+  const getItemKeyValue = (item: any, heading: any) => {
+    // console.log("TestingUploader getItemValue ", item, heading.toLowerCase(), item[heading.toLowerCase()])
+    if(item[heading.toLowerCase()] !== undefined) {
+      return item[heading.toLowerCase()] //? item[heading.toLowerCase()] : ""
+    } else if (heading === "Longitude") {
+      return item.coordinates[0] //? item.coordinates[0] : ""
+    } else if (heading === "Latitude") {
+      return item.coordinates[1] //? item.coordinates[1] : ""
+    } else if (heading === "Altitude") {
+      return item.elevation //? item.elevation : ""
+    }
+  }
+
   const renderTable = (data: any, headings: any) => (
     <div>
       <table>
@@ -321,11 +334,7 @@ const GcpEnterManually: React.FC<any> = () => {
                       type={heading === "Zone" ? "text" : "number"}
                       placeholder={heading.toLowerCase()}
                       className={`mt-1 ml-2 border ${
-                        !validateInput(
-                          item[heading.toLowerCase()] ||
-                            (heading === "Longitude" && item.coordinates[0]) ||
-                            (heading === "Latitude" && item.coordinates[1]) ||
-                            (heading === "Altitude" && item.elevation),
+                        !validateInput(getItemKeyValue(item, heading),
                           heading,
                           index
                         )
@@ -333,11 +342,7 @@ const GcpEnterManually: React.FC<any> = () => {
                           : ""
                       }`}
                       value={
-                        item[heading.toLowerCase()] ||
-                        (heading === "Longitude" && item.coordinates[0]) ||
-                        (heading === "Latitude" && item.coordinates[1]) ||
-                        (heading === "Altitude" && item.elevation) ||
-                        ""
+                        getItemKeyValue(item, heading)
                       }
                       onChange={(e) => handleInputChange(e, index, heading)}
                     />

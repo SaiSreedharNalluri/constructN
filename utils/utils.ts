@@ -48,7 +48,8 @@ export const validateLongitude = (longitude: number): boolean => {
 };
 
 export const validateAltitudeOrElevation = (altitude: number): boolean => {
-    return altitude !== 0 && Number(altitude) > 0;
+    // return (/^[+-]?\d+(\.\d+)?$/).test(altitude.toString())
+    return true;
 };
 
 export const validateEasting = (easting: number): boolean => {
