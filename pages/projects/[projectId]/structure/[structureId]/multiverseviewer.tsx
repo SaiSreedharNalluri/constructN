@@ -1439,7 +1439,7 @@ const Index: React.FC<IProps> = () => {
       else {
         setDesignAvailable(false)
       }
-      if (initData.currentSnapshotBase.reality?.length) {
+      if (initData.currentSnapshotBase?.reality?.length) {
         setRealityAvailable(true)
       }
       else {
@@ -1539,7 +1539,7 @@ const Index: React.FC<IProps> = () => {
       // (router.query.type !== newData.currentViewType) ? router.query.type = newData.currentViewType : null;
       // (router.query.snap !== newData.currentSnapshotBase._id) ? router.query.snap = newData.currentSnapshotBase._id : null;
       router.push({pathname:router.pathname,query:
-        {...router.query,projectId:newData.structure.project,structureId:newData.structure._id,type:newData.currentViewType,snap:newData.currentSnapshotBase._id}},
+        {...router.query,projectId:newData.structure.project,structureId:newData.structure._id,type:newData.currentViewType,snap:newData.currentSnapshotBase?._id}},
         undefined,{});
     }
 

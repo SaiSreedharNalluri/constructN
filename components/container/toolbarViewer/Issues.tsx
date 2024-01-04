@@ -22,7 +22,7 @@ import {
   CameraIcon,
 } from "./ToolBarStyles";
 import { Drawer, Tooltip } from "@mui/material";
-import CreateIssue from "../createIssue/CreateIssue";
+import CreateIssue from "../../divami_components/create-issue/CreateIssue";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import {
   createIssue,
