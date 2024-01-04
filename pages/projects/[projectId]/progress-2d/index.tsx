@@ -305,8 +305,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                 const drawings = LightBoxInstance.viewerData().structure.designs['Plan Drawings']
                 
-                if (!drawings || drawings.length == 0) {
-
+                if (!drawings || drawings.length == 0 || (drawings.length > 0 && Object.keys(drawings[0] || {}).length == 0)) {
+                    
                     setShowPopup(true);
 
                     return
