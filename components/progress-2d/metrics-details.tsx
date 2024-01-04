@@ -106,12 +106,14 @@ export default function Metrics({
 	metrics = {},
 	refetchAssets = ()=>{},
 	asset,
+	onChange,
 }: {
 	stages: Stage[];
 	assetId: string;
 	metrics: { [key: string]: string | number | { metric: string} };
 	refetchAssets: () => void,
 	asset: IAsset,
+	onChange?: (asset: IAsset) => void,
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
@@ -216,13 +218,15 @@ export default function Metrics({
 					<Button
 						size="small"
 						className="py-2 pl-[7px] pr-[8px] mr-2 rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300"
-						onClick={() =>
-							onSave({
+						onClick={async () =>{
+							await onSave({
 								assetId,
 								stageValues,
 								setLoading,
 								refetchAssets,
-							})
+							});
+							onChange && onChange(asset);
+						}
 						}
 						disabled={loading}
 					>
