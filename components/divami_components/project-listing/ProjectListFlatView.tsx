@@ -154,7 +154,13 @@ else{
           }
         }>
           <div className="flex justify-between">
+          <Tooltip
+            title={rowData.projectName?.length > 50 ? rowData.projectName : ""}
+          >
+            <div>
           {truncateString(rowData.projectName, 50)}
+            </div>
+          </Tooltip>
 
           {rowData.status === "Draft" ? (
             <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">
