@@ -162,15 +162,15 @@ else{
             </div>
           </Tooltip>
 
-          {rowData.status === "Draft" ? (
-            <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">
-              Draft
-            </div>
-          ) : rowData.status === "PendingApproval" ? (
-            <div className="text-sm text-white py-[0.5px] bg-[#FFC107] cursor-default px-[4px] rounded-[3px]">
-              Pending Approval
-            </div>
-          ) : ""} 
+          {(rowData.status === "Draft" || rowData.status === 'PendingApproval') && (
+    <div >
+      {rowData.status === 'PendingApproval' ? (
+        <div className="text-sm text-white py-[0.5px] bg-[#006CD0] cursor-default px-[4px] rounded-[3px]">{rowData.status.replace('Pending', 'Pending ')}</div>
+      ) : (
+        <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">{rowData.status}</div>
+      )}
+    </div>
+  )}
           </div>
       
           </div></>;
@@ -536,7 +536,7 @@ alt="delete" className=" cursor-pointer"></Image>
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
-                backgroundColor: rowData.status === "Draft" ||   rowData.status === "PendingApproval" ? "#D9D9D9" : "",
+                backgroundColor: rowData.status==="Draft" ?"#d9d9d9" :rowData.status === 'PendingApproval'?"#FFECE2":""
                 // backgroundColor:
                 //   rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),
