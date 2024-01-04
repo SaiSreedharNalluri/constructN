@@ -28,7 +28,7 @@ import CustomButton from "../../divami_components/custom-button/CustomButton";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
 import { toast } from "react-toastify";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
-import CreateIssue from "../createIssue/CreateIssue";
+import CreateIssue from "../../divami_components/create-issue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../../divami_components/create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";

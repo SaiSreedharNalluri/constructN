@@ -44,7 +44,8 @@ const SelectLayer = ({
     getTreeViewDataForLayers(optionsList)
   );
   const [checked,setChecked] = useState(true)
-  const [filtedTreeViewData, setFilteredTreeViewData] = useState(treeViewData);
+  const [filtedTreeViewData, setFilteredTreeViewData] = useState(optionsList);
+  const [filtedViewData, setFilteredViewData] = useState(initData.currentLayersList);
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
@@ -55,6 +56,18 @@ const SelectLayer = ({
   //     conn?.publishMessage("abc", `{"type": "setViewLayers", "data": ${JSON.stringify(initData.currentLayersList)}}`);
   //     },4000)
   // }
+  const onselecting =(e:any, name:any, node:any)=>{
+    const setValue=filtedViewData.find((item:any)=>{
+      if(item.name===name){
+        if(item.isSelected === false){
+          return item.isSelected = true
+        }
+        else{
+          return item.isSelected = false
+        }
+      } 
+    }) 
+  }
   useEffect(() => {
     setFilteredTreeViewData(treeViewData);
   }, [treeViewData]);
@@ -71,7 +84,7 @@ const SelectLayer = ({
           // const arr = handleSelection(treeViewData, node.id);
           // setTreeViewData([...arr]);
           // let obj: any = {};
-          // for (const key in optionsList) {
+          // for (const key in optionsList) { 
           //   obj = optionsList;
           //   if (optionsList[key]?.name == node.name) {
           //     obj[key] = {
@@ -144,6 +157,7 @@ const SelectLayer = ({
           //   return newTreeViewData;
           // });
         onSelect(e, node.name, node);
+        onselecting(e,node.name,node);
          
           // LayerUpdate(initData.currentLayersList)
          
@@ -160,6 +174,8 @@ const SelectLayer = ({
     </TreeItemLabelContainer>
   );
   const renderTree = (nodes: ILayer,index:number) => {
+    console.log("nodes",nodes);
+    
     return (
       <StyledTreeItem
         key={index+nodes.name}
@@ -186,9 +202,10 @@ const SelectLayer = ({
 
   const handleSearch = (event: any) => {
     setSearchTerm(event.target.value);
-    const searchResult = treeViewData?.filter((eachNode) =>
+    const searchResult = initData.currentLayersList.filter((eachNode:any) =>
       eachNode.name.toLowerCase().includes(event.target.value.toLowerCase())
     );
+    setFilteredViewData(searchResult)
     setFilteredTreeViewData(searchResult);
   };
 
@@ -227,7 +244,7 @@ const SelectLayer = ({
           //defaultExpandIcon={<AddIcon />}
         >
 
-          {initData?.currentLayersList.map((eachNode:ILayer,index:number) => {
+          {filtedViewData.map((eachNode:ILayer,index:number) => {
             return renderTree(eachNode,index)})}
         </StyledTreeView>
       </TreeViewContainer>

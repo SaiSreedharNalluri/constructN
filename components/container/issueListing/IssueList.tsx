@@ -571,7 +571,7 @@ console.log("drawer isserie",issueList);
                           </ProgressChild>
                           <SmallDivider src={smallDivider} alt="progress" />
 
-                          <PriorityChild>
+                          {/* <PriorityChild>
                             {val?.assignees[0]?.firstName
                               .charAt(0)
                               .toUpperCase()}
@@ -580,7 +580,7 @@ console.log("drawer isserie",issueList);
                               .charAt(0)
                               .toUpperCase()}
                             {val?.assignees[0]?.lastName.slice(1)}
-                          </PriorityChild> 
+                          </PriorityChild>  */}
 
                           <LightTooltip
                             arrow

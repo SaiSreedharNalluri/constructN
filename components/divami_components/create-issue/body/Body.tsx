@@ -238,7 +238,7 @@ const Body = ({
               isReq: true,
               isflex: false,
               formLabel: "Select issue status",
-              options: issueStatusList.map((item: any) => {
+              options: issueStatusList?.map((item: any) => {
                 return {
                   ...item,
                   label: item,
