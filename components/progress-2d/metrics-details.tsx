@@ -1,4 +1,4 @@
-import { Button, TableRow, TableHead, TableContainer, TableCell, TableBody, Table, Select, MenuItem, styled } from "@mui/material";
+import { Button, TableRow, TableHead, TableContainer, TableCell, TableBody, Table, Select, MenuItem, styled, Tooltip } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import Input from "@mui/material/OutlinedInput";
 import { IAsset, IAssetStage } from "../../models/IAssetCategory";
@@ -14,7 +14,7 @@ import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 
 interface Stage extends IAssetStage {
 	id?: string;
-	metric?: number | string | { metric: string};
+	metric?: number | string | { metric: string | number};
 }
 
 interface SetProgressProps {
@@ -110,7 +110,7 @@ export default function Metrics({
 }: {
 	stages: Stage[];
 	assetId: string;
-	metrics: { [key: string]: string | number | { metric: string} };
+	metrics: { [key: string]: string | number | { metric: string | number } };
 	refetchAssets: () => void,
 	asset: IAsset,
 	onChange?: (asset: IAsset) => void,
@@ -127,6 +127,15 @@ export default function Metrics({
 	const [showConfirmation, setShowConfirmation] = useState('');
 
 	const [loading, setLoading] = useState(false);
+
+	let activeDisabled = false;
+
+	formatStageData.forEach((stage)=>{
+		if(!(stage.metric as { metric: string })?.metric && +(stage.metric as { metric: number }).metric !== 0){
+			activeDisabled = true;
+			return;
+		}
+	})
 
 	return (
 		<div className="mt-4">
@@ -206,14 +215,26 @@ export default function Metrics({
 			}}
         	/>: null}
 			<div className="mt-4 flex justify-between">
+				{activeDisabled ?<Tooltip title='Fill all the metrics and save to enable this'>
 				<div>
 					<Checkbox sx={{
 						'&.Mui-checked': {
 						color: '#F1742E',
 						},
-					}} checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
+					}} 
+					disabled={activeDisabled}
+					checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
 						<span className="font-semibold pt-1" >Active</span>
 				</div>
+				</Tooltip>: <div>
+					<Checkbox sx={{
+						'&.Mui-checked': {
+						color: '#F1742E',
+						},
+					}} 
+					checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
+						<span className="font-semibold pt-1" >Active</span>
+				</div>}
 				{stageValues.length > 0 ? (
 					<Button
 						size="small"
