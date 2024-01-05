@@ -131,7 +131,7 @@ export default function Metrics({
 	let activeDisabled = false;
 
 	formatStageData.forEach((stage)=>{
-		if(!(stage.metric as { metric: string })?.metric && +(stage.metric as { metric: number }).metric !== 0){
+		if(!(stage.metric as { metric: string })?.metric && +(stage.metric as { metric: number })?.metric !== 0){
 			activeDisabled = true;
 			return;
 		}
