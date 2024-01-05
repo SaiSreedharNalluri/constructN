@@ -48,19 +48,19 @@ const Progress2dAssets = ({
 	};
 
 	return (
-		<div className="mt-4 m-2">
-			<OutlinedInput
+		<div className="m-2 mt-2 bg-white">
+			<div className="sticky top-[0px] bg-white pt-4">
+				<OutlinedInput
 				className="mb-2"
 				size="small"
 				placeholder="Search"
 				onChange={(e) => setSearch(e.target.value)}
 				fullWidth
-			/>
-			<div className="max-h-96 overflow-auto">
-				{(filteredAssets || []).map((row) => (
-					<SingleCard row={row} key={row._id} />
-				))}
+				/>
 			</div>
+			{(filteredAssets || []).map((row) => (
+				<SingleCard row={row} key={row._id} />
+			))}
 		</div>
 	);
 };

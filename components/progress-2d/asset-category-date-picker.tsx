@@ -70,7 +70,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snaps
 
                 sx={{
 
-                    width: '23ch', border: '1px solid #e2e3e5', borderRadius: '6px', fontFamily: 'Open Sans',
+                    width: '24ch', border: '1px solid #e2e3e5', borderRadius: '6px', fontFamily: 'Open Sans',
 
                     '&.MuiInputBase-root': { paddingLeft: '4px' },
 
