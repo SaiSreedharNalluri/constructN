@@ -2008,7 +2008,7 @@ export const PotreeViewerUtils = () => {
                 } else {
                     // console.log("Testing realityViewToggle: ", _isSupportUser);
                     if (_structure._id === "STR418477" || _isSupportUser) {
-                        unloadAllImages();
+                        // unloadAllImages();
                         // _viewer.fitToScreen();
                     }
                 }
