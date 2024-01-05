@@ -433,6 +433,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           }
           else{
             console.log('Nothing to change ->',oldViewerData.currentViewType);
+            newViewerData = {...oldViewerData,currentCompareMode:'noCompare'};
           }
             console.log('Dispatching ViewType',newViewerData.currentViewType);
             //newViewerData.currentCompareMode="noCompare";
