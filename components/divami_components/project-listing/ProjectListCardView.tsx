@@ -174,7 +174,7 @@ else{
            
             customLogger.logInfo("Project Card - Sections");
           }}
-          className={each.status==="Draft" || each.status === 'PendingApproval'?"bg-[#D9D9D9]":""}
+          className={each.status==="Draft" ?"bg-[#d9d9d9]" :each.status === 'PendingApproval'?"bg-[#FFECE2]":""}
         >
           <ProjectTopLeftBg />
           <ProjectTopRightBg />
@@ -305,7 +305,21 @@ else{
            </div>
           :""}  
           </div>
-<div className="absolute bottom-[10px] text-center w-[90%] font-bold text-base text-[#C24200] ">{each.status==="Draft" || each.status === 'PendingApproval'? <div className="">{each.status}</div> :""}</div>
+          <div className="absolute bottom-[10px]  flex justify-center w-[90%] font-bold text-base text-[#C24200] ">
+  {each.status==="Draft" || each.status === 'PendingApproval' ? 
+ 
+      each.status === 'PendingApproval' ? (
+        <div className="text-sm  text-white py-[0.5px] bg-[#006CD0] cursor-default px-[4px] rounded-[3px]">{each.status.replace('Pending', 'Pending ')}</div>
+      ) : (
+        <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">{each.status}</div>
+      )   
+      : (
+    ""
+  )}
+</div>
+
+
+
         </ProjectCard>
       </ReactCardFlip>
     );
