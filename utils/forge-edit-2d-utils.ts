@@ -52,7 +52,7 @@ export class ForgeEdit2DUtils {
 
     loadAssets(assets: IAsset[]) {
 
-        this._edit2DLayer?.clear()
+        this._edit2DLayer?.clear && this._edit2DLayer?.clear()
 
         assets.forEach(asset => {
 

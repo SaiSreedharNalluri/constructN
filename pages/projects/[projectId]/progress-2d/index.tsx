@@ -305,8 +305,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                 const drawings = LightBoxInstance.viewerData().structure.designs['Plan Drawings']
                 
-                if (!drawings || drawings.length == 0) {
-
+                if (!drawings || drawings.length == 0 || (drawings.length > 0 && Object.keys(drawings[0] || {}).length == 0)) {
+                    
                     setShowPopup(true);
 
                     return
@@ -361,6 +361,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     useEffect(()=>{
         if(isCompare){
+            publish('progress-2d-tool', '');
             if(selectedAsset){
                 toast.warn('Exit Compare Mode to Select Assets')
             }
@@ -824,7 +825,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _changeStructure = (structure: any) => {
 
-        setShowReality(false)
+        setShowReality(false);
+
+        compare.current = false;
 
         const queryParams = updateQueryParam(searchParamsRef.current!, 'structId', structure._id)
 
@@ -834,9 +837,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _closeDetails = () => {
 
-        setSelectedAsset(undefined)
+        setSelectedAsset(undefined);
 
-        publish('clear-shape-selection', '')
+        publish('clear-shape-selection', '');
     }
 
     const _toggleStageSelection = (checked: boolean) => {
@@ -852,6 +855,7 @@ const Progress2DPage: React.FC<any> = () => {
     }
 
     const _onRealityItemClick = (event: Event) => {
+
 
         if (!compare.current) {
 
@@ -969,7 +973,7 @@ const Progress2DPage: React.FC<any> = () => {
                 className='bg-[#F1742E] h-[40px] text-base text-[#fff] mt-[20px] normal-case hover:bg-[#F1742E]'
                 style={{ fontFamily: "Open Sans" }}
                 >
-                Okay
+                Ok
                 </Button>
                 </div>
             </>}
@@ -1249,7 +1253,9 @@ const Progress2DPage: React.FC<any> = () => {
                                                     }} />
 
                                             </div>}
-                                            {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} /> }
+                                            {selectedTab === 'assets' && !selectedAsset && <div className='overflow-auto relative' style={{ height: 'calc(100vh - 220px)' }}>
+                                                    <Progress2dAssets assets={assets} />
+                                                </div>}
                                         
                                             {selectedAsset && !isCompare && <AssetDetails
 

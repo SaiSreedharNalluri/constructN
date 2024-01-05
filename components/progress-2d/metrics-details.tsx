@@ -42,8 +42,6 @@ const setProgress = ({
 }: SetProgressProps) => {
 	const index = stageValues.findIndex((stage) => stage.id === id);
 
-	if(key==='metric' && (val as number) < 0) return
-
 	setStageValues(() => {
 		stageValues[index] = { ...(stageValues[index] || {}), [key]: val };
 		return [...(stageValues || [])];
@@ -108,12 +106,14 @@ export default function Metrics({
 	metrics = {},
 	refetchAssets = ()=>{},
 	asset,
+	onChange,
 }: {
 	stages: Stage[];
 	assetId: string;
 	metrics: { [key: string]: string | number | { metric: string} };
 	refetchAssets: () => void,
 	asset: IAsset,
+	onChange?: (asset: IAsset) => void,
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
@@ -170,14 +170,15 @@ export default function Metrics({
 											size="small"
 											type="number"
 											disabled={loading}
-											onChange={(val) =>
+											onChange={(val) =>{
 												setProgress({
 													id: row.id,
-													val: val.target.value,
+													val: +val.target.value < 0 ? +val.target.value * -1: val.target.value,
 													stageValues,
 													setStageValues,
 													key: 'metric'
-												})
+												});
+											}
 											}
 										/>
 									</TableCell>
@@ -217,13 +218,15 @@ export default function Metrics({
 					<Button
 						size="small"
 						className="py-2 pl-[7px] pr-[8px] mr-2 rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300"
-						onClick={() =>
-							onSave({
+						onClick={async () =>{
+							await onSave({
 								assetId,
 								stageValues,
 								setLoading,
 								refetchAssets,
-							})
+							});
+							onChange && onChange(asset);
+						}
 						}
 						disabled={loading}
 					>
