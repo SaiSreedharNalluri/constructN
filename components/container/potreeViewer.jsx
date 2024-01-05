@@ -5,14 +5,35 @@ import { getCookie } from "cookies-next";
 import { IUser } from "../../models/IUser";
 import CameraButtons from './cameraButtons';
 import Measurements3DView from './measurements/measurements-3d';
+import { Button } from '@mui/material';
+import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
+import ViewInArIcon from '@mui/icons-material/ViewInAr';
+
+const subscribe = (eventName, listener) => {
+  document.addEventListener(eventName, listener)
+}
+
+const unsubscribe = (eventName, listener) => {
+  document.removeEventListener(eventName, listener)
+}
+
 function PotreeViewer(props) {
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
+    const [showPointCloud, setShowPointCloud] = useState(false);
     const isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
     const viewerId = `potreeViewer_${viewerCount}`;
     const containerId = `fpContainer_${viewerCount}`;
     const canvasId = `floormap_${viewerCount}`
     const setPotreeViewerUtils = props.setPotreeViewer;
-    const potreeUtils = props.potreeUtils
+    const potreeUtils = props.potreeUtils;
+
+    const { loadAllImages, unloadAllImages } = potreeUtils ||{};
+
+    const setPointCloud = (e) =>{
+      console.log(e,'knbskskb')
+      setShowPointCloud(e.detail);
+    }
+
     const initViewer = function() {
         // let potree = new PotreeViewerUtils(viewerId);
         // if(!potree.isViewerLoaded()) {
@@ -24,6 +45,13 @@ function PotreeViewer(props) {
     useEffect(() => {
         initViewer();
      },[viewerCount]);
+
+     useEffect(()=>{
+      subscribe("show-pointcloud", setPointCloud);
+      return(()=>{
+        unsubscribe("show-pointcloud", setPointCloud);
+      })
+    },[])
 
     return (
       <React.Fragment>
@@ -42,6 +70,17 @@ function PotreeViewer(props) {
             {/* <i title='fullscreen' id="fp_fullscreen_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1">fullscreen</i>
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
+          </div>
+          <div className={`flex-column absolute right-[12px] bottom-[50px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
+            {showPointCloud ?
+              <Button onClick={()=>{
+                  loadAllImages();
+                  setShowPointCloud(false);
+              }} className='text-[12px]' > <ViewInArIcon className='mr-1.5'/> Hide Point Cloud</Button>:
+              <Button className='text-[12px]' onClick={()=>{
+                unloadAllImages();
+                setShowPointCloud(true);
+                }}><ThreeDRotationIcon className='mr-1.5' /> Show Point Cloud</Button>}
           </div>
           {isSupportUser.current ? (
             <div>

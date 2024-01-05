@@ -75,6 +75,8 @@ export const PotreeViewerUtils = () => {
 
     let _orientedImagesHidden = false;
 
+    let prevContext = {};
+
     const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
         _viewerId = viewerId;
@@ -644,6 +646,10 @@ export const PotreeViewerUtils = () => {
     }
 
     const unloadAllImages = () => {
+        prevContext = getContext();
+        _viewer?.scene?.pointclouds?.forEach((pointCloud)=>{
+            pointCloud._visible = true;
+        })
         if(_viewer.scene.orientedImages.length > 0) {
             unloadOrientedImage();
         }
@@ -656,6 +662,13 @@ export const PotreeViewerUtils = () => {
         _currentMode = "3d";
         _currentReality = null;
         
+    }
+
+    const loadAllImages = () => {
+        _viewer.scene.pointclouds.forEach((pointCloud)=>{
+            pointCloud._visible = false;
+        });
+        handleContext(prevContext);
     }
 
     const loadOrientedImages = (image, index = 0) => {
@@ -1026,7 +1039,7 @@ export const PotreeViewerUtils = () => {
         return isOrigin;
     }
 
-    const markerdropped= (e) => {
+    const markerdropped = (e) => {
         if(isOriginPoints(e.measurement.points) && ['Point','Height'].includes(e.measurement.name)){
             removeMeasurement(e.measurement);
             CustomToast('Place on point cloud to measure','error');
@@ -1043,7 +1056,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const markeremoved= (e) => {
-        if(isOriginPoints(e.measurement.points) && !['Point','Height'].includes(e.measurement.name)){
+        if(isOriginPoints(e.measurement.points) && !['Point','Height'].includes(e.measurement.name) && e.measurement.points > 0){
             removeMeasurement(e.measurement);
             CustomToast('Place on point cloud to measure','error');
             return;
@@ -2409,5 +2422,7 @@ export const PotreeViewerUtils = () => {
         clearAllMeasurements,
         loadMeasurements,
         handleContext,
+        unloadAllImages,
+        loadAllImages
     };
 };
