@@ -312,7 +312,7 @@ const validateGCPList = (list: IGCP): {error: number, length: number} => {
 const getUTMValidationErrorCount = (utm: utmLocation): number => {
     let errorCount = validateEasting(utm.easting) ? 0 : 1;
     errorCount += validatingNorthing(utm.northing) ? 0 : 1;
-    errorCount += validateUTMZone(utm.zone) ? 0 : 1;
+    errorCount += utm.zone !== undefined && validateUTMZone(utm.zone) ? 0 : 1;
     errorCount += utm.elevation !== undefined ? validateAltitudeOrElevation(utm.elevation) ?  0 : 1 : 1;
     return errorCount
 }
