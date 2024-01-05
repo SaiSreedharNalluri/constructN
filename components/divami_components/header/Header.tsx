@@ -587,7 +587,7 @@ const Header: React.FC<any> = ({
             <></>
           )}
          <HeaderUploaderImageContainer>
-            <TooltipText title="Uploader" onClick={() => {
+            <TooltipText title="Uploads In Progress" onClick={() => {
               if (openUploader) {
                 setOpenUploader(false);
                 customLogger.logInfo("Uploader Hide")
