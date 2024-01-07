@@ -645,11 +645,18 @@ export const PotreeViewerUtils = () => {
 
     }
 
+    const scrollListner = () => {
+        if(_viewer.scene.view.radius < 0.5 && _viewer.edlOpacity){
+            _viewer.scene.view.radius = 0.5
+        }
+    }
+
     const unloadAllImages = () => {
         prevContext = getContext();
         _viewer?.scene?.pointclouds?.forEach((pointCloud)=>{
             pointCloud._visible = true;
         })
+        _viewer.orbitControls.addEventListener('mousewheel', scrollListner);
         if(_viewer.scene.orientedImages.length > 0) {
             unloadOrientedImage();
         }
@@ -668,6 +675,7 @@ export const PotreeViewerUtils = () => {
         _viewer.scene.pointclouds.forEach((pointCloud)=>{
             pointCloud._visible = false;
         });
+        _viewer.orbitControls.removeEventListener('mousewheel', scrollListner);
         handleContext(prevContext);
     }
 
