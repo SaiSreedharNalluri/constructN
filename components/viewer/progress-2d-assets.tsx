@@ -67,6 +67,9 @@ const Progress2dAssets = ({
 						'&.Mui-checked': {
 						color: '#F1742E',
 						},
+						'&.MuiButtonBase-root':{
+							padding:'10px 2px'
+						}
 					}} checked={showInActiveAssets}  onChange={(e) => setShowInActiveAssets(e.target.checked) } />
 						<span className="text-[12px] mr-1" >Show InActive</span>
 				</div>
