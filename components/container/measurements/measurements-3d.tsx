@@ -347,6 +347,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
     const { measure } = e.detail;
     if(!measure?._id){
       setActiveMeasure(measure);
+      setMeasurementType(measure.name);
     }
   };
   
@@ -381,20 +382,26 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
 
   const measurement = points.find((point)=>((point._id === selected || point.uuid === selected)));
 
+  const removeMeasure =() => {
+    if(activeMeasure){
+      removeMeasurement(activeMeasure);
+    }
+  }
+
 
   const getIconForType = (type: string) => {
 
     switch (type) {
 
-      case 'Point': return <FiberManualRecordIcon id="rahmanMeasure_point" />
+      case 'Point': return <FiberManualRecordIcon id="rahmanMeasure_point" onClick={removeMeasure} />
 
-      case 'Distance': return <LinearScaleIcon id="rahmanMeasure_distance" />
+      case 'Distance': return <LinearScaleIcon id="rahmanMeasure_distance" onClick={removeMeasure} />
 
-      case 'Height': return <HeightIcon  id="rahmanMeasure_height" />
+      case 'Height': return <HeightIcon  id="rahmanMeasure_height" onClick={removeMeasure} />
 
-      case 'Angle': return <PolylineIcon id="rahmanMeasure_angle"/>
+      case 'Angle': return <PolylineIcon id="rahmanMeasure_angle" onClick={removeMeasure}/>
 
-      case 'Area': return <FormatShapesIcon id="rahmanMeasure_area" />
+      case 'Area': return <FormatShapesIcon id="rahmanMeasure_area" onClick={removeMeasure} />
 
       case 'Undo': return <ReplayOutlinedIcon id="rahmanMeasure_undo" onClick={()=>{
         if(measurement?.points?.length! > 1){
@@ -435,12 +442,6 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
 
         className={measurementType == type?" bg-[#F1742E] text-[#fff]":""}
 
-        onClick={()=> {
-          if(activeMeasure){
-            removeMeasurement(activeMeasure);
-          }
-          setMeasurementType(type);
-        }}
         
         aria-label={type} >
 
@@ -638,10 +639,11 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
           )
 
         })}
-        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} setActiveMeasure={setActiveMeasure} getContext={getContext} onCancel={()=>{
+        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} setMeasurementType={setMeasurementType} setActiveMeasure={setActiveMeasure} getContext={getContext} onCancel={()=>{
           removeMeasurement(measurement);
           setSelected('');
           setActiveMeasure('');
+          setMeasurementType('');
         }
           } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <PopupComponent
