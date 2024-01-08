@@ -149,29 +149,30 @@ const GcpEnterManually: React.FC<any> = () => {
     heading: string,
     index: any
   ) => {
+    const isEmptyString = typeof value === "string" && value.trim() === "";
     switch (heading) {
       case "Latitude":
-        return validateLatitude(Number(value));
+        return isEmptyString ? false : validateLatitude(Number(value));
       case "Longitude":
-        return validateLongitude(Number(value));
+        return isEmptyString ? false : validateLongitude(Number(value));
       case "Altitude":
-        return validateAltitudeOrElevation(Number(value));
+        return isEmptyString ? false : validateAltitudeOrElevation(Number(value));
       case "Easting":
-        return validateEasting(Number(value));
+        return isEmptyString ? false : validateEasting(Number(value));
       case "Northing":
-        return validatingNorthing(Number(value));
+        return isEmptyString ? false : validatingNorthing(Number(value));
       case "Zone":
-        return typeof value === "string" && validateUTMZone(value);
+        // Allow empty string for "Zone"
+        return typeof value === "string" ? validateUTMZone(value) : false;
       case "Elevation":
-        return validateAltitudeOrElevation(Number(value));;
+        return isEmptyString ? false : validateAltitudeOrElevation(Number(value));
       default:
-       const isValid = true; // Modify this line based on your validation logic
-        if (!isValid) {
+        const isValid = true; // Modify this line based on your validation logic
+        if (!isValid && !isEmptyString) {
           const errorCountReduced = uploaderState.errorCount - 1;
           // uploaderAction.setErrorCount(errorCountReduced);
         }
-        return isValid;
-    
+        return isValid && !isEmptyString;
     }
   };
 
@@ -193,21 +194,18 @@ const GcpEnterManually: React.FC<any> = () => {
         (selectedItem as utmLocation).zone = value.toUpperCase();
       } else {
         (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] =
-          Number(value);
+        value && JSON.parse(value);;
       }
     } else {
-      if (heading === "Longitude") {
-        const parsedValue = value;
-        (selectedItem as location).coordinates[0] = Number(parsedValue);
-      } else if (heading === "Latitude") {
-        const parsedValue = value;
-        (selectedItem as location).coordinates[1] = Number(parsedValue);
+      if (heading === "Longitude" || heading === "Latitude") {
+        const index = heading === "Longitude" ? 0 : 1;
+        (selectedItem as location).coordinates[index] = value && JSON.parse(value);
       } else if (heading === "Altitude") {
-        const parsedValue = value;
-        (selectedItem as location).elevation = Number(parsedValue);
-      } else {
-        (selectedItem as any)[heading.toLowerCase() as keyof location] = value;
-      }
+          (selectedItem as location).elevation = value && JSON.parse(value);
+        }
+        else {
+          (selectedItem as any)[heading.toLowerCase() as keyof location] = value;
+        } 
     }
     const isValid = validateInput(e.target.value, heading, index);
     updateErrorMessages(identifier, isValid);
@@ -292,15 +290,23 @@ const GcpEnterManually: React.FC<any> = () => {
   };
 
   const getItemKeyValue = (item: any, heading: any) => {
-    // console.log("TestingUploader getItemValue ", item, heading.toLowerCase(), item[heading.toLowerCase()])
-    if(item[heading.toLowerCase()] !== undefined) {
-      return item[heading.toLowerCase()] //? item[heading.toLowerCase()] : ""
-    } else if (heading === "Longitude") {
-      return item.coordinates[0] //? item.coordinates[0] : ""
-    } else if (heading === "Latitude") {
-      return item.coordinates[1] //? item.coordinates[1] : ""
-    } else if (heading === "Altitude") {
-      return item.elevation //? item.elevation : ""
+    switch (heading) {
+      case "Longitude":
+        return item.coordinates[0];
+      case "Latitude":
+        return item.coordinates[1];
+      case "Altitude":
+      case "Elevation":
+        return item.elevation;
+      case "Easting":
+        return item.easting
+      case "Northing":
+        return item.northing
+      case "Zone":
+        return item.zone
+      default:
+        // Handle the case when heading doesn't match any of the specified values
+        return null; // or throw an error, or provide a default value, etc.
     }
   }
 
