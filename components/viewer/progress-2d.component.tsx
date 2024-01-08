@@ -309,6 +309,10 @@ function Progress2DComponent(props: _ViewerProps) {
 
             </div>: null}
 
+            {props.compare ? <div className={`flex absolute bottom-2 ${props.right ? 'right-0': 'left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} style={{ zIndex: 5 }}>
+                {props.right?'From' : 'To'}
+            </div> : null}
+
         </>
     )
 }
