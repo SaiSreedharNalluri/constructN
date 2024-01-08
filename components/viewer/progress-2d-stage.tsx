@@ -239,7 +239,10 @@ function Progress2DStage(
                     <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
                         <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } /> : assetValue} {edit? null: stage.uom}</Typography>
-                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={()=> updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: assetValue }, setLoading, refetch)} />}
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={()=>{
+                            // updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: assetValue }, setLoading, refetch)} 
+                            setEdit(false);
+                        }} />}
                     </div>
                 </div>
 
