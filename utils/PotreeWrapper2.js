@@ -75,6 +75,8 @@ export const PotreeViewerUtils = () => {
 
     let _orientedImagesHidden = false;
 
+    let prevContext = {};
+
     const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
         _viewerId = viewerId;
@@ -643,7 +645,18 @@ export const PotreeViewerUtils = () => {
 
     }
 
+    const scrollListner = () => {
+        if(_viewer.scene.view.radius < 0.5 && _viewer.edlOpacity){
+            _viewer.scene.view.radius = 0.5
+        }
+    }
+
     const unloadAllImages = () => {
+        prevContext = getContext();
+        _viewer?.scene?.pointclouds?.forEach((pointCloud)=>{
+            pointCloud._visible = true;
+        })
+        _viewer.orbitControls.addEventListener('mousewheel', scrollListner);
         if(_viewer.scene.orientedImages.length > 0) {
             unloadOrientedImage();
         }
@@ -656,6 +669,14 @@ export const PotreeViewerUtils = () => {
         _currentMode = "3d";
         _currentReality = null;
         
+    }
+
+    const loadAllImages = () => {
+        _viewer.scene.pointclouds.forEach((pointCloud)=>{
+            pointCloud._visible = false;
+        });
+        _viewer.orbitControls.removeEventListener('mousewheel', scrollListner);
+        handleContext(prevContext);
     }
 
     const loadOrientedImages = (image, index = 0) => {
@@ -1026,7 +1047,7 @@ export const PotreeViewerUtils = () => {
         return isOrigin;
     }
 
-    const markerdropped= (e) => {
+    const markerdropped = (e) => {
         if(isOriginPoints(e.measurement.points) && ['Point','Height'].includes(e.measurement.name)){
             removeMeasurement(e.measurement);
             CustomToast('Place on point cloud to measure','error');
@@ -1043,7 +1064,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const markeremoved= (e) => {
-        if(isOriginPoints(e.measurement.points) && !['Point','Height'].includes(e.measurement.name)){
+        if(isOriginPoints(e.measurement.points) && !['Point','Height'].includes(e.measurement.name) && e.measurement.points > 0){
             removeMeasurement(e.measurement);
             CustomToast('Place on point cloud to measure','error');
             return;
@@ -1995,7 +2016,7 @@ export const PotreeViewerUtils = () => {
                 } else {
                     // console.log("Testing realityViewToggle: ", _isSupportUser);
                     if (_structure._id === "STR418477" || _isSupportUser) {
-                        unloadAllImages();
+                        // unloadAllImages();
                         // _viewer.fitToScreen();
                     }
                 }
@@ -2409,5 +2430,7 @@ export const PotreeViewerUtils = () => {
         clearAllMeasurements,
         loadMeasurements,
         handleContext,
+        unloadAllImages,
+        loadAllImages
     };
 };

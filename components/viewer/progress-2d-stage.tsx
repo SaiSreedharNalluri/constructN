@@ -76,7 +76,7 @@ export default function Progress2DStages(
 
                     refetch={refetch}
 
-                    assets={assets}
+                    assets={assets?.filter((asset)=>(asset.status === 'Active')) || []}
 
                     structId={structId}
 
@@ -129,19 +129,19 @@ function Progress2DStage(
 
     const [assetValue , totalAssetValue]= useState(totalValueMetrics)
 
-    const totalCompletedMetrics = stage.assets.reduce((newVal, oldVal)=>{
+    const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
     },0)
 
-    const totalCompletedCompareMetrics = stage.assetsCompare.reduce((newVal, oldVal)=>{
+    const totalCompletedCompareMetrics = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
     },0)
 
     const getProgress = (): number | number[] => {
 
-        const baseProgress = stage.assets.length == 0 ? 0 : (totalCompletedMetrics * 100 / (totalValueMetrics || 1))
+        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (totalValueMetrics || 1))
 
-        const compareProgress = stage.assetsCompare.length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (totalValueMetrics || 1))
+        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (totalValueMetrics || 1))
 
         if(!compare) return baseProgress
 

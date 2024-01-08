@@ -1184,7 +1184,29 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>
 
-                                            {!selectedAsset && selectedCategory && <div className='flex mt-6 px-3 justify-between'>
+                                            <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
+                                            {!selectedAsset && <Tabs
+
+                                            centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
+
+                                            TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
+
+                                                <Tab
+
+                                                value='stages' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Stages</Typography>} onClick={() => setSelectedTab('stages')} />
+
+                                                <Tab
+
+                                                value='assets' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Assets</Typography>} onClick={() => setSelectedTab('assets')} />
+                                                </Tabs>}
+
+                                            {!selectedAsset && selectedTab === 'stages' && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+
+                                                {!selectedAsset && selectedCategory && <div className='flex pt-4 mb-2 justify-between sticky top-0 bg-white z-10'>
 
                                                 <Button
 
@@ -1207,28 +1229,6 @@ const Progress2DPage: React.FC<any> = () => {
                                                 </Button>
 
                                             </div>}
-
-                                            <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
-                                            {!selectedAsset && <Tabs
-
-                                            centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
-
-                                            TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
-
-                                                <Tab
-
-                                                value='stages' label={<Typography fontFamily='Open Sans' fontSize={14}
-
-                                                variant='caption'>Stages</Typography>} onClick={() => setSelectedTab('stages')} />
-
-                                                <Tab
-
-                                                value='assets' label={<Typography fontFamily='Open Sans' fontSize={14}
-
-                                                variant='caption'>Assets</Typography>} onClick={() => setSelectedTab('assets')} />
-                                                </Tabs>}
-
-                                            {!selectedAsset && selectedTab === 'stages' && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
 
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
