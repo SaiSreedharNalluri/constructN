@@ -14,6 +14,7 @@ import PopupComponent from '../popupComponent/PopupComponent';
 import { API } from '../../config/config';
 import instance from '../../services/axiosInstance';
 import authHeader from '../../services/auth-header';
+import { CustomToast } from '../divami_components/custom-toaster/CustomToast';
 
 
 const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>, structId: string}) => {
@@ -26,16 +27,34 @@ const markAsComplete = async (details: { category?: string, date?: Date, stage?:
             headers: authHeader.authHeader(),
             params: {category: details.category, date: details.date, stage: details.stage, structure: structId}
         })
+        CustomToast('Mark as completed Successfull!','success')
         refetch()
         setCompleted(false)
 
     } catch (error) { 
-        throw error 
+        CustomToast('Mark as completed Failed!','error')
     } finally{
         setLoading(false)
     }
 
 }
+
+const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number }, setLoading: Function, refetch: Function) => {
+	try {
+        setLoading(true);
+		await instance.put(`${API.PROGRESS_2D_URL}/asset-categories/${categoryId}/update-stage`, null, {
+            headers: authHeader.authHeader(),
+            params: data
+        });
+        CustomToast('Successfully updated!','success');
+        refetch();
+	} catch (error) {
+		CustomToast('Failed to update!','error');
+        refetch();
+	} finally{
+        setLoading(false)
+    }
+};
 
 
 
@@ -127,7 +146,7 @@ function Progress2DStage(
 
     const [loading, setLoading] = useState(false)
 
-    const [assetValue , totalAssetValue]= useState(totalValueMetrics)
+    const [assetValue , totalAssetValue]= useState(stage.totalMeasurement || totalValueMetrics)
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
@@ -220,9 +239,8 @@ function Progress2DStage(
                     <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
                         <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } /> : assetValue} {edit? null: stage.uom}</Typography>
-                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={()=>setEdit(false)} />}
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={()=> updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: assetValue }, setLoading, refetch)} />}
                     </div>
-
                 </div>
 
 
