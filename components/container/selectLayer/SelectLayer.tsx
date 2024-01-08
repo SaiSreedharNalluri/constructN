@@ -174,7 +174,7 @@ const SelectLayer = ({
     </TreeItemLabelContainer>
   );
   const renderTree = (nodes: ILayer,index:number) => {
-    console.log("nodes",nodes);
+    //console.log("nodes",nodes);
     
     return (
       <StyledTreeItem

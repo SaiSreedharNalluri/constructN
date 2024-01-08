@@ -1394,7 +1394,10 @@ const Index: React.FC<IProps> = () => {
               if(urlSnap)
                 vData.currentSnapshotBase=urlSnap;
             }
-
+            vData.taskShow=true;
+            vData.issueShow=true;
+            vData.isIssueFiltered=false;
+            vData.isTaskFiltered=false;
             setInintData(vData);
             // if(initData && router.query.iss || router.query.tsk){
 
@@ -1412,12 +1415,12 @@ const Index: React.FC<IProps> = () => {
             //   }
             // }
             if (mViewerStatus === "Waiting") {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
               console.log("Handshake setGenData", response.result)
               setMViewerStatus("Connected")
             }
             else if (mViewerStatus === "Connected") {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(response.result) + '}')
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(vData) + '}')
 
             }
           }
@@ -1476,10 +1479,14 @@ const Index: React.FC<IProps> = () => {
           getGenViewerData(router.query.projectId as string, router.query.structureId as string)
             .then((response) => {
               if (response.success === true) {
+                let vData:IGenData = response.result
+                vData.taskShow=true;
+                vData.issueShow=true;
+                vData.isIssueFiltered=false;
+                vData.isTaskFiltered=false;
+                setInintData(vData);
 
-                setInintData(response.result);
-
-                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
                 console.log("Handshake setGenData", response.result)
                 setMViewerStatus("Connected")
 
