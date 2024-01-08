@@ -85,11 +85,16 @@ const fetchAssetCategories = (projectId: string) => {
 
 }
 
-const fetchAssets = (structureId: string, category: string, date: string, isSupportUser: boolean) => {
+const fetchAssets = (structureId: string, category: string, date: string) => {
+
+    const userObj: any = getCookie('user');
+
+    const user = JSON.parse(userObj);
+
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets`, { headers: headers.headers, params:{ structure: structureId, category, date , status: !isSupportUser ? 'Active' : null } })
+        return instance.get(`${API.PROGRESS_2D_URL}/assets`, { headers: headers.headers, params:{ structure: structureId, category, date , status: !user?.isSupportUser ? 'Active' : null } })
 
     } catch (error) { throw error }
 
@@ -701,7 +706,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id] = { assets: [], assetsCompare: [], ...stage, visible: true })
 
-        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase().date, isSupportUser).then(res => {
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase().date).then(res => {
 
             if (res.data.success) {
 

@@ -74,14 +74,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Views",
     },
 
-    // {
-    //   id: "progress-2d",
-    //   icon: progress2d,
-    //   activeIcon: progress2dHighlighted,
-    //   isActive: router.pathname.includes("progress-2d"),
-    //   nextPage: "",
-    //   toolTipMsg: "2D Progress",
-    // },
+    {
+      id: "progress-2d",
+      icon: progress2d,
+      activeIcon: progress2dHighlighted,
+      isActive: router.pathname.includes("progress-2d"),
+      nextPage: "",
+      toolTipMsg: "2D Progress",
+    },
 
     {
       id: "schedule",
