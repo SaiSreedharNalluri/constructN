@@ -243,6 +243,14 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 selectedJob: action.payload.job,
                 isDelete: true
             }
+        case UploaderActionType.retryJobUploading:
+            let selectedCaptureId = getCaptureIdFromModelOrString(action.payload.job.captures[0])
+            action.payload.job.status = JobStatus.pendingUpload
+                return {
+                    ...state,
+                    selectedJob: action.payload.job,
+                    currentUploadFiles: state.inProgressWorkers && state.inProgressWorkers[selectedCaptureId]
+                }    
         case UploaderActionType.setIsShowPopup:
             let popupVisibility = action.payload.popupVisibility
             if (popupVisibility.isShowPopup) {
