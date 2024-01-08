@@ -38,7 +38,7 @@ const deleteStructure = (projectId: string, structureId: string) => {
 
 }
 
-const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader }: IOnboardingProps) => {
+const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader,loader }: IOnboardingProps) => {
 
   useSignalEffect(() => {
     console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -157,7 +157,7 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
       </div>
 
       {mHierarchy && <StructureHierarchy projectId={projectId.value} hierarchy={mHierarchy} 
-        onAdd={_onAdd} onDelete={_onDelete} onSheetAdded={_reload} />}
+        onAdd={_onAdd} onDelete={_onDelete} onSheetAdded={_reload} loader={loader} />}
 
     </div>
 

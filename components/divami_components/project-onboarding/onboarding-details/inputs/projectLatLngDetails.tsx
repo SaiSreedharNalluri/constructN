@@ -19,9 +19,9 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
     const newCoordinates = [...(latlngDetails.value.location?.coordinates || [])];
 
     if (key === 'latitude') {
-      newCoordinates[1] = parseFloat(value);
+      newCoordinates[1] = value === '' ? '' : parseFloat(value);
     } else if (key === 'longitude') {
-      newCoordinates[0] = parseFloat(value);
+      newCoordinates[0] = value === '' ? '' : parseFloat(value);
     }
 
     latlngDetails.value = {
