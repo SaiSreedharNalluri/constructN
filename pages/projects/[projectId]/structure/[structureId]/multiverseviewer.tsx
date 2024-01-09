@@ -128,6 +128,10 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
 export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
   RouterIssueRef: (handleMenuInstance: any) => void;
+  issueFilterState:(handleMenuInstance:any)=>void;
+  filteredIssueList:(filterIssueList:any)=>void;
+  taskFilterState:(taskFilterState:any)=>void;
+  filteredTaskList:(filteredTaskList:any)=>void;
 };
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
@@ -165,8 +169,10 @@ const Index: React.FC<IProps> = () => {
   const [clickedTool, setClickedTool] = useState<ITools>();
   const [toolUpdate, setToolUpdate] = useState<IToolbarAction>();
   const [loggedInUserId, SetLoggedInUserId] = useState("");
+  const [isList, setIsList] = useState<any>([]);
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
+  const [tasList, setTasList] = useState<any>([]);
   const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [tasksPriotityList, setTasksPriorityList] = useState<[string]>([""]);
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
@@ -201,6 +207,7 @@ const Index: React.FC<IProps> = () => {
 
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
+
 
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
@@ -503,8 +510,7 @@ const Index: React.FC<IProps> = () => {
     // getIssues(structure._id);
     // getTasks(structure._id);
   };
-
-  useEffect(() => {
+  useEffect(() => { 
     if (structure && project) {
       setBreadCrumbsData((prev: any) => [
         project,
@@ -515,12 +521,12 @@ const Index: React.FC<IProps> = () => {
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
-    // if (router.isReady && structure) {
-    //   //router.query.structId = structure?._id;
-    //   router.query.structureId = structure?._id;
+    if (router.isReady && structure) {
+      //router.query.structId = structure?._id;
+      router.query.structureId = structure?._id;
 
-    //   router.push(router);
-    //}
+      router.push(router);
+    }
   }, [structure, project]);
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -720,7 +726,6 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
         break;
       case "selectIssue":
-        console.log("select issue publish")
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "removedIssue":
@@ -732,6 +737,19 @@ const Index: React.FC<IProps> = () => {
           }
         })();
         break;
+      case 'handleIssueFilter':
+          handleOnIssueFilter(toolInstance.data)
+          
+        break;
+      case 'setFilteredIssueList':
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case 'closeFilterOverlay':
+        closeFilterOverlay()
+        break;
+      case 'closeTaskOverlay':
+      closeTaskFilterOverlay()
+      break;
       case "viewTaskList":
         //setOpenIssueView(true);
         break;
@@ -767,15 +785,20 @@ const Index: React.FC<IProps> = () => {
       case "removedTask":
         (async () => {
           const TaskDetelteStatus = await deleteTheTask(toolInstance.data);
-          console.log(TaskDetelteStatus)
           if (TaskDetelteStatus) {
             let taskId = (toolInstance.data as { _id: any })._id;
-            console.log("issueId", taskId)
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
           }
         })();
         // setClickedTool(toolInstance);
         break;
+     
+      case 'handleTaskFilter':
+        handleOnTaskFilter(toolInstance.data);
+        break;
+      case 'setFilteredTaskList':
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break; 
       case "setViewLayers":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
@@ -1053,22 +1076,36 @@ const Index: React.FC<IProps> = () => {
     }
     if (formData?.fromDate) {
       count = count + 1;
-    }
-    setIssueList(result);
+    }   
+    setIsList(result);
     setIssueFilterState({
       isFilterApplied: true,
       filterData: formData,
       numberOfFilters: count,
     });
+    let data : any = result
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredIssueList"}
+    toolClicked(issueFilterMessage)
+   
+  
+
   };
   const closeFilterOverlay = () => {
-    setIssueList(issueFilterList);
+    setIsList(issueFilterList);
     setIssueFilterState({
       isFilterApplied: false,
       filterData: {},
       numberOfFilters: 0,
     });
+    let data:any=issueFilterList
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredIssueList"}
+    toolClicked(issueFilterMessage)
+   
   };
+
+  useEffect(()=>{
+    ref.current?.issueFilterState(issueFilterState)
+  },[issueFilterState])
 
   const handleOnTaskFilter = (formData: any) => {
     const result = taskFilterList.filter(
@@ -1112,13 +1149,20 @@ const Index: React.FC<IProps> = () => {
     if (formData?.fromDate) {
       count = count + 1;
     }
-    setTasksList(result);
+    setTasList(result);
     setTaskFilterState({
       isFilterApplied: true,
       filterData: formData,
       numberOfFilters: count,
     });
+    let data : any = result
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredTaskList"}
+    toolClicked(issueFilterMessage)
   };
+
+  useEffect(()=>{
+    ref.current?.taskFilterState(taskFilterState)
+  },[taskFilterState])
 
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
@@ -1127,6 +1171,9 @@ const Index: React.FC<IProps> = () => {
       filterData: {},
       numberOfFilters: 0,
     });
+    let data:any=taskFilterList
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredIssueList"}
+    toolClicked(issueFilterMessage)
   };
   const deleteTheIssue = async (issueObj: any): Promise<boolean> => {
     try {
@@ -1317,7 +1364,7 @@ const Index: React.FC<IProps> = () => {
 
   useEffect(() => {
     if (router.query.iss !== null && initData) {
-      let sel_iss: Issue | undefined = initData?.currentIssueList.find((t) => t._id === router.query.iss)
+      let sel_iss: Issue | undefined = initData?.currentIssueList?.find((t) => t._id === router.query.iss)
       if (sel_iss) {
         handleMenuInstance.type = "selectIssue"
         handleMenuInstance.data = sel_iss._id
@@ -1374,7 +1421,12 @@ const Index: React.FC<IProps> = () => {
     if (router.isReady) {
       getGenViewerData(router.query.projectId as string, router.query.structureId as string)
         .then((response) => {
-          if (response.success === true) {           
+          if (response.success === true) {  
+            setIssueFilterList(response.result.currentIssueList) 
+            setIsList(response.result.currentIssueList) 
+            setTaskFilterList(response.result.currentTaskList)
+            setTasList(response.result.currentTaskList) 
+
             // if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
             //   router.query.type = response.result.data?.currentViewType as string;
             //   router.query.snap = response.result.data?.currentSnapshotBase._id as string;
@@ -1452,6 +1504,7 @@ const Index: React.FC<IProps> = () => {
         conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
         console.log("Handshake setGenData", initData)
         setMViewerStatus("Connected")
+        
       }
       updateURLQuery(initData as IGenData)
       if (initData.currentViewType === "Plan Drawings" || initData.currentViewType === "BIM") {
@@ -1485,6 +1538,10 @@ const Index: React.FC<IProps> = () => {
                 vData.isIssueFiltered=false;
                 vData.isTaskFiltered=false;
                 setInintData(vData);
+                setIssueFilterList(response.result.currentIssueList)
+                setIsList(response.result.currentIssueList)  
+                setTaskFilterList(response.result.currentTaskList)
+                setTasList(response.result.currentTaskList)
 
                 conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
                 console.log("Handshake setGenData", response.result)
@@ -1539,7 +1596,6 @@ const Index: React.FC<IProps> = () => {
   const updateURLQuery = (newData: IGenData) => {
 
     if (router) {
-      console.log("callback trying to update router");
       // (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
       // (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
       // (router.query.projectId !== newData.structure.project) ? router.query.projectId = newData.structure.project : null;
@@ -1551,9 +1607,20 @@ const Index: React.FC<IProps> = () => {
     }
 
   }
+  useEffect(()=>{
+    if(issueFilterState.isFilterApplied === false) 
+   {
+   ref.current?.issueFilterState(issueFilterState)
+   
+   }
+   if(taskFilterState.isFilterApplied === false){
+     ref.current?.taskFilterState(taskFilterState)
+   }
+ },[issueFilterList,taskFilterList])
   const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("callback data", JSON.parse(msg.toString()))
+    
 
     // if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
     //   updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
@@ -1562,7 +1629,11 @@ const Index: React.FC<IProps> = () => {
     //   updateITRouter(message.type,message.data.id) //Router current Task/Issue
     // }
     if (message.type === "syncGenViewer") {
-      setInintData(message.data);     
+      setInintData(message.data);
+      
+     
+     
+      
       // updateURLQuery(message.data as IGenData);
       //setViewMode(message.data.viewMode);
       

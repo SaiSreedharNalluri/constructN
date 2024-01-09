@@ -65,6 +65,7 @@ import { IProjectUsers } from "../../../models/IProjects";
 import { getProjectUsers } from "../../../services/project";
 import CustomMiniLoader from "../../divami_components/custom_loader/CustomMiniLoader";
 import router from "next/router";
+import { IToolbarAction } from "../../../models/ITools";
 interface IProps {
   closeOverlay?: () => void;
   visibility?: boolean;
@@ -80,6 +81,7 @@ interface IProps {
   taskStatus: any;
   taskTag:any;
   projectUsers: any;
+  toolClicked: (toolAction:IToolbarAction) => void;
 }
 
 // const Footer = () => {
@@ -101,6 +103,7 @@ const TaskFilterCommon: React.FC<any> = ({
   closeTaskFilterOverlay,
   handleOnFilter,
   taskFilterState,
+  toolClicked
 }) => {
   // console.log("tasksListapi", tasksList);
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
@@ -492,6 +495,7 @@ const TaskFilterCommon: React.FC<any> = ({
   };
 
   const onFilterApply = () => {
+    console.log("on apply function");
     let data: any = {};
     data.taskType = [];
     data.taskPriority = [];
@@ -532,7 +536,8 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    handleOnFilter(data);
+    let handleTaskFilter : IToolbarAction = { data: data, type: "handleTaskFilter" };
+    toolClicked(handleTaskFilter)
     handleClose();
   };
   useEffect(() => {
@@ -583,6 +588,11 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     SetFilterState(temp);
   }
+  else{
+    let handleIssueCloseFilter : IToolbarAction = { data:"", type: "closeTaskOverlay" };
+    toolClicked(handleIssueCloseFilter)
+    closeTaskFilterOverlay();
+  }
   }, [optionState]);
 
   const onReset = () => {
@@ -598,6 +608,9 @@ const TaskFilterCommon: React.FC<any> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees([assignees]);
     SetFilterState(temp);
+    let handleIssueCloseFilter : IToolbarAction = { data:"", type: "closeTaskOverlay" };
+    toolClicked(handleIssueCloseFilter)
+    // closeTaskFilterOverlay();
   };
 
   const formHandler = (event: any) => {
