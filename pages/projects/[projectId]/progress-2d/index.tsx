@@ -688,9 +688,12 @@ const Progress2DPage: React.FC<any> = () => {
 
         setSelectedCategory(category)
 
+
         if (category !== undefined) {
 
             _loadAssetsForCategory(category)
+
+            _loadCompareAssets(category)
 
         }
 

@@ -30,6 +30,8 @@ export interface IAssetStage {
 
     description?: string
 
+    totalMeasurement?: number
+
 }
 
 export interface IAsset {
