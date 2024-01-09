@@ -71,16 +71,16 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
           </div>
-          <div className={`flex-column absolute right-[12px] bottom-[50px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
+          <div className={`flex-column absolute right-[12px] top-[70px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
             {showPointCloud ?
               <Button onClick={()=>{
                   loadAllImages();
                   setShowPointCloud(false);
-              }} className='text-[12px]' > <ViewInArIcon className='mr-1.5'/> Hide Point Cloud</Button>:
+              }} className='text-[12px]' >Reality</Button>:
               <Button className='text-[12px]' onClick={()=>{
                 unloadAllImages();
                 setShowPointCloud(true);
-                }}><ThreeDRotationIcon className='mr-1.5' /> Show Point Cloud</Button>}
+                }}><ThreeDRotationIcon className='mr-1.5' />Point Cloud</Button>}
           </div>
           {isSupportUser.current ? (
             <div>

@@ -35,7 +35,20 @@ const createMeasurement = async ({ name = '', type = '', snapshot = '', context 
   }
 };
 
-const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, setMeasurementType=()=>{}, refetch =()=>{}, setLoading=()=>{} , getContext=()=>{}, setActiveMeasure =()=>{}, loading=false, setSelected =()=>{}, apiPoints= []}: {setShow?: Dispatch<SetStateAction<boolean>>, show?: boolean, measurement: {name?: string; points?: object[]; uuid?: string}; onCancel: Function,setActiveMeasure: Dispatch<SetStateAction<string>>, refetch: Function, setLoading: Dispatch<SetStateAction<boolean>>, loading?: boolean ,setSelected?: Dispatch<SetStateAction<string>>, apiPoints: {name: string}[] , getContext: Function, setMeasurementType: Function }) => {
+interface Props {
+  setShow?: Dispatch<SetStateAction<boolean>>,
+  show?: boolean,
+  measurement: {name?: string; points?: object[]; uuid?: string};
+  onCancel: Function,setActiveMeasure: Dispatch<SetStateAction<"" | { name: string }>>,refetch: Function, 
+  setLoading: Dispatch<SetStateAction<boolean>>,
+  loading?: boolean ,
+  setSelected?: Dispatch<SetStateAction<string>>,
+  apiPoints: {name: string}[] ,
+  getContext: Function,
+  setMeasurementType: Function 
+}
+
+const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, setMeasurementType=()=>{}, refetch =()=>{}, setLoading=()=>{} , getContext=()=>{}, setActiveMeasure =()=>{}, loading=false, setSelected =()=>{}, apiPoints= []}: Props) => {
     const router = useRouter();
     const snapshot = router.query.snap as string;
     const [name, setName] = useState('');
