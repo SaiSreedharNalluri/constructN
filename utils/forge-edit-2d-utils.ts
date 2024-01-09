@@ -56,7 +56,7 @@ export class ForgeEdit2DUtils {
 
         assets.forEach(asset => {
 
-            const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage).color
+            const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage)?.color
 
             if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
 

@@ -243,7 +243,23 @@ const Progress2DPage: React.FC<any> = () => {
     
     }>({})
 
-    const params = useParams()
+    const params = useParams();
+
+    const refetchCategories = () =>{
+
+        setShowProgress(true);
+
+        const projId = params && params['projectId'] as string;
+        
+        fetchAssetCategories(projId!).then((response) => {
+            if (response.data.result) {
+                const catSelected = response.data.result.find((cate: {_id: string})=>(cate._id === (selectedCategory ? selectedCategory :response.data.result[1])._id))
+                setAssetCategories(response.data.result);
+                _loadAssetsForCategory(catSelected);
+            }
+            setShowProgress(false);
+        })
+    }
 
     const refetch = () => {
 
@@ -1232,29 +1248,35 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>}
 
-                                                {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
-
-                                                <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}
-
+                                                {loading ? [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))
+                                                : <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}
+                                                
                                                 snapShotDate={snapshotBase.date}
-
+                                                
                                                 selectedCategory={selectedCategory}
-
+                                                
+                                                refetchCategories={refetchCategories}
+                                                
+                                                setLoading = {setLoading}
+                                                
+                                                loading={loading}
+                                                
                                                 refetch={()=>{ _loadAssetsForCategory(selectedCategory as IAssetCategory, selectedAsset) }}
-
-                                                    onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
-
-                                                        _assetMap.current[stage._id!].visible = stage.visible
-
-                                                        setStages([])
-
-                                                        publish('visibility-change', { assets: assets, stageMap: _assetMap.current })
-
-                                                        setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
-
-                                                    }} />
-
+                                                
+                                                onToggleVisibility={(stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => {
+                                                    
+                                                    _assetMap.current[stage._id!].visible = stage.visible
+                                                    
+                                                    setStages([])
+                                                    
+                                                    publish('visibility-change', { assets: assets, stageMap: _assetMap.current })
+                                                    
+                                                    setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
+                                                    
+                                                }} />}
+                                                
                                             </div>}
+                                            
                                             {selectedTab === 'assets' && !selectedAsset && <div className='overflow-auto relative' style={{ height: 'calc(100vh - 220px)' }}>
                                                     <Progress2dAssets assets={assets} />
                                                 </div>}

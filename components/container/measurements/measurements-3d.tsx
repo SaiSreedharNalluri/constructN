@@ -436,7 +436,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
 
     return (
 
-      <Tooltip key={type} title={`${type}`} arrow >
+      <Tooltip key={type} title={`${type === 'Distance' ? 'Length' : type}`} arrow >
 
         <IconButton
 
@@ -502,6 +502,29 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
   const filteredpoints = points.filter((point) =>
     point.name?.toLowerCase()?.includes(search?.toLowerCase())
 	);
+
+  const deleteCallback = async () =>{ 
+    await deleteMeasurement(deleteMeasurementId, setLoading, refetch);
+    setDeleteMeasurementId('');
+    setSelected('');
+  }
+
+  const SecondaryAction = ({measurement}: { measurement: { visible?:boolean }}) =>{
+    const Icon = measurement.visible ? VisibilityIcon : VisibilityOffIcon;
+    return(
+      <Icon onClick={(e)=>{ 
+        e.stopPropagation();
+        measurement.visible = !measurement.visible;
+        points?.forEach((measurement: {visible: boolean})=>{
+          if(measurement.visible){
+            setHideButton(true);
+            return;
+          }
+          setHideButton(false);
+        });
+        setMeasurementsLoaded(!measurementsLoaded);
+      }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer'/>)
+  }
 
 
   return (
@@ -603,13 +626,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
 
               className={`${selected === measurement._id ? ' bg-orange-100' : ''}`}
 
-              secondaryAction={
-
-                measurement.visible ? 
-                <VisibilityIcon onClick={()=>{ measurement.visible = !measurement.visible }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer'/>: 
-                <VisibilityOffIcon onClick={()=>{ measurement.visible = !measurement.visible }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer' />
-
-              }
+              secondaryAction={<SecondaryAction measurement={measurement} />}
 
               onClick={() => onSelect(measurement)}
 
@@ -646,24 +663,26 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
           setMeasurementType('');
         }
           } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
-        {!!deleteMeasurementId ? <PopupComponent
+        {!!deleteMeasurementId ? <div onKeyDown={(e)=>{
+          e.stopPropagation();
+          if(e.key === 'Enter'){
+            deleteCallback();
+          }
+        }}> <PopupComponent
           open={!!deleteMeasurementId}
           hideButtons
           setShowPopUp={setDeleteMeasurementId}
           modalTitle={"Delete Measurement"}
-          modalContent={'Are You Sure You Want To Delete?'}
-          modalmessage={""}
+          modalContent={''}
+          modalmessage={"Are You Sure You Want To Delete?"}
           primaryButtonLabel={"Confirm"}
           SecondaryButtonlabel={"Cancel"}
           disableSecondaryButton={loading}
           disablePrimaryButton={loading}
-          callBackvalue={async () =>{ 
-            await deleteMeasurement(deleteMeasurementId, setLoading, refetch);
-            setDeleteMeasurementId('');
-            setSelected('');
-          }}
+          callBackvalue={deleteCallback}
           secondaryCallback={()=> setDeleteMeasurementId('')}
-        />: null}
+        />
+        </div>: null}
 
       </List> }
       {loading ? <CustomLoader />: null}

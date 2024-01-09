@@ -980,6 +980,7 @@ export const PotreeViewerUtils = () => {
 
     const loadMeasurements =(points = [])=>{
         clearAllMeasurements();
+        _viewer.setLengthUnit('ft');
         points.forEach((point)=>{
             let measure = new Potree.Measure();
             if(point.type ==='Distance'){
@@ -988,7 +989,7 @@ export const PotreeViewerUtils = () => {
             if(point.type ==='Angle'){
                 measure.closed = true;
                 measure.showAngles = true;
-                measure.showDistances = true;
+                measure.showDistances = false;
             }
             if(point.type ==='Point'){
                 measure.showDistances = false;
@@ -1003,7 +1004,7 @@ export const PotreeViewerUtils = () => {
             if(point.type ==='Area'){
                 measure.closed = true;
                 measure.showArea = true;
-                measure.showHeight = true;
+                measure.showHeight = false;
             }
             measure.name = point.name;
             measure.mtype = point.type;
@@ -1123,6 +1124,7 @@ export const PotreeViewerUtils = () => {
             case "area":
                 measurement = _viewer.measuringTool.startInsertion({
 					showDistances: true,
+                    showHeight: false,
 					showArea: true,
 					closed: true,
 					name: 'Area'
@@ -1148,7 +1150,7 @@ export const PotreeViewerUtils = () => {
             break;
             case "angle":
                 measurement = _viewer.measuringTool.startInsertion({
-					showDistances: true,
+					showDistances: false,
 					showArea: false,
 					closed: false,
                     showAngles: true,
