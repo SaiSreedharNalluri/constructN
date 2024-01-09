@@ -1,368 +1,570 @@
-import BackArrow from "../../../../public/divami_icons/backArrow.svg";
-import { Field, Form, Formik } from "formik";
-import {
-  Grid,
-  OutlinedInput,
-  Select,
-  TextField,
-  Checkbox,
-  styled,
-  Box,
-  Button,
-} from "@mui/material";
-
-import {
-  TitleContainer,
-  ArrowIcon,
-  CustomTaskProcoreLinks,
-  HeaderContainer,
-  LeftTitleCont,
-  SpanTile,
-  BodyContainer,
-} from "../../../divami_components/issue_detail/IssueDetailStyles";
-import { useCallback, useState } from "react";
+import { Field, Form, Formik, FormikProps } from "formik";
+import { Grid, TextField, Checkbox,} from "@mui/material";
+import { CustomTaskProcoreLinks, BodyContainer,} from "../../../divami_components/issue_detail/IssueDetailStyles";
+import { useCallback, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { priorityData, statusData } from "../../../../utils/Procoreconstants";
+import { createObservation } from "../../../../services/procore";
+import ProcoreFooter from "../procoreFooter";
+import ProcoreHeader from "../procoreHeader";
+import * as Yup from 'yup';
+import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
+
 
 const LinkNewObservation = (props: any) => {
-  const { handleInstance } = props;
+  const {
+    handleInstance,
+    gen,
+    rfiManager,
+    potentialDistMem,
+    types,
+    hazard,
+    contributingBehavior,
+    contributingCondition,
+  } = props;
+
   const initialValues: {
-    type:string,
-    status:string,
-    title:string,
-    priority:string,
-    number:string,
-    trade:string,
-    location:string,
-    section:string,
-    assignee:string,
-    distributionMember:string,
-    dueDate:string,
-    private:boolean,
-    contributingCondition:string,
-    contributingBehaviour:string,
-    hazard:string,
-    description:string,
-    attachFiles:File[],
+    assignee_id: number | null;
+    contributing_behavior_id: number | null;
+    contributing_condition_id: number | null;
+    description: string;
+    due_date: string;
+    hazard_id: number | null;
+    personal: boolean;
+    priority: string;
+    specification_section_id: number | null;
+    status: string;
+    trade_id: number | null;
+    type_id: number | null;
+    distribution_member_ids: [];
+    location_id: number | null;
+    name: string;
+    attachFiles: File[];
+    number: string;
   } = {
-    type:'',
-    status:'',
-    title:'',
-    priority:'',
-    number:'',
-    trade:'',
-    location:'',
-    section:'',
-    assignee:'',
-    distributionMember:'',
-    dueDate:'',
-    private:false,
-    contributingCondition:'',
-    contributingBehaviour:'',
-    hazard:'',
-    description:'',
-    attachFiles:[],
-
+    assignee_id: 10,
+    contributing_behavior_id: null,
+    contributing_condition_id: null,
+    description: "",
+    due_date: "",
+    hazard_id: null,
+    personal: false,
+    priority: "",
+    specification_section_id: null,
+    status: "",
+    trade_id: null,
+    type_id: null,
+    distribution_member_ids: [],
+    location_id: null,
+    name: "",
+    attachFiles: [],
+    number: "",
   };
-  const ButtonsContainer = styled(Box)({
-    padding: "10px",
-    paddingTop:'20px',
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  });
   const [footerState, setfooterState] = useState(true);
+  const formikRef = useRef<FormikProps<any>>(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const handleSubmit = (values:any) => {
-    
-    console.log('initialvalues',values)
-  };
-  const [files, setFiles] = useState<File[]>([]);
 
+  const [files, setFiles] = useState<File[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+ 
   const onDrop = useCallback((acceptedFiles: any) => {
     setFiles(acceptedFiles);
   }, []);
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const onFileClick = (file: File) => {
+    setSelectedFile(file);
+  };
+  
+  const handleExternalSubmit = () => {
+    if (formikRef.current) {
+      formikRef.current.submitForm();
+    }
+  };
+  const handleSubmit = (observation: {
+    assignee_id: number | null;
+    contributing_behavior_id: number | null;
+    contributing_condition_id: number | null;
+    description: string;
+    due_date: string;
+    hazard_id: number | null;
+    personal: boolean;
+    priority: string;
+    specification_section_id: number | null;
+    status: string;
+    trade_id: number | null;
+    type_id: number | null;
+    distribution_member_ids: [];
+    location_id: number | null;
+    name: string;
+    attachFiles: File[];
+    number: string;
+  }) => {
+    const project_id = 235946;
+    const requestBody = {
+      project_id,
+      observation,
+    };
+      console.log('res observation',requestBody)
+    createObservation(requestBody)
+    .then((response) => {
+      if (response) {
+        CustomToast("Observation Created successfully","success");
+      }
+    })
+    .catch((error) => {
+      if (error) {
+        CustomToast("Observation creation failed","error");
+      }
+    });
+  };
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Title is required'),
+    type_id: Yup.number().nullable().required('Type is not selected'),
+    status: Yup.string().required('status is not selected'),
+    description:Yup.string().required('Description is required'),
+   
+  });
 
+  const handleBack = () => {
+    let closeNewRFI: IprocoreActions = {
+      action: "newCloseObservation",
+      status: false,
+    };
+    handleInstance(closeNewRFI);
+  };
+  
   return (
     <>
       <CustomTaskProcoreLinks>
-        <HeaderContainer>
-          <TitleContainer>
-            <LeftTitleCont>
-              <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
-                <ArrowIcon
-                  onClick={() => {
-                    let closeNewRFI: IprocoreActions = {
-                      action: "newCloseObservation",
-                      status: false,
-                    };
-                    handleInstance(closeNewRFI);
-                  }}
-                  src={BackArrow}
-                  alt={"close icon"}
-                  data-testid="back-arrow"
-                />
-              </div>
-              <SpanTile data-testid="issue-detail-header">
-                Create a new Procore Observation<br></br>
-              </SpanTile>
-            </LeftTitleCont>
-          </TitleContainer>
-        </HeaderContainer>
+      <ProcoreHeader handleInstances={handleBack} heading={"Create New Observation"}></ProcoreHeader>
         <BodyContainer footerState={footerState}>
-          <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-           
-            <Form>
-              <div className=" overflow-y-auto">
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>TYPE*</div>
-                    <Field
-                    className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                    name="type"
-                    as="select"
-                    placeHolder="select Type"
-                ></Field>
+          <Formik
+            initialValues={initialValues}
+            onSubmit={handleSubmit}
+            innerRef={formikRef}  
+            validationSchema={validationSchema}
+          >
+            {({ setFieldValue,errors, touched  }) => (
+              <Form>
+                <div className="px-1  overflow-y-auto calc-h84 mt-5">
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        TYPE <span className="text-red-500">*</span>
+                      </label>
+                      <Field
+                        required
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="type_id"
+                        as="select"
+                        onChange={(e: any) => {
+                          setFieldValue("type_id", parseFloat(e.target.value));
+                        }}
+                      >
+                        <option value="">Select a type</option>
+
+                        {types.map((option: any) => (
+                          <option
+                            className=""
+                            key={option.id}
+                            value={option.id}
+                          >
+                            {option.name}
+                          </option>
+                        ))}
+                      </Field>{errors.type_id && touched.type_id && (
+                        <div className="text-red-500 w-[182px]">{errors.type_id}</div>
+                      )}
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        STATUS <span className="text-border-yellow">*</span>
+                      </label>
+                      <Field
+                        required
+                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="status"
+                        as="select"
+                        onChange={(e: any) => {
+                          setFieldValue("status", e.target.value);
+                        }}
+                      >
+                        <option value="">Select a status</option>
+
+                        {statusData.map((option: any) => (
+                          <option
+                            className=""
+                            key={option.id}
+                            value={option.id}
+                          >
+                            {option.name}
+                          </option>
+                        ))}
+                      </Field>{errors.status && touched.status && (
+                        <div className="text-border-yellow w-[182px]">{errors.status}</div>
+                      )}
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <div>STATUS *</div>
-                    <Field
-                    className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                    name="status"
-                    as="select"
-                    placeHolder="select status"
-                ></Field>
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={2}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        TITLE  <span className="text-border-yellow">*</span>
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="name"
+                        type="text"
+                        placeHolder="Title"
+                      ></Field> {errors.name && touched.name && (
+                        <div className="text-border-yellow w-[182px]">{errors.name}</div>
+                      )}
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        PRIORITY
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="priority"
+                        as="select"
+                        onChange={(e: any) => {
+                          setFieldValue("priority", e.target.value);
+                        }}
+                      >
+                        <option value="">Select a Priority</option>
+                        {priorityData.map((option: any) => (
+                          <option
+                            className=""
+                            key={option.id}
+                            value={option.id}
+                          >
+                            {option.name}
+                          </option>
+                        ))}
+                      </Field>
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>TITLE</div>
-                    <Field
-                    className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                    name="title"
-                    type="text"
-                    placeHolder="Title"
-                ></Field>
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        NUMBER(Assigned)
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="number"
+                        type="text"
+                        placeHolder=" number"
+                        onChange={(e: any) => {
+                          setFieldValue("number", e.target.value);
+                        }}
+                      ></Field>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        TRADE
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="trade_id"
+                        as="select"
+                        placeHolder="select Trade"
+                      ></Field>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <div>PRIORITY</div>
-                    <Field
-                    className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                    name="title"
-                    type="text"
-                    placeHolder="Title"
-                ></Field>
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        LOCATION
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="location_id"
+                        as="select"
+                        placeHolder="select Location"
+                      ></Field>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        SPEC SECTION
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="specification_section_id"
+                        as="select"
+                        placeHolder="select Spec Section"
+                      ></Field>
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>NUMBER(Assigned)</div>
-                    <OutlinedInput
-                      fullWidth
-                      size="small"
-                      className="outline-none"
-                      color="warning"
-                      name="number"
-                      value={null}
-                    />
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        ASSIGNEE
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="assignee_id"
+                        as="select"
+                        onChange={(e: any) =>
+                          setFieldValue(
+                            "assignee_id",
+                            parseFloat(e.target.value)
+                          )
+                        }
+                      >
+                        <option value="">Select a person</option>
+                          {rfiManager.map((option: any) => (
+                            <option key={option.id} value={option.id}>
+                              {option.name}
+                            </option>
+                          ))}
+                      </Field>
+                      
+
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        DISTRIBUTION MEMBER
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="distribution_member_ids"
+                        as="select"
+                        onChange={(e: any) => {
+                          setFieldValue("distribution_member_ids", [
+                            parseFloat(e.target.value),
+                          ]);
+                        }}
+                      >
+                        <option value="">Select a person</option>
+                        {potentialDistMem.map((option: any) => (
+                          <option key={option.id} value={option.id}>
+                            {option.name}
+                          </option>
+                        ))}
+                      </Field>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <div>TRADE</div>
-                    <Select
-                      fullWidth
-                      color="warning"
-                      size="small"
-                      name="trade"
-                      placeholder="Select Trade"
-                    ></Select>
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        DUE DATE
+                      </label>
+                      <input
+                        className="border border-solid border-border-black p-2 focus:outline-yellow-500 rounded w-full hover:border-yellow-500"
+                        type="date"
+                        placeholder="date"
+                        name="due_date"
+                        step="1"
+                        onChange={(e: any) => {
+                          setFieldValue("due_date", e.target.value);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        PRIVATE
+                      </label>
+                      <Checkbox {...label} name="personal" />
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>LOCATION</div>
-                    <Select
-                      fullWidth
-                      size="small"
-                      color="warning"
-                      name="location"
-                      placeholder="Select a Location"
-                    ></Select>
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        CONTRIBUTING CONDITION
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="contributing_condition_id"
+                        as="select"
+                        onChange={(e: any) => {
+                          setFieldValue(
+                            "contributing_condition_id",
+                            parseFloat(e.target.value)
+                          );
+                        }}
+                      >
+                        <option value="">Select a Conditions</option>
+                        {contributingCondition.map((option: any) => (
+                          <option key={option.id} value={option.id}>
+                            {option.name}
+                          </option>
+                        ))}
+                      </Field>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        CONTRIBUTING BEHAVIOR
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="contributing_behavior_id"
+                        as="select"
+                        onChange={(e: any) => {
+                          setFieldValue(
+                            "contributing_behavior_id",
+                            parseFloat(e.target.value)
+                          );
+                        }}
+                      >
+                        <option value="">Select a Contributing Behavior</option>
+                        {contributingBehavior.map((option: any) => (
+                          <option key={option.id} value={option.id}>
+                            {option.name}
+                          </option>
+                        ))}
+                      </Field>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <div>SPEC SECTION</div>
-                    <Select
-                      fullWidth
-                      size="small"
-                      color="warning"
-                      name="section"
-                      placeholder="Select a Spec Section"
-                    ></Select>
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        HAZARD
+                      </label>
+                      <Field
+                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        name="hazard_id"
+                        as="select"
+                        onChange={(e: any) => {
+                          setFieldValue(
+                            "hazard_id",
+                            parseFloat(e.target.value)
+                          );
+                        }}
+                      >
+                        <option value="">Select a Hazard</option>
+                        {hazard.map((option: any) => (
+                          <option
+                            className=""
+                            key={option.id}
+                            value={option.id}
+                          >
+                            {option.name}
+                          </option>
+                        ))}
+                      </Field>
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>ASSIGNEE</div>
-                    <Select
-                      fullWidth
-                      size="small"
-                      color="warning"
-                      name="assignee"
-                      placeholder="Select Assignee"
-                    ></Select>
+                  <Grid container className="pt-[5px]">
+                    <Grid item xs={15}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        DESCRIPTION <span className="text-border-yellow">*</span>
+                      </label>
+                      <TextField
+                        fullWidth
+                        required
+                        name="description"
+                        id="outlined-multiline-flexible"
+                        multiline
+                        maxRows={4}
+                        onChange={(e: any) => {
+                          setFieldValue("description", e.target.value);
+                        }}
+                      />{errors.description && touched.description && (
+                        <div className="text-border-yellow w-[182px]">{errors.description}</div>
+                      )}
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <div>DISTRIBUTION MEMBERS</div>
-                    <Select
-                      fullWidth
-                      size="small"
-                      color="warning"
-                      name="distributionMembers"
-                      placeholder="Select DistributionMember"
-                    ></Select>
+                  <Grid container className="pt-[5px] mb-[20px]">
+                    <Grid item xs={10}>
+                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
+                        ATTACH FILES
+                      </label>
+                      <div
+                        {...getRootProps()}
+                        style={{
+                          width: "100%",
+                          border: "1px dashed #ccc",
+                          padding: "20px",
+                          textAlign: "center",
+                        }}
+                      >
+                        <input {...getInputProps()} name="attachFiles" />
+                        {isDragActive ? (
+                          <p>Drop the files here ...</p>
+                        ) : (
+                          <p>
+                            Drag & drop files here, or click to select files
+                          </p>
+                        )}
+                      </div>
+                      {files.length > 0 && (
+                        <div>
+                          <strong>Uploaded Files:</strong>
+                          <ul>
+                            {files.map((file: any, index: number) => (
+                              <li
+                                key={index}
+                                style={{ cursor: "pointer" }}
+                                onClick={() => onFileClick(file)}
+                              >
+                                {file.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>DUE DATE</div>
-                    <input
-                      className="border border-solid border-border-black p-2 focus:outline-yellow-500 rounded w-full hover:border-yellow-500"
-                      type="date"
-                      placeholder="date"
-                      name="DueDate"
-                      step="1"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <div>PRIVATE</div>
-                    <Checkbox {...label} name="private" />
-                  </Grid>
-                </Grid>
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>CONTRIBUTING CONDITIONS</div>
-                    <Select
-                      fullWidth
-                      size="small"
-                      name="contributingCondition"
-                      placeholder="Select Contributing Condtion"
-                    ></Select>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <div>CONTRIBUTING BEHAVOIR</div>
-                    <Select
-                      fullWidth
-                      size="small"
-                      name="contributingBehavior"
-                      placeholder="Select Contributing Behavior"
-                    ></Select>
-                  </Grid>
-                </Grid>
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="space-between"
-                  className="mt-[4px]"
-                >
-                  <Grid item xs={6}>
-                    <div>HAZARD</div>
-                    <Select 
-                    fullWidth 
-                    size="small" 
-                    name="hazard"
-                    placeholder="Select Hazard"></Select>
-                  </Grid>
-                </Grid>
-                <Grid container className="mt-[4px]">
-                  <Grid item xs={15}>
-                    <div>DESCRIPTION *</div>
-                    <TextField
-                      fullWidth
-                      required
-                      name="description"
-                      id="outlined-multiline-flexible"
-                      multiline
-                      maxRows={4}
-                     
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container className="mt-[4px] mb-[20px]">
-                  <Grid item xs={10}>
-                    <div>ATTACH FILES</div>
-                    <div
-                      {...getRootProps()}
-                      style={{
-                        width: "100%",
-                        border: "1px dashed #ccc",
-                        padding: "20px",
-                        textAlign: "center",
-                      }}
-                    >
-                      <input {...getInputProps()} name="attachFiles" />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Drag & drop files here, or click to select files</p>
+                  {selectedFile && (
+                    <div>
+                      <strong>Selected File:</strong> {selectedFile.name}
+                      {selectedFile.type.startsWith("image/") && (
+                        <img
+                          src={URL.createObjectURL(selectedFile)}
+                          alt="Selected File"
+                          className="mt-2 max-w-full"
+                        />
                       )}
                     </div>
-                    {files.length > 0 && (
-            <div>
-              <strong>Uploaded Files:</strong>
-              <ul>
-                {files.map((file: any, index: number) => (
-                  <li key={index}>{file.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-                  </Grid>
-                </Grid>
-              </div>
-              <ButtonsContainer>
-      <Button>Cancel</Button>
-      <Button type='submit'>Create</Button>
-    </ButtonsContainer>
-            </Form>
-            
+                  )}
+                </div>
+              </Form>
+            )}
           </Formik>
         </BodyContainer>
-      
+        <ProcoreFooter
+          handleExternalSubmit={handleExternalSubmit}
+        ></ProcoreFooter>
       </CustomTaskProcoreLinks>
     </>
   );

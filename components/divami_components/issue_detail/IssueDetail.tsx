@@ -35,7 +35,6 @@ import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
-
 import _ from "lodash";
 import {
   createAttachment,
@@ -117,7 +116,9 @@ import {
   SecondContDueDate,
   ThirdContDueDate,
   ProcoreLogo,
+  
 } from "./IssueDetailStyles";
+import "jspdf-autotable";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
@@ -129,7 +130,7 @@ import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
 import procore from "../../../public/divami_icons/procore.svg";
 import ProcoreLink from "../../container/procore/procoreLinks";
-import LinkNewRFI from "../../container/procore/linkNewRfi";
+import jsPDF from "jspdf";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -1224,8 +1225,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
+  const [gen,setGen]=useState<any>(undefined)
   const handleProcoreLinks = () =>{
-    
+   const generatePDF= convertObjectToPdf()
+   setGen(generatePDF);
     setProcorePopup(true)
     setTaskDetail(false)
   }
@@ -1234,11 +1237,70 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setProcorePopup(false)
     setTaskDetail(true);
   }
+  const convertObjectToPdf = () => {
+    // Sample object data
+    const data: any = selectedIssue;
+  
+    // Create a new jsPDF instance
+    const pdf = new jsPDF();
+  
+    // Set font size and style
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+  
+    // Define table headers
+    const headers = ["Key", "Value"];
+  
+    // Initialize table data array
+    const tableData = [];
+  
+    // Iterate over object properties and push key-value pairs to tableData
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        // Check if the current property is "assignees"
+        if (key === "assignees") {
+          // Extract names from assignees array and concatenate
+          const assigneeNames = data[key].map((assignee: any) => `${assignee.firstName} ${assignee.lastName}`).join(", ");
+          tableData.push([key, assigneeNames]);
+        } else {
+          // For other properties, push key-value pairs to tableData
+          tableData.push([key, data[key]]);
+        }
+        if (key === "screenshot") {
+          
+          // Handle screenshot separately and add it as an image
+          const screenshotUrl = data[key];
+          const imgWidth = 80; // Adjust as needed
+          const imgHeight = 60; // Adjust as needed
+          pdf.addImage(screenshotUrl, "PNG", 100, 200, imgWidth, imgHeight);
+          tableData.push(["Screenshot", ""]);
+        }
+      }
+    }
+  
+    // Set table column widths and autoTable options
+    const columnWidths = [50, 140];
+  
+    // Add table headers and data to PDF using jspdf-autotable
+    (pdf as any).autoTable({
+      head: [headers],
+      body: tableData,
+      startY: 20,
+      margin: { top: 20 },
+      columnStyles: { 0: { cellWidth: columnWidths[0] } },
+    });
+      
+    // Save the PDF
+    
+    return pdf;
+    pdf.save("object_data.pdf");
+  };
+  
 
   return (
     <>
    
-      {procorePopup && <ProcoreLink handleCloseProcore={handleCloseProcore}></ProcoreLink>}
+      {procorePopup && <ProcoreLink gen={gen} handleCloseProcore={handleCloseProcore}></ProcoreLink>}
       {taskDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
@@ -1253,8 +1315,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   alt={"close icon"}
                   data-testid="back-arrow"
                 />
+                
               </div>
-
+     
               <DarkToolTip
                 title={
                   <SecondAssigneeList>

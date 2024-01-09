@@ -16,6 +16,7 @@ interface TabPanelProps {
 }
 
 export const ProcoreLogo = styled(Image)`
+  cursor:pointer;
   width: 20px; 
   height: 20px;
   
