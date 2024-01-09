@@ -11,53 +11,217 @@ import {
 } from "../../divami_components/issue_detail/IssueDetailStyles";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
 import { TitleContainer } from "../../divami_components/issue_detail/IssueDetailStyles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import rfiAdd from "../../../public/divami_icons/addButton.svg";
 import { HelpCenterOutlined } from "@mui/icons-material";
-import LinkNewRFI from "./linkNewRfi";
 import LinkNewObservation from "./procoreObservations/linkNewObservation";
-
+import jsPDF from "jspdf";
+import LinkNewRFI from "./newRFI/linkNewRfi";
+import {
+  contributingBehaviorList,
+  contributingConditionsList,
+  costImpact,
+  getcoastCode,
+  getLocation,
+  getReceivedFrom,
+  getResponsibleContractor,
+  getRfiManager,
+  getRfiStage,
+  hazardList,
+  potentialDistributionMembers,
+  scheduleImpact,
+  specSection,
+  tradeList,
+  typesList,
+} from "../../../services/procore";
+import NewLinkSubmittal from "./procoreSubmittal/newLinkSubmittal";
+import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
+import LinkExistingRfi from "./newRFI/linkExistingRfi";
 const ProcoreLink = (props: any) => {
-   const {
-    handleCloseProcore
-   }=props
-   const [ selectedComponent, setSelectedComponent]=useState<any| null>(null)
-   const handleInstanceClick =(componentType:any)=>{
-    switch (componentType) {
-        case "RFI":
-          setSelectedComponent(<LinkNewRFI/>);
-          break;
-        case "New_Observation":
-          setSelectedComponent(<LinkNewObservation handleInstance={handleInstanceClick}/>)
-          break;
-        case  "newCloseObservation":
-            setSelectedComponent(null)
-            break;
-        case "Summit":
-         
-          break;
-        
-        default:
-          setSelectedComponent(null);
+  const { handleCloseProcore, gen } = props;
+
+  const captureToPdf2 = async () => {
+    const element = document.getElementById("targetElementId");
+
+    if (element) {
+      try {
+        const pdf = new jsPDF();
+        pdf.html(element, {
+          callback: () => {
+            pdf.save("procore_link.pdf");
+          },
+        });
+      } catch (error) {
+        console.error("Error generating PDF:", error);
       }
-   }
+    } else {
+      console.warn("Element not found");
+    }
+  };
+  const [loading, setLoading] = useState(false)
+  const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
+
+  const [rfiManager, setRfiManager] = useState([]);
+  const [receivedFrom, setReceivedFrom] = useState([]);
+  const [responsibleContractor, setResponsibleContractor] = useState([]);
+  const [potentialDistMem, setPotentialDistMem] = useState([]);
+  const [contributingBehavior, setContributingBehavior] = useState([]);
+  const [contributingCondition, setContributingCondition] = useState([]);
+  const [hazard, setHazard] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [specSectionn, setspecSection] = useState();
+  const [coastCodee, setCoastCodee] = useState([]);
+  const [trades, setTrade] = useState([]);
+  const [location, setLocation] = useState([]);
+  const [rfistage, setrfistage] = useState([]);
+  const [scheduleImpactt, setScheduleImpact] = useState([]);
+  const [costImpacts, setcostImpact] = useState([]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [
+        rfiManagerData,
+        receivedFromData,
+        responsibleContractorData,
+        potentialDistMemData,
+        specSectionData,
+        locationData,
+        coastCodeData,
+        rfistageData,
+        scheduleImpactData,
+        costImpactsData,
+        tradeData,
+        contributingBehaviorData,
+        contributingConditionData,
+        hazardData,
+        typeData,
+      ] = await Promise.all([
+        getRfiManager(),
+        getReceivedFrom(),
+        getResponsibleContractor(),
+        potentialDistributionMembers(),
+        specSection(),
+        getLocation(),
+        getcoastCode(),
+        getRfiStage(),
+        scheduleImpact(),
+        costImpact(),
+        tradeList(),
+        contributingBehaviorList(),
+        contributingConditionsList(),
+        hazardList(),
+        typesList(),
+      ]);
+
+      setRfiManager(rfiManagerData);
+      setReceivedFrom(receivedFromData);
+      setResponsibleContractor(responsibleContractorData);
+      setPotentialDistMem(potentialDistMemData);
+      setspecSection(specSectionData);
+      setLocation(locationData);
+      setCoastCodee(coastCodeData);
+      setrfistage(rfistageData);
+      setScheduleImpact(scheduleImpactData);
+      setcostImpact(costImpactsData);
+      setTrade(tradeData);
+      setContributingBehavior(contributingBehaviorData);
+      setContributingCondition(contributingConditionData);
+      setHazard(hazardData);
+      setTypes(typeData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    console.log('useEffect')
+    fetchData();
+  }, []);
+
+  const handleInstanceClick = (componentType: any) => {
+    switch (componentType) {
+      case "RFI":
+        setSelectedComponent(
+          <LinkNewRFI
+            handleInstance={handleInstanceClick}
+            rfiManager={rfiManager}
+            receivedForm={receivedFrom}
+            responsibleContractor={responsibleContractor}
+            potentialDistMem={potentialDistMem}
+            coastCodee={coastCodee}
+            rfistage={rfistage}
+            scheduleImpactt={scheduleImpactt}
+            costImpacts={costImpacts}
+            specSectionn={specSectionn}
+          />
+        );
+        break;
+      case "closeNewRFI":
+        setSelectedComponent(null);
+        break;
+      case "Existing_RFI":
+        setSelectedComponent(
+            <LinkExistingRfi
+            handleInstance={handleInstanceClick}></LinkExistingRfi>
+        )
+        break;
+      case "newCloseObservation":
+        setSelectedComponent(null);
+        break;
+      case "New_Observation":
+        setSelectedComponent(
+          <LinkNewObservation
+            gen={gen}
+            rfiManager={rfiManager}
+            handleInstance={handleInstanceClick}
+            potentialDistMem={potentialDistMem}
+            types={types}
+            hazard={hazard}
+            contributingCondition={contributingCondition}
+            contributingBehavior={contributingBehavior}
+          ></LinkNewObservation>
+        );
+        break;
+      case "Link_new_submittal":
+        setSelectedComponent(
+          <NewLinkSubmittal
+            rfiManager={rfiManager}
+            receivedForm={receivedFrom}
+            responsibleContractor={responsibleContractor}
+            potentialDistMem={potentialDistMem}
+            coastCodee={coastCodee}
+            handleInstance={handleInstanceClick}
+          ></NewLinkSubmittal>
+        );
+  
+      case "Summit":
+        break;
+
+      default:
+        setSelectedComponent(null);
+    }
+  };
 
   const [footerState, SetFooterState] = useState(false);
 
-  if(selectedComponent){
-    return selectedComponent
+  if (selectedComponent) {
+    return selectedComponent;
   }
 
   return (
+    
     <div className="">
-      <CustomTaskProcoreLinks>
+      {loading?(<div>
+        <CustomLoader></CustomLoader>
+      </div>):(<div>
+      <CustomTaskProcoreLinks id="targetElementId">
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
                 <ArrowIcon
                   onClick={() => {
-                    handleCloseProcore()
+                    handleCloseProcore();
                   }}
                   src={BackArrow}
                   alt={"close icon"}
@@ -72,39 +236,71 @@ const ProcoreLink = (props: any) => {
         </HeaderContainer>
         <BodyContainer footerState={footerState}>
           <LabelContainer
+            id="targetElementId"
             className="cursor-pointer hover:bg-gray-100 "
-            onClick={()=>{handleInstanceClick('RFI')}}
+            onClick={() => {
+              handleInstanceClick("RFI");
+            }}
           >
             <AddRfi className="" src={rfiAdd} alt="Link new RFI"></AddRfi>
             <SpanCont className="flex justify-center">LINK NEW RFI</SpanCont>
           </LabelContainer>
-          <LabelContainer className="cursor-pointer hover:bg-gray-100">
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+                handleInstanceClick("Existing_RFI");
+              }}
+            >
+          
             <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
             <SpanCont className="flex justify-center">
               LINK EXISTING RFI
             </SpanCont>
           </LabelContainer>
-          <LabelContainer className="cursor-pointer hover:bg-gray-100" onClick={()=>{handleInstanceClick('New_Observation')}} >
-            <AddRfi className="" src={rfiAdd} alt="Link new Observation"></AddRfi>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+              handleInstanceClick("New_Observation");
+            }}
+          >
+            <AddRfi
+              className=""
+              src={rfiAdd}
+              alt="Link new Observation"
+            ></AddRfi>
             <SpanCont className="flex justify-center">
               LINK NEW OBSERVATION
             </SpanCont>
           </LabelContainer>
-          <LabelContainer className="cursor-pointer hover:bg-gray-100">
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+          >
             <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
             <SpanCont className="flex justify-center">
               LINK EXISTING OBSERVATION
             </SpanCont>
           </LabelContainer>
-          <LabelContainer className="cursor-pointer hover:bg-gray-100">
-            <AddRfi className="" src={rfiAdd} alt="Link new RFI"></AddRfi>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+              handleInstanceClick("Link_new_submittal");
+            }}
+          >
+            <AddRfi className="" src={rfiAdd} alt="Link new submittal"></AddRfi>
             <SpanCont className="flex justify-center">
               LINK NEW SUBMITTAL
             </SpanCont>
           </LabelContainer>
-          <LabelContainer className="cursor-pointer hover:bg-gray-100">
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+          >
             <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
             <SpanCont className="flex justify-center">
@@ -113,6 +309,7 @@ const ProcoreLink = (props: any) => {
           </LabelContainer>
         </BodyContainer>
       </CustomTaskProcoreLinks>
+      </div>)}
     </div>
   );
 };
