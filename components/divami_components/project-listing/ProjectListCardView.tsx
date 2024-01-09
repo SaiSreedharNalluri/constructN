@@ -75,7 +75,7 @@ export const ProjectListCardView = ({
   );
 
   useEffect(() => {
-    console.log(projects)
+    // console.log(projects)
     setProjectsData(projects);
   }, [projects]);
 

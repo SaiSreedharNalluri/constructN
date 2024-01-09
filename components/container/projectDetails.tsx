@@ -50,11 +50,9 @@ const ProjectDetails: React.FC = () => {
       setUser(user);
     }
   }, []);
-  const latitude: any =
-    projectData?.location != undefined ? projectData?.location[0] : 0;
-  const longitude: any =
-    projectData?.location != undefined ? projectData?.location[1] : 0;
-  const utm = projectData?.utm ? projectData?.utm : "NA";
+const latitude =projectData?.location?.coordinates[1]  != undefined ? projectData?.location?.coordinates[1] : 0;
+const longitude =projectData?.location?.coordinates[0]  != undefined ? projectData?.location?.coordinates[0] : 0;
+  const utm = projectData?.utm ? projectData?.utm.zone : "NA";
   const handleUpdateProject = (formData: any) => {
     let projectInfo: any = {};
     projectInfo.name = formData.filter(
@@ -69,10 +67,13 @@ const ProjectDetails: React.FC = () => {
     projectInfo.utm = formData.filter(
       (item: any) => item.id == "utm_value"
     )[0]?.defaultValue;
-    projectInfo.location = [
-      formData.filter((item: any) => item.id == "latitude")[0]?.defaultValue,
-      formData.filter((item: any) => item.id == "longitude")[0]?.defaultValue,
-    ];
+    projectInfo.location = {
+      type: "point",
+      coordinates: [
+        formData.filter((item: any) => item.id == "longitude")[0]?.defaultValue,
+        formData.filter((item: any) => item.id == "latitude")[0]?.defaultValue,
+      ],
+    }; 
     //projectInfo.name = (projectInfo.name as string).substring(0,100);
     updateProjectInfo(projectInfo, router.query.projectId as string)
       .then((response) => {

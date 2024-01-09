@@ -127,9 +127,7 @@ else{
 
     return `--`;
   };
-  const handleProjectClick = (rowData:any) => {
-    console.log("rowdata",rowData);
-    
+  const handleProjectClick = (rowData:any) => {    
     if (rowData.status !== "Draft" && rowData.status !== "PendingApproval") {
       router.push(`/projects/${rowData._id}/sections`);
     } else if (rowData.status === "Draft" && rowData.role === "admin") {
