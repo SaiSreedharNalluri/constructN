@@ -127,7 +127,20 @@ else{
 
     return `--`;
   };
-
+  const handleProjectClick = (rowData:any) => {
+    console.log("rowdata",rowData);
+    
+    if (rowData.status !== "Draft" && rowData.status !== "PendingApproval") {
+      router.push(`/projects/${rowData._id}/sections`);
+    } else if (rowData.status === "Draft" && rowData.role === "admin") {
+      router.push(`project-onboarding?id=${rowData._id}`);
+    } else if (rowData.status === "Draft" && rowData.role !== "admin") {
+      setisAdmin(true);
+    } else if (rowData.status === "PendingApproval") {
+      setisPending(true);
+    }
+  };
+  
   const localizationOptions = {
     body: {
       emptyDataSourceMessage: <LocalSearch />,
@@ -148,32 +161,30 @@ else{
       },
       cellStyle: { width: "36%" },
       render: (rowData: any) => {
-        return <><div className="hover:cursor-pointer" onClick={()=>{
-          if(rowData.status !== "Draft" && rowData.status !== "PendingApproval" ){
-            router.push(`/projects/${rowData._id}/sections`);}
-          }
-        }>
-          <div className="flex justify-between">
-          <Tooltip
-            title={rowData.projectName?.length > 50 ? rowData.projectName : ""}
-          >
+        return  <div className="flex items-center justify-between">
+        <div className="hover:cursor-pointer" onClick={() => handleProjectClick(rowData)}>
+               <Tooltip
+              title={rowData.projectName?.length > 50 ? rowData.projectName : ""}
+            >
+              {truncateString(rowData.projectName, 50)}
+            </Tooltip>
+        </div>
+        <div>
+        {(rowData.status === "Draft" || rowData.status === "PendingApproval") && (
             <div>
-          {truncateString(rowData.projectName, 50)}
+          {rowData.status === 'PendingApproval' ? (
+                <div className="text-sm text-white py-[0.5px] bg-[#006CD0] cursor-default px-[4px] rounded-[3px]">
+                  {rowData.status.replace('Pending', 'Pending ')}
             </div>
-          </Tooltip>
-
-          {(rowData.status === "Draft" || rowData.status === 'PendingApproval') && (
-    <div >
-      {rowData.status === 'PendingApproval' ? (
-        <div className="text-sm text-white py-[0.5px] bg-[#006CD0] cursor-default px-[4px] rounded-[3px]">{rowData.status.replace('Pending', 'Pending ')}</div>
-      ) : (
-        <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">{rowData.status}</div>
+              ) : (
+                <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">
+                {rowData.status}
+</div>
       )}
     </div>
   )}
-          </div>
-      
-          </div></>;
+        </div>
+      </div>
       },
     },
     {
@@ -402,23 +413,18 @@ else{
       render: (rowData: any) => {
         return (
           <div>
-       {rowData.status === "Draft"?
-         <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>{
-          if(rowData.status==="Draft" && rowData.role==="admin"){
-            router.push(`project-onboarding?id=${rowData._id}`)
-          }
-       else if(rowData.status==="Draft" && rowData.role!=="admin"){
-        // CustomToast("Only Admin can edit this Draft ","info") 
-        setisAdmin(true)
-          }
-         }}>
-         Click to Resume
-        </div>:rowData.status === "PendingApproval" ?
-        <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={()=>{ setisPending(true)}}>
-          Pending Approval
+          {rowData.status === "Draft" ? (
+            <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={() => handleProjectClick(rowData)}>
+              Click to Resume
+            </div>
+          ) : rowData.status === "PendingApproval" ? (
+            <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={() => setisPending(true)}>
+              Pending Approval
+            </div>
+          ) : (
+            ""
+          )}
         </div>
-       :""}  
-       </div>
             
           
         );
