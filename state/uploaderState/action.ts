@@ -41,7 +41,8 @@ export enum UploaderActionType {
     setUploadCompletionState,
     setIsShowPopup,
     deleteJob,
-    retryJobUploading
+    retryJobUploading,
+    setShowRetry
 }
 
 export interface refreshJobs {
@@ -206,6 +207,10 @@ export interface retryJobUploading{
   type: UploaderActionType.retryJobUploading,
   payload: {job: IJobs}
 }
+export interface setShowRetry{
+  type:UploaderActionType.setShowRetry,
+  payload:{showRetry:string|null}
+}
 export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>) => {
     return {
       uploaderAction: {
@@ -313,6 +318,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         },
         retryJobUploading: (job: IJobs) => {
           dispatch({type: UploaderActionType.retryJobUploading, payload: {job:job}})
+        },
+        setShowRetry:(showRetry:string |null)=>{
+          dispatch({type:UploaderActionType.setShowRetry,payload:{showRetry:showRetry}})
         }
       }
     }
@@ -351,4 +359,5 @@ export type UploaderActions =
   | setUploadCompletionState
   | setIsShowPopup
   | deleteJob
-  |retryJobUploading
+  | retryJobUploading
+  | setShowRetry

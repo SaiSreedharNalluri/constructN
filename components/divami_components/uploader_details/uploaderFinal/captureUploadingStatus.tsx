@@ -140,7 +140,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
         } else {
           return(
             <div>
-            {show && uploaderState.selectedJob && uploaderState.selectedJob.status === JobStatus.uploadFailed && job._id === show ?
+            {uploaderState.showRetry && uploaderState.selectedJob && uploaderState.selectedJob.status === JobStatus.uploadFailed && job._id === uploaderState.showRetry ?
             (<div><AutorenewIcon color="warning" className="text-white bg-[#F1742E] rounded-full cursor-pointer"onClick={()=>{
             let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
             if(filesList != undefined)
@@ -246,9 +246,9 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       setHoveredRowIndex(index)
                       let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
                       if(uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId] !=undefined)
-                      setShow(job._id)} 
+                      uploaderAction.setShowRetry(job._id)} 
                       }
-                    onMouseLeave={() =>{setHoveredRowIndex(null), setShow(null)} }
+                    onMouseLeave={() =>{setHoveredRowIndex(null), uploaderAction.setShowRetry(null)} }
                   >
                     <td className="pl-2 w-[35%]  flex items-center">
                       {isUploadedOn && (
