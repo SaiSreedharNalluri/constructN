@@ -1607,16 +1607,18 @@ const Index: React.FC<IProps> = () => {
     }
 
   }
-  useEffect(()=>{
-    if(issueFilterState.isFilterApplied === false) 
-   {
-   ref.current?.issueFilterState(issueFilterState)
+//   useEffect(()=>{
+//     if(issueFilterState.isFilterApplied === false) 
+//    {
+//    ref.current?.issueFilterState(issueFilterState)
    
-   }
-   if(taskFilterState.isFilterApplied === false){
-     ref.current?.taskFilterState(taskFilterState)
-   }
- },[issueFilterList,taskFilterList])
+//    }
+//    if(taskFilterState.isFilterApplied === false){
+//      ref.current?.taskFilterState(taskFilterState)
+//    }
+//  },[issueFilterState,taskFilterState])
+
+
   const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("callback data", JSON.parse(msg.toString()))

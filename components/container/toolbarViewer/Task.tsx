@@ -102,7 +102,9 @@ function Task({
   const [contextInfo,setContextInfo] = useState<any>()
   let taskMenuInstance: IToolbarAction = { data: "",type:"showTask"};
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
-  const [filterState,setFilterState] = useState()
+  const [filterState,setFilterState] = useState({isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,})
   const [filterTaskList,setFilterTaskList] = useState([])
   
 

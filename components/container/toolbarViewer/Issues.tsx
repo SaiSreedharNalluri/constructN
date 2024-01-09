@@ -104,7 +104,11 @@ function Issues({
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [contextInfo,setContextInfo] = useState<any>()
   const[isLoading,setLoading]=useState(false)
-  const [filterState,setFilterState] = useState()
+  const [filterState,setFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,
+  })
   const [filterIssList,setFilterIssList] = useState([])
   useImperativeHandle(ref, () => {
     return{
