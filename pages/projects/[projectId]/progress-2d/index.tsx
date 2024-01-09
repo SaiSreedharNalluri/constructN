@@ -681,9 +681,12 @@ const Progress2DPage: React.FC<any> = () => {
 
         setSelectedCategory(category)
 
+
         if (category !== undefined) {
 
             _loadAssetsForCategory(category)
+
+            _loadCompareAssets(category)
 
         }
 
@@ -769,7 +772,6 @@ const Progress2DPage: React.FC<any> = () => {
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id].assetsCompare = [])
 
         if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotCompare().date, isSupportUser).then(res => {
-
             if (res.data.success) {
 
                 setLoading(false)
