@@ -106,6 +106,8 @@ const Body = ({
       .then((response: any) => {
         if (response.success === true) {
           setIssueStatusList(response.result);
+          console.log("status response",response.result);
+          
         }
       })
       .catch((error: any) => {

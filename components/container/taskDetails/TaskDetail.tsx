@@ -449,7 +449,7 @@ function BasicTabs(props: any) {
               <ThirdContWatch>Created By</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
-                {taskState?.TabOne?.owner}
+                {/* {taskState?.TabOne?.owner.fullName as string} */}
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
@@ -535,13 +535,13 @@ function BasicTabs(props: any) {
                     arrow
                     title={
                       <SecondAssigneeList>
-                        {taskState?.TabOne?.assignee?.map(
+                        {taskState?.TabOne?.assignessList?.map(
                           (assignName: any, index: number) => {
                             if (index !== 0) {
                               return (
                                 <>
                                   {index !==
-                                  taskState?.TabOne?.assigneesList.length - 1
+                                  taskState?.TabOne?.assignessList.length - 1
                                     ? assignName.firstName +
                                       " " +
                                       assignName.firstName +
@@ -882,6 +882,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     initData,
     toolClicked
   } = props;
+  
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
   const [selectedTask, setSelectedTask] = useState(task);
@@ -890,18 +891,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const[isLoading,setLoading]=useState(false);
   const [file, setFile] = useState<File>();
 
+
   useEffect(() => {
    
-    const taskData=initData?.currentTaskList?.find((each:any)=>{
+    const taskData=initData?.currentTaskList.find((each:any)=>{
       if(each._id === task._id){
         return each
       }
-     
       
     
     })
     setSelectedTask(taskData);
-  }, [task,initData]);
+  }, []);
   const DetailsObj = {
     TabOne: {
       options: [
@@ -958,7 +959,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
   const [showPopUp, setshowPopUp] = useState(false);
-
   useEffect(() => {
     let tempObj = {
       ...selectedTask,
@@ -968,7 +968,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       sequenceNumber: selectedTask?.sequenceNumber,
 
       capturedOn: selectedTask?.createdAt,
-      creator: selectedTask?.owner?.fullName,
+      creator: selectedTask.owner.fullName,
       issueDescription: selectedTask?.description,
       screenshot: selectedTask?.screenshot as string,
       attachments: selectedTask?.attachments,
@@ -997,6 +997,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
         TabOne: tempObj,
       };
     });
+
+    
   }, [selectedTask]);
 
   const deletetaskById = (taskList: Task[], selectedTask: Task) => {
@@ -1029,7 +1031,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
-      console.log("data",data);
       
       updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
@@ -1070,7 +1071,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value || each._id || each;
+        return each.value || each._id;
       });
     data.structure = initData?.structure?._id;
     data.snapshot = initData?.currentSnapshotBase?._id;

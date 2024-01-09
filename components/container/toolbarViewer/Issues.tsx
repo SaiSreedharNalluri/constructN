@@ -22,7 +22,7 @@ import {
   CameraIcon,
 } from "./ToolBarStyles";
 import { Drawer, Tooltip } from "@mui/material";
-import CreateIssue from "../../divami_components/create-issue/CreateIssue";
+import CreateIssue from "../createIssue/CreateIssue";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import {
   createIssue,
@@ -45,6 +45,8 @@ import { useRouter } from "next/router";
 
 export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
+  issueFilterState:(handleIssueFilterState:any)=>void;
+  filteredIssueList:(filteredIssueList:any)=>void;
   
   
 };
@@ -102,6 +104,12 @@ function Issues({
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [contextInfo,setContextInfo] = useState<any>()
   const[isLoading,setLoading]=useState(false)
+  const [filterState,setFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,
+  })
+  const [filterIssList,setFilterIssList] = useState([])
   useImperativeHandle(ref, () => {
     return{
       handleIssueInstance(IssuetoolInstance:any){
@@ -133,9 +141,16 @@ function Issues({
         setSelectedIssue(selectedObj)
         setOpenIssueDetails(true)
       }
+    },
+    issueFilterState(handleIssueFilterState:any){
+      setFilterState(handleIssueFilterState)
+    },
+    filteredIssueList(filteredIssueList:any){
+      setFilterIssList(filteredIssueList)
     }
     }
-  },[]);
+  },[router.isReady,initData]);
+
   
   useEffect(() => {
     setMyProject(currentProject);
@@ -246,7 +261,6 @@ function Issues({
     if (data.title && data.type && data.priority) {
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
-          console.log("issue comp res",response)
           if (response.success === true) {
             CustomToast(" Issue created successfully","success");
             setEnableSubmit(true);
@@ -413,7 +427,7 @@ function Issues({
         >
           <CustomIssueListDrawer
             closeFilterOverlay={closeFilterOverlay}
-            issuesList={initData}
+            issuesList={initData.currentIssueList}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
@@ -428,7 +442,7 @@ function Issues({
             contextInfo={contextInfo}
             currentProject={currentProject}
             issueTypesList={issueTypesList}
-            issueFilterState={issueFilterState}
+            issueFilterState={filterState}
             setIssueFilterState={setIssueFilterState}
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
@@ -438,7 +452,8 @@ function Issues({
             projectUsers={projectUsers}
             issueContext={issueContext}
             toolClicked={toolClicked}
-            initData={initData}
+            initData={initData.currentIssueList}
+           
 
           />
         </Drawer>
@@ -487,7 +502,7 @@ function Issues({
             setIssueList={setIssueList}
             deleteTheAttachment={deleteTheAttachment}
             getIssues={getIssues}
-            issuesList={issuesList}
+            issuesList={initData.currentIssueList}
             deleteTheIssue={deleteTheIssue}
             issueLoader={issueLoader}
             setIssueLoader={setIssueLoader}

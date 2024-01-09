@@ -70,7 +70,7 @@ import { Issue } from "../../../models/Issue";
 import { IToolbarAction, ITools } from "../../../models/ITools";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { getProjectUsers } from "../../../services/project";
-import FilterCommon from "../../divami_components/issue-filter-common/IssueFilterCommon";
+import FilterCommon from "../IssueFilter/IssueFilterCommon"
 import CustomIssueDetailsDrawer from "../issueDetails/IssueDetail";
 // import {
 //   CloseIcon,
@@ -84,6 +84,7 @@ import {
   CloseIcon, CustomSearchField,
   IconContainer,
 } from "../../divami_components/task_list/TaskListStyles";
+import { getIssuesList } from "../../../services/issue";
 
 
 interface IProps {
@@ -196,7 +197,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const [downloadList, setDownloadList] = useState(issueList);
 
   const [filteredIssuesList, setFilteredIssuesList] = useState<any>(
-    issueList?.currentIssueList.slice(0, 10)
+    issueList?.slice(0, 10)
   );
   //
   const [filterRsp, setFilterRsp] = useState<IFilterProps>({
@@ -207,6 +208,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
     tagStatus: [],
     loading: true,
   });
+ 
 
   const [sortRsp, setSortRsp] = useState<ISortProps>({
     sortPriority: [],
@@ -277,19 +279,20 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   const handleDownloadMenuClick = () => handleDownloadClose();
 
 
-  const [errorShow, setErrorShow] = useState<any>(issueList.currentIssueList);
+  const [errorShow, setErrorShow] = useState<any>(issueList);
 
   useEffect(() => {
     setIssueList(issuesList);
     setDownloadList(issuesList);
+    
   }, [issuesList]);
 
   useEffect(() => {
-    setFilteredIssuesList(issueList?.currentIssueList.slice(0, 10));
+    setFilteredIssuesList(issueList?.slice(0, 10));
   }, [issueList]);
 
   useEffect(() => {
-    setRemainingIssues(issueList?.currentIssueList?.currentIsuueList?.length > 10 ? issueList.currentIssueList.length : 0);
+    setRemainingIssues(issueList?.length > 10 ? issueList.length : 0);
   }, [issueList]);
 
   const closeIssueList = () => {
@@ -298,6 +301,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleViewTaskList = () => {
     setOpenDrawer(true);
+    
+  
   };
 
   const handleSearchWindow = () => {
@@ -310,7 +315,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleSearch = () => {
     if (searchTerm) {
-      const filteredData: any = issueList?.currentIssueList.filter((eachIssue: any) => {
+      const filteredData: any = issueList.currentIssueList.filter((eachIssue: any) => {
         const taskName = eachIssue?.type?.toLowerCase();
         const sequenceNumber = eachIssue?.sequenceNumber.toString();
         return (
@@ -322,15 +327,15 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       setFilteredIssuesList([...filteredData.slice(0, 10)]);
       setRemainingIssues(filteredData.length > 10 ? filteredData.length : 0);
     } else {
-      setFilteredIssuesList(issueList.currentIssueList.slice(0, 10));
-      setRemainingIssues(issueList.currentIssueList.length > 10 ? issueList?.currentIssueList?.length : 0);
+      setFilteredIssuesList(issueList.slice(0, 10));
+      setRemainingIssues(issueList.length > 10 ? issueList?.length : 0);
     }
   };
 
   const handleLoadMore = () => {
     const noOfIssuesLoaded = filteredIssuesList.length;
     if (searchTerm) {
-      const filteredData: any = issueList?.currentIssueList.filter((eachIssue: any) => {
+      const filteredData: any = issueList?.filter((eachIssue: any) => {
         const taskName = eachIssue?.type?.toLowerCase();
         const sequenceNumber = eachIssue?.sequenceNumber.toString();
         return (
@@ -341,8 +346,8 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       setRemainingIssues(filteredData?.length - (noOfIssuesLoaded + 10));
       setFilteredIssuesList([...filteredData.slice(0, noOfIssuesLoaded + 10)]);
     } else {
-      setFilteredIssuesList(issueList?.currentIssueList?.slice(0, noOfIssuesLoaded + 10));
-      setRemainingIssues(issueList?.currentIssueList?.length - (noOfIssuesLoaded + 10));
+      setFilteredIssuesList(issueList?.slice(0, noOfIssuesLoaded + 10));
+      setRemainingIssues(issueList?.length - (noOfIssuesLoaded + 10));
     }
   };
 
@@ -352,13 +357,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   useEffect(() => {
     if (viewIssue?._id) {
-      issueList.currentIssueList.forEach((item: any) => {
+      issueList.forEach((item: any) => {
         if (viewIssue._id === item._id) {
           setViewIssue(item);
         }
       });
     }
-  }, [issueList.currentIssueList]);
+  }, [issueList]);
+
 
   const handleViewIssue = (issue: any) => {
     filteredIssuesList.forEach((item: any) => {
@@ -411,7 +417,6 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
       issueContRef.current.scrollTop = 0;
     }
   };
-console.log("drawer isserie",issueList);
 
   return (
     <>
@@ -571,7 +576,7 @@ console.log("drawer isserie",issueList);
                           </ProgressChild>
                           <SmallDivider src={smallDivider} alt="progress" />
 
-                          {/* <PriorityChild>
+                          <PriorityChild>
                             {val?.assignees[0]?.firstName
                               .charAt(0)
                               .toUpperCase()}
@@ -580,7 +585,7 @@ console.log("drawer isserie",issueList);
                               .charAt(0)
                               .toUpperCase()}
                             {val?.assignees[0]?.lastName.slice(1)}
-                          </PriorityChild>  */}
+                          </PriorityChild> 
 
                           <LightTooltip
                             arrow
@@ -656,7 +661,7 @@ console.log("drawer isserie",issueList);
               }
             >
               <CustomIssueDetailsDrawer
-                issuesList={issueList.currentIssueList}
+                issuesList={initData}
                 issue={viewIssue}
                 onClose={() => {
                   setOpenIssueDetail((prev: any) => !prev)
@@ -694,7 +699,7 @@ console.log("drawer isserie",issueList);
                 issuesList={issuesList}
                 visibility={listOverlay}
                 closeOverlay={closeIssueList}
-                handleOnFilter={handleOnFilter}
+                toolClicked={toolClicked}
                 onClose={() => setOpenDrawer((prev: any) => !prev)}
                 handleOnSort={() => { }}
                 deleteTheIssue={() => { }}

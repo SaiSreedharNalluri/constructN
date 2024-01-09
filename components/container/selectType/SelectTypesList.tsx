@@ -127,6 +127,7 @@ setFilteredItems(result)
           />
         </DrawerSearchBar>
         <ListStyled>
+        
           {filteredItems?.length >0 && 
            filteredItems?.map((item: any, index: number) => (
               <>

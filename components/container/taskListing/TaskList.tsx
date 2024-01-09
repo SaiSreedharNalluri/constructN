@@ -277,7 +277,9 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   const handleViewTask = (task: any) => {
-    filteredTaskList.forEach((item: any) => {
+    console.log("handletask",task);
+    
+    initData?.currentTaskList.forEach((item: any) => {
       if (task._id === item._id) {
         setViewTask(item);
         // taskContext(task)
@@ -356,7 +358,6 @@ const CustomTaskListDrawer = (props: any) => {
       taskContRef.current.scrollTop = 0;
     }
   };
-  console.log("routerrrrrrre",router)
   return (
     <>
       {errorShow?.length > 0 ? (
@@ -702,6 +703,7 @@ const CustomTaskListDrawer = (props: any) => {
                 handleOnFilter={handleOnTaskFilter}
                 onClose={() => setOpenDrawer((prev: any) => !prev)}
                 taskFilterState={taskFilterState}
+                toolClicked={toolClicked}
               />
             </Drawer>
           )}

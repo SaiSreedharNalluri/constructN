@@ -41,7 +41,8 @@ import { useRouter } from "next/router";
 
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
-  
+  taskFilterState:(taskFilterState:any)=>void;
+  filteredTaskList:(filteredTaskList:any)=>void;
   
 };
 function Task({
@@ -101,6 +102,10 @@ function Task({
   const [contextInfo,setContextInfo] = useState<any>()
   let taskMenuInstance: IToolbarAction = { data: "",type:"showTask"};
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
+  const [filterState,setFilterState] = useState({isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,})
+  const [filterTaskList,setFilterTaskList] = useState([])
   
 
   useImperativeHandle(ref, () => {
@@ -139,7 +144,16 @@ function Task({
         
         }
 
+      },
+      taskFilterState(taskFilterState:any){
+        console.log("taskFilter state",taskFilterState);
+        
+        setFilterState(taskFilterState)
+      },
+      filteredTaskList(filteredTaskList:any){
+        setFilterTaskList(filteredTaskList)
       }
+      
     }},[])
 
   useEffect(() => {
@@ -168,7 +182,6 @@ function Task({
     }
   };
   const clickTaskSubmit = (formData: any) => {
-console.log("form datttaaa",formData)
     setEnableSubmit(false);
     let data: any = {};
     const userIdList = formData
@@ -180,7 +193,6 @@ console.log("form datttaaa",formData)
     data.snapshot = initData.currentSnapshotBase._id;
     data.status = "To Do";
     data.context = contextInfo;
-    console.log("contextInfo",contextInfo)
     Object.keys(contextInfo).forEach((key) => {
       if (key !== "id") {
         data.context = { ...data.context, [key]: contextInfo[key] };
@@ -439,7 +451,7 @@ console.log("form datttaaa",formData)
           }}
         >
           <TaskList
-            tasksList={tasksList}
+            tasksList={initData.currentTaskList}
             taskMenuClicked={taskMenuClicked}
             currentProject={myProject}
             currentStructure={myStructure}
@@ -449,7 +461,7 @@ console.log("form datttaaa",formData)
             handleOnTaskFilter={handleOnTaskFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
             deleteTheTask={deleteTheTask}
-            taskFilterState={taskFilterState}
+            taskFilterState={filterState}
             getTasks={getTasks}
             handleOnTasksSort={handleOnTasksSort}
             deleteTheAttachment={deleteTheAttachment}

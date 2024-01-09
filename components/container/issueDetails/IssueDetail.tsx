@@ -28,7 +28,7 @@ import CustomButton from "../../divami_components/custom-button/CustomButton";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
 import { toast } from "react-toastify";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
-import CreateIssue from "../../divami_components/create-issue/CreateIssue";
+import CreateIssue from "../createIssue/CreateIssue";
 import { ISSUE_FORM_CONFIG } from "../../divami_components/create-issue/body/Constants";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { editIssue } from "../../../services/issue";
@@ -951,9 +951,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [selectedIssue, setSelectedIssue] = useState(issue);
   const[isLoading,setLoading]=useState(false);
   const router = useRouter();
+  console.log("selected Issue",selectedIssue,initData);
+  
   useEffect(() => {
 
-    const issueData=initData?.currentIssueList.find((each:any)=>{
+    const issueData=issuesList.find((each:any)=>{
       if(each._id === issue?._id){
         return each
       }
@@ -980,7 +982,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
-    console.log("selectedIssue",selectedIssue)
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
 
     const deleteTheAttachment = (attachmentId: string) => {
@@ -1051,7 +1052,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
-  console.log("selected issue",initData);
   
   useEffect(() => {
     let tempObj = {
@@ -1059,7 +1059,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       options: selectedIssue?.options,
       priority: selectedIssue?.priority,
       capturedOn: selectedIssue?.createdAt,
-      creator: selectedIssue?.owner,
+      creator: selectedIssue?.owner.fullName,
       issueDescription: selectedIssue?.description,
       screenshot: selectedIssue?.screenshot as string,
       attachments: selectedIssue?.attachments,
