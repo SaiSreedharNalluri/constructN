@@ -4,7 +4,7 @@ import {
   Content,
   ProjectsListContainer,
 } from "../../components/divami_components/project-users-list/usersListStyles";
-import { Drawer, InputAdornment, Menu, Tooltip } from "@mui/material";
+import { Drawer, InputAdornment, Menu, Tooltip,Button } from "@mui/material";
 import {
   HeaderActions,
   HeaderImage,
@@ -80,6 +80,7 @@ import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted
 import CustomLoggerClass from "../../components/divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../state/appState/context";
 import { IProjects } from "../../models/IProjects";
+// import { Button} from "@material-ui/core";
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -335,6 +336,7 @@ const Index: React.FC<any> = () => {
               setShowWelcomeMessage(true);
             }
             const projectsData = response?.data?.result.map((each: any) => {
+              console.log(each)
               return {
                 ...each,
                 companyLogo: each.coverPhoto,
@@ -343,19 +345,19 @@ const Index: React.FC<any> = () => {
                 numberOfUsers: each.usersCount,
                 updatedAt: moment(each.lastUpdated).format("DD MMM YY"),
                 lastUpdated: new Date(each.lastUpdated),
-                capture360Count: each?.captures["360 Image"]
+                capture360Count: each?.captures && each?.captures["360 Image"]
                   ? `${each?.captures["360 Image"]}`
                   : "0",
-                captureVideoWalkCount: each?.captures["360 Video"]
+                captureVideoWalkCount: each?.captures && each?.captures["360 Video"]
                   ? `${each?.captures["360 Video"]}`
                   : "0",
-                capturePhoneCount: each?.captures["Phone Image"]
+                capturePhoneCount: each?.captures && each?.captures["Phone Image"]
                   ? `${each?.captures["Phone Image"]}`
                   : "0",
-                captureLidarCount: each?.captures["LiDAR Scan"]
+                captureLidarCount: each?.captures && each?.captures["LiDAR Scan"]
                   ? `${each?.captures["LiDAR Scan"]}`
                   : "0",
-                captureDroneCount: each?.captures["Drone Image"]
+                captureDroneCount: each?.captures && each?.captures["Drone Image"]
                   ? `${each?.captures["Drone Image"]}`
                   : "0",
               };
@@ -374,11 +376,13 @@ const Index: React.FC<any> = () => {
                 return dateB-dateA
               }
             })
-            setProjects(sortedProjects);
+            console.log(sortedProjects)
+            setProjects(sortedProjects.sort((a: any, b: any) => a.status === 'Draft' || a.status === 'PendingApproval' ? -1 : 1));
           }
           setShowLoading(false);
         })
-        .catch((error) => {
+        .catch((error: any) => {
+          console.log(error)
           setShowWelcomeMessage(true);
         });
       getUserRoles().then((res: any) => {
@@ -407,7 +411,9 @@ const Index: React.FC<any> = () => {
   }, [router.isReady]);
 
   useEffect(() => {
-    setSearchTableData(projects);
+    setSearchTableData([]
+      .concat(projects)
+      .sort((a: any, b: any) => a.status === 'Draft' || a.status === 'PendingApproval' ? -1 : 1));
   }, [projects]);
 
   const onDeleteIssue = (status: any) => {
@@ -543,6 +549,7 @@ const Index: React.FC<any> = () => {
             <ProjectsHeader>
               <HeaderLabel>Project(s) </HeaderLabel>
               <HeaderActions>
+              <Button onClick={()=>router.push("project-onboarding")} style={{backgroundColor:"#FF853E",marginRight:"22px",color:"white"}}>+ Create New Project</Button>
                 {isSearching ? (
                   <SearchAreaContainer marginRight>
                     <CustomSearchField

@@ -85,7 +85,10 @@ import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, De
 import instance from "../../../services/axiosInstance";
 import { API } from "../../../config/config";
 import { toast } from "react-toastify";
+import authHeader from "../../../services/auth-header";
 // import { ISections } from "../../../models/ISections";
+
+const headers = {headers: authHeader.authHeader()}
 
 interface RowData {
   tableData: { id: number };
@@ -99,7 +102,7 @@ const fetchAssetCategories = (projectId: string) => {
 
   try {
 
-      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
 
   } catch (error) { throw error }
 
@@ -249,9 +252,9 @@ const[isProcessing,setProcessing]=useState(false);
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string
 
-      // fetchAssetCategories(projectId).then(res => {
-      //   if(res.data.success) setHasProgress2D(res.data.result.length > 0)
-      // }).catch(e => console.log(e))
+      fetchAssetCategories(projectId).then(res => {
+        if(res.data.success) setHasProgress2D(res.data.result.length > 0)
+      }).catch(e => console.log(e))
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
@@ -785,43 +788,46 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
     },
 
 
-    // {
-    //   title: "Progress 2D",
-    //   field: "has2dProgress",
-    //   sorting: false,
-    //   headerStyle: {
-    //     borderBottom: "1px solid #FF843F",
-    //     fontFamily: "Open Sans",
-    //     fontStyle: "normal",
-    //     fontWeight: "500",
-    //     fontSize: "14px",
-    //     lineHeight: "20px",
-    //     color: "#101F4C",
-    //   },
-    //   cellStyle: { width: "20%" },
+    {
+      title: "Progress 2D",
+      field: "has2dProgress",
+      sorting: false,
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
+      cellStyle: { width: "20%" },
    
-    //   render: (rowData: any) => {
-    //     return <div className="cursor-pointer">{
-    //       <TooltipText title="2D Progress">
-    //         <div className="flex justify-center">
-    //           <Progress2DImageIcon
-    //             src={Progress2DImage}
-    //             alt={""}
-    //             onClick={() => {
-    //               if(hasProgress2D) {
-    //                 router.push({
-    //                   pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-    //                   query: { structId: rowData._id },
-    //                 })} else {
-    //                   toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
-    //                 }
-    //             }}
-    //           ></Progress2DImageIcon>
-    //         </div>
-    //       </TooltipText>
-    //       }</div>;
-    //   },
-    // },
+      render: (rowData: any) => {
+
+        const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
+        
+        return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
+          <TooltipText title="2D Progress">
+            <div className="flex justify-center">
+              <Progress2DImageIcon
+                src={Progress2DImage}
+                alt={""}
+                onClick={() => {
+                  if(hasProgress2D) {
+                    router.push({
+                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+                      query: { structId: rowData._id },
+                    })} else {
+                      toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
+                    }
+                }}
+              ></Progress2DImageIcon>
+            </div>
+          </TooltipText>
+          }</div> : 'Not Available';
+      },
+    },
   ];
 
 

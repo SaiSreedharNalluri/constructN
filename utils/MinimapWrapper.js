@@ -9,6 +9,13 @@ import {
 } from './ViewerDataUtils';
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 import PointTool from './Tools';
+
+const publish = (eventName, data) => {
+  const event = new CustomEvent(eventName, { detail: data })
+  document.dispatchEvent(event)
+
+}
+
 export class ForgeMinimapInstance {
 
   constructor(viewerId) {
@@ -515,6 +522,7 @@ export const MinimapUtils = () => {
         //   };
         // } else {
         console.log(`Inside Rag Click click: ${JSON.stringify(targetObject)}`, _viewerId);
+        publish('show-pointcloud', false);
         if(!targetObject.id) return
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();

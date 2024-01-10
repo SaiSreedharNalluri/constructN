@@ -116,10 +116,12 @@ const ProjectHierarchy = ({
       getStructureData ? getStructureData(nodes) : null;
       const { pathname, query } = router
       delete query.paramName;
+      delete router.query.snap;
+      
       const newQueryParamValue =  nodes._id // Specify the new value for the query parameter
       router.push({
         pathname: pathname,
-        query: { ...router.query, structId: newQueryParamValue },
+        query: { ...router.query, structureId: newQueryParamValue },
       });
       
       if (
@@ -147,7 +149,7 @@ const ProjectHierarchy = ({
   };
 
   const renderTreeNode = (node: any, onLabelClick: any) => {
-    console.log(node, '========')
+    //console.log(node, '========')
     return (
       <LabelContainer data-testid="label" className={node?.snapshots && node?.designs?.length>0 && Object.keys(node?.snapshots?.latestSnapshot).length <= 0 || Object.keys(node?.snapshots?.latestSnapshot).length >=0 && node?.snapshots?.snapshotActiveCount <1 ?"bg-[#E7E7E7] ":""} >
         <div className="flex items-center">

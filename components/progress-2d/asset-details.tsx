@@ -17,10 +17,7 @@ import { API } from '../../config/config'
 import Metrics from './metrics-details'
 import authHeader from '../../services/auth-header'
 
-
-const headers = {
-    headers: authHeader.authHeader(),
-}
+const headers = {headers: authHeader.authHeader()}
 
 
 const fetchAssetDetails = (assetId: string, date: string) => {
@@ -119,17 +116,29 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 changeAssetStage(assetId, values.stage, snapshotBase.date).then(res => {
 
-                    onChange && onChange(res.data.result)
+                    if(!(name !== actualName || description !== actualDecription)) {
 
-                    toast.success('Updated asset stage successfully!', { autoClose: 5000 })
+                        onChange && onChange(res.data.result);
+                    
+                    }
 
-                    setLoading(false)
+                    if(!(name !== actualName || description !== actualDecription)) {
+
+                        toast.success('Updated asset stage successfully!', { autoClose: 5000 })
+                    
+                    }
+
+                    // setLoading(false)
 
                 }).catch(err => {
 
                     setLoading(false)
 
-                    toast.error('Failed to update asset stage!', { autoClose: 5000 })
+                    if(!(name !== actualName || description !== actualDecription)) {
+
+                        toast.error('Failed to update asset stage!', { autoClose: 5000 })
+                    
+                    }
 
                 })
 
@@ -141,10 +150,10 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                         updateAssetDetails(assetId, { name, description}).then(res => {
         
                             if(onChange) onChange(res.data.result)
+
+                            toast.success('Updated asset details successfully!', { autoClose: 5000 });
         
-                            toast.success('Updated asset details successfully!', { autoClose: 5000 })
-        
-                            setLoading(false)
+                            // setLoading(false)
         
                         }).catch(err => {
         
@@ -153,6 +162,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                             setLoading(false)
         
                             toast.error('Failed to update asset details!', { autoClose: 5000 })
+
         
                         })
         
@@ -172,7 +182,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 toast.success('Removed asset stage successfully!', { autoClose: 5000 })
 
-                setLoading(false)
+                // setLoading(false)
 
             }).catch(err => {
 
@@ -246,7 +256,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
 
-                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} /></div>}
+                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} asset={asset} onChange={onChange} /></div>}
 
                     </div>
                 }

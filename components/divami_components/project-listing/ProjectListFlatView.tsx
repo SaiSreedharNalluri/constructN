@@ -38,7 +38,10 @@ import { SortDescIcon } from "./SortDescIcon";
 import LocalSearch from "../local_component/LocalSearch";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import { TooltipText } from "../side-panel/SidePanelStyles";
-
+import Delete from "../../../public/divami_icons/delete.svg";
+import { CustomToast } from "../custom-toaster/CustomToast";
+import PopupComponent from "../../popupComponent/PopupComponent";
+import { deleteProject } from "../../../services/project";
 export const ProjectListFlatView = ({
   projects,
   projectActions,
@@ -52,12 +55,32 @@ export const ProjectListFlatView = ({
   const [showMoreActions, setShowMoreActions] = useState<boolean>(false);
 
   const [projectsState, setProjectsState] = useState(projects);
-
+  const[isAdmin,setisAdmin]=useState(false);
+  const[isPending,setisPending]=useState(false);
+  const[projectId,setProjectId]=useState("");
+  const[isDelete,setDelete]=useState(false);
+  const[role,setRole]=useState("");
   useEffect(() => {
     // setProjectsState([...projects]);
     setProjectsState([...projects]);
   }, [projects]);
+  const onDelete = (projectId: string,role:string) => {
+    if(role==="admin"){
+      deleteProject(projectId).then(res => {
+       const updatedProjects = projectsState.filter((project: any) => project._id !== projectId);          
+        setProjectsState(updatedProjects);
+        CustomToast(res.message,"success")
+      })
+      .catch((err) => {
+        CustomToast(err, 'error')
+        
+      } )
+    }
+else{
+  CustomToast("Only Admin can delete the project","success")
+}
 
+  }
   const sortBy = (field: string) => {
     if (sortObj) {
       setProjectsState(
@@ -104,6 +127,20 @@ export const ProjectListFlatView = ({
 
     return `--`;
   };
+  const handleProjectClick = (rowData:any) => {
+    console.log("rowdata",rowData);
+    
+    if (rowData.status !== "Draft" && rowData.status !== "PendingApproval") {
+      router.push(`/projects/${rowData._id}/sections`);
+    } else if (rowData.status === "Draft" && rowData.role === "admin") {
+      router.push(`project-onboarding?id=${rowData._id}`);
+    } else if (rowData.status === "Draft" && rowData.role !== "admin") {
+      setisAdmin(true);
+    } else if (rowData.status === "PendingApproval") {
+      setisPending(true);
+    }
+  };
+  
   const localizationOptions = {
     body: {
       emptyDataSourceMessage: <LocalSearch />,
@@ -122,13 +159,32 @@ export const ProjectListFlatView = ({
         lineHeight: "20px",
         color: "#101F4C",
       },
-      cellStyle: { width: "32%" },
+      cellStyle: { width: "36%" },
       render: (rowData: any) => {
-        return <><div className="hover:cursor-pointer" onClick={()=>{
-          router.push(`/projects/${rowData._id}/sections`);
-        }}>
-          {truncateString(rowData.projectName, 50)}
-          </div></>;
+        return  <div className="flex items-center justify-between">
+        <div className="hover:cursor-pointer" onClick={() => handleProjectClick(rowData)}>
+               <Tooltip
+              title={rowData.projectName?.length > 50 ? rowData.projectName : ""}
+            >
+              {truncateString(rowData.projectName, 50)}
+            </Tooltip>
+        </div>
+        <div>
+        {(rowData.status === "Draft" || rowData.status === "PendingApproval") && (
+            <div>
+          {rowData.status === 'PendingApproval' ? (
+                <div className="text-sm text-white py-[0.5px] bg-[#006CD0] cursor-default px-[4px] rounded-[3px]">
+                  {rowData.status.replace('Pending', 'Pending ')}
+            </div>
+              ) : (
+                <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">
+                {rowData.status}
+</div>
+      )}
+    </div>
+  )}
+        </div>
+      </div>
       },
     },
     {
@@ -145,6 +201,8 @@ export const ProjectListFlatView = ({
       },
       render: (rowData: any) => {
         return (
+          rowData.status === "Draft" ||   rowData.status === "PendingApproval" ?"-":
+          <>
           <CapturesFieldContainer>
             <CapturesField>
               <TooltipText title="360 Image">
@@ -216,9 +274,10 @@ export const ProjectListFlatView = ({
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
+          </>
         );
       },
-      cellStyle: { width: "25%" },
+      cellStyle: { width: "20%" },
     },
     {
       title: <CustomColumnTitle>Users</CustomColumnTitle>,
@@ -317,7 +376,7 @@ export const ProjectListFlatView = ({
         lineHeight: "8px",
         color: "#101F4C",
       },
-      cellStyle: { width: "28%" },
+      cellStyle: { width: "14%" },
 
       customSort: () => sortByLastUpdated(),
       render: (rowData: any) => {
@@ -326,6 +385,49 @@ export const ProjectListFlatView = ({
           ? "N/A"
           : moment(rowData.lastUpdated).format('DD MMM YYYY')}
         </>;
+      },
+    },
+    // {
+    //   title: "",
+    //   field: "",
+
+    //   cellStyle: { width: "16%" },
+    //   render: (rowData: any) => {
+    //     return   <div>
+    //     {rowData._id==="PRJ697680"?
+    //      <div className="font-bold text-base text-[#101F4C] text-center" onClick={()=>router.push("project-onboarding")}>
+    //      Click to Resume
+    //     </div>:rowData._id==="PRJ69768" ?
+    //     <div className="font-bold text-base text-[#101F4C] text-center" >
+    //       Pending Approval
+    //     </div>
+    //    :""}  
+    //    </div>
+    //   },
+    // },
+    {
+
+
+      cellStyle: { width: "16%" },
+      sorting: false,
+      render: (rowData: any) => {
+        return (
+          <div>
+          {rowData.status === "Draft" ? (
+            <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={() => handleProjectClick(rowData)}>
+              Click to Resume
+            </div>
+          ) : rowData.status === "PendingApproval" ? (
+            <div className="font-bold  text-[#101F4C] text-center cursor-pointer" onClick={() => setisPending(true)}>
+              Pending Approval
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+            
+          
+        );
       },
     },
     {
@@ -344,17 +446,30 @@ export const ProjectListFlatView = ({
       sorting: false,
       render: (rowData: any) => {
         return (
-          <TooltipText  title="Project Menu">
-            <div>
-          <CustomMenu
-            hoveringOver={hoveringOver}
-            imageSrc={MoreActions}
-            menuOptions={projectActions}
-            data={rowData}
-            id="rowMenu"
-          />
+         
+          rowData.status === "Draft"|| rowData.status === "PendingApproval"?  <TooltipText title="Delete Project" placement="bottom"> 
+          <div>
+          <Image src={Delete} onClick={(e)=>{ 
+            e.stopPropagation(); 
+            setDelete(true)
+            setProjectId(rowData._id)
+            setRole(rowData.role)  ;}} 
+alt="delete" className=" cursor-pointer"></Image>
           </div>
           </TooltipText>
+          : <TooltipText  title="Project Menu">
+             <div>
+             <CustomMenu
+             hoveringOver={hoveringOver}
+             imageSrc={MoreActions}
+             menuOptions={projectActions}
+             data={rowData}
+             id="rowMenu"
+           />
+           </div>
+           </TooltipText>
+            
+          
         );
       },
     },
@@ -427,6 +542,7 @@ export const ProjectListFlatView = ({
                 fontWeight: "400",
                 fontSize: "14px",
                 color: "#101F4C",
+                backgroundColor: rowData.status==="Draft" ?"#d9d9d9" :rowData.status === 'PendingApproval'?"#FFECE2":""
                 // backgroundColor:
                 //   rowData.tableData.id == hoveringOver ? "#FFF2EB" : "",
               }),
@@ -445,6 +561,56 @@ export const ProjectListFlatView = ({
           />
         </TableWrapper>
       </ThemeProvider>
+        {
+        isAdmin || isPending?<PopupComponent open={isAdmin?isAdmin:isPending}
+        setShowPopUp={isAdmin?setisAdmin:setisPending}
+        modalTitle={isAdmin? "Access Denied !!":"Review in progress !!"}
+        modalmessage={
+        isAdmin?
+        <div className="flex flex-col">
+          <div>
+          1. The project you are trying to access is in draft stage.
+          </div>
+        <div>
+        2. Please reach out to the admin of this project to finish the project setup.
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>:<div className="flex flex-col">
+          <div>
+          1. The project you are trying to access has not been approved.
+          </div>
+        <div>
+        2. You can access the project only after the project has been approved. 
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>}
+        primaryButtonLabel={"Ok"}
+        SecondaryButtonlabel={""}
+        callBackvalue={
+          isAdmin?
+          () => {
+          setisAdmin(false)
+        }:() => {
+          setisPending(false)
+        }}></PopupComponent>:""
+      }
+            {
+        isDelete? <PopupComponent
+        open={isDelete}
+        setShowPopUp={setDelete}
+        modalTitle={"'Attention'"}
+        modalmessage={
+         `Are you sure you want to 'Delete Project'?`
+        }
+        primaryButtonLabel={"Yes"}
+        SecondaryButtonlabel={"No"}
+        callBackvalue={()=>{onDelete(projectId,role);setDelete(false)}}
+      />:""
+      }
     </ProjectUsersListContainer>
   );
 };

@@ -1,7 +1,7 @@
 import router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { IProjects } from "../../../models/IProjects";
-import { getProjects, getProjectsList } from "../../../services/project";
+import { deleteProject, getProjects, getProjectsList } from "../../../services/project";
 import userCount from "../../../public/divami_icons/userCount.svg";
 import updatedAtIcon from "../../../public/divami_icons/updatedAtIcon.svg";
 import {
@@ -49,11 +49,13 @@ import DroneImageNew from "../../../public/divami_icons/DroneImageNew.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import ReactCardFlip from "react-card-flip";
 import cardMenu from "../../../public/divami_icons/cardMenu.svg";
-
+import Delete from "../../../public/divami_icons/delete.svg";
 import moment from "moment";
 import CustomLoader from "../custom_loader/CustomLoader";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { Tooltip } from "@mui/material";
+import { CustomToast } from "../custom-toaster/CustomToast";
+import PopupComponent from "../../popupComponent/PopupComponent";
 export const ProjectListCardView = ({
   projects,
   projectActions,
@@ -63,19 +65,42 @@ export const ProjectListCardView = ({
   const customLogger = new CustomLoggerClass();
   const [projectsData, setProjectsData] = useState(
     projects?.length
-      ? projects.map((each: any, index: number) => {
-          return {
-            ...each,
-            showActionsCard: index == 1 ? true : false,
-          };
-        })
-      : []
+   ? projects.map((each: any, index: number) => {
+      return {
+        ...each,
+        showActionsCard: index == 1 ? true : false,
+      };
+    })
+: []
   );
 
   useEffect(() => {
+    console.log(projects)
     setProjectsData(projects);
   }, [projects]);
 
+  const[isAdmin,setisAdmin]=useState(false);
+  const[isPending,setisPending]=useState(false);
+  const[isDelete,setDelete]=useState(false);
+  const[projectId,setProjectId]=useState("");
+  const[role,setRole]=useState("");
+  const onDelete = (projectId: string,role:string) => {
+    if(role==="admin"){
+      deleteProject(projectId).then((res) => {
+        const updatedProjects = projectsData.filter((project: any) => project._id !== projectId);          
+        setProjectsData(updatedProjects);
+        CustomToast(res.message,"success")
+      })
+      .catch((err) => {
+        CustomToast(err, 'error')
+        
+      } )
+    }
+else{
+  CustomToast("Only Admin can delete the project","success")
+}
+
+  }
   const Card = ({ each }: any) => {
     const [isFlipped, setIsFlipped] = useState(true);
 
@@ -89,6 +114,7 @@ export const ProjectListCardView = ({
           onMouseLeave={() => {
             setIsFlipped((prev) => !prev);
           }}
+
         >
           <ProjectTopLeftBg active />
           <ProjectTopRightBg active />
@@ -132,14 +158,37 @@ export const ProjectListCardView = ({
         <ProjectCard
           onClick={(e: any) => {
             e.stopPropagation();
-            router.push(`/projects/${each._id}/sections`);
+            if(each.status==="Draft" && each.role==="admin"){
+              router.push(`project-onboarding?id=${each._id}`)
+            }
+         else if(each.status==="Draft" && each.role!=="admin"){
+          setisAdmin(true)
+            }
+            else if(each.status==="PendingApproval"){              
+              setisPending(true)
+            }
+        
+            else if (each.status !== "Draft" && each.status !== "PendingApproval"){
+              router.push(`/projects/${each._id}/sections`);
+            }
+           
             customLogger.logInfo("Project Card - Sections");
           }}
+          className={each.status==="Draft" ?"bg-[#d9d9d9]" :each.status === 'PendingApproval'?"bg-[#FFECE2]":""}
         >
           <ProjectTopLeftBg />
           <ProjectTopRightBg />
           <ProjectBottomLeftBg />
           <ProjectBottomRightBg />
+          {each.status==="Draft" || each.status === 'PendingApproval'?
+          <Tooltip title="Delete Project" placement="bottom">
+          <Image className="float-right" width={15} height={17} src={Delete} alt=""  onClick={(e) => {
+            e.stopPropagation(); 
+            setDelete(true)
+            setProjectId(each._id)
+            setRole(each.role)
+          }}></Image>
+          </Tooltip>:
           <Tooltip title="Project Menu" placement="bottom">
           <div className="float-right">
           <ProjectCardFlipIcon
@@ -152,8 +201,22 @@ export const ProjectListCardView = ({
           />
           </div>
           </Tooltip>
+          }
+          {/* <Tooltip title="Project Menu" placement="bottom">
+          <div className="float-right">
+            {each._id==="PRJ697680"?<Image src={Delete} alt=""></Image>:<ProjectCardFlipIcon
+            src={cardMenu}
+            alt=""
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFlipped((prev) => !prev);      
+            }}
+          />}
+          
+          </div>
+          </Tooltip> */}
           <ProjectLogo
-            src={each.companyLogo}
+            src={each.companyLogo?each.companyLogo:"https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp"}
             alt={""}
             width={242}
             height={45}
@@ -168,7 +231,7 @@ export const ProjectListCardView = ({
             </ProjectNameTitle>
           </Tooltip>
 
-          <CapturesText>Captures so far</CapturesText>
+        {each.status==="Draft" || each.status === 'PendingApproval'?"":<>  <CapturesText>Captures so far</CapturesText>
           <CaptureImageContainer>
             <CaptureImageIcon src={Capture360photo} alt=""></CaptureImageIcon>
             <CaptureName>360 Image - </CaptureName>
@@ -218,7 +281,9 @@ export const ProjectListCardView = ({
             </CaptureCount>
           </CaptureImageContainer>
           <ListHorizontalDivider />
-          <UpdatedAtContainer>
+
+</>}
+<UpdatedAtContainer>
             <UsersCountContainer>
               <Image src={userCount} alt="" width={14} height={15} />
               <UsersCountText>{each.numberOfUsers}</UsersCountText>
@@ -231,6 +296,30 @@ export const ProjectListCardView = ({
       : moment(each.lastUpdated).format('DD MMM YYYY')}</UsersCountText>
             </CaptureImageContainer>
           </UpdatedAtContainer>
+          <div>
+           {each.status==="Draft"?
+            <div className="font-bold text-base text-[#101F4C] text-center" >
+            Click to Resume
+           </div>: each.status === 'PendingApproval' ?
+           <div className="font-bold text-base text-[#101F4C] text-center" >
+           </div>
+          :""}  
+          </div>
+          <div className="absolute bottom-[10px]  flex justify-center w-[90%] font-bold text-base text-[#C24200] ">
+  {each.status==="Draft" || each.status === 'PendingApproval' ? 
+ 
+      each.status === 'PendingApproval' ? (
+        <div className="text-sm  text-white py-[0.5px] bg-[#006CD0] cursor-default px-[4px] rounded-[3px]">{each.status.replace('Pending', 'Pending ')}</div>
+      ) : (
+        <div className="text-sm text-white py-[0.5px] bg-[#C24200] cursor-default px-[4px] rounded-[3px]">{each.status}</div>
+      )   
+      : (
+    ""
+  )}
+</div>
+
+
+
         </ProjectCard>
       </ReactCardFlip>
     );
@@ -261,6 +350,56 @@ export const ProjectListCardView = ({
         </ShowErrorContainer>
          </div>
       )}
+      {
+        isAdmin || isPending?<PopupComponent open={isAdmin?isAdmin:isPending}
+        setShowPopUp={isAdmin?setisAdmin:setisPending}
+        modalTitle={isAdmin? "Access Denied !!":"Review in progress !!"}
+        modalmessage={
+        isAdmin?
+        <div className="flex flex-col">
+          <div>
+          1. The project you are trying to access is in draft stage.
+          </div>
+        <div>
+        2. Please reach out to the admin of this project to finish the project setup.
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>:<div className="flex flex-col">
+          <div>
+          1. The project you are trying to access has not been approved.
+          </div>
+        <div>
+        2. You can access the project only after the project has been approved. 
+        </div>
+<div>
+3. You will receive an email once the project is ready to use.
+  </div>         
+          </div>}
+        primaryButtonLabel={"Ok"}
+        SecondaryButtonlabel={""}
+        callBackvalue={
+          isAdmin?
+          () => {
+          setisAdmin(false)
+        }:() => {
+          setisPending(false)
+        }}></PopupComponent>:""
+      }
+      {
+        isDelete? <PopupComponent
+        open={isDelete}
+        setShowPopUp={setDelete}
+        modalTitle={"'Attention'"}
+        modalmessage={
+         `Are you sure you want to 'Delete Project'?`
+        }
+        primaryButtonLabel={"Yes"}
+        SecondaryButtonlabel={"No"}
+        callBackvalue={()=>{onDelete(projectId,role);setDelete(false)}}
+      />:""
+      }
     </ProjectCardsContainer>
   );
 };

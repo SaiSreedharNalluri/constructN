@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { MutableRefObject, useEffect, useRef, useState } from 'react'
 
 import Forge from './forge'
 
@@ -35,12 +35,19 @@ interface _ViewerProps {
     category: IAssetCategory | undefined
 
     selectedLayers: string[] | undefined
+
+    _forge: MutableRefObject<Autodesk.Viewing.GuiViewer3D | undefined>;
+
+    right?: boolean
+
+    _dataViz: MutableRefObject<ForgeDataVizUtils | undefined>
+
 }
 
 
 function Progress2DComponent(props: _ViewerProps) {
 
-    const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
+    const _forge = props._forge
 
     const _initialised = useRef<boolean>(false)
 
@@ -54,7 +61,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const _offset = useRef<number[]>()
 
-    const _dataVizUtils = useRef<ForgeDataVizUtils>()
+    const _dataVizUtils = props._dataViz
 
     const _edit2dUtils = useRef<ForgeEdit2DUtils>()
 
@@ -188,6 +195,16 @@ function Progress2DComponent(props: _ViewerProps) {
 
         loadLayers(_layers.current)
 
+        if (props.selectedLayers) {
+
+            _dataVizUtils.current?.showTag('360 Video', props.selectedLayers.includes('360 Video'))
+
+            _dataVizUtils.current?.showTag('360 Image', props.selectedLayers.includes('360 Image'))
+
+            _dataVizUtils.current?.showTag('Phone Image', props.selectedLayers.includes('Phone Image'))
+
+        }
+
         publish('progress-2d-tool', 'Select')
 
         publish('progress-2d-tool-type', 'Select')
@@ -210,7 +227,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
         if (extensionId === 'Autodesk.DataVisualization') {
 
-            _dataVizUtils.current = new ForgeDataVizUtils(_forge.current!, _extn as Autodesk.Extensions.DataVisualization)
+            _dataVizUtils.current = new ForgeDataVizUtils(_forge.current!, _extn as Autodesk.Extensions.DataVisualization, props.compare)
 
         } else if (extensionId === 'Autodesk.Edit2D') {
 
@@ -278,9 +295,11 @@ function Progress2DComponent(props: _ViewerProps) {
 
                 onModelLoaded={onModelLoaded}
 
+                compare={props.right}
+
                 onExtnLoaded={onExtnLoaded} /> }
 
-            <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
+            {!props.compare ? <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
                 { props.category && props.isSupportUser && <Paper className='ml-3' elevation={1}>
 
@@ -288,7 +307,11 @@ function Progress2DComponent(props: _ViewerProps) {
 
                 </Paper> }
 
-            </div>
+            </div>: null}
+
+            {props.compare ? <div className={`flex absolute bottom-2 ${props.right ? 'right-0': 'left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} style={{ zIndex: 5 }}>
+                {props.right?'From' : 'To'}
+            </div> : null}
 
         </>
     )

@@ -47,7 +47,7 @@ export const HeaderRightSection = styled.div({
 });
 export const HeaderRightSectionResetIcon = styled.div({
   marginRight: "7px",
-  borderRadius:"50%",
+  borderRadius:"10px",
   padding:"6px",
   "&:hover": {
     cursor: "pointer",
@@ -62,6 +62,15 @@ export const HeaderRightSectionCloseIcon = styled.div({
     background:"#E7E7E7"
   },
 });
+
+export const FilterHeader = styled.div({
+  fontWeight: "500",
+  color: "#101F4C",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontSize: "16px",
+  marginTop: "20px",
+});
 export const HeaderRightSectionResetText = styled.div({
   marginRight: "10px",
   borderRight: "1px solid #d9d9d9",
@@ -71,15 +80,6 @@ export const HeaderRightSectionResetText = styled.div({
   fontWeight: "400",
   color: " #F1742E",
   cursor: "pointer",
-});
-
-export const FilterHeader = styled.div({
-  fontWeight: "500",
-  color: "#101F4C",
-  fontFamily: "Open Sans",
-  fontStyle: "normal",
-  fontSize: "16px",
-  marginTop: "20px",
 });
 
 export const HeaderRightSectionCancel = styled.div({});
