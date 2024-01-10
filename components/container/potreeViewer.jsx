@@ -5,7 +5,7 @@ import { getCookie } from "cookies-next";
 import { IUser } from "../../models/IUser";
 import CameraButtons from './cameraButtons';
 import Measurements3DView from './measurements/measurements-3d';
-import { Button } from '@mui/material';
+import { Button, Checkbox, Tooltip } from '@mui/material';
 import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
 
@@ -27,10 +27,9 @@ function PotreeViewer(props) {
     const setPotreeViewerUtils = props.setPotreeViewer;
     const potreeUtils = props.potreeUtils;
 
-    const { loadAllImages, unloadAllImages } = potreeUtils ||{};
+    const { loadAllImages, onEscape } = potreeUtils ||{};
 
     const setPointCloud = (e) =>{
-      console.log(e,'knbskskb')
       setShowPointCloud(e.detail);
     }
 
@@ -72,15 +71,15 @@ function PotreeViewer(props) {
             <canvas id={canvasId}></canvas>
           </div>
           <div className={`flex-column absolute right-[12px] top-[70px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
-            {showPointCloud ?
-              <Button onClick={()=>{
+            {showPointCloud?.view ? (showPointCloud.disable ?<Tooltip title='Please Select Image'>
+              <div>
+                <Button disabled className='text-[12px] w-[150px]'>Reality</Button>
+              </div>
+              </Tooltip> : <Button onClick={()=>{
                   loadAllImages();
-                  setShowPointCloud(false);
-              }} className='text-[12px]' >Reality</Button>:
-              <Button className='text-[12px]' onClick={()=>{
-                unloadAllImages();
-                setShowPointCloud(true);
-                }}><ThreeDRotationIcon className='mr-1.5' />Point Cloud</Button>}
+              }} className='text-[12px] w-[150px] pointer'>Reality</Button>)
+              :
+              <Button className='text-[12px] w-[150px] pointer' onClick={onEscape}><ThreeDRotationIcon className='mr-1.5' />Point Cloud</Button>}
           </div>
           {isSupportUser.current ? (
             <div>

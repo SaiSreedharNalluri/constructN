@@ -480,7 +480,6 @@ export const ForgeViewerUtils = function () {
         //     tag: tagObject,
         //   };
         // } else {
-        publish('show-pointcloud', false);
         console.log(`Inside Rag Click click: ${targetObject.position.x}`);
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();

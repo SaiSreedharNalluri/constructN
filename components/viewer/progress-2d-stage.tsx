@@ -157,7 +157,7 @@ function Progress2DStage(
 
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
 
-    const [assetValue , totalAssetValue]= useState(stage.totalMeasurement || totalValueMetrics)
+    const [assetValue , totalAssetValue]= useState(totalValueMetrics)
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
