@@ -108,7 +108,7 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
             value={addressDetails.value.address?.zipcode}
             onChange={(e) => handleAddressChange('zipcode', e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === '-' || e.key === 'Minus') {
+              if (e.key === '-' || e.code === 'Minus') {
                 e.preventDefault();
               }
             }}
