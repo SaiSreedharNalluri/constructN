@@ -631,6 +631,8 @@ const Progress2DPage: React.FC<any> = () => {
 
             setLoading(false)
 
+            if(currentCategory.current) _loadAssetsForCategory(currentCategory.current);
+
             toast.success('Deleted asset successfully!', { autoClose: 5000 })
 
             // publish('delete-shape', currentAsset.current)
