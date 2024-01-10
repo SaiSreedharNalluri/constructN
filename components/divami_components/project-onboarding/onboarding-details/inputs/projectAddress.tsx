@@ -107,6 +107,11 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
             className="outline-none"
             value={addressDetails.value.address?.zipcode}
             onChange={(e) => handleAddressChange('zipcode', e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === '-' || e.key === 'Minus') {
+                e.preventDefault();
+              }
+            }}
           />
           {(addressDetails.value.address?.zipcode === "") && (
             <FormHelperText className='text-[#FF853E]'>Zipcode is required</FormHelperText>

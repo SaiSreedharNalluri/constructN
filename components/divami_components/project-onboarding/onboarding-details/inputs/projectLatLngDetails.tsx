@@ -101,7 +101,7 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         <FormHelperText className='text-[#FF853E]'>Measurement is required</FormHelperText>
       )}
     </Grid>
-    <Grid item xs={1} className='mt-[16px] opacity'>
+    <Grid item xs={1.5} className='mt-[16px] opacity'>
     </Grid>
   </Grid>)
 
