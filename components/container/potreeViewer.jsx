@@ -27,7 +27,11 @@ function PotreeViewer(props) {
     const setPotreeViewerUtils = props.setPotreeViewer;
     const potreeUtils = props.potreeUtils;
 
-    const { loadAllImages, onEscape } = potreeUtils ||{};
+    const loadAllImages = props.loadAllImages;
+    const onEscape = props.onEscape;
+    const loadMeasurements =  props.loadMeasurements;
+
+    const isCompareViewer= props.isCompareViewer;
 
     const setPointCloud = (e) =>{
       setShowPointCloud(e.detail);
@@ -81,10 +85,10 @@ function PotreeViewer(props) {
               :
               <Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={onEscape}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>}
           </div>
-          {isSupportUser.current ? (
+          {isSupportUser.current && !isCompareViewer ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
-              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} />
+              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} />
             </div>
           ) : (
             ""

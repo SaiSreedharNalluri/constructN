@@ -128,10 +128,10 @@ const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<Set
   }
 };
 
-const Measurements3DView: FC<any> = ({ potreeUtils = {}, realityMap ={}}) => {
+const Measurements3DView: FC<any> = ({ potreeUtils = {}, realityMap ={}, loadMeasurements=()=>{} }) => {
 
   return (<div id='rahmanMeasurement'>
-            <MeasurementTypePicker potreeUtils={potreeUtils} realityMap={realityMap} />
+            <MeasurementTypePicker potreeUtils={potreeUtils} realityMap={realityMap} loadMeasurements={loadMeasurements} />
           </div>)
 
 }
@@ -239,7 +239,7 @@ const SegmentButtonGroup = styled(ButtonGroup)({
 
 
 
-const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
+const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasurements }) => {
 
   const [measurementsLoaded, setMeasurementsLoaded]=useState(false)
   
@@ -247,7 +247,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
 
   const [apiPoints, setApiPoints]= useState<{name: string}[] | []>([])
 
-  const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, getContext , loadMeasurements , handleContext} = potreeUtils || {}
+  const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, getContext, handleContext} = potreeUtils || {}
 
   const [show, setShow] = useState<boolean>(false)
 
@@ -534,8 +534,6 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap }) => {
         setMeasurementsLoaded(!measurementsLoaded);
       }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer'/>)
   }
-
-
 
   return (
 
