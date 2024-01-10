@@ -70,16 +70,16 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
           </div>
-          <div className={`flex-column absolute right-[12px] top-[70px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
+          <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
             {showPointCloud?.view ? (showPointCloud.disable ?<Tooltip title='Please Select Image'>
               <div>
-                <Button disabled className='text-[12px] w-[150px]'>Reality</Button>
+                <Button disabled className={`w-[140px] font-['Open_Sans'] text-[12px] opacity-[0.7] cursor-not-allowed`}>Reality</Button>
               </div>
               </Tooltip> : <Button onClick={()=>{
                   loadAllImages();
-              }} className='text-[12px] w-[150px] pointer'>Reality</Button>)
+              }} className={`w-[140px] pointer font-['Open_Sans'] text-[#101F4C] text-[12px] opacity-[0.7]`}>Reality</Button>)
               :
-              <Button className='text-[12px] w-[150px] pointer' onClick={onEscape}><ThreeDRotationIcon className='mr-1.5' />Point Cloud</Button>}
+              <Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={onEscape}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>}
           </div>
           {isSupportUser.current ? (
             <div>
