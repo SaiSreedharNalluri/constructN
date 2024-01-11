@@ -20,6 +20,8 @@ const unsubscribe = (eventName, listener) => {
 function PotreeViewer(props) {
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
     const [showPointCloud, setShowPointCloud] = useState(false);
+    const [showMessage, setShowMessage] = useState(false);
+    const [showHidden, setShowHidden] = useState(false);
     const isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
     const viewerId = `potreeViewer_${viewerCount}`;
     const containerId = `fpContainer_${viewerCount}`;
@@ -50,6 +52,27 @@ function PotreeViewer(props) {
     useEffect(() => {
         initViewer();
      },[viewerCount]);
+
+     useEffect(()=>{
+      let clearTimer;
+      let clearHidden;
+      if(showPointCloud.view){
+        setShowMessage(true);
+        setShowHidden(false);
+        clearTimer = setTimeout(()=>{
+          setShowMessage(false);
+        },2500);
+        clearHidden = setTimeout(()=>{
+          setShowHidden(true);
+        },3500);
+      }
+      return(()=>{
+        clearTimeout(clearTimer);
+        clearTimeout(clearHidden);
+        clearTimer = undefined;
+        clearHidden= undefined;
+      })
+     },[showPointCloud.view])
 
      useEffect(()=>{
       subscribe("show-pointcloud", setPointCloud);
@@ -89,6 +112,9 @@ function PotreeViewer(props) {
               :
               <Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={()=>{ if(onEscape){onEscape();} }}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>}
           </div>
+        {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
+              <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
+          </div>: null}
           {isSupportUser.current && !isCompareViewer ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
