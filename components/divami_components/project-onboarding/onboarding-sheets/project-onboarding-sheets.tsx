@@ -59,7 +59,9 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
   const [mHierarchy, setHierarchy] = useState<any>()
 
   useEffect(() => {
-
+    if(showLoader){
+      showLoader.value=true
+      }
     fetchStructureHierarchy(projectId.value).then(res => {
 
       if (res.data.result) {
@@ -67,7 +69,9 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
         if(hierarchy !== undefined) hierarchy.value = res.data.result
 
         setHierarchy(res.data.result)
-
+        if(showLoader){
+          showLoader.value=false
+          }
       }
 
     }).catch(err => console.log(err))
