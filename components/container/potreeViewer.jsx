@@ -5,7 +5,7 @@ import { getCookie } from "cookies-next";
 import { IUser } from "../../models/IUser";
 import CameraButtons from './cameraButtons';
 import Measurements3DView from './measurements/measurements-3d';
-import { Button } from '@mui/material';
+import { Button, Checkbox, Tooltip } from '@mui/material';
 import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
 
@@ -27,10 +27,15 @@ function PotreeViewer(props) {
     const setPotreeViewerUtils = props.setPotreeViewer;
     const potreeUtils = props.potreeUtils;
 
-    const { loadAllImages, unloadAllImages } = potreeUtils ||{};
+    const loadAllImages = props.loadAllImages;
+    const onEscape = props.onEscape;
+    const loadMeasurements =  props.loadMeasurements;
+
+    const loadPrevDroneImage =  props.loadPrevDroneImage
+
+    const isCompareViewer = props.isCompareViewer;
 
     const setPointCloud = (e) =>{
-      console.log(e,'knbskskb')
       setShowPointCloud(e.detail);
     }
 
@@ -71,21 +76,23 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
           </div>
-          <div className={`flex-column absolute right-[12px] bottom-[50px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
-            {showPointCloud ?
-              <Button onClick={()=>{
+          <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
+            {showPointCloud?.view ? (showPointCloud.disable ? (!showPointCloud.prevImage ? <Tooltip title='Please Select Image'>
+              <div>
+                <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>
+              </div>
+              </Tooltip>: <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} onClick={loadPrevDroneImage} >Reality</Button>) : <Button onClick={()=>{
+                if(loadAllImages){
                   loadAllImages();
-                  setShowPointCloud(false);
-              }} className='text-[12px]' > <ViewInArIcon className='mr-1.5'/> Hide Point Cloud</Button>:
-              <Button className='text-[12px]' onClick={()=>{
-                unloadAllImages();
-                setShowPointCloud(true);
-                }}><ThreeDRotationIcon className='mr-1.5' /> Show Point Cloud</Button>}
+                }
+              }} className={`w-[140px] pointer font-['Open_Sans'] text-[#101F4C] text-[12px] opacity-[0.7]`}>Reality</Button>)
+              :
+              <Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={()=>{ if(onEscape){onEscape();} }}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>}
           </div>
-          {isSupportUser.current ? (
+          {isSupportUser.current && !isCompareViewer ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
-              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} />
+              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} />
             </div>
           ) : (
             ""

@@ -832,6 +832,44 @@ function GenericViewer(props) {
         break;
     }
   };
+  
+  const loadAllImages = () =>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadAllImages();
+    }
+
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.loadAllImages();
+    }
+  }
+
+  const loadMeasurements =(points)=>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadMeasurements(points);
+    }
+
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.loadMeasurements(points);
+    }
+  }
+
+  const onEscape = () =>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.onEscape();
+    }
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.onEscape();
+    }
+  }
+
+  const loadPrevDroneImage = () =>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadPrevDroneImage();
+    }
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.loadPrevDroneImage();
+    }
+  }
 
   async function loadMinimapData() {
     if (minimapUtils.current != undefined) {
@@ -1220,7 +1258,12 @@ function GenericViewer(props) {
             isSupportUser={isSupportUser.current}
             setPotreeViewer={setpotreeViewerUtils}
             potreeUtils={potreeUtils.current}
+            loadAllImages={loadAllImages}
+            onEscape={onEscape}
             realityMap={realityMap}
+            isCompareViewer={count === 2 ? true: false}
+            loadPrevDroneImage={loadPrevDroneImage}
+            loadMeasurements={loadMeasurements}
           ></PotreeViewer>
         );
       case 'Mapbox':

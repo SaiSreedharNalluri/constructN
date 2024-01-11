@@ -35,7 +35,20 @@ const createMeasurement = async ({ name = '', type = '', snapshot = '', context 
   }
 };
 
-const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, setMeasurementType=()=>{}, refetch =()=>{}, setLoading=()=>{} , getContext=()=>{}, setActiveMeasure =()=>{}, loading=false, setSelected =()=>{}, apiPoints= []}: {setShow?: Dispatch<SetStateAction<boolean>>, show?: boolean, measurement: {name?: string; points?: object[]; uuid?: string}; onCancel: Function,setActiveMeasure: Dispatch<SetStateAction<string>>, refetch: Function, setLoading: Dispatch<SetStateAction<boolean>>, loading?: boolean ,setSelected?: Dispatch<SetStateAction<string>>, apiPoints: {name: string}[] , getContext: Function, setMeasurementType: Function }) => {
+interface Props {
+  setShow?: Dispatch<SetStateAction<boolean>>,
+  show?: boolean,
+  measurement: {name?: string; points?: object[]; uuid?: string};
+  onCancel: Function,setActiveMeasure: Dispatch<SetStateAction<"" | { name: string }>>,refetch: Function, 
+  setLoading: Dispatch<SetStateAction<boolean>>,
+  loading?: boolean ,
+  setSelected?: Dispatch<SetStateAction<string>>,
+  apiPoints: {name: string}[] ,
+  getContext: Function,
+  setMeasurementType: Function 
+}
+
+const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, setMeasurementType=()=>{}, refetch =()=>{}, setLoading=()=>{} , getContext=()=>{}, setActiveMeasure =()=>{}, loading=false, setSelected =()=>{}, apiPoints= []}: Props) => {
     const router = useRouter();
     const snapshot = router.query.snap as string;
     const [name, setName] = useState('');
@@ -53,8 +66,24 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
           setName(measurement.name || '')
         },[measurement])
         
+    const callBack = async () =>{
+      const isNameExists = apiPoints.find((point)=> (point.name === name?.trim()) );
+      if(isNameExists){
+        toast.error("Name Already Exists Please Choose a Different Name");
+        return;
+      }
+      await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected, context : getContext() });
+      setActiveMeasure('');
+      setMeasurementType('');
+      refetch();
+    }
   return (
-    <div>
+    <div onKeyDown={(e)=>{
+      e.stopPropagation();
+      if(e.key === 'Enter'){
+        callBack();
+      }
+    }}>
         <PopupComponent
           open={show}
           hideButtons
@@ -66,17 +95,7 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
           SecondaryButtonlabel={"Cancel"}
           disableSecondaryButton={loading}
           disablePrimaryButton={loading}
-          callBackvalue={async () =>{
-            const isNameExists = apiPoints.find((point)=> (point.name === name?.trim()) );
-            if(isNameExists){
-              toast.error("Name Already Exists Please Choose a Different Name");
-              return;
-            }
-            await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected, context : { id: getContext().id , image: getContext().image, type: getContext().type }});
-            setActiveMeasure('');
-            setMeasurementType('');
-            refetch();
-          }}
+          callBackvalue={callBack}
           secondaryCallback={onCancel}
         />
     </div>

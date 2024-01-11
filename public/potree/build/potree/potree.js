@@ -54252,7 +54252,7 @@
 
 					let suffix = "";
 					if(this.lengthUnit != null && this.lengthUnitDisplay != null){
-						distance = distance / this.lengthUnit.unitspermeter * this.lengthUnitDisplay.unitspermeter;  //convert to meters then to the display unit
+						distance = distance * (this.lengthUnit.unitspermeter || this.lengthUnitDisplay.unitspermeter);  //convert to meters then to the display unit
 						suffix = this.lengthUnitDisplay.code;
 					}
 
@@ -54393,7 +54393,7 @@
 
 				let suffix = "";
 				if(this.lengthUnit != null && this.lengthUnitDisplay != null){
-					area = area / Math.pow(this.lengthUnit.unitspermeter, 2) * Math.pow(this.lengthUnitDisplay.unitspermeter, 2);  //convert to square meters then to the square display unit
+					area = area * (Math.pow(this.lengthUnit.unitspermeter || this.lengthUnitDisplay.unitspermeter, 2));
 					suffix = this.lengthUnitDisplay.code;
 				}
 
