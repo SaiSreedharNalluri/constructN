@@ -292,6 +292,18 @@ const Index: React.FC<IProps> = () => {
   }, [uploaderState.currentUploadFiles])
 
   const sendingFilesToworker=(uploadFiles: IUploadFile<RawImage>[])=>{
+    if(uploadFiles.some(obj => obj.status === 2))
+    {
+      uploadFiles.sort((a, b) => {
+        if (a.status === b.status) {
+          return 0;
+        }
+        if (a.status === 2) {
+          return -1;
+        }
+        return 1;
+      });
+    }
     let captureId = uploadFiles[0].uploadObject.capture
     if(captureId) {
       let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url), {name: captureId});

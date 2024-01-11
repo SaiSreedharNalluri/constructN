@@ -72,6 +72,7 @@ export interface UploaderState {
     isDelete: boolean,
     currentPopup? : PopupData,
     errorCount:number;
+    showRetry:string | null
 }
 
 export enum UploaderStep {
@@ -129,5 +130,6 @@ export const initialUploaderState: UploaderState = {
     isShowPopup: false,
     isDelete: false,
     errorCount:0,
+    showRetry:null
 };
 

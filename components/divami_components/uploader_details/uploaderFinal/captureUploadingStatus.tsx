@@ -20,6 +20,8 @@ import PopupComponent from "../../../popupComponent/PopupComponent";
 import { UploadStatus, UploaderModalMessage, UploaderModalPrimaryButton, UploaderModalSecondaryButton, UploaderModalTitle } from "../../../../models/IUploader";
 import { UploaderPopups } from "../../../../state/uploaderState/state";
 import { RawImageStatus } from "../../../../models/IRawImages";
+import { CustomToast } from "../../custom-toaster/CustomToast";
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -56,6 +58,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
   const { state: appState, appContextAction } = useAppContext();
+  const [show,setShow] = useState<string|null>(null)
   /**
    * If isUploading true case, get data from uploaderState.pendingUploadJobs
    * If isUploading false case, get data from uploaderState.pendingProcessJobs
@@ -135,7 +138,22 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
         if (getRawImagesStatus(job)) {
           return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
         } else {
-          return (<ErrorIcon color="error" />)
+          return(
+            <div>
+            {uploaderState.showRetry && uploaderState.selectedJob && uploaderState.selectedJob.status === JobStatus.uploadFailed && job._id === uploaderState.showRetry ?
+            (<div><AutorenewIcon color="warning" className="text-white bg-[#F1742E] rounded-full cursor-pointer"onClick={()=>{
+            let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
+            if(filesList != undefined)
+            {
+              uploaderAction.retryJobUploading(job)
+            }
+            else{
+              CustomToast(`You don't have sufficient data to complete these operation`,'error')
+            }
+            
+            }}/></div>):(<div> <ErrorIcon color="error" /></div>)}
+            </div>
+          ) 
         }
       default:
           return (<CircularProgress color="warning" size={"24px"} thickness={5}/>) 
@@ -224,8 +242,13 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
                       index === hoveredRowIndex ? "bg-gray-200" : ""
                     }  ${uploaderState.selectedJob?._id===job._id?"bg-[#D9D9D9] text-[#F1742E]":""} flex justify-between w-full my-[4px] mx-auto`}
-                    onMouseEnter={() => setHoveredRowIndex(index)}
-                    onMouseLeave={() => setHoveredRowIndex(null)}
+                    onMouseEnter={() =>{ 
+                      setHoveredRowIndex(index)
+                      let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
+                      if(uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId] !=undefined)
+                      uploaderAction.setShowRetry(job._id)} 
+                      }
+                    onMouseLeave={() =>{setHoveredRowIndex(null), uploaderAction.setShowRetry(null)} }
                   >
                     <td className="pl-2 w-[35%]  flex items-center">
                       {isUploadedOn && (
