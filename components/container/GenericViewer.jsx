@@ -1261,6 +1261,7 @@ function GenericViewer(props) {
             loadAllImages={loadAllImages}
             onEscape={onEscape}
             realityMap={realityMap}
+            isCompare={isCompare}
             isCompareViewer={count === 2 ? true: false}
             loadPrevDroneImage={loadPrevDroneImage}
             loadMeasurements={loadMeasurements}

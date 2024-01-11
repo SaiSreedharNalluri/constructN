@@ -1380,7 +1380,7 @@ export const PotreeViewerUtils = () => {
             publish("show-pointcloud", { view: false, disable: false });
         } else {
             _viewer.setEDLOpacity(1);
-            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode) ? true: false, prevImage });
+            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage });
         }
     }
 
