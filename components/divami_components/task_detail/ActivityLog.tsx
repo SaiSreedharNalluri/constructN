@@ -378,6 +378,7 @@ const ActivityLog = (props: any) => {
                         src={Delete}
                         alt={"close icon"}
                         onClick={() => {
+                          setReplyToText('')
                           setCommentId(each?._id)
                           setCommentPopup(true);
                         }}
@@ -640,7 +641,7 @@ const ActivityLog = (props: any) => {
                                           //   replyObj?.commentId,
                                           //   replyObj?._id
                                           // );
-
+                                          setReplyToText('')
                                           setcommentReplyPopup(true);
                                         }}
                                       />
