@@ -20,6 +20,8 @@ const unsubscribe = (eventName, listener) => {
 function PotreeViewer(props) {
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
     const [showPointCloud, setShowPointCloud] = useState(false);
+    const [showMessage, setShowMessage] = useState(false);
+    const [showHidden, setShowHidden] = useState(false);
     const isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
     const viewerId = `potreeViewer_${viewerCount}`;
     const containerId = `fpContainer_${viewerCount}`;
@@ -52,11 +54,66 @@ function PotreeViewer(props) {
      },[viewerCount]);
 
      useEffect(()=>{
+      let clearTimer;
+      let clearHidden;
+      if(showPointCloud.view){
+        setShowMessage(true);
+        setShowHidden(false);
+        clearTimer = setTimeout(()=>{
+          setShowMessage(false);
+        },2500);
+        clearHidden = setTimeout(()=>{
+          setShowHidden(true);
+        },3500);
+      }
+      return(()=>{
+        clearTimeout(clearTimer);
+        clearTimeout(clearHidden);
+        clearTimer = undefined;
+        clearHidden= undefined;
+      })
+     },[showPointCloud.view])
+
+     useEffect(()=>{
       subscribe("show-pointcloud", setPointCloud);
       return(()=>{
         unsubscribe("show-pointcloud", setPointCloud);
       })
     },[])
+
+    const getButton = () => {
+      if(props.isCompare && showPointCloud?.view){
+        return (<Tooltip title='Please Select Image'>
+        <div>
+          <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>
+        </div>
+        </Tooltip>)
+      }
+
+      if(showPointCloud?.view && showPointCloud.disable && !showPointCloud.prevImage ){
+        return(<Tooltip title='Please Select Image'>
+        <div>
+          <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>
+        </div>
+        </Tooltip>)
+      }
+
+      if(showPointCloud?.view && showPointCloud.disable){
+        return(<Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} onClick={loadPrevDroneImage} >Reality</Button>)
+      }
+
+      if(showPointCloud?.view && !showPointCloud.disable){
+        return(<Button onClick={()=>{
+          if(loadAllImages){
+            loadAllImages();
+          }
+        }} className={`w-[140px] pointer font-['Open_Sans'] text-[#101F4C] text-[12px] opacity-[0.7]`}>Reality</Button>)
+      }
+
+      return(<Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={()=>{ if(onEscape){onEscape();} }}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>)
+      
+
+    }
 
     return (
       <React.Fragment>
@@ -77,19 +134,12 @@ function PotreeViewer(props) {
             <canvas id={canvasId}></canvas>
           </div>
           <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
-            {showPointCloud?.view ? (showPointCloud.disable ? (!showPointCloud.prevImage ? <Tooltip title='Please Select Image'>
-              <div>
-                <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>
-              </div>
-              </Tooltip>: <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} onClick={loadPrevDroneImage} >Reality</Button>) : <Button onClick={()=>{
-                if(loadAllImages){
-                  loadAllImages();
-                }
-              }} className={`w-[140px] pointer font-['Open_Sans'] text-[#101F4C] text-[12px] opacity-[0.7]`}>Reality</Button>)
-              :
-              <Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={()=>{ if(onEscape){onEscape();} }}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>}
+          {getButton()}
           </div>
-          {isSupportUser.current && !isCompareViewer ? (
+        {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
+              <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
+          </div>: null}
+          {!isCompareViewer ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
               <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} />

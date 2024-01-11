@@ -539,7 +539,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
 
     <>
     
-    {rightClickNeeded.includes((activeMeasure as {name: string}).name) ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8]'>Right click to end the measurement</div> : null}
+    {rightClickNeeded.includes((activeMeasure as {name: string}).name) ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8]'>Right Click to Save or Cancel</div> : null}
 
     {measurementType === 'Undo' ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8]'>Please click <SaveIcon /> to save the changes</div> : null}
 
