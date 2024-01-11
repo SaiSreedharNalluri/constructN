@@ -52,7 +52,7 @@ const ProjectDetails: React.FC = () => {
   }, []);
 const latitude =projectData?.location?.coordinates[1]  != undefined ? projectData?.location?.coordinates[1] : 0;
 const longitude =projectData?.location?.coordinates[0]  != undefined ? projectData?.location?.coordinates[0] : 0;
-  const utm = projectData?.utm.zone ? projectData?.utm.zone : "NA";
+  const utm = projectData?.utm?.zone ? projectData?.utm?.zone : "NA";
   const handleUpdateProject = (formData: any) => {
     let projectInfo: any = {};
     projectInfo.name = formData.filter(
