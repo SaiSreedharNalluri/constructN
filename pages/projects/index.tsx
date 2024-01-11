@@ -616,6 +616,7 @@ const Index: React.FC<any> = () => {
                     />
                   </SearchAreaContainer>
                 ) : (
+                  <Tooltip title={"Search"}>
                   <HeaderImage
                     src={searchIcon}
                     alt=""
@@ -625,9 +626,10 @@ const Index: React.FC<any> = () => {
                       setIsSearching(true);
                     }}
                   />
+                  </Tooltip>
                 )}
                 {isGridView ? (
-                  <CustomMenu
+                 <CustomMenu
                     width={24}
                     height={24}
                     right="20px"
@@ -637,6 +639,7 @@ const Index: React.FC<any> = () => {
                 ) : (
                   <></>
                 )}
+                <Tooltip title={"Filter"}>
                 <HeaderImage
                   src={UserFilterIcon}
                   alt=""
@@ -646,6 +649,7 @@ const Index: React.FC<any> = () => {
                     setOpenFilter(true);
                   }}
                 />
+                </Tooltip>
                 {isFilterApplied ? <FilterIndicator /> : <></>}
                 <ToggleButtonContainer id="view-options">
                   <Tooltip title={"Grid View"}>
