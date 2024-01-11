@@ -139,7 +139,7 @@ function PotreeViewer(props) {
         {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
               <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
           </div>: null}
-          {isSupportUser.current && !isCompareViewer ? (
+          {!isCompareViewer ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
               <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} />
