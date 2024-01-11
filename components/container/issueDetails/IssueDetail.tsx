@@ -1097,7 +1097,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
-      console.log("data",data)
       editIssue(projectId, data, selectedIssue?._id)
         .then((response:any) => {
           if (response.success === true) {
@@ -1134,8 +1133,8 @@ const CustomIssueDetailsDrawer = (props: any) => {
         return each?._id || each?.value;
       });
 
-    data.structure = initData?.structure?._id;
-    data.snapshot = initData?.currentSnapshotBase?._id;
+    data.structure = router.query.structureId;
+    data.snapshot = router.query.snap;
     data.status = formData.filter(
       (item: any) => item.id == "issueStatus"
     )[0]?.defaultValue;

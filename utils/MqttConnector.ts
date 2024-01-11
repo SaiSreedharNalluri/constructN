@@ -30,9 +30,11 @@ export class MqttConnector{
    };
    options:mqtt.IClientOptions;
 
-   constructor(url:string='wss://broker.emqx.io:8084/mqtt',opt:mqtt.IClientOptions={hostname:'localhost',port:9001,path:'/mqtt',clean:true,clientId:'mqtt-asad',protocol:'ws'}){
+  //  constructor(url:string='ws://localhost:9001/mqtt',opt:mqtt.IClientOptions={hostname:'localhost',port:9001,path:'/mqtt',clean:true,clientId:'mqtt-asad',protocol:'ws'}){
+    
+   constructor(url:string='wss://e15f0a91.ala.asia-southeast1.emqxsl.com:8084/mqtt',opt:mqtt.IClientOptions={hostname:'e15f0a91.ala.asia-southeast1.emqxsl.com',port:8084,path:'/mqtt',clean:true,clientId:'mqtt-'+Math.random().toString(36).slice(-8),protocol:'wss',username:'shivram',password:';bigWig8',protocolVersion:5}){
     this.options = opt;
-    this._connection= mqtt.connect(url);
+    this._connection= mqtt.connect(opt);
     this._connection.on("connect", () => {
       console.log("App Successfully Connected to MQTT");
     });

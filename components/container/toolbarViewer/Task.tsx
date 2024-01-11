@@ -305,8 +305,9 @@ function Task({
 
   const onCancelCreate = () => {
     // taskMenuInstance.toolAction = "taskCreateFail";
-    // taskMenuInstance.type = "createFailIssue";
-    // taskMenuClicked(taskMenuInstance);
+    taskMenuInstance.type = "createFailTask";
+    taskMenuInstance.data= "task"
+    taskMenuClicked(taskMenuInstance);
     setOpenCreateTask(false);
     taskMenuClicked(taskMenuInstance);
     setOpenCreateTask(false)

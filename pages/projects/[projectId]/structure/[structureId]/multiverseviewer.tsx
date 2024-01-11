@@ -667,6 +667,9 @@ const Index: React.FC<IProps> = () => {
           case "pointCloud":
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
             break;
+          case "orthoPhoto":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "orthoPhoto"}`);
+            break;
         }
         break;
 
@@ -766,6 +769,7 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
         break;
       case "createFailTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailTask","data":" "}');
         break;
       case "createSuccessTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
@@ -1416,6 +1420,80 @@ const Index: React.FC<IProps> = () => {
     }
     router.push(router)
   }
+  const getInitViewType = (vData:IGenData):string =>{
+    if(vData.structure.designs&& vData.structure.designs.length >= 1){
+      if(vData.structure.designs.find((des:any)=>{
+        if(des.type==="Plan Drawings"){
+          return des
+        }    
+      }))
+      {
+        
+        return "Plan Drawings"
+      }
+      else if(vData.structure.designs.find((des:any)=>{
+        if(des.type==="BIM"){
+          return des
+        }    
+      })){
+        
+        return "BIM"
+      }
+
+    }
+    else if(vData.currentSnapshotBase.reality?.length && vData.currentSnapshotBase.reality.length >=1){
+      return "pointCloud"
+    }
+    
+     
+    
+    
+  return ""
+}
+  
+ const isViewTypeAvailable = (vData:IGenData,checkType:string):boolean=>{
+  
+    switch(checkType){
+      case 'Plan Drawings':
+        if(vData.structure.designs&& vData.structure.designs.length >= 1){
+          if(vData.structure.designs.find((des:any)=>{
+            if(des.type==="Plan Drawings"){
+              return des
+            }    
+          }))
+          {
+            
+            return true;
+          }
+        }
+        break;
+      case 'BIM':
+        if(vData.structure.designs&& vData.structure.designs.length >= 1){
+          if(vData.structure.designs.find((des:any)=>{
+            if(des.type==="BIM"){
+              return des
+            }    
+          }))
+          {
+            
+            return true;
+          }
+        }
+        break;
+      case 'pointCloud':
+        if(vData.currentSnapshotBase.reality?.length && vData.currentSnapshotBase.reality.length >=1){
+          return true;
+        }
+        break
+      case 'orthoPhoto':
+        break;
+
+    }
+    return false
+ }
+
+
+  
   useEffect(() => {
 
     if (router.isReady) {
@@ -1423,9 +1501,7 @@ const Index: React.FC<IProps> = () => {
         .then((response) => {
           if (response.success === true) {  
             setIssueFilterList(response.result.currentIssueList) 
-            setIsList(response.result.currentIssueList) 
             setTaskFilterList(response.result.currentTaskList)
-            setTasList(response.result.currentTaskList) 
 
             // if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
             //   router.query.type = response.result.data?.currentViewType as string;
@@ -1433,8 +1509,18 @@ const Index: React.FC<IProps> = () => {
             //   router.push(router);
             // }
             let vData:IGenData = response.result; 
-            if(router.query.type&& router.query.type!== vData.currentViewType)
-              vData.currentViewType = router.query.type.toString()
+            if(router.query.type&& router.query.type !== undefined)
+            {
+              if(isViewTypeAvailable(vData,router.query.type.toString()))
+              {
+                vData.currentViewType = router.query.type.toString()
+              }
+              else{
+                vData.currentViewType = getInitViewType(vData)
+              }
+             
+            }
+             
             if(router.query.snap&& router.query.snap!== vData.currentSnapshotBase._id)
             {
               let urlSnap:ISnapshot|undefined=vData.snapshotList.find((snp:ISnapshot)=>{
@@ -1533,6 +1619,18 @@ const Index: React.FC<IProps> = () => {
             .then((response) => {
               if (response.success === true) {
                 let vData:IGenData = response.result
+              if(router.query.type&& router.query.type !== undefined)
+            {
+              
+              if(isViewTypeAvailable(vData,router.query.type.toString()))
+              {
+                vData.currentViewType = router.query.type.toString()
+              }
+              else{
+                vData.currentViewType = getInitViewType(vData)
+              }
+             
+            }
                 vData.taskShow=true;
                 vData.issueShow=true;
                 vData.isIssueFiltered=false;
