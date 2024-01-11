@@ -378,8 +378,7 @@ const ActivityLog = (props: any) => {
                         src={Delete}
                         alt={"close icon"}
                         onClick={() => {
-                          // deleteComments(each?._id);
-                          // deletePopup(each?._id);
+                          setCommentId(each?._id)
                           setCommentPopup(true);
                         }}
                       />   
@@ -398,7 +397,7 @@ const ActivityLog = (props: any) => {
                        SecondaryButtonlabel={"Cancel"}
                        callBackvalue={() => {
                          setCommentPopup(false);
-                         deleteComments(each?._id);
+                         deleteComments(commentId);
                        }}
                      /> 
                       )} 
