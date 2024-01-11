@@ -77,6 +77,8 @@ export const PotreeViewerUtils = () => {
 
     let prevContext = {};
 
+    let prevImage = null;
+
     const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
         _viewerId = viewerId;
@@ -485,6 +487,8 @@ export const PotreeViewerUtils = () => {
         return _viewer.scene.images360.length;
     }
 
+    const loadPrevDroneImage = () => loadImage(prevImage.reality, prevImage.image)
+
     const onImageLoad = (event) => {
         if(event.detail.viewer !== _viewerId) {
             return;
@@ -504,6 +508,7 @@ export const PotreeViewerUtils = () => {
             _sendContext = false;
             _eventHandler(_viewerId, getContext(event.detail.image));
         }
+        prevImage = { reality: _currentReality, image: event.detail.image };
         publish("show-pointcloud", { view: false, disable: false });
     }   
 
@@ -1371,11 +1376,11 @@ export const PotreeViewerUtils = () => {
     const pointCloudView = (cond) => {
         _viewer.setEDLEnabled(cond);
         if (cond) {
-            _viewer.setEDLOpacity(0);
+            if(_currentMode !== "Drone Image") _viewer.setEDLOpacity(0);
             publish("show-pointcloud", { view: false, disable: false });
         } else {
             _viewer.setEDLOpacity(1);
-            publish("show-pointcloud", { view: true, disable: _currentMode === "Drone Image"? true: false });
+            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode) ? true: false, prevImage });
         }
     }
 
@@ -2465,5 +2470,6 @@ export const PotreeViewerUtils = () => {
         handleContext,
         loadAllImages,
         onEscape,
+        loadPrevDroneImage,
     };
 };

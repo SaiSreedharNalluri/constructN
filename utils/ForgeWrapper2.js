@@ -697,6 +697,7 @@ export const ForgeViewerUtils = function () {
             fov: true,
           });
           _viewer.navigation.setIsLocked(true);
+          publish("movement-locked",true);
         }
 
         if (_viewer.getExtension("Autodesk.BimWalk")) {

@@ -862,6 +862,15 @@ function GenericViewer(props) {
     }
   }
 
+  const loadPrevDroneImage = () =>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadPrevDroneImage();
+    }
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.loadPrevDroneImage();
+    }
+  }
+
   async function loadMinimapData() {
     if (minimapUtils.current != undefined) {
       minimapUtils.current.setStructure(structure);
@@ -1253,6 +1262,7 @@ function GenericViewer(props) {
             onEscape={onEscape}
             realityMap={realityMap}
             isCompareViewer={count === 2 ? true: false}
+            loadPrevDroneImage={loadPrevDroneImage}
             loadMeasurements={loadMeasurements}
           ></PotreeViewer>
         );

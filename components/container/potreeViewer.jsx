@@ -31,7 +31,9 @@ function PotreeViewer(props) {
     const onEscape = props.onEscape;
     const loadMeasurements =  props.loadMeasurements;
 
-    const isCompareViewer= props.isCompareViewer;
+    const loadPrevDroneImage =  props.loadPrevDroneImage
+
+    const isCompareViewer = props.isCompareViewer;
 
     const setPointCloud = (e) =>{
       setShowPointCloud(e.detail);
@@ -75,15 +77,17 @@ function PotreeViewer(props) {
             <canvas id={canvasId}></canvas>
           </div>
           <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
-            {showPointCloud?.view ? (showPointCloud.disable ?<Tooltip title='Please Select Image'>
+            {showPointCloud?.view ? (showPointCloud.disable ? (!showPointCloud.prevImage ? <Tooltip title='Please Select Image'>
               <div>
-                <Button disabled className={`w-[140px] font-['Open_Sans'] text-[12px] opacity-[0.7] cursor-not-allowed`}>Reality</Button>
+                <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>
               </div>
-              </Tooltip> : <Button onClick={()=>{
+              </Tooltip>: <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} onClick={loadPrevDroneImage} >Reality</Button>) : <Button onClick={()=>{
+                if(loadAllImages){
                   loadAllImages();
+                }
               }} className={`w-[140px] pointer font-['Open_Sans'] text-[#101F4C] text-[12px] opacity-[0.7]`}>Reality</Button>)
               :
-              <Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={onEscape}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>}
+              <Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={()=>{ if(onEscape){onEscape();} }}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>}
           </div>
           {isSupportUser.current && !isCompareViewer ? (
             <div>

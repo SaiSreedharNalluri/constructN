@@ -72,7 +72,7 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
         toast.error("Name Already Exists Please Choose a Different Name");
         return;
       }
-      await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected, context : { id: getContext().id , image: getContext().image, type: getContext().type }});
+      await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected, context : getContext() });
       setActiveMeasure('');
       setMeasurementType('');
       refetch();

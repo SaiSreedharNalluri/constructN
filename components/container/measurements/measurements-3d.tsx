@@ -128,7 +128,7 @@ const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<Set
   }
 };
 
-const Measurements3DView: FC<any> = ({ potreeUtils = {}, realityMap ={}, loadMeasurements=()=>{} }) => {
+const Measurements3DView: FC<any> = ({ potreeUtils = {}, realityMap ={}, loadMeasurements = ()=>{} }) => {
 
   return (<div id='rahmanMeasurement'>
             <MeasurementTypePicker potreeUtils={potreeUtils} realityMap={realityMap} loadMeasurements={loadMeasurements} />
