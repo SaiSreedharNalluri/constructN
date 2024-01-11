@@ -52,17 +52,19 @@ export class ForgeEdit2DUtils {
 
     loadAssets(assets: IAsset[]) {
 
-        this._edit2DLayer?.clear && this._edit2DLayer?.clear()
+        if((this._edit2DLayer as { context?: object })?.context){
+            this._edit2DLayer?.clear();
 
-        assets.forEach(asset => {
+            assets.forEach(asset => {
 
-            const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage)?.color
-
-            if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
-
-            else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
-
-        })
+                const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage).color
+    
+                if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
+    
+                else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
+    
+            })
+        }
 
     }
 

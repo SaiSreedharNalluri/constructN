@@ -124,6 +124,7 @@ const Index: React.FC<IProps> = () => {
 
   useEffect(() => {
     if(uploaderState.pendingUploadJobs.length > 0) {
+      uploaderAction.setIsLoading(true)
       Promise.all(uploaderState.pendingUploadJobs.map((job) => {
         let captureId = ""
         if((job.captures[0] as ICapture)?._id) {

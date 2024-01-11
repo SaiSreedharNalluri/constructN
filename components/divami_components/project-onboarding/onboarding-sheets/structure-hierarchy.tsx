@@ -40,7 +40,7 @@ type UploadProgress = {
     percentage: number
 }
 
-const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdded }: any) => {
+const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdded,loader }: any) => {
 
     useSignals()
 
@@ -60,10 +60,10 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
 
     const uploadProgress = useSignal<UploadProgress>({ sent: 0, total: 0, percentage: -1 })
 
-    const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.value!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete))
+    const addSheetFormJSX = useComputed(() => renderAddSheetForm(addSheetPopup, projectId, currentStructure.value!, onSheetAdded, fileToUpload, uploadProgress, uploadComplete,loader))
 
     const renderAddSheetPopup = useComputed(() => addSheetPopup.value === true ? <PopupComponent open={addSheetPopup.value} hideButtons
-        setShowPopUp={(state: boolean) => addSheetPopup.value = state} modalTitle={'Add Drawing'}
+        setShowPopUp={(state: boolean) =>{ addSheetPopup.value = state;fileToUpload.value?fileToUpload.value=undefined:""}} modalTitle={'Add Drawing'}
         modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} modalContent={addSheetFormJSX}
         backdropWidth={true} showButton={false}
@@ -221,7 +221,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
 const renderAddSheetForm = (
     showPopup: Signal<boolean>, projectId: string, structure: IStructure, onSheetAdded: Function,
-    fileToUpload: Signal<File | undefined>, uploadProgress: Signal<UploadProgress>, uploadStatus: Signal<boolean>) => {
+    fileToUpload: Signal<File | undefined>, uploadProgress: Signal<UploadProgress>, uploadStatus: Signal<boolean>,loader:any) => {
 
     const dragDropText = "(or drag and drop file here)";
     const supportFileText = "Upload .PDF or .DWG file";
@@ -248,12 +248,14 @@ const renderAddSheetForm = (
         uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
             // console.log(`${percentage}%`)
             uploadProgress.value = { sent, total, percentage }
+           loader.value=true
         })
             .onError((error: any) => {
                 console.error(error)
                 uploadStatus.value = false
                 CustomToast('Failed to upload.', 'error', false)
                 fileToUpload.value = undefined
+                loader.value=true
             })
             .onComplete(() => {
                 uploadStatus.value = false
@@ -262,6 +264,7 @@ const renderAddSheetForm = (
                 CustomToast(`Added drawing to ${structure.name} successfully.`, 'success')
                 onSheetAdded()
                 fileToUpload.value = undefined
+                loader.value=false
             })
 
         uploadStatus.value = true
@@ -293,6 +296,13 @@ const renderAddSheetForm = (
                 <LinearProgress className='mt-4' color='warning' variant="determinate" value={uploadProgress.value.percentage} />
             </div>
         }
+        {loader.value&&<div style={{  position: "fixed",
+  top: "0",
+  left: "0",
+  width: "100vw",
+  height: "100vh",
+  backgroundColor: "rgba(0, 0, 0, 0.5)" ,
+  zIndex: 9999,}}></div>}
 
         <div className='flex justify-between mt-6'>
 
@@ -302,7 +312,7 @@ const renderAddSheetForm = (
             </Button>
 
             <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' color='warning'
-                disabled={fileToUpload.value === undefined || uploadStatus.value == true} onClick={() => proceedUpload()} >
+                disabled={fileToUpload.value === undefined || uploadStatus.value == true} onClick={() =>{ proceedUpload(); loader.value=true}} >
                 Upload
             </Button>
 
