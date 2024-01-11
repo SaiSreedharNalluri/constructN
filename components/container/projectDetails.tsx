@@ -19,6 +19,7 @@ import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
 import moment from 'moment-timezone';
 import CustomLoggerClass from "../divami_components/custom_logger/CustomLoggerClass";
 import { MAPBOX } from "../../config/config";
+import {TruncatedString} from "../../utils/utils";
 const ProjectDetails: React.FC = () => {
   const customLogger = new CustomLoggerClass();
   let [projectData, setProjectData]:any = useState();
@@ -119,17 +120,6 @@ const longitude =projectData?.location?.coordinates[0]  != undefined ? projectDa
         }
       });
   };
-  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
-    let truncatedText = text;
-
-    if (text.length > maxLength) {
-      const prefix = text.substring(0, maxLength - suffixLength);
-      const suffix = text.substring(text.length - suffixLength);
-      truncatedText = prefix + "..." + suffix;
-    }
-
-    return truncatedText;
-  };
   return (
     <div className="">
       {projectData ? (
@@ -149,12 +139,12 @@ const longitude =projectData?.location?.coordinates[0]  != undefined ? projectDa
           <div className="w-full  flex border-2 border-gray-400 rounded-md">
           <div className=" w-1/2">
           <div className=" border-b border-black mx-4 py-2">
-                <img
-                  alt=""
-                  className=" w-3/4 h-20"
-                  width={1080}
-                  height={1080}
-                  src={projectData?.coverPhoto}
+          <img
+          alt=""
+          className=" w-3/4 h-20"
+          width={1080}
+          height={1080}
+          src={projectData?.coverPhoto?projectData?.coverPhoto:"https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp"}
                 />
                 <div>
                   <ChangeIcon handleImageUPload={handleImageUPload} />

@@ -60,6 +60,7 @@ export const ProjectListCardView = ({
   projects,
   projectActions,
   truncateString,
+  onDelete
 }: any) => {
   const router = useRouter();
   const customLogger = new CustomLoggerClass();
@@ -84,23 +85,7 @@ export const ProjectListCardView = ({
   const[isDelete,setDelete]=useState(false);
   const[projectId,setProjectId]=useState("");
   const[role,setRole]=useState("");
-  const onDelete = (projectId: string,role:string) => {
-    if(role==="admin"){
-      deleteProject(projectId).then((res) => {
-        const updatedProjects = projectsData.filter((project: any) => project._id !== projectId);          
-        setProjectsData(updatedProjects);
-        CustomToast(res.message,"success")
-      })
-      .catch((err) => {
-        CustomToast(err, 'error')
-        
-      } )
-    }
-else{
-  CustomToast("Only Admin can delete the project","success")
-}
 
-  }
   const Card = ({ each }: any) => {
     const [isFlipped, setIsFlipped] = useState(true);
 

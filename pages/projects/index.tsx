@@ -40,6 +40,7 @@ import { ProjectListCardView } from "../../components/divami_components/project-
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
 import {
+  deleteProject,
   getProjects,
   getProjectsList,
   getProjectUsers,
@@ -336,7 +337,6 @@ const Index: React.FC<any> = () => {
               setShowWelcomeMessage(true);
             }
             const projectsData = response?.data?.result.map((each: any) => {
-              console.log(each)
               return {
                 ...each,
                 companyLogo: each.coverPhoto,
@@ -536,6 +536,27 @@ const Index: React.FC<any> = () => {
   const handleChatHoverEnd = () => {
     setChatHovered(false);
   };
+  const onDelete = (projectId: string, role: string) => {
+    if (role === "admin") {
+      deleteProject(projectId)
+        .then((res) => {
+          const updatedProjects = searchTableData.filter(
+            (project: any) => project._id !== projectId
+          );
+          setProjects(updatedProjects);
+          setSearchTableData(updatedProjects);
+          CustomToast(res.message, "success");
+        })
+        .catch((err) => {
+          CustomToast(err, 'error');
+        });
+    } else {
+      CustomToast("Only Admin can delete the project", "success");
+    }
+  };
+  
+
+ 
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -678,12 +699,14 @@ const Index: React.FC<any> = () => {
                 projects={searchTableData}
                 projectActions={projectActions}
                 truncateString={truncateString}
+                onDelete={onDelete}
               />
             ) : (
               <ProjectListFlatView
                 projects={searchTableData}
                 projectActions={projectActions}
                 truncateString={truncateString}
+                onDelete={onDelete}
               />
             )}
             {openFilter && (

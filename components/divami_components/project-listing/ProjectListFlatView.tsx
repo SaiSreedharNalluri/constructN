@@ -46,6 +46,7 @@ export const ProjectListFlatView = ({
   projects,
   projectActions,
   truncateString,
+  onDelete
 }: any) => {
   const router = useRouter();
   const defaultMaterialTheme = createTheme();
@@ -64,23 +65,7 @@ export const ProjectListFlatView = ({
     // setProjectsState([...projects]);
     setProjectsState([...projects]);
   }, [projects]);
-  const onDelete = (projectId: string,role:string) => {
-    if(role==="admin"){
-      deleteProject(projectId).then(res => {
-       const updatedProjects = projectsState.filter((project: any) => project._id !== projectId);          
-        setProjectsState(updatedProjects);
-        CustomToast(res.message,"success")
-      })
-      .catch((err) => {
-        CustomToast(err, 'error')
-        
-      } )
-    }
-else{
-  CustomToast("Only Admin can delete the project","success")
-}
 
-  }
   const sortBy = (field: string) => {
     if (sortObj) {
       setProjectsState(
