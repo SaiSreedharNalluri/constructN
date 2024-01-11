@@ -1,0 +1,170 @@
+/* .Upper1{
+    
+    background-color: rgb(255, 165, 0);
+  } */
+  .groove {
+  
+    /* border: 2px groove rgb(255, 165, 0,0.1); */
+    /* border-width: 10px; */
+    /* display:flex;
+    flex-direction: column; */
+    align-items: center;
+
+    margin-top: 0%;
+    margin-right: 0%;
+    margin-bottom: 0%;
+    margin-left: 77%;
+
+    padding-top: 44px;
+    padding-right:5px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+    
+    height: 482px;
+    width: 276px;
+    background-color: rgb(255, 165, 0,0.0);
+  }
+  .button2{
+    /* background-color: rgb(255, 165, 0);
+    color: #fff;
+    padding: 10px;
+    
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer; */
+    background-color: rgb(255, 165, 0);
+  color: #fff;
+  /* padding: 10px; */
+  opacity: 0.9;
+  border: none;
+  /* border-radius: 5px;  */
+  cursor: pointer;
+  /* margin-left: 100px; */
+  width: 94%;
+    padding: 10px;
+    /* border: 1px solid #ccc; */
+    border-radius: 5px;
+    font-size: 15px;
+  
+  }
+  /* .Upper2{
+color: #000;
+display: flex;
+flex-direction: row;
+
+
+  }  */
+
+ .Upper2 a:hover{
+    color: rgb(255, 165, 0);
+   text-decoration-line: none;
+
+   
+ }
+ .Upper2 a:link{
+  text-decoration: none ;
+ 
+
+ }
+ /* .middleleft{
+  background-color: rgb(255, 165, 0);
+  height: 450px;
+  width: 10%;
+ } */
+
+ .pp{
+  display: flex;
+  
+ }
+ .middleleft1{
+  opacity: 0.7;
+  padding-left: 45px;
+  
+}
+.main{
+  /* background-color: aliceblue; */
+  background-image: url("https://app.constructn.ai/_next/static/media/Illustration.a0ccf67c.svg");
+  background-color: rgb(255, 165, 0,0.0);
+ 
+  height: 30%;
+}
+
+
+.oneinput{
+   background-color: white;
+    width: 88%; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+
+}
+.one textarea{
+  background-color: aliceblue;
+  border-radius: 5px;
+  border-color: black;
+  display: flex;
+
+/* text-align: center; */
+/* padding-left: 30px; */
+/* margin-left: 20%; */
+}
+.input2{
+  /* background-color: aliceblue;
+  border-radius: 5px;
+  border-color: black;
+  display: flex; */
+width: 5px;
+height: 12px;
+/* padding-right: 1000px; */
+ /* text-align: center;
+  padding-left: 30px;
+margin-left: 22%;  */
+
+}
+
+
+.one {
+ 
+  border-color: black;
+
+ /* text-align: center; */
+}
+
+
+ /* .holder{
+  text-align: center;
+}  */
+.groove h5{
+  padding-left: 0%;
+  align-items: flex-end;
+}
+.input{
+  display: flex;
+ flex-direction: row;
+ padding-right: 40%;
+
+}
+/* .input3{
+  width: 15px;
+  height: 12px;
+  display: flex;
+  flex-direction: row;
+} */
+.Upper2 {
+  display: flex;
+  align-items: center;
+}
+
+.input3 {
+  margin-right: 5px; 
+}
+
+.h5 {
+  margin: 0; /* Remove default margin for the h5 element */
+}
+
+
+.signin{
+  padding-left: 86px;
+}

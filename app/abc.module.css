@@ -1,0 +1,161 @@
+.groove {
+  
+    /* border: 2px groove rgb(255, 165, 0,0.1); */
+    /* border-width: 10px; */
+    /* display:flex;
+    flex-direction: column; */
+    align-items: center;
+
+    margin-top: 0%;
+    margin-right: 0%;
+    margin-bottom: 0%;
+    margin-left: 77%;
+
+    padding-top: 44px;
+    padding-right:5px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+    
+    height: 482px;
+    width: 276px;
+    background-color: rgb(255, 165, 0,0.0);
+  }
+
+  .groove a:hover{
+    color: rgb(255, 165, 0);
+    text-decoration: none;
+  
+  }
+  .groove a:link {
+    text-decoration: none;
+  }
+/* .one{
+
+ display: flex;
+flex-direction: row; 
+} */
+
+.Upper1{
+  /* background-color: rgb(255, 165, 0,); */
+ 
+  background-image: url("/imageCN.png");
+
+ } 
+.button1{
+  width: 94%;
+  background-color: rgb(255, 165, 0);
+   /* color: #fff;
+  padding: 10px; */
+  opacity: 0.9;
+  border: none;
+  /* border-radius: 5px; 
+  cursor: pointer; */
+  margin-right: 15px;  
+  padding: 12px;
+  /* background-color: #3498db; */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  /* transition: background-color 0.3s ease; */
+
+}
+.button1:hover{
+  opacity: 1;
+}
+.button2{
+  background-color: rgb(255, 165, 0);
+  color: #fff;
+  /* padding: 10px; */
+  opacity: 0.9;
+  border: none;
+  /* border-radius: 5px;  */
+  cursor: pointer;
+  /* margin-left: 100px; */
+  width: 94%;
+    padding: 10px;
+    /* border: 1px solid #ccc; */
+    border-radius: 5px;
+    font-size: 15px;
+  
+}
+.button2:hover{
+  opacity: 1;
+}
+.middleleft{
+  /* background-color: rgb(255, 165, 0); */
+  height: 450px;
+  width: 10%;
+
+}
+.middleleft1{
+  opacity: 0.7;
+  padding-left: 35px;
+  
+}
+
+/* .ambo{
+  display: flex;
+  gap: 10px;
+  /* border-left: black;
+  border: 30px; */
+   /* border-left: 30px solid black;
+} */ 
+
+.btn{
+  padding-bottom: 10px;
+}
+
+/* .inputtextbox{
+  margin-left: 20px;
+  border-radius: 90px;
+  color: aqua;
+} */
+
+.one input{
+  /* background-color: aliceblue;
+  border-radius: 5px;
+  border-color: black; */
+  
+    width: 88%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 15px;
+  
+}
+.main{
+  background-color: aliceblue;
+}
+/* .bgimg{
+height: 30%;
+width: 30%;
+} */
+.main{
+  background-image: url("https://app.constructn.ai/_next/static/media/Illustration.a0ccf67c.svg");
+  background-color: rgb(255, 165, 0,0.0);
+ 
+  height: 30%;
+}
+.lock{
+  border-color: black;
+  background-color: rgb(255, 165, 0,0.6);
+  border-radius: 50%;
+  padding: 4px;
+  padding-top: 8px;
+  padding-bottom: 2px;
+  margin-left: 98px;
+
+  /* width: 15%;
+  height: 15%;
+  background-color: #3498db; /* Set your desired background color */
+  /* border-radius: 50%; */ 
+ 
+}
+.signin{
+  padding-left: 86px;
+}
+.user1{
+color: blue;
+}
