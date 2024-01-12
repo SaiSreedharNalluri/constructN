@@ -2011,11 +2011,9 @@ export const PotreeViewerUtils = () => {
             _sendContext = true;
         } else {
             // console.log("Testing realityViewToggle: ", _isSupportUser);
-            if (_structure._id === "STR418477" || _isSupportUser) {
                 unloadAllImages();
                 // _viewer.fitToScreen();
-            }
-            publish("show-pointcloud", { view: true, disable: false });
+                publish("show-pointcloud", { view: true, disable: false });
         }
     }
     
