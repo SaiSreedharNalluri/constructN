@@ -382,7 +382,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     useEffect(()=>{
         if(isCompare){
-            publish('progress-2d-tool', '');
+            publish('progress-2d-tool', 'Select');
             if(selectedAsset){
                 toast.warn('Exit Compare Mode to Select Assets')
             }
@@ -1072,8 +1072,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             <div id='left-container' className={`relative h-full w-${showReality ? '1/2' : 'full'} border border-[#e2e3e5] z-20 rounded-lg p-[2px] flex justify-center ${showReality ? '' : 'grow shrink'}`}  
                                                     style={isCompare ? {
-                                                    clipPath: `polygon(0% 0%, ${clipValue}% 0%, ${clipValue}% 100%, 0% 100%)`,
-                                                    } : {} }>
+                                                        clipPath: `polygon(${clipValue}% 0%, 100% 0%, 100% 100%, ${clipValue}% 100%)`,
+                                                        } : {} }>
 
                                                 <Progress2DComponent
 
