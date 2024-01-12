@@ -2,6 +2,7 @@ import React from "react"
 import ChooseFiles from "../chooseFile/chooseFiles"; 
 import UploadingStatus from './uploadingStatus'
 import { useUploaderContext } from "../../../state/uploaderState/context";
+import { UploadRange } from "../../../state/uploaderState/state";
 
 interface IProps{
   onDrop: (acceptedFiles: File[]) => void;
@@ -10,8 +11,8 @@ let ChooseUploaderFile:React.FC<IProps>=({onDrop})=>{
   const { state } = useUploaderContext();
   
   const dragDropText = "Drag and Drop the files / folders you want to upload or browse"
-  const supportFileText=`1).Supported file types: jpeg, jpg with GPS metadata. 
-                         2).Maximum upload limit: 1500 files only, Reach out to support@constructn.ai for larger uploads `
+  const supportFileText=`1) Supported file types: jpeg, jpg with GPS metadata. 
+  2) Min. of ${UploadRange.Minimum} and Max. of ${UploadRange.Maximum} files allowed. Reach out to support@constructn.ai for larger uploads.`
   const getDisableStatus=()=>{
     if(state.choosenFiles.validFiles.length === 1500)
     {
