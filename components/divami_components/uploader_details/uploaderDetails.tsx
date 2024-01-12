@@ -282,7 +282,7 @@ const UploaderDateDetails: React.FC<any> = () => {
               maxDate={maxAllowedDate}
               showPopperArrow={false}
               customInput={<div className="custom-date-picker-input">
-              <input className="outline-none" placeholder="DD/MM/YYYY" type="text" value={uploaderState.date===undefined ? '' :moment(uploaderState.date).format('DD/MM/YYYY')} readOnly/>
+              <input className="outline-none" placeholder="DD/MM/YYYY" type="text" value={uploaderState.date===undefined ? '' :moment(uploaderState.date).format('DD MMM,YYYY')} readOnly/>
               <CalendarMonthIcon className="calendar-icon" />
             </div>}
             />
