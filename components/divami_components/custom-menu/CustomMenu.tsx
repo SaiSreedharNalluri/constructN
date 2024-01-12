@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useState } from "react";
-import { ListItemIcon, Menu } from "@mui/material";
+import { ListItemIcon, Menu, Tooltip } from "@mui/material";
 import {
   MenuOptionIcon,
   MenuOptionLabel,
@@ -27,7 +27,8 @@ export const CustomMenu = ({
   };
   const [isActive, setIsActive] = useState(false);
   return (
-    <MenuWrapper className={`${id} ${isActive ? "active" : ""}`}>
+    <Tooltip title={"Sort"}>
+    <MenuWrapper className={`${id} ${isActive ? "active" : ""} cursor-pointer`}>
       <Image
         src={imageSrc}
         alt=""
@@ -108,5 +109,6 @@ export const CustomMenu = ({
         ))}
       </Menu>
     </MenuWrapper>
+    </Tooltip>
   );
 };

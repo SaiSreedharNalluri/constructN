@@ -199,7 +199,7 @@ const ProjectConfig = ({
     // Check if the value is empty or not and set setShowbutton accordingly
     setShowbutton(
       value.trim().length > 0 &&
-        value.trim().length <= 15 &&
+        value.trim().length <= 14 &&
         /^(?:[a-zA-Z]+|\d+|[a-zA-Z0-9\s]+)$/.test(value)
     );
   };
