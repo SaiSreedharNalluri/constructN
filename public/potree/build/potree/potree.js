@@ -54321,7 +54321,7 @@
 
 					let suffix = "";
 					if(this.lengthUnit != null && this.lengthUnitDisplay != null){
-						height = height / this.lengthUnit.unitspermeter * this.lengthUnitDisplay.unitspermeter;  //convert to meters then to the display unit
+						height = height * (this.lengthUnit.unitspermeter || this.lengthUnitDisplay.unitspermeter);  //convert to meters then to the display unit
 						suffix = this.lengthUnitDisplay.code;
 					}
 

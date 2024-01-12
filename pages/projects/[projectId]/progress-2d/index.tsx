@@ -1144,7 +1144,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 category={selectedCategory}
 
-                                                snapshot={snapshotBase}
+                                                snapshot={snapshotCompare}
 
                                                 compare={isCompare}
 
