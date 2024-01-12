@@ -19,9 +19,16 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy, loader }: IO
   }
 
   const fileToUpload = useSignal<File | undefined>(undefined)
-  const existingBIM = useSignal(
-    hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 && hierarchy!.value[0].designs![0].type === 'BIM' ?
-      hierarchy!.value[0].designs![0].name : undefined)
+  const existingBIM = useComputed(() => {
+    if(hierarchy !== undefined && hierarchy.value.length > 0) {
+      if(hierarchy.value[0].designs !== undefined && hierarchy.value[0].designs.length > 0 ) {
+        hierarchy.value[0].designs.forEach(design => {
+          if(design.type === 'BIM') return design.name
+        })
+      }
+    }
+    return undefined
+  })
   const uploadComplete = useSignal(hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 && hierarchy!.value[0].designs![0].type === 'BIM')
   const isUploading = useSignal(false)
   const uploadProgress = useSignal<UploadProgress>({ sent: 0, total: 0, percentage: -1 })
