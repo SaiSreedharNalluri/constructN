@@ -37,10 +37,10 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy, loader }: IO
   const dragDropText = "(or drag and drop file here)";
   const supportFileText = "Upload .RVT or .NWD file";
 
-  console.log(hierarchy?.peek()[0]._id, existingBIM.value)
+  // console.log(hierarchy?.peek()[0]._id, existingBIM.value)
 
   useSignalEffect(() => {
-    console.log('Action inside BIM', 'Step:', step.peek(), 'Action:', action?.peek(), 'Project ID:', projectId.peek(), 'Structure ID:', hierarchy?.peek()[0]._id)
+    // console.log('Action inside BIM', 'Step:', step.peek(), 'Action:', action?.peek(), 'Project ID:', projectId.peek(), 'Structure ID:', hierarchy?.peek()[0]._id)
     switch (action!.value) {
       case 'Back-2':
         step.value = 1
