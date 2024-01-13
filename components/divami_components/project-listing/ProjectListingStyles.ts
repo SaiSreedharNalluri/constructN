@@ -168,7 +168,7 @@ export const ProjectCardsContainer = styled("div")({
 export const ProjectCard = styled("div")((props: any) => ({
   width: props.active ? "300px" : "300px",
   // height: props.active ? "458px" : "438px",
-  height: props.active ? "408px" : "408px",
+  // height: props.active ? "416px" : "408px", //increasing height
   background: "#FFFFFF",
   border: "1px solid #888888",
   padding: "20px",
@@ -259,13 +259,13 @@ export const CapturesText = styled("div")({
   fontStyle: "italic",
   marginBottom: "13px",
 });
-export const CaptureImageContainer = styled("div")({
+export const CaptureImageContainer = styled("div")((props: { marginBottom?: boolean }) => ({
   display: "flex",
   color: "#515151",
   fontSize: "14px",
   alignItems: "center",
-  marginBottom: "16px",
-});
+  marginBottom: props.marginBottom ? "4px" : "16px",
+}));
 export const CaptureImageIcon = styled(Image)({
   marginRight: "7px",
   width: "20px",

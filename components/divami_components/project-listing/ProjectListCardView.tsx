@@ -4,6 +4,7 @@ import { IProjects } from "../../../models/IProjects";
 import { deleteProject, getProjects, getProjectsList } from "../../../services/project";
 import userCount from "../../../public/divami_icons/userCount.svg";
 import updatedAtIcon from "../../../public/divami_icons/updatedAtIcon.svg";
+import Progress2DImage from "../../../public/divami_icons/progress2d.svg";
 import {
   ProjectCard,
   ProjectLogo,
@@ -60,6 +61,7 @@ export const ProjectListCardView = ({
   projects,
   projectActions,
   truncateString,
+  d2Details
 }: any) => {
   const router = useRouter();
   const customLogger = new CustomLoggerClass();
@@ -280,6 +282,15 @@ else{
                 : `0${each.captureDroneCount}`}
             </CaptureCount>
           </CaptureImageContainer>
+          <CaptureImageContainer>
+            <Image
+            width={20}
+            height={21}
+                src={Progress2DImage}
+                alt={""}
+              ></Image>
+              <div className="ml-[7px]">{d2Details[each._id]? "Available" : "Not Available"}</div>
+            </CaptureImageContainer>
           <ListHorizontalDivider />
 
 </>}
@@ -289,7 +300,7 @@ else{
               <UsersCountText>{each.numberOfUsers}</UsersCountText>
             </UsersCountContainer>
             <ListDivider />
-            <CaptureImageContainer>
+            <CaptureImageContainer marginBottom>
               <Image src={updatedAtIcon} alt="" width={14} height={15} />
               <UsersCountText>Last Captured - {isNaN(Date.parse(each.lastUpdated))
       ? "N/A"

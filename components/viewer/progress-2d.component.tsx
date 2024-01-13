@@ -221,7 +221,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _dataVizUtils.current?.setTransform(_tm.current!, _offset.current!)
 
-            if (layers) _dataVizUtils.current.loadMediaData(layers)
+            if (layers) _dataVizUtils.current.loadMediaData(layers, props.snapshot.date)
         }
     }
 

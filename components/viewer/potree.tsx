@@ -151,9 +151,9 @@ function PotreeViewer(props: IProps) {
 
     subscribe('viewerState', onViewerStateChange)
 
-    subscribe('publish-viewer-state-' + viewerId, _publishViewerState)
+    subscribe('publish-viewer-state', _publishViewerState)
 
-    subscribe('reset-viewer-state-' + viewerId, _onResetViewerState)
+    subscribe('reset-viewer-state', _onResetViewerState)
 
     initViewer()
 
@@ -161,9 +161,10 @@ function PotreeViewer(props: IProps) {
 
       unsubscribe('viewerState', onViewerStateChange)
 
-      unsubscribe('publish-viewer-state-' + viewerId, _publishViewerState)
+      unsubscribe('publish-viewer-state', _publishViewerState)
 
-      unsubscribe('reset-viewer-state-' + viewerId, _onResetViewerState)
+      unsubscribe('reset-viewer-state', _onResetViewerState)
+
 
     }
 

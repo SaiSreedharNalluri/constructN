@@ -534,7 +534,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
         setMeasurementsLoaded(!measurementsLoaded);
       }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer'/>)
   }
-
+ 
   return (
 
     <>
