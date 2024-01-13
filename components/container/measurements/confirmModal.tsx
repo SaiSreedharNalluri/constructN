@@ -7,6 +7,7 @@ import authHeader from '../../../services/auth-header';
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
 import { CustomToast } from '../../divami_components/custom-toaster/CustomToast';
+import { getCookie } from 'cookies-next';
 
 const createMeasurement = async ({ name = '', type = '', snapshot = '', context = {}, data = [] , setLoading, setShow , setSelected}: {name?: string ,type?: string, snapshot?: string, context?: object, data?:{position?: object}[] , setLoading: React.Dispatch<React.SetStateAction<boolean>>,setShow: (v: boolean) => void, setSelected: Dispatch<SetStateAction<string>>}) => {
   const formatData = data.map((single)=>(single.position))
@@ -49,6 +50,8 @@ interface Props {
 }
 
 const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=()=>{}, setMeasurementType=()=>{}, refetch =()=>{}, setLoading=()=>{} , getContext=()=>{}, setActiveMeasure =()=>{}, loading=false, setSelected =()=>{}, apiPoints= []}: Props) => {
+    const userObj: any = getCookie('user');
+    const user = JSON.parse(userObj);
     const router = useRouter();
     const snapshot = router.query.snap as string;
     const [name, setName] = useState('');
@@ -72,7 +75,7 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
         toast.error("Name Already Exists Please Choose a Different Name");
         return;
       }
-      await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected, context : getContext() });
+      await createMeasurement({ name: name , type: measurement?.name, snapshot, data: measurement?.points, setLoading, setShow , setSelected, context : { ...(getContext() || {}), createdBy: user._id } });
       setActiveMeasure('');
       setMeasurementType('');
       refetch();
