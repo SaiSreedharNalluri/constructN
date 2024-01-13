@@ -86,6 +86,7 @@ import instance from "../../../services/axiosInstance";
 import { API } from "../../../config/config";
 import { toast } from "react-toastify";
 import authHeader from "../../../services/auth-header";
+import { CustomToast } from "../custom-toaster/CustomToast";
 // import { ISections } from "../../../models/ISections";
 
 const headers = {headers: authHeader.authHeader()}
@@ -103,6 +104,16 @@ const fetchAssetCategories = (projectId: string) => {
   try {
 
       return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
+
+  } catch (error) { throw error }
+
+}
+
+const fetchAssetCountByStructure = (projectId: string) => {
+
+  try {
+
+      return instance.get(`${API.PROGRESS_2D_URL}/assets/asset-count-by-structure`, { headers: headers.headers , params: { project: projectId } })
 
   } catch (error) { throw error }
 
@@ -140,6 +151,7 @@ const SectionsListing = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
   const [hasProgress2D, setHasProgress2D]: any = useState(false);
+  const [assetCount, setAssetCount] = useState({});
   // const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
@@ -250,7 +262,9 @@ const[isProcessing,setProcessing]=useState(false);
   useEffect(() => {
     if (router.isReady &&(!dataLoaded)) {
       const type = "newSnapshot";
-      const projectId = router?.query?.projectId as string
+      const projectId = router?.query?.projectId as string;
+
+      fetchAssetCountByStructure(router.query.projectId as string).then((res)=> setAssetCount(res.data.result)).catch(()=>{ setAssetCount({}); CustomToast("error","Failed To Fetch the Asset Count")});
 
       fetchAssetCategories(projectId).then(res => {
         if(res.data.success) setHasProgress2D(res.data.result.length > 0)
@@ -810,7 +824,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
           <TooltipText title="2D Progress">
             <div className="flex justify-center">
-              <Progress2DImageIcon
+              {assetCount[rowData._id as keyof typeof assetCount] ? <Progress2DImageIcon
                 src={Progress2DImage}
                 alt={""}
                 onClick={() => {
@@ -822,7 +836,11 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
                       toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
                     }
                 }}
-              ></Progress2DImageIcon>
+              ></Progress2DImageIcon>: <Progress2DImageIcon
+              src={Progress2DImage}
+              alt={""}
+              className="opacity-[0.6] cursor-not-allowed"
+            ></Progress2DImageIcon>}
             </div>
           </TooltipText>
           }</div> : 'Not Available';

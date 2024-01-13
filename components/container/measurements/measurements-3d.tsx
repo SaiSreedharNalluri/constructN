@@ -534,7 +534,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
         setMeasurementsLoaded(!measurementsLoaded);
       }} style={{ fontSize: "18px" }} className='mr-[26px] cursor-pointer'/>)
   }
-
+ 
   return (
 
     <>
@@ -685,7 +685,10 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
               </ListItemButton>
 
                 <DeleteIcon
-                    onClick={()=> setDeleteMeasurementId(measurement._id!)}
+                    onClick={(e)=>{  
+                      e.stopPropagation();
+                      setDeleteMeasurementId(measurement._id!);
+                      }}
                     style={{ fontSize: "18px" }}
                     data-testid={"addIcon"}
                     className='cursor-pointer mr-2 z-10'

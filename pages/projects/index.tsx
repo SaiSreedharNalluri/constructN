@@ -40,6 +40,7 @@ import { ProjectListCardView } from "../../components/divami_components/project-
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
 import {
+  get2dProgressDetails,
   getProjects,
   getProjectsList,
   getProjectUsers,
@@ -122,6 +123,7 @@ const Index: React.FC<any> = () => {
     ],
   });
   const [selectedOption, setSelectedOption] = useState("issuePriority");
+  const [d2Details, setD2Details] = useState({});
 
   const {
     boot,
@@ -329,6 +331,8 @@ const Index: React.FC<any> = () => {
   useEffect(() => {
     if (router.isReady) {
 
+      get2dProgressDetails().then((res)=>(setD2Details(res.data.result))).catch(()=>{ setD2Details({});CustomToast("error","Unable to Fetch 2d Progress details")});
+      
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
@@ -678,6 +682,7 @@ const Index: React.FC<any> = () => {
                 projects={searchTableData}
                 projectActions={projectActions}
                 truncateString={truncateString}
+                d2Details={d2Details}
               />
             ) : (
               <ProjectListFlatView

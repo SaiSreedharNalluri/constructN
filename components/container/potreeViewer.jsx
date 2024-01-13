@@ -16,7 +16,7 @@ const subscribe = (eventName, listener) => {
 const unsubscribe = (eventName, listener) => {
   document.removeEventListener(eventName, listener)
 }
-
+ 
 function PotreeViewer(props) {
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
     const [showPointCloud, setShowPointCloud] = useState(false);
