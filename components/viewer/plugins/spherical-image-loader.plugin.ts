@@ -50,6 +50,24 @@ export class SphericalImageLoader extends RealityBasePlugin {
 
     private _initSphericalImage = (sphericalImage: any) => {
 
+        const loader = "../../../images/loading.jpg"
+                
+        this._textureLoader.load(loader, texture => {
+
+            var sphereGeometry = new THREE.SphereGeometry(0.5, 128, 128)
+
+            var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, opacity: 1, transparent: true })
+
+            sphereGeometry.scale(-1, 1, 1)
+
+            this._sphericalMesh = new THREE.Mesh(sphereGeometry, sphereMaterial)
+
+            this._scene.add(this._sphericalMesh)
+            
+            this._transformSphere({position: { x: 443888.46805643535, y: 4646560.9695593435, z: 111.48846863686504 }, rotation:[-90.14411556656954, -28.05067717342728, -178.98213086922823]})
+
+        })
+
         this._textureLoader.load(sphericalImage.imageName, texture => {
 
             this._imageDimensions = { width: texture.image.naturalWidth, height: texture.image.naturalHeight }
@@ -79,7 +97,30 @@ export class SphericalImageLoader extends RealityBasePlugin {
 
                 this._initSphericalImage(sphericalImage)
 
+                return;
+
             }
+
+            const loader = "../../../images/loading.jpg"
+
+            this._textureLoader.load(loader, texture => {
+
+                var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
+
+                if (this._sphericalMesh) {
+
+                    this._sphericalMesh.material.dispose()
+
+                    this._sphericalMesh.material = sphereMaterial
+
+
+                    this._sphericalMesh.material.needsUpdate = true
+
+                    this._transformSphere({position: { x: 443888.46805643535, y: 4646560.9695593435, z: 111.48846863686504 }, rotation:[-90.14411556656954, -28.05067717342728, -178.98213086922823]})
+
+
+                }
+            })
 
             this._textureLoader.load(sphericalImage.imageName, texture => {
 

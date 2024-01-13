@@ -38,6 +38,7 @@ import { toast } from 'react-toastify'
 import CustomLoader from '../../divami_components/custom_loader/CustomLoader'
 import PopupComponent from '../../popupComponent/PopupComponent'
 import { CustomToast } from '../../divami_components/custom-toaster/CustomToast'
+import { getCookie } from 'cookies-next'
 
 const rightClickNeeded =['Distance','Area','Angle']
 
@@ -51,6 +52,8 @@ const unsubscribe = (eventName: string, listener: EventListenerOrEventListenerOb
 }
 
 const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetStateAction<[] | {name: string}[]>>, setLoading: Dispatch<SetStateAction<boolean>>) => {
+  const userObj: any = getCookie('user');
+  const user = JSON.parse(userObj);
   try{
     setLoading(true);
     const resp =  await instance.get(
@@ -60,7 +63,8 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
         params: { snapshot }
       }
     )
-    setApiPoints([...(resp.data.result || [])]);
+    const filterById = [...(resp.data.result || [])].filter((point)=>(point.context.createdBy === user._id))
+    setApiPoints(filterById);
   }catch{
     setApiPoints([]);
     CustomToast('Failed to Load Measurements!',"error");

@@ -168,7 +168,7 @@ export const ProjectCardsContainer = styled("div")({
 export const ProjectCard = styled("div")((props: any) => ({
   width: props.active ? "300px" : "300px",
   // height: props.active ? "458px" : "438px",
-  // height: props.active ? "416px" : "408px", //increasing height
+  height: "436px", //increasing height
   background: "#FFFFFF",
   border: "1px solid #888888",
   padding: "20px",
