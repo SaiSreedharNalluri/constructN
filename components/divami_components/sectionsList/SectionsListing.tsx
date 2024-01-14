@@ -87,6 +87,7 @@ import { API } from "../../../config/config";
 import { toast } from "react-toastify";
 import authHeader from "../../../services/auth-header";
 import { CustomToast } from "../custom-toaster/CustomToast";
+import { getCookie } from "cookies-next";
 // import { ISections } from "../../../models/ISections";
 
 const headers = {headers: authHeader.authHeader()}
@@ -139,6 +140,9 @@ const customToolbarStyle = {
 };
 
 const SectionsListing = () => {
+  const userObj: any = getCookie("user");
+  const user = JSON.parse(userObj || '{}');
+  const isSupportUser = user?.isSupportUser;
   const router = useRouter();
   const { appContextAction } = useAppContext();
   const { appAction } = appContextAction;
@@ -824,7 +828,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
           <TooltipText title="2D Progress">
             <div className="flex justify-center">
-              {assetCount[rowData._id as keyof typeof assetCount] ? <Progress2DImageIcon
+              {(assetCount[rowData._id as keyof typeof assetCount] || isSupportUser) ? <Progress2DImageIcon
                 src={Progress2DImage}
                 alt={""}
                 onClick={() => {
@@ -836,14 +840,10 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
                       toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
                     }
                 }}
-              ></Progress2DImageIcon>: <Progress2DImageIcon
-              src={Progress2DImage}
-              alt={""}
-              className="opacity-[0.6] cursor-not-allowed"
-            ></Progress2DImageIcon>}
+              ></Progress2DImageIcon>: "Processing"}
             </div>
           </TooltipText>
-          }</div> : 'Not Available';
+          }</div> : 'No Drawings';
       },
     },
   ];

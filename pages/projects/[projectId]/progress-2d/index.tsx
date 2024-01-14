@@ -152,10 +152,6 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _compareDataViz = useRef<ForgeDataVizUtils>()
 
-    const clearIntervelRef = useRef()
-
-    const clearHideIntervelRef = useRef()
-
     const [isScriptsLoaded, setIsScriptsLoaded] = useState(false)
 
     const [isAutodeskInitialised, setAutodeskInitialised] = useState(false)
@@ -201,8 +197,6 @@ const Progress2DPage: React.FC<any> = () => {
     const [selectedLayers, setSelectedLayers] = useState<string[]>()
 
     const [showMessage, setShowMessage] = useState(false);
-
-    const [showHidden, setShowHidden] = useState(true);
 
     const [realityDate, setRealityDate] = useState('')
 
@@ -905,16 +899,6 @@ const Progress2DPage: React.FC<any> = () => {
 
         }
         setRealityDate((event as CustomEvent).detail.snapshotDate);
-        clearTimeout(clearIntervelRef.current);
-        clearTimeout(clearHideIntervelRef.current);
-        setShowMessage(true);
-        setShowHidden(false);
-        (clearIntervelRef.current as undefined | ReturnType<typeof setTimeout>) = setTimeout(()=>{
-            setShowMessage(false);
-        },3500);
-        (clearHideIntervelRef.current as undefined | ReturnType<typeof setTimeout>) = setTimeout(()=>{
-            setShowHidden(true);
-        },3800);
 
     }
 
@@ -1123,15 +1107,17 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             {showReality ? (<>
 
-                                                {realityDate && !showHidden ? <div className={`bg-gray-500 text-white absolute top-4 right-10 mr-8 p-4 opacity-0 transition-opacity duration-1000 ease-in-out text-[14px] z-40 ${showMessage ? 'opacity-100': 'opacity-0'}`}>{`SnapshotDate: ${moment(realityDate).format("DD MMM, yyyy")}`}</div>: null}
-
                                                     <div className='flex h-full w-[3px] rounded bg-white items-center' style={{ zIndex: 20 }}>
 
                                                     </div>
 
-                                                    <div id='right-container' className={'relative h-full w-1/2 z-20'}>
+                                                    <div id='right-container' className={'relative h-full w-1/2 z-20 border border-[#e2e3e5] rounded-lg'} >
 
                                                         <RealityPage snapshot={realityDate === snapshotCompare?.date ? snapshotCompare: snapshotBase} id={'left'} />
+
+                                                        <div className={`flex absolute bottom-1 left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} >
+                                                        {`SnapshotDate: ${moment(realityDate).format("DD MMM, yyyy")}`}
+                                                        </div>
 
                                                         <IconButton
 
