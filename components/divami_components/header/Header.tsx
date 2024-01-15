@@ -534,6 +534,8 @@ const Header: React.FC<any> = ({
               onClick={goToProjectsList}
               src={constructnLogo}
               alt="Constructn Logo"
+              priority
+              //placeholder="blur"
               data-testid="constructn-logo"
             />
           </HeaderLogoImageContainer>

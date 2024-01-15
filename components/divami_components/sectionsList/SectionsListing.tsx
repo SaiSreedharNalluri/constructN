@@ -577,8 +577,8 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
              }
            else if (Object.keys(rowData.snapshots?.latestSnapshot).length >= 0 && rowData.snapshots?.snapshotActiveCount>0 ) {
               router.push({
-                pathname: `/projects/${router?.query?.projectId as string}/structure/${rowData._id}/multiverseviewer`
-                //query: { structId: rowData._id },
+                pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+                query: { structureId: rowData._id,projectId:router?.query?.projectId as string },
               });
               setCaptureAvailable(false)
               customLogger.logInfo("View Strucuture");
@@ -810,8 +810,8 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
                 onClick={() => {
                   if(hasProgress2D) {
                     router.push({
-                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-                      query: { structId: rowData._id },
+                      pathname: `/projects/[projectId]/progress-2d`,
+                      query: { structId: rowData._id, projectId:router?.query?.projectId as string },
                     })} else {
                       toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
                     }
@@ -984,11 +984,11 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           isImageThere={true}
           SecondaryButtonlabel={"No"}
           callBackvalue={isCaptureAvailable? ()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`
-            //query: { structId: id },
+            pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+            query: { structureId: id, projectId:router?.query?.projectId as string },
           }):()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`//,
-            //query: { structId: id },
+            pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+            query: { structureId: id, projectId:router?.query?.projectId as string },
           }) }
         />
         )

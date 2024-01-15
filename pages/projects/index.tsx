@@ -226,7 +226,8 @@ const Index: React.FC<any> = () => {
     {
       label: "View Project Summary",
       action: (id?: string) => {
-        router.push(`/projects/${id}/sections`);
+        router.push({pathname:`/projects/[projectId]/sections`,
+        query:{projectId:id}});
       },
     },
     {
@@ -239,13 +240,15 @@ const Index: React.FC<any> = () => {
     {
       label: "Project Details",
       action: (id?: string) => {
-        router.push(`/projects/${id}/settings`);
+        router.push({pathname:`/projects/[projectId]/settings`,
+        query:{projectId:id}});
       },
     },
     {
       label: "Manage Users",
       action: (id: string) => {
-        router.push(`/projects/${id}/usersList`);
+        router.push({pathname:`/projects/[projectId]/usersList`,
+        query:{projectId:id}});
       },
     },
     {
