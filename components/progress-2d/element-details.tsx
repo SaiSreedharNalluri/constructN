@@ -74,7 +74,7 @@ const ElementDetails: React.FC<{
                     <Button 
                     size='small'  
                     className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
-                    disabled={ !( actualName !== name || description !== actualDecription ||  stage !== actualStage )}
+                    disabled={ !( actualName !== name || description !== actualDecription ||  stage !== actualStage ) || !name}
                     onClick={onSave}
                     >
                         Save

@@ -1,4 +1,4 @@
-import { OutlinedInput } from "@mui/material";
+import { Button, Checkbox, OutlinedInput } from "@mui/material";
 import React, { useState } from "react";
 import moment from "moment";
 import { publish } from "../../services/light-box-service";
@@ -12,8 +12,11 @@ const Progress2dAssets = ({
 	assets = [],
 }: Props) => {
 	const [search, setSearch] = useState("");
+	const [showInActiveAssets, setShowInActiveAssets] = useState(false);
 
-	const filteredAssets = assets.filter(
+	const inActiveAssets = showInActiveAssets ? assets.filter((asset)=>(asset.status === 'Inactive')): assets
+
+	const filteredAssets = inActiveAssets.filter(
 		(asset) =>
 			asset.name?.toLowerCase()?.includes(search?.toLowerCase()) ||
 			(asset?.progress?.stage as IAssetStage)?.name
@@ -33,29 +36,47 @@ const Progress2dAssets = ({
 				<div className="text-[11px] mt-[4px] font-semibold text-[#999999]">
 					{(row?.progress?.stage as IAssetStage)?.name || "-"}
 				</div>
-				<div className="text-[11px] mt-[2px] text-[#ccc]">
-					{moment(new Date(row.updatedAt)).format(
-						"DD MMM, yyyy HH:mm"
-					) || "-"}
+				<div className="flex justify-between">
+					<div className="text-[11px] mt-[2px] text-[#ccc]">
+						{moment(new Date(row.updatedAt)).format(
+							"DD MMM, yyyy HH:mm"
+						) || "-"}
+					</div>
+					<div className="text-[11px] mt-[2px] text-[#ccc] mr-2">
+						{row.status}
+					</div>
 				</div>
 			</div>
 		);
 	};
 
 	return (
-		<div className="mt-4 m-2">
-			<OutlinedInput
-				className="mb-2"
-				size="small"
-				placeholder="Search"
-				onChange={(e) => setSearch(e.target.value)}
-				fullWidth
-			/>
-			<div className="max-h-96 overflow-auto">
-				{(filteredAssets || []).map((row) => (
-					<SingleCard row={row} key={row._id} />
-				))}
+		<div className="m-2 mt-0 bg-white">
+			<div className="pt-4 mb-2 sticky top-0 bg-white z-10 flex justify-between">
+				<div className="w-[calc(70%-30px)]">
+					<OutlinedInput
+					className="mb-2"
+					size="small"
+					placeholder="Search"
+					onChange={(e) => setSearch(e.target.value)}
+					fullWidth
+					/>
+				</div>
+				<div>
+					<Checkbox sx={{
+						'&.Mui-checked': {
+						color: '#F1742E',
+						},
+						'&.MuiButtonBase-root':{
+							padding:'10px 2px'
+						}
+					}} checked={showInActiveAssets}  onChange={(e) => setShowInActiveAssets(e.target.checked) } />
+						<span className="text-[12px] mr-1" >Show InActive</span>
+				</div>
 			</div>
+			{(filteredAssets || []).map((row) => (
+				<SingleCard row={row} key={row._id} />
+			))}
 		</div>
 	);
 };

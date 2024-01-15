@@ -19,9 +19,10 @@ import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
 import moment from 'moment-timezone';
 import CustomLoggerClass from "../divami_components/custom_logger/CustomLoggerClass";
 import { MAPBOX } from "../../config/config";
+import {TruncatedString} from "../../utils/utils";
 const ProjectDetails: React.FC = () => {
   const customLogger = new CustomLoggerClass();
-  let [projectData, setProjectData] = useState<IProjects>();
+  let [projectData, setProjectData]:any = useState();
   const router = useRouter();
   useEffect(() => {
     if (router.isReady) {
@@ -50,11 +51,9 @@ const ProjectDetails: React.FC = () => {
       setUser(user);
     }
   }, []);
-  const latitude: any =
-    projectData?.location != undefined ? projectData?.location[0] : 0;
-  const longitude: any =
-    projectData?.location != undefined ? projectData?.location[1] : 0;
-  const utm = projectData?.utm ? projectData?.utm : "NA";
+const latitude =projectData?.location?.coordinates[1]  != undefined ? projectData?.location?.coordinates[1] : 0;
+const longitude =projectData?.location?.coordinates[0]  != undefined ? projectData?.location?.coordinates[0] : 0;
+  const utm = projectData?.utm?.zone ? projectData?.utm?.zone : "NA";
   const handleUpdateProject = (formData: any) => {
     let projectInfo: any = {};
     projectInfo.name = formData.filter(
@@ -69,10 +68,13 @@ const ProjectDetails: React.FC = () => {
     projectInfo.utm = formData.filter(
       (item: any) => item.id == "utm_value"
     )[0]?.defaultValue;
-    projectInfo.location = [
-      formData.filter((item: any) => item.id == "latitude")[0]?.defaultValue,
-      formData.filter((item: any) => item.id == "longitude")[0]?.defaultValue,
-    ];
+    projectInfo.location = {
+      type: "point",
+      coordinates: [
+        formData.filter((item: any) => item.id == "longitude")[0]?.defaultValue,
+        formData.filter((item: any) => item.id == "latitude")[0]?.defaultValue,
+      ],
+    }; 
     //projectInfo.name = (projectInfo.name as string).substring(0,100);
     updateProjectInfo(projectInfo, router.query.projectId as string)
       .then((response) => {
@@ -118,17 +120,6 @@ const ProjectDetails: React.FC = () => {
         }
       });
   };
-  const TruncatedString = ({ text, maxLength, suffixLength }: any) => {
-    let truncatedText = text;
-
-    if (text.length > maxLength) {
-      const prefix = text.substring(0, maxLength - suffixLength);
-      const suffix = text.substring(text.length - suffixLength);
-      truncatedText = prefix + "..." + suffix;
-    }
-
-    return truncatedText;
-  };
   return (
     <div className="">
       {projectData ? (
@@ -148,12 +139,12 @@ const ProjectDetails: React.FC = () => {
           <div className="w-full  flex border-2 border-gray-400 rounded-md">
           <div className=" w-1/2">
           <div className=" border-b border-black mx-4 py-2">
-                <img
-                  alt=""
-                  className=" w-3/4 h-20"
-                  width={1080}
-                  height={1080}
-                  src={projectData?.coverPhoto}
+          <img
+          alt=""
+          className=" w-3/4 h-20"
+          width={1080}
+          height={1080}
+          src={projectData?.coverPhoto?projectData?.coverPhoto:"https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp"}
                 />
                 <div>
                   <ChangeIcon handleImageUPload={handleImageUPload} />

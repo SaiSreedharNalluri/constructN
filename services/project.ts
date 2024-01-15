@@ -232,3 +232,29 @@ export const getGanttViewData = async (projectId: string) => {
       throw error;
     });
 };
+
+export const createProject = (formData: any) => {
+  return instance
+    .post(`${API.BASE_URL}/projects`,formData, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response?.data;
+    })
+    .catch((error) => {
+      throw error?.response?.data;
+    });
+};
+
+export const deleteProject = (formData: any) => {
+  return instance
+    .delete(`${API.BASE_URL}/projects/${formData}`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response?.data;
+    })
+    .catch((error) => {
+      throw error?.response?.data;
+    });
+};

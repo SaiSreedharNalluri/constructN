@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { IAsset, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
 
 import { publish, subscribe, unsubscribe } from '../services/light-box-service'
+import { Vector2 } from 'three'
 
 export class ForgeEdit2DUtils {
 
@@ -51,23 +52,29 @@ export class ForgeEdit2DUtils {
 
     loadAssets(assets: IAsset[]) {
 
-        this._edit2DLayer?.clear()
+        if((this._edit2DLayer as { context?: object })?.context){
+            this._edit2DLayer?.clear();
 
-        assets.forEach(asset => {
+            assets.forEach(asset => {
 
-            const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage).color
-
-            if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
-
-            else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
-
-        })
+                const color = asset.progress.stage == 'NOT_STARTED' ? '#000080' : (asset.progress.stage as IAssetStage).color
+    
+                if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
+    
+                else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
+    
+            })
+        }
 
     }
 
     _createPolygon(assetId: string, points: IAssetPoint[], color: string) {
 
-        var poly = new Autodesk.Edit2D.Polygon(points, new Autodesk.Edit2D.Style({
+        const localPoints = points.map(point => this._toLocalPosition({x: point.x, y: point.y}))
+
+        const _2dPoints = localPoints.map(point => { return {x: point.x, y: point.y} })
+
+        var poly = new Autodesk.Edit2D.Polygon(_2dPoints, new Autodesk.Edit2D.Style({
 
             lineColor: color, lineWidth: 6, fillColor: color, fillAlpha: 0.25
 
@@ -80,7 +87,11 @@ export class ForgeEdit2DUtils {
 
     _createPolyline(assetId: string, points: IAssetPoint[], color: string) {
 
-        var poly = new Autodesk.Edit2D.Polyline(points, new Autodesk.Edit2D.Style({
+        const localPoints = points.map(point => this._toLocalPosition({x: point.x, y: point.y}))
+
+        const _2dPoints = localPoints.map(point => { return {x: point.x, y: point.y} })
+
+        var poly = new Autodesk.Edit2D.Polyline(_2dPoints, new Autodesk.Edit2D.Style({
 
             lineColor: color, lineWidth: 6
 
@@ -103,7 +114,7 @@ export class ForgeEdit2DUtils {
 
             // console.log(event.action.poly)
 
-            publish('update-2d-shape', { _id: event.action.poly.name, points: event.action.poly._loops[0] })
+            publish('update-2d-shape', { _id: event.action.poly.name, points: event.action.poly._loops[0].map((point: Vector2) => this._toGlobalPosition(point)) })
 
         }
 
@@ -119,7 +130,7 @@ export class ForgeEdit2DUtils {
 
             // console.log(event.action.shapes[0])
 
-            publish('update-2d-shape', { _id: event.action.shapes[0].name, points: event.action.shapes[0]._loops[0] })
+            publish('update-2d-shape', { _id: event.action.shapes[0].name, points: event.action.shapes[0]._loops[0].map((point: Vector2) => this._toGlobalPosition(point)) })
 
         }
 
@@ -199,16 +210,16 @@ export class ForgeEdit2DUtils {
         this._offset = offset
     }
 
-    _toLocalPosition = (position: THREE.Vector3) => {
+    _toLocalPosition = ({x, y}: {x: number, y: number}) => {
 
-        let _position = this._applyTMInverse(position, this._tm)
+        let _position = this._applyTMInverse(new THREE.Vector3(x, y), this._tm)
 
         return this._applyOffset(_position, this._offset)
     }
 
-    _toGlobalPosition = (position: THREE.Vector3) => {
+    _toGlobalPosition = (position: THREE.Vector2) => {
 
-        let _position = this._applyTM(position, this._tm)
+        let _position = this._applyTM(new THREE.Vector3(position.x, position.y, 0), this._tm)
 
         _position = this._removeOffset(_position, this._offset)
 
@@ -349,6 +360,8 @@ export class ForgeEdit2DUtils {
 
                 style.lineAlpha = visibilityMap[shape.name] === '#NA' ? 0 : 1
 
+                style.fillAlpha = visibilityMap[shape.name] === '#NA' ? 0 : 0.25
+
             }
 
         })
@@ -383,7 +396,7 @@ export class ForgeEdit2DUtils {
 
                 const matches = this._viewer.toolController.getActiveTool().getName().match(new RegExp('Edit2_' + '(.*)' + '_default'))
 
-                publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0], type: matches ? matches[1].replace('Tool', '') : '' })
+                publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: matches ? matches[1].replace('Tool', '') : '' })
 
                 break
 

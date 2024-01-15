@@ -85,13 +85,12 @@ const AttachmentPreview:React.FC<IProps>=({attachment,setShowPreview})=>{
         width="100%"
         >
         <BootstrapDialogTitle
-          id="customized-dialog-title"
-          isUploader={true}
-          onClose={() => {
-            setShowPreview(false)
-            setOpenPreview(false);
-          }}
-        >
+            id="customized-dialog-title"
+            isUploader={true}
+            onClose={() => {
+              setShowPreview(false);
+              setOpenPreview(false);
+            } } hideCloseButton={false}        >
           <Tooltip title={attachment?.name?.length > 20 ? attachment?.name : ""}><div>{truncateString(attachment.name,20)}</div></Tooltip>
        </BootstrapDialogTitle>
         <DialogContent dividers style={{padding:'30px',height:'100%',width:"100%"}}>

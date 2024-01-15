@@ -14,7 +14,8 @@ export enum JobStatus {
   realityUploaded = "realityUploaded",
   readyForVisualization = "readyForVisualization",
   active = "active",
-  progress = "progress"
+  progress = "progress",
+  archived = "archived"
 }
 
 export interface IJobs {

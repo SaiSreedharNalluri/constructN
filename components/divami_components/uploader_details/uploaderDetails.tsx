@@ -107,20 +107,20 @@ const UploaderDateDetails: React.FC<any> = () => {
       //   );
       // });
 
-      const errorJobs = uploaderState.pendingUploadJobs.filter((job, index) => {
-        return job.status === JobStatus.uploadFailed
-      })
-      const combinedJobs = uploaderState.pendingProcessJobs.concat(errorJobs)
-      const filteredPendingProcessJobs = combinedJobs.filter((job) => {
-        return (
-          getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
-          new Date(job.date).toLocaleDateString() ===
-          uploaderState?.date?.toLocaleDateString()
-        );
-      });
+      // const errorJobs = uploaderState.pendingUploadJobs.filter((job, index) => {
+      //   return job.status === JobStatus.uploadFailed
+      // })
+      // const combinedJobs = uploaderState.pendingProcessJobs.concat(errorJobs)
+      // const filteredPendingProcessJobs = combinedJobs.filter((job) => {
+      //   return (
+      //     getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
+      //     new Date(job.date).toLocaleDateString() ===
+      //     uploaderState?.date?.toLocaleDateString()
+      //   );
+      // });
 
-      setFilteredJobs(filteredPendingProcessJobs);
-      console.log("filtered", filteredPendingProcessJobs);
+      // setFilteredJobs(filteredPendingProcessJobs);
+      // console.log("filtered", filteredPendingProcessJobs);
     }
   }, [
     uploaderState.pendingProcessJobs,
@@ -157,7 +157,7 @@ const UploaderDateDetails: React.FC<any> = () => {
       <div className="flex">
         <div className="pr-[14px] mt-[18px] w-[75%]" >
           <p className="pr-2 font-sans text-[#101F4C]  font-semibold text-sm my-[4px]">
-            Section Name
+            View Name
           </p>
           <div
             className="w-full border-t border-solid border-[#F1742E] h-[1px]"
@@ -201,7 +201,7 @@ const UploaderDateDetails: React.FC<any> = () => {
                                 Capture Date
                               </th>
                               <th>
-                                Uploaded on
+                                Upload Date
                               </th>
                               <th>
                                 Status
@@ -221,13 +221,13 @@ const UploaderDateDetails: React.FC<any> = () => {
                                     {
                                       job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
                                         <div>
-                                          {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                                          {getTheProjectDateAndTime(setTheFormatedDate((job.captures[0] as ICapture).captureDateTime))}
                                         </div>
                                       ) : ('-')
                                     }
                                   </td>
                                   <td className="p-1 ">
-                                    {getTheProjectDateAndTime(job.updatedAt)}
+                                    {getTheProjectDateAndTime(job.createdAt)}
                                   </td>
                                   <td
                                     style={{

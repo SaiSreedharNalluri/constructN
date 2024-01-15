@@ -45,9 +45,9 @@ const ProjectInfo: React.FC<IProps> = ({
     type: projectData?.type ? projectData?.type : '',
     description: projectData?.description ? projectData?.description : '',
     latitude:
-      projectData?.location != undefined ? projectData?.location[0] : latitude,
+      0,
     longitude:
-      projectData?.location != undefined ? projectData?.location[1] : latitude,
+      0,
     utm: projectData?.utm ? projectData?.utm : '',
   };
   const validationSchema = Yup.object().shape({

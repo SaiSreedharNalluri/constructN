@@ -240,6 +240,7 @@ export const ProjectNameTitle = styled("div")({
   height: "53px",
   lineHeight: "26px",
   marginBottom: "10px",
+  wordBreak:"break-all"
 });
 export const UsersCountContainer = styled("div")({ display: "flex" });
 export const UsersCountText = styled("div")({
