@@ -71,7 +71,8 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
           </div>
-          <div className={`flex-column absolute right-[12px] bottom-[50px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
+          {isSupportUser.current ? (<>
+            <div className={`flex-column absolute right-[12px] bottom-[50px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
             {showPointCloud ?
               <Button onClick={()=>{
                   loadAllImages();
@@ -82,12 +83,11 @@ function PotreeViewer(props) {
                 setShowPointCloud(true);
                 }}><ThreeDRotationIcon className='mr-1.5' /> Show Point Cloud</Button>}
           </div>
-          {isSupportUser.current ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
               <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} />
             </div>
-          ) : (
+            </>) : (
             ""
           )}
         </div>
