@@ -64,7 +64,6 @@ import Iframe from "../../../../../components/container/Iframe"
 import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
 import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
-import { init } from "mixpanel-browser";
 interface IProps { }
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -1598,7 +1597,6 @@ const Index: React.FC<IProps> = () => {
 
 
   useEffect(() => {
-console.log("initDAata after loading",initData);
 
     if (initData) {
       if (initData.structure.designs?.length) {
