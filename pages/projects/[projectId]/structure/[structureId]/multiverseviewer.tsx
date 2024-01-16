@@ -750,6 +750,9 @@ const Index: React.FC<IProps> = () => {
       case 'closeFilterOverlay':
         closeFilterOverlay()
         break;
+      case "sortIssue":
+        handleOnIssueSort(toolInstance.data)
+        break;
       case 'closeTaskOverlay':
       closeTaskFilterOverlay()
       break;
@@ -803,6 +806,9 @@ const Index: React.FC<IProps> = () => {
       case 'setFilteredTaskList':
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break; 
+      case 'sortTask':
+        handleOnTasksSort(toolInstance.data)
+        break;
       case "setViewLayers":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
@@ -856,181 +862,200 @@ const Index: React.FC<IProps> = () => {
   //   }
   // };
 
-  const handleOnIssueSort = (sortMethod: string) => {
-
+  const handleOnIssueSort = (sortMethod: any) => {
     switch (sortMethod) {
       case "Last Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
             if (a.dueDate > b.dueDate) {
               return 1;
             } else if (b.dueDate > a.dueDate) {
               return -1;
             }
             return 0;
-          })
-        );
+          });
+        
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "First Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
             if (a.updatedAt > b.updatedAt) {
               return -1;
             } else if (b.updatedAt > a.updatedAt) {
               return 1;
             }
             return 0;
-          })
-        );
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
       case "Asc DueDate":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) => {
-            return (
-              new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "Dsc DueDate":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) => {
-            return (
-              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "Asc Priority":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            a.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "Dsc Priority":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            b.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "status_asc":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            a.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.status.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
 
         break;
       case "status_desc":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            b.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.status.trim().toLowerCase())
-          ),
-        ]);
-
+        if (initData) {
+          const sortedData = [...initData.currentIssueList].sort((a: any, b: any) =>
+            b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase())
+          );
+          const updatedInitData = { ...initData, currentIssueList: sortedData };
+          setInintData(updatedInitData);
+        }
         break;
       default:
         break;
     }
   };
 
-  const handleOnTasksSort = (sortMethod: string) => {
+  const handleOnTasksSort = (sortMethod: any) => {
 
     switch (sortMethod) {
       case "Last Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
             if (a.updatedAt > b.updatedAt) {
               return 1;
             } else if (b.updatedAt > a.updatedAt) {
               return -1;
             }
             return 0;
-          })
-        );
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "First Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
             if (a.updatedAt > b.updatedAt) {
               return -1;
             } else if (b.updatedAt > a.updatedAt) {
               return 1;
             }
             return 0;
-          })
-        );
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
       case "Asc DueDate":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) => {
-            return (
-              new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "Dsc DueDate":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) => {
-            return (
-              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "Asc Priority":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            a.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "Dsc Priority":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            b.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "status_asc":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            a.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.status.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
 
         break;
       case "status_desc":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            b.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.status.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
 
         break;
       default:
