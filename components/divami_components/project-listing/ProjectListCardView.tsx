@@ -291,9 +291,9 @@ else{
                 : `0${each.captureDroneCount}`}
             </CaptureCount>
           </CaptureImageContainer>
-          <CaptureImageContainer>
+          <CaptureImageContainer opacity={d2Details[each._id] ? 1 : 0.6}>
             <Image2D stroke={d2Details[each._id]? "green": "#36415D"} strokeWidth={d2Details[each._id]? "1.3": "1"} />
-              <div className="ml-[7px]">{d2Details[each._id]? "Available" : "Not Available"}</div>
+              <div className={`${d2Details[each._id] ? "text-[green]": 'text-[#36415D]'} ml-[7px]`}>{d2Details[each._id]? "Available" : "Not Available"}</div>
             </CaptureImageContainer>
           <ListHorizontalDivider />
 
