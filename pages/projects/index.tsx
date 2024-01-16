@@ -4,7 +4,7 @@ import {
   Content,
   ProjectsListContainer,
 } from "../../components/divami_components/project-users-list/usersListStyles";
-import { Drawer, InputAdornment, Menu, Tooltip } from "@mui/material";
+import { Drawer, InputAdornment, Menu, Tooltip,Button } from "@mui/material";
 import {
   HeaderActions,
   HeaderImage,
@@ -40,6 +40,7 @@ import { ProjectListCardView } from "../../components/divami_components/project-
 import { ProjectListFlatView } from "../../components/divami_components/project-listing/ProjectListFlatView";
 import moment from "moment";
 import {
+  deleteProject,
   getProjects,
   getProjectsList,
   getProjectUsers,
@@ -80,6 +81,7 @@ import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted
 import CustomLoggerClass from "../../components/divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../state/appState/context";
 import { IProjects } from "../../models/IProjects";
+// import { Button} from "@material-ui/core";
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
 
@@ -226,7 +228,8 @@ const Index: React.FC<any> = () => {
     {
       label: "View Project Summary",
       action: (id?: string) => {
-        router.push(`/projects/${id}/sections`);
+        router.push({pathname:`/projects/[projectId]/sections`,
+        query:{projectId:id}});
       },
     },
     {
@@ -239,13 +242,15 @@ const Index: React.FC<any> = () => {
     {
       label: "Project Details",
       action: (id?: string) => {
-        router.push(`/projects/${id}/settings`);
+        router.push({pathname:`/projects/[projectId]/settings`,
+        query:{projectId:id}});
       },
     },
     {
       label: "Manage Users",
       action: (id: string) => {
-        router.push(`/projects/${id}/usersList`);
+        router.push({pathname:`/projects/[projectId]/usersList`,
+        query:{projectId:id}});
       },
     },
     {
@@ -343,19 +348,19 @@ const Index: React.FC<any> = () => {
                 numberOfUsers: each.usersCount,
                 updatedAt: moment(each.lastUpdated).format("DD MMM YY"),
                 lastUpdated: new Date(each.lastUpdated),
-                capture360Count: each?.captures["360 Image"]
+                capture360Count: each?.captures && each?.captures["360 Image"]
                   ? `${each?.captures["360 Image"]}`
                   : "0",
-                captureVideoWalkCount: each?.captures["360 Video"]
+                captureVideoWalkCount: each?.captures && each?.captures["360 Video"]
                   ? `${each?.captures["360 Video"]}`
                   : "0",
-                capturePhoneCount: each?.captures["Phone Image"]
+                capturePhoneCount: each?.captures && each?.captures["Phone Image"]
                   ? `${each?.captures["Phone Image"]}`
                   : "0",
-                captureLidarCount: each?.captures["LiDAR Scan"]
+                captureLidarCount: each?.captures && each?.captures["LiDAR Scan"]
                   ? `${each?.captures["LiDAR Scan"]}`
                   : "0",
-                captureDroneCount: each?.captures["Drone Image"]
+                captureDroneCount: each?.captures && each?.captures["Drone Image"]
                   ? `${each?.captures["Drone Image"]}`
                   : "0",
               };
@@ -374,11 +379,13 @@ const Index: React.FC<any> = () => {
                 return dateB-dateA
               }
             })
-            setProjects(sortedProjects);
+            console.log(sortedProjects)
+            setProjects(sortedProjects.sort((a: any, b: any) => a.status === 'Draft' || a.status === 'PendingApproval' ? -1 : 1));
           }
           setShowLoading(false);
         })
-        .catch((error) => {
+        .catch((error: any) => {
+          console.log(error)
           setShowWelcomeMessage(true);
         });
       getUserRoles().then((res: any) => {
@@ -407,7 +414,9 @@ const Index: React.FC<any> = () => {
   }, [router.isReady]);
 
   useEffect(() => {
-    setSearchTableData(projects);
+    setSearchTableData([]
+      .concat(projects)
+      .sort((a: any, b: any) => a.status === 'Draft' || a.status === 'PendingApproval' ? -1 : 1));
   }, [projects]);
 
   const onDeleteIssue = (status: any) => {
@@ -530,6 +539,27 @@ const Index: React.FC<any> = () => {
   const handleChatHoverEnd = () => {
     setChatHovered(false);
   };
+  const onDelete = (projectId: string, role: string) => {
+    if (role === "admin") {
+      deleteProject(projectId)
+        .then((res) => {
+          const updatedProjects = searchTableData.filter(
+            (project: any) => project._id !== projectId
+          );
+          setProjects(updatedProjects);
+          setSearchTableData(updatedProjects);
+          CustomToast(res.message, "success");
+        })
+        .catch((err) => {
+          CustomToast(err, 'error');
+        });
+    } else {
+      CustomToast("Only Admin can delete the project", "success");
+    }
+  };
+  
+
+ 
   return (
     <div className=" w-full  h-full">
       <div className="w-full">
@@ -543,6 +573,7 @@ const Index: React.FC<any> = () => {
             <ProjectsHeader>
               <HeaderLabel>Project(s) </HeaderLabel>
               <HeaderActions>
+              <Button onClick={()=>router.push("project-onboarding")} style={{backgroundColor:"#FF853E",marginRight:"22px",color:"white"}}>+ Create New Project</Button>
                 {isSearching ? (
                   <SearchAreaContainer marginRight>
                     <CustomSearchField
@@ -588,6 +619,7 @@ const Index: React.FC<any> = () => {
                     />
                   </SearchAreaContainer>
                 ) : (
+                  <Tooltip title={"Search"}>
                   <HeaderImage
                     src={searchIcon}
                     alt=""
@@ -597,9 +629,10 @@ const Index: React.FC<any> = () => {
                       setIsSearching(true);
                     }}
                   />
+                  </Tooltip>
                 )}
                 {isGridView ? (
-                  <CustomMenu
+                 <CustomMenu
                     width={24}
                     height={24}
                     right="20px"
@@ -609,6 +642,7 @@ const Index: React.FC<any> = () => {
                 ) : (
                   <></>
                 )}
+                <Tooltip title={"Filter"}>
                 <HeaderImage
                   src={UserFilterIcon}
                   alt=""
@@ -618,6 +652,7 @@ const Index: React.FC<any> = () => {
                     setOpenFilter(true);
                   }}
                 />
+                </Tooltip>
                 {isFilterApplied ? <FilterIndicator /> : <></>}
                 <ToggleButtonContainer id="view-options">
                   <Tooltip title={"Grid View"}>
@@ -671,12 +706,14 @@ const Index: React.FC<any> = () => {
                 projects={searchTableData}
                 projectActions={projectActions}
                 truncateString={truncateString}
+                onDelete={onDelete}
               />
             ) : (
               <ProjectListFlatView
                 projects={searchTableData}
                 projectActions={projectActions}
                 truncateString={truncateString}
+                onDelete={onDelete}
               />
             )}
             {openFilter && (

@@ -43,16 +43,27 @@ import { getCookie } from 'cookies-next'
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 
 import { IUser } from '../../../../models/IUser'
+
 import CustomLoader from '../../../../components/divami_components/custom_loader/CustomLoader'
+
 import Progress2dAssets from '../../../../components/viewer/progress-2d-assets'
+
 import { ForgeDataVizUtils } from '../../../../utils/forge-utils'
+
+import authHeader from '../../../../services/auth-header'
+
+import { useRouter as Router  } from 'next/router'
+
+import PopupComponent from '../../../../components/popupComponent/PopupComponent'
+
+const headers = {headers: authHeader.authHeader()}
 
 
 const fetchViewerData = (projectId: string, structureId: string) => {
 
     try {
 
-        return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/${structureId}/viewer-data`)
+        return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/${structureId}/viewer-data`, headers)
 
     } catch (error) { throw error }
 
@@ -60,7 +71,7 @@ const fetchViewerData = (projectId: string, structureId: string) => {
 
 const fetchStructureHierarchy = (projectId: string) => {
 
-    try { return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/hierarchy`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/projects/${projectId}/structures/hierarchy`, headers) } catch (error) { throw error }
 
 }
 
@@ -68,7 +79,7 @@ const fetchAssetCategories = (projectId: string) => {
 
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
 
     } catch (error) { throw error }
 
@@ -76,9 +87,14 @@ const fetchAssetCategories = (projectId: string) => {
 
 const fetchAssets = (structureId: string, category: string, date: string) => {
 
+    const userObj: any = getCookie('user');
+
+    const user = JSON.parse(userObj);
+
+
     try {
 
-        return instance.get(`${API.PROGRESS_2D_URL}/assets?structure=${structureId}&category=${category}&date=${date}`)
+        return instance.get(`${API.PROGRESS_2D_URL}/assets`, { headers: headers.headers, params:{ structure: structureId, category, date , status: !user?.isSupportUser ? 'Active' : null } })
 
     } catch (error) { throw error }
 
@@ -88,7 +104,7 @@ const createAsset = (asset: Partial<IAsset>, date: string) => {
 
     try {
 
-        return instance.post(`${API.PROGRESS_2D_URL}/assets?date=${date}`, asset)
+        return instance.post(`${API.PROGRESS_2D_URL}/assets?date=${date}`, asset, headers)
 
     } catch (error) { throw error }
 
@@ -98,7 +114,7 @@ const updateAsset = (assetId: string, asset: Partial<IAsset>) => {
 
     try {
 
-        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset)
+        return instance.put(`${API.PROGRESS_2D_URL}/assets/${assetId}`, asset, headers)
 
     } catch (error) { throw error }
 }
@@ -107,14 +123,14 @@ const deleteAsset = (assetId: string) => {
 
     try {
 
-        return instance.delete(`${API.PROGRESS_2D_URL}/assets/${assetId}`)
+        return instance.delete(`${API.PROGRESS_2D_URL}/assets/${assetId}`, headers)
 
     } catch (error) { throw error }
 }
 
 const autodeskAuth = () => {
 
-    try { return instance.get(`${API.BASE_URL}/aps/getAPSToken`) } catch (error) { throw error }
+    try { return instance.get(`${API.BASE_URL}/aps/getAPSToken`, headers) } catch (error) { throw error }
 
 }
 
@@ -125,6 +141,8 @@ const fetchImagesData = (path: string) => {
 }
 
 const Progress2DPage: React.FC<any> = () => {
+
+    const nextRouter = Router();
 
     const _forge = useRef<Autodesk.Viewing.GuiViewer3D>()
 
@@ -188,10 +206,14 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [isSupportUser, setIsSupportUser] = useState<boolean>(false)
 
+    const [showPopup, setShowPopup] = useState<boolean>(false)
+
     const [selectedTab , setSelectedTab] = useState('stages') 
 
 
     const [clipValue, setClipValue] = useState(50);
+
+    const structId = searchParams.get('structId')
 
     const handleMouseMove = (e: { buttons: number; clientX: number }) => {
     if (e.buttons === 1) {
@@ -229,8 +251,6 @@ const Progress2DPage: React.FC<any> = () => {
     const params = useParams()
 
     const refetch = () => {
-
-        const structId = searchParams.get('structId')
 
         const projId = params && params['projectId'] as string
 
@@ -288,6 +308,15 @@ const Progress2DPage: React.FC<any> = () => {
 
                 const snapshots = LightBoxInstance.viewerData().snapshots
 
+                const drawings = LightBoxInstance.viewerData().structure.designs['Plan Drawings']
+                
+                if (!drawings || drawings.length == 0 || (drawings.length > 0 && Object.keys(drawings[0] || {}).length == 0)) {
+                    
+                    setShowPopup(true);
+
+                    return
+                }
+
                 if (!snapshots || snapshots.length == 0) {
 
                     toast.warning('Snapshots are not available for this structure!', { autoClose: 5000 })
@@ -337,6 +366,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     useEffect(()=>{
         if(isCompare){
+            publish('progress-2d-tool', '');
             if(selectedAsset){
                 toast.warn('Exit Compare Mode to Select Assets')
             }
@@ -590,7 +620,9 @@ const Progress2DPage: React.FC<any> = () => {
 
             setLoading(false)
 
-            toast.success('Deleted asset successfully!', { autoClose: 5000 })
+            toast.success('Deleted asset successfully!', { autoClose: 5000 });
+
+            if(currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
             // publish('delete-shape', currentAsset.current)
 
@@ -656,9 +688,12 @@ const Progress2DPage: React.FC<any> = () => {
 
         setSelectedCategory(category)
 
+
         if (category !== undefined) {
 
             _loadAssetsForCategory(category)
+
+            _loadCompareAssets(category)
 
         }
 
@@ -790,6 +825,7 @@ const Progress2DPage: React.FC<any> = () => {
         })
     }
 
+
     const _onAssetDetailsChange = (asset: IAsset) => {
 
         currentAsset.current = asset._id
@@ -800,7 +836,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _changeStructure = (structure: any) => {
 
-        setShowReality(false)
+        setShowReality(false);
+
+        compare.current = false;
 
         const queryParams = updateQueryParam(searchParamsRef.current!, 'structId', structure._id)
 
@@ -810,9 +848,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _closeDetails = () => {
 
-        setSelectedAsset(undefined)
+        setSelectedAsset(undefined);
 
-        publish('clear-shape-selection', '')
+        publish('clear-shape-selection', '');
     }
 
     const _toggleStageSelection = (checked: boolean) => {
@@ -828,6 +866,7 @@ const Progress2DPage: React.FC<any> = () => {
     }
 
     const _onRealityItemClick = (event: Event) => {
+
 
         if (!compare.current) {
 
@@ -903,6 +942,57 @@ const Progress2DPage: React.FC<any> = () => {
             )
 
         else return <></>
+    }
+
+
+    if(showPopup){
+        return (<>
+        <div>
+            <Header showBreadcrumbs breadCrumbData={[]} showFirstElement={true} />
+        </div>
+        {showPopup && <PopupComponent
+        
+            showButton={false}
+
+            open={showPopup} 
+
+            hideButtons 
+            
+            setShowPopUp={setShowPopup}
+
+            primaryButtonLabel={""} 
+            
+            SecondaryButtonlabel={""}
+            
+            secondaryCallback={async () => { 
+                await nextRouter.push('/projects/[projectId]/sections',`/projects/${params['projectId']}/sections`);
+                setShowPopup(false);
+            }}
+
+
+            modalTitle={'Plan Drawings not available!'}
+            
+            modalmessage={
+            <>
+                <div className='text-base'>Plan drawings not available. Please change level</div>
+                <div className='flex justify-center'>
+                <Button
+                onClick={async () => { 
+                    await nextRouter.push('/projects/[projectId]/sections',`/projects/${params['projectId']}/sections`);
+                    setShowPopup(false);
+                }}
+                className='bg-[#F1742E] h-[40px] text-base text-[#fff] mt-[20px] normal-case hover:bg-[#F1742E]'
+                style={{ fontFamily: "Open Sans" }}
+                >
+                Ok
+                </Button>
+                </div>
+            </>}
+            
+            width={'458px'} backdropWidth={true}
+            
+            />}
+        </>)
     }
 
     return (
@@ -1105,7 +1195,29 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>
 
-                                            {!selectedAsset && selectedCategory && <div className='flex mt-6 px-3 justify-between'>
+                                            <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
+                                            {!selectedAsset && <Tabs
+
+                                            centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
+
+                                            TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
+
+                                                <Tab
+
+                                                value='stages' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Stages</Typography>} onClick={() => setSelectedTab('stages')} />
+
+                                                <Tab
+
+                                                value='assets' label={<Typography fontFamily='Open Sans' fontSize={14}
+
+                                                variant='caption'>Assets</Typography>} onClick={() => setSelectedTab('assets')} />
+                                                </Tabs>}
+
+                                            {!selectedAsset && selectedTab === 'stages' && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
+
+                                                {!selectedAsset && selectedCategory && <div className='flex pt-4 mb-2 justify-between sticky top-0 bg-white z-10'>
 
                                                 <Button
 
@@ -1129,31 +1241,9 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>}
 
-                                            <Divider className='mt-2' orientation='horizontal' variant='fullWidth' flexItem />
-                                            {!selectedAsset && <Tabs
-
-                                            centered value={selectedTab} className='text-black bg-[#fbece2]' textColor='inherit'
-
-                                            TabIndicatorProps={{ style: { backgroundColor: '#f1742e' } }} >
-
-                                                <Tab
-
-                                                value='stages' label={<Typography fontFamily='Open Sans' fontSize={14}
-
-                                                variant='caption'>Stages</Typography>} onClick={() => setSelectedTab('stages')} />
-
-                                                <Tab
-
-                                                value='assets' label={<Typography fontFamily='Open Sans' fontSize={14}
-
-                                                variant='caption'>Assets</Typography>} onClick={() => setSelectedTab('assets')} />
-                                                </Tabs>}
-
-                                            {!selectedAsset && selectedTab === 'stages' && <div className='px-4 overflow-auto' style={{ height: 'calc(100vh - 220px)' }}>
-
                                                 {loading && [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))}
 
-                                                <Progress2DStages stages={stages} compare={isCompare} assets={assets}
+                                                <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}
 
                                                 snapShotDate={snapshotBase.date}
 
@@ -1174,7 +1264,9 @@ const Progress2DPage: React.FC<any> = () => {
                                                     }} />
 
                                             </div>}
-                                            {selectedTab === 'assets' && !selectedAsset && <Progress2dAssets assets={assets} /> }
+                                            {selectedTab === 'assets' && !selectedAsset && <div className='overflow-auto relative' style={{ height: 'calc(100vh - 220px)' }}>
+                                                    <Progress2dAssets assets={assets} />
+                                                </div>}
                                         
                                             {selectedAsset && !isCompare && <AssetDetails
 

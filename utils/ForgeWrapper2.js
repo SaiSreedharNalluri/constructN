@@ -2,6 +2,12 @@ import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 import { applyTM, isMobile } from "./ViewerDataUtils";
 
+const publish = (eventName, data) => {
+  const event = new CustomEvent(eventName, { detail: data })
+  document.dispatchEvent(event)
+
+}
+
 export class ForgeInstance {
 
   constructor(viewerId) {
@@ -474,6 +480,7 @@ export const ForgeViewerUtils = function () {
         //     tag: tagObject,
         //   };
         // } else {
+        publish('show-pointcloud', false);
         console.log(`Inside Rag Click click: ${targetObject.position.x}`);
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();

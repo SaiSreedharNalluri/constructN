@@ -91,7 +91,7 @@ const UploaderReview: React.FC<any> = () => {
               {! uploaderState.skipGCP && 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
                 <div>
-                  <p className="mb-0 font-semibold">No. of GCPs(if Provided)</p>
+                  <p className="mb-0 font-semibold">No. of GCPs</p>
                 </div>
                 <div>
                   <p className="text-black-500 mb-0">: {uploaderState.gcpList?.location ? uploaderState.gcpList?.location.length : uploaderState.gcpList?.utmLocation?.length}</p>

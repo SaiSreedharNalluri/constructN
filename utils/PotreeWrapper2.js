@@ -4,6 +4,7 @@ import { PotreeInstance } from "./PotreeWrapper";
 import { isMobile } from "./ViewerDataUtils";
 import { getDesignPointCloudPath, getDesignPointCloudTM } from "../services/design";
 import { getStructurePath } from "./S3Utils";
+import { CustomToast } from "../components/divami_components/custom-toaster/CustomToast";
 
 export const PotreeViewerUtils = () => {
 
@@ -73,6 +74,8 @@ export const PotreeViewerUtils = () => {
     let _isSupportUser = false;
 
     let _orientedImagesHidden = false;
+
+    let prevContext = {};
 
     const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
@@ -642,7 +645,18 @@ export const PotreeViewerUtils = () => {
 
     }
 
+    const scrollListner = () => {
+        if(_viewer.scene.view.radius < 0.5 && _viewer.edlOpacity){
+            _viewer.scene.view.radius = 0.5
+        }
+    }
+
     const unloadAllImages = () => {
+        prevContext = getContext();
+        _viewer?.scene?.pointclouds?.forEach((pointCloud)=>{
+            pointCloud._visible = true;
+        })
+        _viewer.orbitControls.addEventListener('mousewheel', scrollListner);
         if(_viewer.scene.orientedImages.length > 0) {
             unloadOrientedImage();
         }
@@ -655,6 +669,14 @@ export const PotreeViewerUtils = () => {
         _currentMode = "3d";
         _currentReality = null;
         
+    }
+
+    const loadAllImages = () => {
+        _viewer.scene.pointclouds.forEach((pointCloud)=>{
+            pointCloud._visible = false;
+        });
+        _viewer.orbitControls.removeEventListener('mousewheel', scrollListner);
+        handleContext(prevContext);
     }
 
     const loadOrientedImages = (image, index = 0) => {
@@ -951,6 +973,126 @@ export const PotreeViewerUtils = () => {
 
     }
 
+    const measurementMoved = (eve, measurement)=>{ 
+        const isClick = eve.drag.start.x === eve.drag.end.x && eve.drag.start.y === eve.drag.end.y;
+        publish("measurement-moved", { measure: measurement, isClick }); 
+    }
+
+    const loadMeasurements =(points = [])=>{
+        clearAllMeasurements();
+        points.forEach((point)=>{
+            let measure = new Potree.Measure();
+            if(point.type ==='Distance'){
+                measure.closed = false;
+            }
+            if(point.type ==='Angle'){
+                measure.closed = true;
+                measure.showAngles = true;
+                measure.showDistances = true;
+            }
+            if(point.type ==='Point'){
+                measure.showDistances = false;
+                measure.showCoordinates = true;
+                measure.maxMarkers = 1;
+            }
+            if(point.type ==='Height'){
+                measure.closed = false;
+                measure.showDistances = false;
+                measure.showHeight = true;
+            }
+            if(point.type ==='Area'){
+                measure.closed = true;
+                measure.showArea = true;
+                measure.showHeight = true;
+            }
+            measure.name = point.name;
+            measure.mtype = point.type;
+            measure._id = point._id;
+            measure.context = point.context;
+            point.data.forEach((position)=>{
+                measure.addMarker(new THREE.Vector3(position.x, position.y, position.z));
+            });
+            _viewer?.scene?.addMeasurement(measure);
+        });
+        _viewer?.scene?.measurements.forEach((measurement)=>{
+            measurement?.spheres?.forEach((sphere) => {
+                if(!sphere.hasEventListener("drop", (eve)=>{measurementMoved(eve, measurement)})){
+                    sphere.addEventListener("drop", (eve)=>{measurementMoved(eve, measurement)});
+                }
+            });
+        })
+        
+    }
+
+    const removeMeasurement=(measurement)=>{
+        _viewer?.scene?.removeMeasurement(measurement)
+    }
+
+    const publish = (eventName, data) => {
+        const event = new CustomEvent(eventName, { detail: data })
+        document.dispatchEvent(event)
+    
+    }
+
+    const getPoints=()=>(_viewer?.scene?.measurements || []);
+
+    const isOriginPoints = (points)=>{
+        let isOrigin = true;
+        points.forEach((point)=>{
+            if(point.position.x !==0 || point.position.y !== 0 || point.position.z !== 0){
+                isOrigin = false;
+                return;
+            }
+        })
+        return isOrigin;
+    }
+
+    const markerdropped = (e) => {
+        if(isOriginPoints(e.measurement.points) && ['Point','Height'].includes(e.measurement.name)){
+            removeMeasurement(e.measurement);
+            CustomToast('Place on point cloud to measure','error');
+            return;
+        };
+        if(isOriginPoints(e.measurement.points)) return;
+        publish('marker-added', e);
+        if(e.measurement.name === 'Point' && !e.measurement?._id){
+            publish('measurement-created', { measure: e.measurement })
+        }
+        if(e.measurement.name === 'Height' && e.measurement.points.length === 2 && !e.measurement?._id){
+            publish('measurement-created', { measure: e.measurement })
+        }
+    }
+
+    const markeremoved= (e) => {
+        if(isOriginPoints(e.measurement.points) && !['Point','Height'].includes(e.measurement.name) && e.measurement.points > 0){
+            removeMeasurement(e.measurement);
+            CustomToast('Place on point cloud to measure','error');
+            return;
+        };
+        if(!['Point','Height'].includes(e.measurement.name) && !e.measurement?._id && e?.measurement?.points?.length > 0){
+            publish('measurement-created', { measure: e.measurement });
+        }
+    }
+
+
+    const myevent = (e) => {
+        publish('setactive-measurement', { measure: e.measurement })
+        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_removed', markeremoved)
+        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_dropped', markerdropped)
+    }
+
+    const clearAllMeasurements= () =>{
+        _viewer.scene.removeAllMeasurements()
+    }
+
+    
+
+    const loadAddMeasurementsEvents = () => {
+        if(!_viewer?.scene?.hasEventListener('measurement_added', myevent)){
+            _viewer?.scene?.addEventListener('measurement_added', myevent);
+        }
+    }
+
     const realityViewToggleListener = (event) => {
          console.log("Testing realityViewToggle: onclick listener: ", event.currentTarget)
          const isImageDisabled = JSON.parse(event.currentTarget.getAttribute('data-isEnabled'))
@@ -1004,8 +1146,14 @@ export const PotreeViewerUtils = () => {
 					name: 'Distance'
 				});
             break;
-            case "clear":
-                _viewer.scene.removeAllMeasurements();
+            case "angle":
+                measurement = _viewer.measuringTool.startInsertion({
+					showDistances: true,
+					showArea: false,
+					closed: false,
+                    showAngles: true,
+					name: 'Angle'
+				});
             break;
 
         }
@@ -1868,7 +2016,7 @@ export const PotreeViewerUtils = () => {
                 } else {
                     // console.log("Testing realityViewToggle: ", _isSupportUser);
                     if (_structure._id === "STR418477" || _isSupportUser) {
-                        unloadAllImages();
+                        // unloadAllImages();
                         // _viewer.fitToScreen();
                     }
                 }
@@ -2248,6 +2396,7 @@ export const PotreeViewerUtils = () => {
         //   _isActive = false;
     }
 
+
     return {
         initializeViewer: initializeViewer,
         isViewerLoaded: isViewerLoaded,
@@ -2274,5 +2423,14 @@ export const PotreeViewerUtils = () => {
         updateFloormapAnimation: updateFloormapAnimation,
         removeData: removeData,
         shutdown: shutdown,
+        loadMeasurementModule,
+        loadAddMeasurementsEvents,
+        getPoints,
+        removeMeasurement,
+        clearAllMeasurements,
+        loadMeasurements,
+        handleContext,
+        unloadAllImages,
+        loadAllImages
     };
 };

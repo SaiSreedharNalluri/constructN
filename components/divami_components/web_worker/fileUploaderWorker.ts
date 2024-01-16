@@ -1,19 +1,89 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { IUploadFile, UploadStatus, UploadType } from "../../../models/IUploader";
+interface CustomError {
+  message: string;
+  response?: {
+    status: number;
+    data: any;
+    headers: any;
+  };
+}
+
+const MAX_RETRY_ATTEMPTS = 3;
 
 self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>>) => {
-  console.log("Testing Uploader: inside single worker ", event.data)
-  await axios.put(event.data.destination, event.data.file).then((response)=>{
-    if(response.status===200) {
-      self.postMessage({ status: UploadStatus.success, id: event.data.uploadObject._id, fileName:event.data.file.name});
-    } else{
-      self.postMessage({ status: UploadStatus.failed, id: event.data.uploadObject._id, fileName:event.data.file.name});
+  let retryAttempts = 0;
+
+  const uploadFile = async () => {
+    try {
+      const response = await axios.put(event.data.destination, event.data.file);
+
+      if (response.status === 200) {
+        self.postMessage({
+          status: UploadStatus.success,
+          id: event.data.uploadObject._id,
+          fileName: event.data.file.name,
+        });
+      } else {
+        self.postMessage({
+          status: UploadStatus.failed,
+          id: event.data.uploadObject._id,
+          fileName: event.data.file.name,
+        });
+      }
+    } catch (error) {
+      const customError: CustomError = error as CustomError;
+
+      if (customError.response && customError.response.status === 400) {
+        if (retryAttempts < MAX_RETRY_ATTEMPTS) {
+          retryAttempts++;
+          await uploadFile();
+        } else {
+          self.postMessage({
+            status: UploadStatus.failed,
+            id: event.data.uploadObject._id,
+            fileName: event.data.file.name,
+            errorMessage: `Max retry attempts reached. ${customError.message}`,
+          });
+        }
+      } else {
+        self.postMessage({
+          status: UploadStatus.failed,
+          id: event.data.uploadObject._id,
+          fileName: event.data.file.name,
+          errorMessage: customError.message,
+        });
+      }
     }
-  }).catch((error)=>{
-    self.postMessage({ status: UploadStatus.failed, id: event.data.uploadObject._id, fileName: event.data.file.name, errorMessage: error.message });
-    return;
-  })
-}
+  };
+
+  await uploadFile();
+};
+
+
+
+
+
+// import axios from "axios";
+// import { IUploadFile, UploadStatus, UploadType } from "../../../models/IUploader";
+
+// self.onmessage = async (event: MessageEvent<IUploadFile<UploadType>>) => {
+//   await axios.put(event.data.destination, event.data.file).then((response)=>{
+//     if(response.status===200) {
+//       self.postMessage({ status: UploadStatus.success, id: event.data.uploadObject._id, fileName:event.data.file.name});
+//     } else{
+//       self.postMessage({ status: UploadStatus.failed, id: event.data.uploadObject._id, fileName:event.data.file.name});
+//     }
+//   }).catch((error)=>{
+//     if (error.response && error.response.status === 400) {
+      
+//     }
+
+
+//     self.postMessage({ status: UploadStatus.failed, id: event.data.uploadObject._id, fileName: event.data.file.name, errorMessage: error.message });
+//     return;
+//   })
+// }
 
 
 

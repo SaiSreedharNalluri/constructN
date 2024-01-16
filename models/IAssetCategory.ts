@@ -30,6 +30,8 @@ export interface IAssetStage {
 
     description?: string
 
+    totalMeasurement?: number
+
 }
 
 export interface IAsset {
@@ -69,6 +71,8 @@ export interface IAsset {
     metrics?: { [key: string]: string | number | { metric: string}}
 
     compare?: boolean
+
+    status?: 'Active' | 'Inactive'
     
 }
 

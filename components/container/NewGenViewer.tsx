@@ -111,6 +111,7 @@ type PotreeViewerUtilsType = {
   updateTasksData: Function,
   updateProgressData: Function,
   updateData: Function,
+  showLayers: Function,
   updateLayersData: Function,
   initiateAddTag: Function,
   cancelAddTag: Function,
@@ -244,7 +245,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   };
 
   const [offset, setOffset] = useState(1);
-  const pageSize = 10;
+  const pageSize = 5;
   const [totalSnaphotsCount,setTotalSnaphotsCount] = useState(0)
 
   const [totalPages, setTotalPages] = useState(Math.ceil(totalSnaphotsCount / pageSize));
@@ -432,6 +433,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
           }
           else{
             console.log('Nothing to change ->',oldViewerData.currentViewType);
+            newViewerData = {...oldViewerData,currentCompareMode:'noCompare'};
           }
             console.log('Dispatching ViewType',newViewerData.currentViewType);
             //newViewerData.currentCompareMode="noCompare";
@@ -776,6 +778,16 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   }
 
   function handleRealityTypeChange(viewerType:string) {
+  
+      currentViewerData.currentLayersList?.map(
+        (layer)=>{
+          if(minimapUtils.current)
+            minimapUtils.current.showTag(layer.name,layer.isSelected)
+          if(minimapCompareUtils.current)
+            minimapCompareUtils.current.showTag(layer.name,layer.isSelected)
+            
+        }
+      );
     switch (viewerType) {
       case 'Forge':
         if (forgeUtils.current) {
@@ -788,6 +800,30 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         }
         break;
       case 'Potree':
+        if(potreeUtils.current){
+          potreeUtils.current.showLayers(currentViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
+        }
+        if (forgeCompareUtils.current) {
+          forgeCompareUtils.current.showLayers(currentViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
+        }
+        if(potreeCompareUtils.current){
+          potreeCompareUtils.current.showLayers(currentViewerData.currentLayersList?.map(
+            (layer)=>{if(layer.isSelected){
+              return layer.name
+            }
+            }
+          ));
+        }
         break;
     }
   }
@@ -881,6 +917,12 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
       case 'Potree':
         if (potreeUtils.current) {
           potreeUtils.current.showTag(tag, show);
+        }
+        if(minimapUtils.current){
+          minimapUtils.current.showTag(tag,show);
+        }
+        if(minimapCompareUtils.current){
+          minimapCompareUtils.current.showTag(tag,show);
         }
         break;
     }
@@ -1214,6 +1256,20 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
 
 
   function renderMinimap  (count:number)  {
+    if ( ( currentViewerData.currentSnapshotBase.reality?.length &&currentViewerData.currentSnapshotBase.reality?.length <= 0)) {
+      return;
+    }
+    if(currentViewerData.structure.designs)
+    {
+      if(currentViewerData.structure.designs.find((des:IDesign)=>{
+        if(des.type==="Plan Drawings"){
+          return des
+        }
+      }) == undefined){
+        return
+      }
+    }
+
     if (count !== 1 && !isCompareMode) {
       return;
     }
@@ -2040,7 +2096,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
   };
 
   useEffect(() => {
-    setTotalPages(Math.ceil(totalSnaphotsCount / 10));
+    setTotalPages(Math.ceil(totalSnaphotsCount / pageSize));
   }, [totalSnaphotsCount]);
 
   const setPrevList = () => {
@@ -2074,7 +2130,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         <div className={`relative ${currentViewerData.currentCompareMode!=='noCompare' ? "basis-1/2": "hidden" }`}>
           {isInitReady && isCompareMode && renderViewer(2)}
           {(currentViewerData.currentCompareMode==='compareReality')?renderMinimap(2):<></>}
-          {isInitReady && tmcCompare}
+          {isInitReady &&(currentViewerData.currentCompareMode==='compareReality') && tmcCompare}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotCompare||currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentCompareSnapshot} isFullScreen={isFullScreenMode}></TimeLineComponent> */}
         </div>
         {

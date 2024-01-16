@@ -68,7 +68,6 @@ import { Circle, Rectangle } from "@mui/icons-material";
 import { json } from "stream/consumers";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast"; 
 import { getUserProfile } from "../../../services/userAuth";
-import NotificationDrawer from "../../divami_components/custom-drawer/notification-drawer";
 import { truncate } from "fs/promises";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import * as Sentry from "@sentry/nextjs";
@@ -741,7 +740,7 @@ const Header: React.FC<any> = ({
               </div>
             </TooltipText>
 
-            {openNotification && (
+            {/* {openNotification && (
               <div>
                 <NotificationDrawer variant="persistent">
                   <div>
@@ -758,7 +757,7 @@ const Header: React.FC<any> = ({
                   <div></div>
                 </NotificationDrawer>
               </div>
-            )}
+            )} */}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
             <TooltipText title="Menu">

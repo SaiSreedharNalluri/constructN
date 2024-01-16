@@ -106,8 +106,8 @@ const GcpEnterManually: React.FC<any> = () => {
             errorsToReduce += 1;
           }
         });
-      const newErrorCount = uploaderState.errorCount - errorsToReduce;
-        uploaderAction.setErrorCount(newErrorCount);
+      // const newErrorCount = uploaderState.errorCount - errorsToReduce;
+      //   uploaderAction.setErrorCount(newErrorCount);
 
     updatedGCPList.splice(index, 1);
 
@@ -138,7 +138,7 @@ const GcpEnterManually: React.FC<any> = () => {
       // Update error count
       const newErrorCount = Object.values(newErrors).filter((error) => error !== "").length;
      
-      uploaderAction.setErrorCount(newErrorCount);
+      // uploaderAction.setErrorCount(newErrorCount);
 
       return newErrors;
     });
@@ -149,29 +149,30 @@ const GcpEnterManually: React.FC<any> = () => {
     heading: string,
     index: any
   ) => {
+    const isEmptyString = typeof value === "string" && value.trim() === "";
     switch (heading) {
       case "Latitude":
-        return validateLatitude(Number(value));
+        return isEmptyString ? false : validateLatitude(Number(value));
       case "Longitude":
-        return validateLongitude(Number(value));
+        return isEmptyString ? false : validateLongitude(Number(value));
       case "Altitude":
-        return validateAltitudeOrElevation(Number(value));
+        return isEmptyString ? false : validateAltitudeOrElevation(Number(value));
       case "Easting":
-        return validateEasting(Number(value));
+        return isEmptyString ? false : validateEasting(Number(value));
       case "Northing":
-        return validatingNorthing(Number(value));
+        return isEmptyString ? false : validatingNorthing(Number(value));
       case "Zone":
-        return typeof value === "string" && validateUTMZone(value);
+        // Allow empty string for "Zone"
+        return typeof value === "string" ? validateUTMZone(value) : false;
       case "Elevation":
-        return validateAltitudeOrElevation(Number(value));;
+        return isEmptyString ? false : validateAltitudeOrElevation(Number(value));
       default:
-       const isValid = true; // Modify this line based on your validation logic
-        if (!isValid) {
+        const isValid = true; // Modify this line based on your validation logic
+        if (!isValid && !isEmptyString) {
           const errorCountReduced = uploaderState.errorCount - 1;
-          uploaderAction.setErrorCount(errorCountReduced);
+          // uploaderAction.setErrorCount(errorCountReduced);
         }
-        return isValid;
-    
+        return isValid && !isEmptyString;
     }
   };
 
@@ -190,24 +191,21 @@ const GcpEnterManually: React.FC<any> = () => {
 
     if (uploaderState.gcpType === GCPType.UTM) {
       if (heading === "Zone") {
-        (selectedItem as utmLocation).zone = value;
+        (selectedItem as utmLocation).zone = value.toUpperCase();
       } else {
         (selectedItem as any)[heading.toLowerCase() as keyof utmLocation] =
-          Number(value);
+        value && JSON.parse(value);;
       }
     } else {
-      if (heading === "Longitude") {
-        const parsedValue = value;
-        (selectedItem as location).coordinates[0] = Number(parsedValue);
-      } else if (heading === "Latitude") {
-        const parsedValue = value;
-        (selectedItem as location).coordinates[1] = Number(parsedValue);
+      if (heading === "Longitude" || heading === "Latitude") {
+        const index = heading === "Longitude" ? 0 : 1;
+        (selectedItem as location).coordinates[index] = value && JSON.parse(value);
       } else if (heading === "Altitude") {
-        const parsedValue = value;
-        (selectedItem as location).elevation = Number(parsedValue);
-      } else {
-        (selectedItem as any)[heading.toLowerCase() as keyof location] = value;
-      }
+          (selectedItem as location).elevation = value && JSON.parse(value);
+        }
+        else {
+          (selectedItem as any)[heading.toLowerCase() as keyof location] = value;
+        } 
     }
     const isValid = validateInput(e.target.value, heading, index);
     updateErrorMessages(identifier, isValid);
@@ -291,6 +289,27 @@ const GcpEnterManually: React.FC<any> = () => {
     }
   };
 
+  const getItemKeyValue = (item: any, heading: any) => {
+    switch (heading) {
+      case "Longitude":
+        return item.coordinates[0];
+      case "Latitude":
+        return item.coordinates[1];
+      case "Altitude":
+      case "Elevation":
+        return item.elevation;
+      case "Easting":
+        return item.easting
+      case "Northing":
+        return item.northing
+      case "Zone":
+        return item.zone
+      default:
+        // Handle the case when heading doesn't match any of the specified values
+        return null; // or throw an error, or provide a default value, etc.
+    }
+  }
+
   const renderTable = (data: any, headings: any) => (
     <div>
       <table>
@@ -321,11 +340,7 @@ const GcpEnterManually: React.FC<any> = () => {
                       type={heading === "Zone" ? "text" : "number"}
                       placeholder={heading.toLowerCase()}
                       className={`mt-1 ml-2 border ${
-                        !validateInput(
-                          item[heading.toLowerCase()] ||
-                            (heading === "Longitude" && item.coordinates[0]) ||
-                            (heading === "Latitude" && item.coordinates[1]) ||
-                            (heading === "Altitude" && item.elevation),
+                        !validateInput(getItemKeyValue(item, heading),
                           heading,
                           index
                         )
@@ -333,11 +348,7 @@ const GcpEnterManually: React.FC<any> = () => {
                           : ""
                       }`}
                       value={
-                        item[heading.toLowerCase()] ||
-                        (heading === "Longitude" && item.coordinates[0]) ||
-                        (heading === "Latitude" && item.coordinates[1]) ||
-                        (heading === "Altitude" && item.elevation) ||
-                        ""
+                        getItemKeyValue(item, heading)
                       }
                       onChange={(e) => handleInputChange(e, index, heading)}
                     />

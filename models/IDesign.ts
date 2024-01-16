@@ -7,6 +7,7 @@ export interface IDesign {
   storage: [IStorage];
   version?: string;
   tm?: tm;
+  createdAt: string;
 }
 
 export interface IStorage {

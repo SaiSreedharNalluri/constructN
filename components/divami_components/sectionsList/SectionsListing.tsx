@@ -85,7 +85,10 @@ import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, De
 import instance from "../../../services/axiosInstance";
 import { API } from "../../../config/config";
 import { toast } from "react-toastify";
+import authHeader from "../../../services/auth-header";
 // import { ISections } from "../../../models/ISections";
+
+const headers = {headers: authHeader.authHeader()}
 
 interface RowData {
   tableData: { id: number };
@@ -99,7 +102,7 @@ const fetchAssetCategories = (projectId: string) => {
 
   try {
 
-      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
 
   } catch (error) { throw error }
 
@@ -553,7 +556,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         color: "#101F4C",
         cursor:"default"
       },
-      cellStyle: { width: "28%" },
+      cellStyle: { width: "38%" },
       render: (rowData: any) => {
         // router.push(`/projects/${id}/sections`);
         
@@ -577,8 +580,8 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
              }
            else if (Object.keys(rowData.snapshots?.latestSnapshot).length >= 0 && rowData.snapshots?.snapshotActiveCount>0 ) {
               router.push({
-                pathname: `/projects/${router?.query?.projectId as string}/structure/${rowData._id}/multiverseviewer`
-                //query: { structId: rowData._id },
+                pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+                query: { structureId: rowData._id,projectId:router?.query?.projectId as string },
               });
               setCaptureAvailable(false)
               customLogger.logInfo("View Strucuture");
@@ -785,43 +788,46 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
     },
 
 
-    {
-      title: "Progress 2D",
-      field: "has2dProgress",
-      sorting: false,
-      headerStyle: {
-        borderBottom: "1px solid #FF843F",
-        fontFamily: "Open Sans",
-        fontStyle: "normal",
-        fontWeight: "500",
-        fontSize: "14px",
-        lineHeight: "20px",
-        color: "#101F4C",
-      },
-      cellStyle: { width: "20%" },
+    // {
+    //   title: "Progress 2D",
+    //   field: "has2dProgress",
+    //   sorting: false,
+    //   headerStyle: {
+    //     borderBottom: "1px solid #FF843F",
+    //     fontFamily: "Open Sans",
+    //     fontStyle: "normal",
+    //     fontWeight: "500",
+    //     fontSize: "14px",
+    //     lineHeight: "20px",
+    //     color: "#101F4C",
+    //   },
+    //   cellStyle: { width: "20%" },
    
-      render: (rowData: any) => {
-        return <div className="cursor-pointer">{
-          <TooltipText title="2D Progress">
-            <div className="flex justify-center">
-              <Progress2DImageIcon
-                src={Progress2DImage}
-                alt={""}
-                onClick={() => {
-                  if(hasProgress2D) {
-                    router.push({
-                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-                      query: { structId: rowData._id },
-                    })} else {
-                      toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
-                    }
-                }}
-              ></Progress2DImageIcon>
-            </div>
-          </TooltipText>
-          }</div>;
-      },
-    },
+    //   render: (rowData: any) => {
+
+    //     const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
+        
+    //     return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
+    //       <TooltipText title="2D Progress">
+    //         <div className="flex justify-center">
+    //           <Progress2DImageIcon
+    //             src={Progress2DImage}
+    //             alt={""}
+    //             onClick={() => {
+    //               if(hasProgress2D) {
+    //                 router.push({
+    //                   pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+    //                   query: { structId: rowData._id },
+    //                 })} else {
+    //                   toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
+    //                 }
+    //             }}
+    //           ></Progress2DImageIcon>
+    //         </div>
+    //       </TooltipText>
+    //       }</div> : 'Not Available';
+    //   },
+    // },
   ];
 
 
@@ -984,11 +990,11 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           isImageThere={true}
           SecondaryButtonlabel={"No"}
           callBackvalue={isCaptureAvailable? ()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`
-            //query: { structId: id },
+            pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+            query: { structureId: id, projectId:router?.query?.projectId as string },
           }):()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure/${id}/multiverseviewer`//,
-            //query: { structId: id },
+            pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+            query: { structureId: id, projectId:router?.query?.projectId as string },
           }) }
         />
         )

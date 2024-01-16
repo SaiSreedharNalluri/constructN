@@ -5,11 +5,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import type { Dayjs } from "dayjs";
 import * as React from "react";
 import { styled } from "@mui/system";
-import Box from "@mui/material/Box";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import calender from "../../../public/divami_icons/calender.svg";
 import dayjs from "dayjs";
-import Icon from "@mui/material/Icon";
+import { IconButton } from "@mui/material";
 
 const CalenderICon = (props: any) => {
   return (
@@ -103,17 +102,22 @@ const CustomCalender = (props: any) => {
     config,
     dataTestId,
   } = props;
-
+  const customInputRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = React.useState<Dayjs | null>(
     
     dayjs(data?.defaultValue) || null
   );
+  const [isOpen,setIsOpen]= React.useState(false);
   useEffect(() => {
     setValue(dayjs(data?.defaultValue));
   }, [data?.defaultValue]);
   const calenderIcon = React.forwardRef((props, ref) => (
     <CalenderICon ref={ref} />
   ));
+
+  useEffect(() => {
+    customInputRef.current?.focus();
+  }, []);
 
   return (
     <div data-testid={`custom-calender-parent-${dataTestId}`}>
@@ -124,9 +128,11 @@ const CustomCalender = (props: any) => {
           components={{
             OpenPickerIcon: calenderIcon,
           }}
+          open={isOpen}
+          onClose={() => {setIsOpen(false);}}
           PopperProps={
             hideTextField
-              ? {
+              ? {anchorEl:customInputRef.current,
                   sx: {
                     "& .MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)": {
                       backgroundColor: "#FFF5EF",
@@ -231,8 +237,11 @@ const CustomCalender = (props: any) => {
           // PopperProps={data.styles ? data.styles : null}
           renderInput={
             hideTextField
-              ? ({ inputRef, inputProps, InputProps }) => (
-                  <Box ref={inputRef}>{InputProps?.endAdornment}</Box>
+               ? (params) => (
+                  <div ref={customInputRef}>
+                    <TextField style={{ opacity: 0, width: 0, height: 0 }} {...params} /> 
+                    <IconButton onClick={() => {setIsOpen(!isOpen);}}><CalenderICon/></IconButton>
+                    </div>
                 )
               : (params) => (
                   <CustomDatePickerInputField
@@ -241,6 +250,8 @@ const CustomCalender = (props: any) => {
                     InputLabelProps={{ shrink: true }}
                     placeholder="MM/DD/YYYY"
                     sx={calender}
+                    aria-readonly
+                    onClick={() => {setIsOpen(!isOpen);}}
                   />
                 )
           }
