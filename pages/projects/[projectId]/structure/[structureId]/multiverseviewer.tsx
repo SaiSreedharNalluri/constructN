@@ -523,9 +523,9 @@ const Index: React.FC<IProps> = () => {
     }
     if (router.isReady && structure) {
       //router.query.structId = structure?._id;
-      router.query.structureId = structure?._id;
+      router.query.structureId = structure?._id as string;
 
-      router.push(router);
+      router.push({pathname:router.pathname,query:{...router.query,structureId:structure._id as string}})
     }
   }, [structure, project]);
 
