@@ -424,6 +424,13 @@ const Progress2DPage: React.FC<any> = () => {
 
     }, [isScriptsLoaded])
 
+
+    useEffect(() => {
+        if(typeof window !== 'undefined' && window.Autodesk){
+            setIsScriptsLoaded(true)
+        }
+    },[])
+
     useEffect(() => {
 
         const userObj: any = getCookie('user')
@@ -1018,18 +1025,8 @@ const Progress2DPage: React.FC<any> = () => {
     return (
 
         <>
-
-            <Script
-
-                src='https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js'
-
-                onReady={() => { setIsScriptsLoaded(true) }} />
-
-            {
+       {
                 isScriptsLoaded && isAutodeskInitialised ?
-
-                    <>
-
                         <div className='flex flex-col'>
 
                             <div>
@@ -1115,7 +1112,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                         <RealityPage snapshot={realityDate === snapshotCompare?.date ? snapshotCompare: snapshotBase} id={'left'} />
 
-                                                        <div className={`flex absolute bottom-1 left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} >
+                                                        <div className={`flex absolute bottom-0 left-2' } text-[#4a4a4a] rounded bg-[#F1742E] hover:text-[#fff] hover:bg-[#f1742e] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} >
                                                         {`SnapshotDate: ${moment(realityDate).format("DD MMM, yyyy")}`}
                                                         </div>
 
@@ -1318,11 +1315,10 @@ const Progress2DPage: React.FC<any> = () => {
 
                             {(showProgress || loading) && <CustomLoader/>}
 
-                        </div>
+                        </div>: ''
+}
 
-                    </> : ''
-            }
-        </>
+                    </>
 
     )
 }
