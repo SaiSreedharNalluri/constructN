@@ -658,7 +658,9 @@ export const PotreeViewerUtils = () => {
     }
 
     const unloadAllImages = () => {
-        prevContext = getContext();
+        if(getContext().type !== '3d'){
+            prevContext = getContext();
+        }
         _viewer?.scene?.pointclouds?.forEach((pointCloud)=>{
             pointCloud._visible = true;
         })

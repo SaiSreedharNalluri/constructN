@@ -703,7 +703,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
           )
 
         })}
-        {show ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} setMeasurementType={setMeasurementType} setActiveMeasure={setActiveMeasure} getContext={getContext} onCancel={()=>{
+        {showModal ? <ConfirmModal show={showModal} setShow={setShowModal} measurement={measurement!} setMeasurementType={setMeasurementType} setActiveMeasure={setActiveMeasure} getContext={getContext} onCancel={()=>{
           removeMeasurement(measurement);
           setSelected('');
           setActiveMeasure('');
