@@ -82,7 +82,7 @@ function PotreeViewer(props) {
     },[])
 
     const getButton = () => {
-      if(props.isCompare && showPointCloud?.view){
+      if(props.isCompare && showPointCloud?.view && showPointCloud.disable){
         return (<Tooltip title='Please Select Image'>
         <div>
           <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>

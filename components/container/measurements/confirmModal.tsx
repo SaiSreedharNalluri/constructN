@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
 import { CustomToast } from '../../divami_components/custom-toaster/CustomToast';
 import { getCookie } from 'cookies-next';
+import ShortUniqueId  from 'short-unique-id';
 
 const createMeasurement = async ({ name = '', type = '', snapshot = '', context = {}, data = [] , setLoading, setShow , setSelected}: {name?: string ,type?: string, snapshot?: string, context?: object, data?:{position?: object}[] , setLoading: React.Dispatch<React.SetStateAction<boolean>>,setShow: (v: boolean) => void, setSelected: Dispatch<SetStateAction<string>>}) => {
   const formatData = data.map((single)=>(single.position))
@@ -66,8 +67,9 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
         </div>)
 
         useEffect(()=>{
-          setName(measurement.name || '')
-        },[measurement])
+          const uid = new ShortUniqueId({ length: 10, dictionary: 'alphanum_upper' });
+          setName((measurement.name === "Distance" ? "Length" : measurement.name || '') + `-${uid.rnd()}`);
+        },[])
         
     const callBack = async () =>{
       const isNameExists = apiPoints.find((point)=> (point.name === name?.trim()) );

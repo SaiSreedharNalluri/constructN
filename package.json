@@ -79,6 +79,7 @@
     "react-tagsinput": "^3.20.0",
     "react-toastify": "^9.1.1",
     "react-use-intercom": "^5.1.4",
+    "short-unique-id": "^5.0.3",
     "tesseract.js": "^5.0.3",
     "three": "^0.158.0",
     "three-fatline": "^0.6.1",
