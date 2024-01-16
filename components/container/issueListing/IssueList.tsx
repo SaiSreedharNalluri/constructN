@@ -164,13 +164,13 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   const handleClose = () => {
     onClose(true);
-    // setIssueList([
-    //   ...issuesList.sort((a: any, b: any) => {
-    //     return (
-    //       new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
-    //     );
-    //   }),
-    // ]);
+      setIssueList([
+        ...issuesList.sort((a: any, b: any) => {
+          return (
+            new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()
+          );
+        }),
+      ]);
   };
   let issueMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   const [sortOrder, setSortOrder] = useState("asc");
@@ -263,17 +263,18 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   };
 
   const handleSortMenuClick = (sortMethod: string) => {
-    handleOnIssueSort(sortMethod);
-    setFilteredIssuesList(
-      filteredIssuesList.sort((a: any, b: any) => {
-        if (a.dueDate > b.dueDate) {
-          return 1;
-        } else if (b.dueDate > a.dueDate) {
-          return -1;
-        }
-        return 0;
-      })
-    );
+    let handleOnSort: IToolbarAction = { type: "sortIssue", data: sortMethod };
+    toolClicked(handleOnSort);
+    //   setFilteredIssuesList(
+    //     filteredIssuesList.sort((a: any, b: any) => {
+    //       if (a.dueDate > b.dueDate) {
+    //         return 1;
+    //       } else if (b.dueDate > a.dueDate) {
+    //         return -1;
+    //       }
+    //       return 0;
+    //     })
+    // );
   };
 
   const handleDownloadMenuClick = () => handleDownloadClose();

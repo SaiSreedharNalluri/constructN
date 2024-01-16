@@ -232,9 +232,10 @@ const CustomTaskListDrawer = (props: any) => {
     setAnchorEl(null);
   };
 
-  const handleSortMenuClick = (sortMethod: string) =>
-    handleOnTasksSort(sortMethod);
-
+  const handleSortMenuClick = (sortMethod: string) =>{
+  let handleOnTaskSort: IToolbarAction = { type: "sortTask", data:sortMethod };
+  toolClicked(handleOnTaskSort)
+  }
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
