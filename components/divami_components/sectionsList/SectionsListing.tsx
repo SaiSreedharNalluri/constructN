@@ -840,7 +840,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
                       toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
                     }
                 }}
-              ></Progress2DImageIcon>: "Processing"}
+              ></Progress2DImageIcon>: "No Progress Data"}
             </div>
           </TooltipText>
           }</div> : 'No Drawings';

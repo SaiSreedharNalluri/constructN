@@ -259,11 +259,12 @@ export const CapturesText = styled("div")({
   fontStyle: "italic",
   marginBottom: "13px",
 });
-export const CaptureImageContainer = styled("div")((props: { marginBottom?: boolean }) => ({
+export const CaptureImageContainer = styled("div")((props: { marginBottom?: boolean , opacity?: number }) => ({
   display: "flex",
   color: "#515151",
   fontSize: "14px",
   alignItems: "center",
+  opacity: props.opacity || 1,
   marginBottom: props.marginBottom ? "4px" : "16px",
 }));
 export const CaptureImageIcon = styled(Image)({
