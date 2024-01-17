@@ -15,6 +15,7 @@ import { API } from '../../config/config';
 import instance from '../../services/axiosInstance';
 import authHeader from '../../services/auth-header';
 import { CustomToast } from '../divami_components/custom-toaster/CustomToast';
+import { getCookie } from 'cookies-next';
 
 
 const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>, structId: string}) => {
@@ -149,6 +150,10 @@ function Progress2DStage(
 
     }) {
 
+    const userObj: any = getCookie('user')
+
+    const user = JSON.parse(userObj || "{}")
+
     const [edit , setEdit]= useState(false)
 
     const totalValueMetrics = assets.reduce((newVal, oldVal)=>{
@@ -264,13 +269,13 @@ function Progress2DStage(
                             setEdit(false);
                         }
                         }} /> : assetValue} {edit? null: stage.uom}</Typography>
-                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
+                        {user?.isSupportUser && (!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />)}
                     </div>
                 </div>
 
 
             </div>
-            {((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics )) < 1) ? <div className='flex mt-2'>
+            {((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics )) < 1 && user?.isSupportUser) ? <div className='flex mt-2'>
                     <Typography fontFamily='Open Sans' onClick={(e)=> setCompleted({checked: true, details: stage})} className='text-[12px] text-[#0000FF] underline cursor-pointer'>Mark as Complete</Typography>
             </div> :null}
 
