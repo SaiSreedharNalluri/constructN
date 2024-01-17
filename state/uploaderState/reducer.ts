@@ -14,9 +14,10 @@ export const resetUploaderState = (): UploaderState => {
 export const uploaderReducer = (state: UploaderState, action: UploaderActions): UploaderState => {
     switch (action.type) {
         case UploaderActionType.startNewUpload: 
+          
             return {
                 ...state,
-                step: UploaderStep.Details,
+                step:state.step === UploaderStep.Upload  ? UploaderStep.Details : UploaderStep.Upload,
                 structure: undefined,
                 date: undefined,
                 isNextEnabled: false,
