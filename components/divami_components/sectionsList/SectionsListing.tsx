@@ -268,11 +268,11 @@ const[isProcessing,setProcessing]=useState(false);
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string;
 
-      fetchAssetCountByStructure(router.query.projectId as string).then((res)=> setAssetCount(res.data.result)).catch(()=>{ setAssetCount({}); CustomToast("error","Failed To Fetch the Asset Count")});
+      // fetchAssetCountByStructure(router.query.projectId as string).then((res)=> setAssetCount(res.data.result)).catch(()=>{ setAssetCount({}); CustomToast("error","Failed To Fetch the Asset Count")});
 
-      fetchAssetCategories(projectId).then(res => {
-        if(res.data.success) setHasProgress2D(res.data.result.length > 0)
-      }).catch(e => console.log(e))
+      // fetchAssetCategories(projectId).then(res => {
+      //   if(res.data.success) setHasProgress2D(res.data.result.length > 0)
+      // }).catch(e => console.log(e))
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
