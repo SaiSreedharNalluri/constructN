@@ -24,6 +24,19 @@ export const getProjectsList = async () => {
   }
 };
 
+export const get2dProgressDetails = async () => {
+  try {
+    return await instance.get(
+      `${API.PROGRESS_2D_URL}/asset-categories/category-count-by-project`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProjectDetails = async (projectId: string) => {
   try {
     return await instance.get(

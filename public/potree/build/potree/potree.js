@@ -54095,12 +54095,62 @@
 
 			this.update();
 		};
+		
+		det(a){
+			return a[0][0]*a[1][1]*a[2][2] + a[0][1]*a[1][2]*a[2][0] + a[0][2]*a[1][0]*a[2][1] - a[0][2]*a[1][1]*a[2][0] - a[0][1]*a[1][0]*a[2][2] - a[0][0]*a[1][2]*a[2][1]
+		};
+		
+		unit_normal(a, b, c){
+			const x = this.det([[1,a.y,a.z],
+				[1,b.y,b.z],
+				[1,c.y,c.z]])
+			const y = this.det([[a.x,1,a.z],
+				[b.x,1,b.z],
+				[c.x,1,c.z]])
+			const z = this.det([[a.x,a.y,1],
+				[b.x,b.y,1],
+				[c.x,c.y,1]])
+			const magnitude = (x**2 + y**2 + z**2)**0.5;
+			return([x/magnitude, y/magnitude, z/magnitude])
+		}
+    
+		dot(a, b){
+			return(a[0]*b[0] + a[1]*b[1] + a[2]*b[2])
+		}
+		
+		cross(a, b){
+			const x = a.y * b.z - a.z * b.y
+			const y = a.z * b.x - a.x * b.z
+			const z = a.x * b.y - a.y * b.x
+			return([x, y, z])
+		}
+	
+		area(){
+			if(this.points.length < 3){
+				return 0
+			}
+
+			let total = [0, 0, 0];
+
+    		for (let i = 0; i < this.points.length; i++) {
+        		let vi1 = this.points[i].position;
+        		let vi2 = (i === this.points.length - 1) ? this.points[0].position : this.points[i + 1].position;
+        		let prod = this.cross(vi1, vi2);
+
+        		total[0] += prod[0];
+        		total[1] += prod[1];
+        		total[2] += prod[2];
+    		}
+   			const result = this.dot(total, this.unit_normal(this.points[0].position, this.points[1].position, this.points[2].position))
+    		return(result/2 > 0 ? result/2 : -1*result/2)
+		}
 
 		getArea () {
 			let area = 0;
 			let j = this.points.length - 1;
 
 			for (let i = 0; i < this.points.length; i++) {
+
 				let p1 = this.points[i].position;
 				let p2 = this.points[j].position;
 				area += (p2.x + p1.x) * (p1.y - p2.y);
@@ -54252,7 +54302,7 @@
 
 					let suffix = "";
 					if(this.lengthUnit != null && this.lengthUnitDisplay != null){
-						distance = distance / this.lengthUnit.unitspermeter * this.lengthUnitDisplay.unitspermeter;  //convert to meters then to the display unit
+						distance = distance * (this.lengthUnit.unitspermeter || this.lengthUnitDisplay.unitspermeter);  //convert to meters then to the display unit
 						suffix = this.lengthUnitDisplay.code;
 					}
 
@@ -54321,7 +54371,7 @@
 
 					let suffix = "";
 					if(this.lengthUnit != null && this.lengthUnitDisplay != null){
-						height = height / this.lengthUnit.unitspermeter * this.lengthUnitDisplay.unitspermeter;  //convert to meters then to the display unit
+						height = height * (this.lengthUnit.unitspermeter || this.lengthUnitDisplay.unitspermeter);  //convert to meters then to the display unit
 						suffix = this.lengthUnitDisplay.code;
 					}
 
@@ -54389,11 +54439,12 @@
 			{ // update area label
 				this.areaLabel.position.copy(centroid);
 				this.areaLabel.visible = this.showArea && this.points.length >= 3;
-				let area = this.getArea();
+				// let area = this.getArea();
+				let area = this.area();
 
 				let suffix = "";
 				if(this.lengthUnit != null && this.lengthUnitDisplay != null){
-					area = area / Math.pow(this.lengthUnit.unitspermeter, 2) * Math.pow(this.lengthUnitDisplay.unitspermeter, 2);  //convert to square meters then to the square display unit
+					area = area * (Math.pow(this.lengthUnit.unitspermeter || this.lengthUnitDisplay.unitspermeter, 2));
 					suffix = this.lengthUnitDisplay.code;
 				}
 

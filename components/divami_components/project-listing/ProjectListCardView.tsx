@@ -56,11 +56,22 @@ import CustomLoggerClass from "../../divami_components/custom_logger/CustomLogge
 import { Tooltip } from "@mui/material";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import PopupComponent from "../../popupComponent/PopupComponent";
+
+const Image2D =({ stroke = "#36415D" , strokeWidth ='1' })=>(<svg width="22" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.3125 15H3.32031V14.1602L4.75391 12.7109C5.04297 12.4141 5.27474 12.1667 5.44922 11.9688C5.6263 11.7682 5.75391 11.5859 5.83203 11.4219C5.91276 11.2578 5.95312 11.082 5.95312 10.8945C5.95312 10.668 5.88932 10.4987 5.76172 10.3867C5.63672 10.2721 5.46875 10.2148 5.25781 10.2148C5.03646 10.2148 4.82161 10.2656 4.61328 10.3672C4.40495 10.4688 4.1875 10.6133 3.96094 10.8008L3.30469 10.0234C3.46875 9.88281 3.64193 9.75 3.82422 9.625C4.00911 9.5 4.22266 9.39974 4.46484 9.32422C4.70964 9.24609 5.0026 9.20703 5.34375 9.20703C5.71875 9.20703 6.04036 9.27474 6.30859 9.41016C6.57943 9.54557 6.78776 9.73047 6.93359 9.96484C7.07943 10.1966 7.15234 10.4596 7.15234 10.7539C7.15234 11.069 7.08984 11.3568 6.96484 11.6172C6.83984 11.8776 6.65755 12.1354 6.41797 12.3906C6.18099 12.6458 5.89453 12.9284 5.55859 13.2383L4.82422 13.9297V13.9844H7.3125V15ZM13.0352 12.0898C13.0352 12.7331 12.9115 13.2708 12.6641 13.7031C12.4193 14.1328 12.0638 14.457 11.5977 14.6758C11.1315 14.8919 10.5703 15 9.91406 15H8.29688V9.28906H10.0898C10.6888 9.28906 11.2083 9.39583 11.6484 9.60938C12.0885 9.82031 12.4297 10.1341 12.6719 10.5508C12.9141 10.9648 13.0352 11.4779 13.0352 12.0898ZM11.7773 12.1211C11.7773 11.6992 11.7148 11.3529 11.5898 11.082C11.4674 10.8086 11.2852 10.6068 11.043 10.4766C10.8034 10.3464 10.5065 10.2812 10.1523 10.2812H9.50781V14H10.0273C10.6185 14 11.0573 13.8424 11.3438 13.5273C11.6328 13.2122 11.7773 12.7435 11.7773 12.1211Z" fill={stroke} stroke-width={strokeWidth}  />
+<path d="M21 13V15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H3C2.46957 17 1.96086 16.7893 1.58579 16.4142C1.21071 16.0391 1 15.5304 1 15V3C1 2.46957 1.21071 1.96086 1.58579 1.58579C1.96086 1.21071 2.46957 1 3 1H9" stroke={stroke} stroke-linecap="round" stroke-linejoin="round" stroke-width={strokeWidth}  />
+<path d="M20.9999 0.999987L16.6961 5.33249L14.4159 3.06732L11.0181 6.48772" stroke={stroke} stroke-linecap="round" stroke-linejoin="round" stroke-width={strokeWidth} />
+<path d="M18.2725 1.00903L20.9997 0.999974L21.0088 3.72723" stroke={stroke} stroke-linecap="round" stroke-linejoin="round" stroke-width={strokeWidth} />
+</svg>
+
+)
+
 export const ProjectListCardView = ({
   projects,
   projectActions,
   truncateString,
-  onDelete
+  onDelete,
+  d2Details
 }: any) => {
   const router = useRouter();
   const customLogger = new CustomLoggerClass();
@@ -265,6 +276,10 @@ export const ProjectListCardView = ({
                 : `0${each.captureDroneCount}`}
             </CaptureCount>
           </CaptureImageContainer>
+          <CaptureImageContainer opacity={d2Details[each._id] ? 1 : 0.6}>
+            <Image2D stroke={d2Details[each._id]? "green": "#36415D"} strokeWidth={d2Details[each._id]? "1.3": "1"} />
+              <div className={`${d2Details[each._id] ? "text-[green]": 'text-[#36415D]'} ml-[7px]`}>{d2Details[each._id]? "Available" : "Not Available"}</div>
+            </CaptureImageContainer>
           <ListHorizontalDivider />
 
 </>}
@@ -274,7 +289,7 @@ export const ProjectListCardView = ({
               <UsersCountText>{each.numberOfUsers}</UsersCountText>
             </UsersCountContainer>
             <ListDivider />
-            <CaptureImageContainer>
+            <CaptureImageContainer marginBottom>
               <Image src={updatedAtIcon} alt="" width={14} height={15} />
               <UsersCountText>Last Captured - {isNaN(Date.parse(each.lastUpdated))
       ? "N/A"

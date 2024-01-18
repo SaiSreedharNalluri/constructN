@@ -219,7 +219,7 @@ export class ForgeDataVizUtils {
         }
     }
 
-    loadMediaData = async (mediaData: any[]) => {
+    loadMediaData = async (mediaData: any[], date: string | undefined = undefined) => {
 
         let dbObject: any
 
@@ -291,7 +291,9 @@ export class ForgeDataVizUtils {
 
                                 rotation: mRotation,
 
-                                type: type
+                                type: type,
+
+                                snapshotDate: date
                             })
                         }
                     }

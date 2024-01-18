@@ -41,6 +41,7 @@ import { ProjectListFlatView } from "../../components/divami_components/project-
 import moment from "moment";
 import {
   deleteProject,
+  get2dProgressDetails,
   getProjects,
   getProjectsList,
   getProjectUsers,
@@ -123,6 +124,7 @@ const Index: React.FC<any> = () => {
     ],
   });
   const [selectedOption, setSelectedOption] = useState("issuePriority");
+  const [d2Details, setD2Details] = useState({});
 
   const {
     boot,
@@ -330,6 +332,8 @@ const Index: React.FC<any> = () => {
   useEffect(() => {
     if (router.isReady) {
 
+      get2dProgressDetails().then((res)=>(setD2Details(res.data.result))).catch(()=>{ setD2Details({});CustomToast("error","Unable to Fetch 2d Progress details")});
+      
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
@@ -704,6 +708,7 @@ const Index: React.FC<any> = () => {
                 projectActions={projectActions}
                 truncateString={truncateString}
                 onDelete={onDelete}
+                d2Details={d2Details}
               />
             ) : (
               <ProjectListFlatView
