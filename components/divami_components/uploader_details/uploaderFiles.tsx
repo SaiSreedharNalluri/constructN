@@ -5,7 +5,7 @@ import ExifReader from "exifreader";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import Warning from "../../../public/divami_icons/Warning_Icon.svg";
 import { useUploaderContext } from "../../../state/uploaderState/context";
-import { fileWithExif } from "../../../state/uploaderState/state";
+import { UploadRange, fileWithExif } from "../../../state/uploaderState/state";
 import { getCaptureIdFromModelOrString } from "../../../utils/utils";
 import { getRawImages } from "../../../services/captureManagement";
 import { UploaderModalPrimaryButton, UploaderModalTitle } from "../../../models/IUploader";
@@ -19,13 +19,13 @@ const UploaderFiles = () => {
   let refProcessing = useRef(false);
   let validFileCount = useRef(state.choosenFiles.validFiles.length)
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-   if (acceptedFiles) {
+   if (acceptedFiles.length) {
     uploaderAction.chageIsReading(true)
       const batchSize = 100;
-      if(acceptedFiles.length > 1500) {
+      if(acceptedFiles.length > UploadRange.Maximum) {
         if(validFileCount.current > 0) {
-          setMessage(`You have exceeded the maximum upload limit of 1500 files.You may upload 
-          additional ${1500-validFileCount.current} files or reach out to
+          setMessage(`You have exceeded the maximum upload limit of ${UploadRange.Maximum} files.You may upload 
+          additional ${UploadRange.Maximum-validFileCount.current} files or reach out to
           support@constructn.ai for larger uploads.`)
           setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
           setModalTitle(UploaderModalTitle.uploadFileLimit)
@@ -34,17 +34,17 @@ const UploaderFiles = () => {
           return
 
         } else {
-          setMessage(`You have exceeded the maximum upload limit of 1500 files.`)
+          setMessage(`You have exceeded the maximum upload limit of ${UploadRange.Maximum} files.`)
           setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
           setModalTitle(UploaderModalTitle.uploadFileLimit)
           setshowPopUp(true)
           uploaderAction.chageIsReading(false)
           return
         }
-      } else if (acceptedFiles.length < 1500) {
-        if((validFileCount.current + acceptedFiles.length) > 1500) {
-          setMessage(`You have exceeded the maximum upload limit of 1500 files.You may upload 
-                      additional ${1500-validFileCount.current} files or reach out to
+      } else if (acceptedFiles.length < UploadRange.Maximum) {
+        if((validFileCount.current + acceptedFiles.length) > UploadRange.Maximum) {
+          setMessage(`You have exceeded the maximum upload limit of ${UploadRange.Maximum} files.You may upload 
+                      additional ${UploadRange.Maximum-validFileCount.current} files or reach out to
                       support@constructn.ai for larger uploads.`)
           setPrimaryButtonLabel(UploaderModalPrimaryButton.ok)
           setModalTitle(UploaderModalTitle.uploadFileLimit)

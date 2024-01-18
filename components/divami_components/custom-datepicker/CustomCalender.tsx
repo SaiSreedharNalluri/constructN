@@ -250,6 +250,8 @@ const CustomCalender = (props: any) => {
                     InputLabelProps={{ shrink: true }}
                     placeholder="MM/DD/YYYY"
                     sx={calender}
+                    aria-readonly
+                    onClick={() => {setIsOpen(!isOpen);}}
                   />
                 )
           }
