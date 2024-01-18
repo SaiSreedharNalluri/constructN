@@ -5,7 +5,7 @@ import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, Suspense} from "react";
 import { CustomToast } from "../../../../../components/divami_components/custom-toaster/CustomToast"
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
@@ -60,7 +60,6 @@ import CustomLoggerClass from "../../../../../components/divami_components/custo
 import { getGenViewerData } from "../../../../../services/genviewer";
 import { IGenData } from "../../../../../models/IGenData";
 import { MqttConnector, OnMessageCallbak } from "../../../../../utils/MqttConnector";
-import Iframe from "../../../../../components/container/Iframe"
 import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
 import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
@@ -207,7 +206,7 @@ const Index: React.FC<IProps> = () => {
 
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
-
+  const Iframe = React.lazy(() => import('../../../../../components/container/Iframe'));
 
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
@@ -1939,8 +1938,10 @@ const Index: React.FC<IProps> = () => {
             </div></div></div>
 
         <div>
-          {initData && <Iframe isFullScreen={isFullScreen}></Iframe>}
-          {!multiverseIsReady && <CustomLoader />}
+        <Suspense fallback={<CustomLoader />}>
+        {initData && <Iframe isFullScreen={isFullScreen} />}
+      </Suspense>
+      {!multiverseIsReady && <CustomLoader />}
         </div>
 
       </div>
