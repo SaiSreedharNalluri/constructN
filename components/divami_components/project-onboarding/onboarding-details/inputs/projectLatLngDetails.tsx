@@ -19,9 +19,9 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
     const newCoordinates = [...(latlngDetails.value.location?.coordinates || [])];
 
     if (key === 'latitude') {
-      newCoordinates[1] = parseFloat(value);
+      newCoordinates[1] = value === '' ? '' : parseFloat(value);
     } else if (key === 'longitude') {
-      newCoordinates[0] = parseFloat(value);
+      newCoordinates[0] = value === '' ? '' : parseFloat(value);
     }
 
     latlngDetails.value = {
@@ -101,7 +101,7 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         <FormHelperText className='text-[#FF853E]'>Measurement is required</FormHelperText>
       )}
     </Grid>
-    <Grid item xs={1} className='mt-[16px] opacity'>
+    <Grid item xs={1.5} className='mt-[16px] opacity'>
     </Grid>
   </Grid>)
 

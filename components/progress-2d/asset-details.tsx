@@ -116,7 +116,11 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 changeAssetStage(assetId, values.stage, snapshotBase.date).then(res => {
 
-                    onChange && onChange(res.data.result)
+                    if(!(name !== actualName || description !== actualDecription)) {
+
+                        onChange && onChange(res.data.result);
+                    
+                    }
 
                     if(!(name !== actualName || description !== actualDecription)) {
 

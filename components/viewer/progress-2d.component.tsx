@@ -15,6 +15,8 @@ import { IAsset, IAssetCategory } from '../../models/IAssetCategory'
 import ClickTypesPicker from './segment-class-filters'
 
 import { Paper } from '@mui/material'
+import dayjs from 'dayjs'
+import moment from 'moment'
 
 interface _ViewerProps {
 
@@ -219,7 +221,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _dataVizUtils.current?.setTransform(_tm.current!, _offset.current!)
 
-            if (layers) _dataVizUtils.current.loadMediaData(layers)
+            if (layers) _dataVizUtils.current.loadMediaData(layers, props.snapshot.date)
         }
     }
 
@@ -309,8 +311,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
             </div>: null}
 
-            {props.compare ? <div className={`flex absolute bottom-2 ${props.right ? 'right-0': 'left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} style={{ zIndex: 5 }}>
-                {props.right?'From' : 'To'}
+            {props.compare ? <div className={`flex absolute bottom-2 ${!props.right ? 'right-0': 'left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} style={{ zIndex: 5 }}>
+                {moment(new Date(props.snapshot.date)).format('DD MMM, yyyy')}
             </div> : null}
 
         </>

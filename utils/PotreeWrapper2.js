@@ -77,6 +77,8 @@ export const PotreeViewerUtils = () => {
 
     let prevContext = {};
 
+    let prevImage = null;
+
     const initializeViewer = (viewerId, eventHandler, isSupportUser) => {
         console.log("potree inisde initializeViewer: ")
         _viewerId = viewerId;
@@ -485,6 +487,8 @@ export const PotreeViewerUtils = () => {
         return _viewer.scene.images360.length;
     }
 
+    const loadPrevDroneImage = () => loadImage(prevImage.reality, prevImage.image)
+
     const onImageLoad = (event) => {
         if(event.detail.viewer !== _viewerId) {
             return;
@@ -504,6 +508,8 @@ export const PotreeViewerUtils = () => {
             _sendContext = false;
             _eventHandler(_viewerId, getContext(event.detail.image));
         }
+        prevImage = { reality: _currentReality, image: event.detail.image };
+        publish("show-pointcloud", { view: false, disable: false });
     }   
 
     const onImageUnLoad = (event) => {
@@ -652,7 +658,9 @@ export const PotreeViewerUtils = () => {
     }
 
     const unloadAllImages = () => {
-        prevContext = getContext();
+        if(getContext().type !== '3d'){
+            prevContext = getContext();
+        }
         _viewer?.scene?.pointclouds?.forEach((pointCloud)=>{
             pointCloud._visible = true;
         })
@@ -980,6 +988,7 @@ export const PotreeViewerUtils = () => {
 
     const loadMeasurements =(points = [])=>{
         clearAllMeasurements();
+        _viewer.setLengthUnit('ft');
         points.forEach((point)=>{
             let measure = new Potree.Measure();
             if(point.type ==='Distance'){
@@ -988,7 +997,7 @@ export const PotreeViewerUtils = () => {
             if(point.type ==='Angle'){
                 measure.closed = true;
                 measure.showAngles = true;
-                measure.showDistances = true;
+                measure.showDistances = false;
             }
             if(point.type ==='Point'){
                 measure.showDistances = false;
@@ -1003,7 +1012,7 @@ export const PotreeViewerUtils = () => {
             if(point.type ==='Area'){
                 measure.closed = true;
                 measure.showArea = true;
-                measure.showHeight = true;
+                measure.showHeight = false;
             }
             measure.name = point.name;
             measure.mtype = point.type;
@@ -1123,6 +1132,7 @@ export const PotreeViewerUtils = () => {
             case "area":
                 measurement = _viewer.measuringTool.startInsertion({
 					showDistances: true,
+                    showHeight: false,
 					showArea: true,
 					closed: true,
 					name: 'Area'
@@ -1148,7 +1158,7 @@ export const PotreeViewerUtils = () => {
             break;
             case "angle":
                 measurement = _viewer.measuringTool.startInsertion({
-					showDistances: true,
+					showDistances: false,
 					showArea: false,
 					closed: false,
                     showAngles: true,
@@ -1368,9 +1378,11 @@ export const PotreeViewerUtils = () => {
     const pointCloudView = (cond) => {
         _viewer.setEDLEnabled(cond);
         if (cond) {
-            _viewer.setEDLOpacity(0);
+            if(_currentMode !== "Drone Image") _viewer.setEDLOpacity(0);
+            publish("show-pointcloud", { view: false, disable: false });
         } else {
             _viewer.setEDLOpacity(1);
+            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage });
         }
     }
 
@@ -1980,6 +1992,32 @@ export const PotreeViewerUtils = () => {
     const getSelectedLayers = (layers) => {
         return Object.keys(layers).filter((key)=>(layers[key]))
     }
+
+
+    const onEscape = () =>{
+        if (_currentMode == "Drone Image") {
+            // _viewer.controls.elExit.click();
+            for (const realityKey in _realityLayers ) {
+                let reality = _realityLayers[realityKey];
+                // let show = layersList.find((e) => e === reality.type);
+                // console.log("testShowLayers: in for", reality, _realityState[reality.type]);
+                switch (reality.type) {
+                    case "Phone Image":
+                    case "Drone Image":
+                        // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
+                        _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
+                        break;
+                }
+            }
+            unloadOrientedImage();
+            _sendContext = true;
+        } else {
+            // console.log("Testing realityViewToggle: ", _isSupportUser);
+                unloadAllImages();
+                // _viewer.fitToScreen();
+                publish("show-pointcloud", { view: true, disable: false });
+        }
+    }
     
 
     const onKeyDown = (event) => {
@@ -1997,29 +2035,29 @@ export const PotreeViewerUtils = () => {
         // console.log("Inside Key down listener: ", event);
         switch (event.key) {
             case "Escape":
-                if (_currentMode == "Drone Image") {
-                    // _viewer.controls.elExit.click();
-                    for (const realityKey in _realityLayers ) {
-                        let reality = _realityLayers[realityKey];
-                        // let show = layersList.find((e) => e === reality.type);
-                        // console.log("testShowLayers: in for", reality, _realityState[reality.type]);
-                        switch (reality.type) {
-                            case "Phone Image":
-                            case "Drone Image":
-                                // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
-                                _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
-                                break;
-                        }
-                    }
-                    unloadOrientedImage();
-                    _sendContext = true;
-                } else {
-                    // console.log("Testing realityViewToggle: ", _isSupportUser);
-                    if (_structure._id === "STR418477" || _isSupportUser) {
-                        // unloadAllImages();
-                        // _viewer.fitToScreen();
-                    }
-                }
+                // if (_currentMode == "Drone Image") {
+                //     // _viewer.controls.elExit.click();
+                //     for (const realityKey in _realityLayers ) {
+                //         let reality = _realityLayers[realityKey];
+                //         // let show = layersList.find((e) => e === reality.type);
+                //         // console.log("testShowLayers: in for", reality, _realityState[reality.type]);
+                //         switch (reality.type) {
+                //             case "Phone Image":
+                //             case "Drone Image":
+                //                 // console.log("testShowLayers: in switch", reality, _realityState[reality.type]);
+                //                 _viewer.scene.orientedImages[reality.index].visible = _realityState[reality.type];
+                //                 break;
+                //         }
+                //     }
+                //     unloadOrientedImage();
+                //     _sendContext = true;
+                // } else {
+                //     // console.log("Testing realityViewToggle: ", _isSupportUser);
+                //     if (_structure._id === "STR418477" || _isSupportUser) {
+                //         // unloadAllImages();
+                //         // _viewer.fitToScreen();
+                //     }
+                // }
                 break;
             case "ArrowUp":
                 if (_currentMode == "Drone Image" || _currentMode == "Phone Image") {
@@ -2430,7 +2468,8 @@ export const PotreeViewerUtils = () => {
         clearAllMeasurements,
         loadMeasurements,
         handleContext,
-        unloadAllImages,
-        loadAllImages
+        loadAllImages,
+        onEscape,
+        loadPrevDroneImage,
     };
 };

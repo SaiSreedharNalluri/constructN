@@ -118,7 +118,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snaps
 
                             disableAll: true,
 
-                            defaultValue: snapshotBase.date,
+                            defaultValue: snapshotCompare.date,
 
                             disableDays: _disableWeekends
 

@@ -10,7 +10,7 @@ import { Button, LinearProgress, Typography } from "@mui/material";
 import { getStructureHierarchy } from "../../../../services/structure";
 import moment from "moment";
 
-const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardingProps) => {
+const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy, loader }: IOnboardingProps) => {
 
   type UploadProgress = {
     sent: number
@@ -19,9 +19,16 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
   }
 
   const fileToUpload = useSignal<File | undefined>(undefined)
-  const existingBIM = useSignal(
-    hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 && hierarchy!.value[0].designs![0].type === 'BIM' ?
-      hierarchy!.value[0].designs![0].name : undefined)
+  const existingBIM = useComputed(() => {
+    if(hierarchy !== undefined && hierarchy.value.length > 0) {
+      if(hierarchy.value[0].designs !== undefined && hierarchy.value[0].designs.length > 0 ) {
+        hierarchy.value[0].designs.forEach(design => {
+          if(design.type === 'BIM') return design.name
+        })
+      }
+    }
+    return undefined
+  })
   const uploadComplete = useSignal(hierarchy!.value.length > 0 && hierarchy!.value[0].designs!.length > 0 && hierarchy!.value[0].designs![0].type === 'BIM')
   const isUploading = useSignal(false)
   const uploadProgress = useSignal<UploadProgress>({ sent: 0, total: 0, percentage: -1 })
@@ -30,10 +37,10 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
   const dragDropText = "(or drag and drop file here)";
   const supportFileText = "Upload .RVT or .NWD file";
 
-  console.log(hierarchy?.peek()[0]._id, existingBIM.value)
+  // console.log(hierarchy?.peek()[0]._id, existingBIM.value)
 
   useSignalEffect(() => {
-    console.log('Action inside BIM', 'Step:', step.peek(), 'Action:', action?.peek(), 'Project ID:', projectId.peek(), 'Structure ID:', hierarchy?.peek()[0]._id)
+    // console.log('Action inside BIM', 'Step:', step.peek(), 'Action:', action?.peek(), 'Project ID:', projectId.peek(), 'Structure ID:', hierarchy?.peek()[0]._id)
     switch (action!.value) {
       case 'Back-2':
         step.value = 1
@@ -41,7 +48,7 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
         break
       case 'Next-2':
         console.log(fileToUpload.peek(), showPopUp.peek())
-        if (existingBIM.peek() !== undefined) { 
+        if (existingBIM.peek() !== undefined) {
           step.value = 3
           action!.value = ''
         } else if (fileToUpload.peek() === undefined) {
@@ -75,12 +82,28 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
 
   const renderUploadedOn = useComputed(() => existingBIM.value !== undefined ?
     <Typography className='text-orange-600 m-8' variant="body1">
-     Uploaded on: {moment(hierarchy!.value[0].designs![0].createdAt).format('LL')}
+      Uploaded on: {moment(hierarchy!.value[0].designs![0].createdAt).format('LL')}
     </Typography> : <></>)
+  const renderLoader = useComputed(() => {
+    if (loader) {
+      if (loader.value === true) {
+        return <div style={{
+          position: "fixed",
+          top: "0",
+          left: "0",
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          zIndex: 9999
+        }}></div>
+      }
+    }
+  }
 
+  )
   const renderUploadButton = useComputed(() => uploadComplete.value == false ?
     <Button variant='contained' disabled={fileToUpload.value === undefined || isUploading.value === true} size='small' className='flex-1 mt-8 bg-[#F1742E]'
-      color='warning' onClick={() => proceedUpload()} >
+      color='warning' onClick={() => { if (loader) loader.value = true, proceedUpload() }} >
       Upload
     </Button> : <></>)
 
@@ -118,6 +141,8 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
   };
 
   const proceedUpload = () => {
+    console.log("procced method");
+
     // const worker = new Worker(new URL('../../web_worker/uploadFileWorker.ts', import.meta.url));
     // console.log(worker)
     // worker.postMessage({ file: fileToUpload.peek(), type: 'BIM', projectId: projectId.peek(), structureId: structureId?.peek() });
@@ -132,17 +157,26 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
     uploader.onProgress(({ sent, total, percentage }: { percentage: number, sent: number, total: number }) => {
       // console.log(`${percentage}%`)
       uploadProgress.value = { sent, total, percentage }
+      if (loader) {
+        loader.value = true
+      }
     })
       .onError((error: any) => {
         isUploading.value = false
         console.error(error)
+        if (loader) {
+          loader.value = true
+        }
       })
       .onComplete(() => {
         getStructureHierarchy(projectId.peek()).then((res => {
           isUploading.value = false
           uploadProgress.value = { sent: 0, total: 0, percentage: -1 }
           uploadComplete.value = true
-          if(hierarchy) hierarchy.value = res.data.result
+          if (loader) {
+            loader.value = false
+          }
+          if (hierarchy) hierarchy.value = res.data.result
         })).catch(err => console.log(err))
       })
     isUploading.value = true
@@ -166,7 +200,6 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
           acceptFiles={{ "application/octet-stream": [".nwd", ".rvt"] }}
         ></ChooseOnboardingFiles>
       </div>
-
       {renderProgress}
 
       {renderUploadedOn}
@@ -174,6 +207,7 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
       {renderUploadButton}
 
       {renderSuccessMessage}
+      {renderLoader}
 
       <div style={{ textAlign: "left", marginTop: "20px" }}>
         <a
@@ -187,7 +221,7 @@ const ProjectOnboardingBIM = ({ step, action, projectId, hierarchy }: IOnboardin
       </div>
 
       {renderPopup}
-      
+
     </div>
   );
 };

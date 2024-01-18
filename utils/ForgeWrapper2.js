@@ -480,7 +480,6 @@ export const ForgeViewerUtils = function () {
         //     tag: tagObject,
         //   };
         // } else {
-        publish('show-pointcloud', false);
         console.log(`Inside Rag Click click: ${targetObject.position.x}`);
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();
@@ -698,6 +697,7 @@ export const ForgeViewerUtils = function () {
             fov: true,
           });
           _viewer.navigation.setIsLocked(true);
+          publish("movement-locked",true);
         }
 
         if (_viewer.getExtension("Autodesk.BimWalk")) {

@@ -38,7 +38,7 @@ const deleteStructure = (projectId: string, structureId: string) => {
 
 }
 
-const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader }: IOnboardingProps) => {
+const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader,loader }: IOnboardingProps) => {
 
   useSignalEffect(() => {
     console.log('Action inside Sheets', 'Step:', step.peek(), 'Action:', action?.value, 'Project ID:', projectId.peek())
@@ -59,7 +59,9 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
   const [mHierarchy, setHierarchy] = useState<any>()
 
   useEffect(() => {
-
+    if(showLoader){
+      showLoader.value=true
+      }
     fetchStructureHierarchy(projectId.value).then(res => {
 
       if (res.data.result) {
@@ -67,7 +69,9 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
         if(hierarchy !== undefined) hierarchy.value = res.data.result
 
         setHierarchy(res.data.result)
-
+        if(showLoader){
+          showLoader.value=false
+          }
       }
 
     }).catch(err => console.log(err))
@@ -157,7 +161,7 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
       </div>
 
       {mHierarchy && <StructureHierarchy projectId={projectId.value} hierarchy={mHierarchy} 
-        onAdd={_onAdd} onDelete={_onDelete} onSheetAdded={_reload} />}
+        onAdd={_onAdd} onDelete={_onDelete} onSheetAdded={_reload} loader={loader} />}
 
     </div>
 

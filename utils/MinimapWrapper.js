@@ -522,7 +522,6 @@ export const MinimapUtils = () => {
         //   };
         // } else {
         console.log(`Inside Rag Click click: ${JSON.stringify(targetObject)}`, _viewerId);
-        publish('show-pointcloud', false);
         if(!targetObject.id) return
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();

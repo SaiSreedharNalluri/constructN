@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { ChildrenEntity, IStructure } from "../../../models/IStructure";
-import {
-  getStructureHierarchy,
-  getStructureList,
-} from "../../../services/structure";
-import { CustomToast } from "../custom-toaster/CustomToast";
 import { useRouter } from "next/router";
-import { getSectionsList } from "../../../services/sections";
-import { AxiosResponse } from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SectionList from "../../container/sectionList";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
-import { getProjectDetails } from "../../../services/project";
-import { IProjects } from "../../../models/IProjects";
 import { IJobs, JobStatus } from "../../../models/IJobs";
 import { ICapture } from "../../../models/ICapture";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-import { getStructureIdFromModelOrString } from "../../../utils/utils";
-
 import { TruncatedString } from "../../../utils/utils";
 import { TooltipText } from "../side-panel/SidePanelStyles";
+import moment from "moment";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
@@ -284,13 +275,16 @@ const UploaderDateDetails: React.FC<any> = () => {
           <div
             className="pt-2"
           >
-            <DatePicker
+             <DatePicker
               className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
-              placeholderText="MM/DD/YYYY"
-              selected={uploaderState.date}
               onChange={(date) => handleDateChange(date)}
               disabled={!uploaderState.structure?.name}
               maxDate={maxAllowedDate}
+              showPopperArrow={false}
+              customInput={<div className="custom-date-picker-input">
+              <input className="outline-none" placeholder="DD/MM/YYYY" type="text" value={uploaderState.date===undefined ? '' :moment(uploaderState.date).format('DD MMM,YYYY')} readOnly/>
+              <CalendarMonthIcon className="calendar-icon" />
+            </div>}
             />
           </div>
           {!uploaderState.structure?.name && (

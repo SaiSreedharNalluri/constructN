@@ -26,6 +26,7 @@ export type IOnboardingProps = {
   projectDetails: Signal<IProjects>
   usersCount?: Signal<number>
   showLoader?: Signal<boolean>
+  loader?:Signal<boolean>
 }
 
 const ProjectOnboarding = () => {
@@ -38,7 +39,7 @@ const ProjectOnboarding = () => {
   const hierarchy = useSignal([])
   const showLoader = useSignal(false)
   const projectDetails: any = useSignal({ type: 'Residential' })
-
+ const loader=useSignal(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -74,6 +75,7 @@ const ProjectOnboarding = () => {
           hierarchy={hierarchy}
           projectDetails={projectDetails}
           showLoader={showLoader}
+          loader={loader}
         /></>
 
       case 2:
@@ -84,6 +86,7 @@ const ProjectOnboarding = () => {
           action={action}
           projectDetails={projectDetails}
           showLoader={showLoader}
+          loader={loader}
         /></>
 
       case 3:

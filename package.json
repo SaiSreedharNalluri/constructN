@@ -13,7 +13,8 @@
     "docker-image-delta": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:delta .",
     "docker-image-prod-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:prod-us .",
     "docker-image-prod": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web:prod .",
-    "docker-image-qa-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:qa-us ."
+    "docker-image-qa-us": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:qa-us .",
+    "docker-image-qa-granite": "npm run build && docker buildx build --platform linux/amd64 --push -t constructn/web-prototype:qa-granite ."
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -79,6 +80,7 @@
     "react-tagsinput": "^3.20.0",
     "react-toastify": "^9.1.1",
     "react-use-intercom": "^5.1.4",
+    "short-unique-id": "^5.0.3",
     "tesseract.js": "^5.0.3",
     "three": "^0.158.0",
     "three-fatline": "^0.6.1",

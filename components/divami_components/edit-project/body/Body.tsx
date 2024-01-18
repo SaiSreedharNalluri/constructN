@@ -57,21 +57,22 @@ const Body = ({ setCanBeDisabled, editData, handleFormData,setIsValidate,validat
           if (item.id === "utm_value") {
             return {
               ...item,
-              defaultValue: editData?.utm || " ",
+              isDisabled: true,
+              defaultValue: editData?.utm?.zone || " ",
             };
           }
           if (item.id === "latitude") {
             return {
               ...item,
               isDisabled: true,
-              defaultValue: editData?.location?.coordinates[1] || " ",
+              defaultValue: editData?.location?.coordinates[1] || 0,
             };
           }
           if (item.id === "longitude") {
             return {
               ...item,
               isDisabled: true,
-              defaultValue: editData?.location?.coordinates[0] || " ",
+              defaultValue: editData?.location?.coordinates[0] || 0,
             };
           }
           if (item.id === "projectType") {
