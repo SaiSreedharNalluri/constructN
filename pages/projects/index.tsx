@@ -332,7 +332,7 @@ const Index: React.FC<any> = () => {
   useEffect(() => {
     if (router.isReady) {
 
-      get2dProgressDetails().then((res)=>(setD2Details(res.data.result))).catch(()=>{ setD2Details({});CustomToast("error","Unable to Fetch 2d Progress details")});
+      get2dProgressDetails().then((res)=>(setD2Details(res.data.result))).catch(()=>{ setD2Details({})});
       
       getProjectsList()
         .then(async (response) => {

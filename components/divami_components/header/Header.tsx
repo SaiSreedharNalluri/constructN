@@ -178,9 +178,12 @@ const Header: React.FC<any> = ({
     });
   }
   useEffect(() => {
-    let user = JSON.parse(getCookie("user") as string)
-    if (user?.avatar) {
-      setAvatar(user.avatar);
+    const userCookie = getCookie("user");
+    if(userCookie !== undefined) {
+      let user = JSON.parse(userCookie as string)
+      if (user?.avatar) {
+        setAvatar(user.avatar);
+      }
     }
   }, [router.isReady]);
   useEffect(() => {
