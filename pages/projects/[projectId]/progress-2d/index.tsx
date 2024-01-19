@@ -300,7 +300,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                     setAssetCategories(response[1].data.result)
 
-                    if(response[1].data.result.length > 0) _onCategorySelected(response[1].data.result[1])
+                    if(response[1].data.result.length > 0) _onCategorySelected(response[1].data.result[0])
 
                 }
                 
