@@ -269,13 +269,13 @@ function Progress2DStage(
                             setEdit(false);
                         }
                         }} /> : assetValue} {edit? null: stage.uom}</Typography>
-                        {user?.isSupportUser && (!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />)}
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
                     </div>
                 </div>
 
 
             </div>
-            {((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics )) < 1 && user?.isSupportUser) ? <div className='flex mt-2'>
+            {((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics )) < 1) ? <div className='flex mt-2'>
                     <Typography fontFamily='Open Sans' onClick={(e)=> setCompleted({checked: true, details: stage})} className='text-[12px] text-[#0000FF] underline cursor-pointer'>Mark as Complete</Typography>
             </div> :null}
 

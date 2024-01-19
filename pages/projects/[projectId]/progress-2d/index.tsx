@@ -85,7 +85,7 @@ const fetchAssetCategories = (projectId: string) => {
 
 }
 
-const fetchAssets = (structureId: string, category: string, date: string) => {
+const fetchAssets = (structureId: string, category: string, date: string = '2000-01-01T00:00:00.000Z') => {
 
     const userObj: any = getCookie('user');
 
@@ -100,7 +100,7 @@ const fetchAssets = (structureId: string, category: string, date: string) => {
 
 }
 
-const createAsset = (asset: Partial<IAsset>, date: string) => {
+const createAsset = (asset: Partial<IAsset>, date: string = '2000-01-01T00:00:00.000Z') => {
 
     try {
 
@@ -486,15 +486,16 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _extractBaseSnapshot = async (snapshot: any) => {
 
+        LightBoxInstance.setSnapshotBase(snapshot);
+
+        if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
+
         if (snapshot) {
 
             await _extractSnapshotPaths(snapshot)
-
-            LightBoxInstance.setSnapshotBase(snapshot)
-
+           
             setSnapshotBase(snapshot)
 
-            if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
         }
 
@@ -502,15 +503,15 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _extractCompareSnapshot = async (snapshot: any) => {
 
+        LightBoxInstance.setSnapshotCompare(snapshot);
+        if (currentCategory.current) _loadCompareAssets(currentCategory.current);
+
         if (snapshot) {
 
             await _extractSnapshotPaths(snapshot)
 
-            LightBoxInstance.setSnapshotCompare(snapshot)
-
             setSnapshotCompare(snapshot)
 
-            if (currentCategory.current) _loadCompareAssets(currentCategory.current)
 
         } else setSnapshotCompare(undefined)
 
@@ -569,7 +570,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             setLoading(true)
 
-            createAsset(assetBody, LightBoxInstance.getSnapshotBase().date).then(res => {
+            createAsset(assetBody, LightBoxInstance.getSnapshotBase()?.date).then(res => {
 
                 setShowProgress(false)
 
@@ -738,7 +739,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id] = { assets: [], assetsCompare: [], ...stage, visible: true })
 
-        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase().date).then(res => {
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotBase()?.date).then(res => {
 
             if (res.data.success) {
 
@@ -805,7 +806,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         stages.forEach((stage: IAssetStage) => _assetMap.current[stage._id].assetsCompare = [])
 
-        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotCompare().date).then(res => {
+        if (structureId.current!) fetchAssets(structureId.current!, category!._id, LightBoxInstance.getSnapshotCompare()?.date).then(res => {
 
             if (res.data.success) {
 
@@ -1045,7 +1046,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                 <div className='flex flex-col w-full' style={{ height: 'calc(100vh - 64px)' }}>
 
-                                    {hierarchy && snapshotBase && <Progress2DToolbar
+                                    {hierarchy && <Progress2DToolbar
 
                                         hierarchy={hierarchy}
 
@@ -1182,7 +1183,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         </div>
 
-                                        {snapshotBase && <div className={'flex flex-col w-1/4 mr-4 py-4'}
+                                        <div className={'flex flex-col w-1/4 mr-4 py-4'}
 
                                             style={{ height: 'calc(100vh - 144px)', border: '1px solid #e2e3e5', borderRadius: '6px' }} >
 
@@ -1265,7 +1266,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                 {loading ? [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))
                                                 : <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}
                                                 
-                                                snapShotDate={snapshotBase.date}
+                                                snapShotDate={snapshotBase?.date}
                                                 
                                                 selectedCategory={selectedCategory}
                                                 
@@ -1305,7 +1306,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 onChange={_onAssetDetailsChange}/>}
 
-                                        </div>}
+                                        </div>
 
                                     </div>
 
