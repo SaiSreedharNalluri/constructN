@@ -1,15 +1,12 @@
 import { Breadcrumbs, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import Image from "next/image";
+import Link from "next/link";
 
-export const BreadcrumbsLabel = styled(Typography)({
+export const BreadcrumbsLabel = styled(Link)({
   fontSize: "14px",
-  color: "#36415D",
   fontFamily: "Open Sans",
-  "&:hover": {
-    cursor: "pointer",
-    color: "#F1742E",
-  },
+
 });
 
 export const CustomizedBreadcrumbs = styled(Breadcrumbs)({

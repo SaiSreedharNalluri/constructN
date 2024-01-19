@@ -413,12 +413,14 @@ const Header: React.FC<any> = ({
         )}
         <HeaderLeftPart>
           <HeaderLogoImageContainer>
+          <Link href="/projects">
             <Image
               onClick={goToProjectsList}
               src={constructnLogo}
               alt="Constructn Logo"
               data-testid="constructn-logo"
             />
+            </Link>
           </HeaderLogoImageContainer>
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && (
