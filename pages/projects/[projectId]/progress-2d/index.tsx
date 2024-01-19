@@ -504,6 +504,7 @@ const Progress2DPage: React.FC<any> = () => {
     const _extractCompareSnapshot = async (snapshot: any) => {
 
         LightBoxInstance.setSnapshotCompare(snapshot);
+
         if (currentCategory.current) _loadCompareAssets(currentCategory.current);
 
         if (snapshot) {
@@ -721,8 +722,6 @@ const Progress2DPage: React.FC<any> = () => {
 
             _loadAssetsForCategory(category)
 
-            _loadCompareAssets(category)
-
         }
 
     }
@@ -795,6 +794,11 @@ const Progress2DPage: React.FC<any> = () => {
         setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
         setAssets(assets)
+
+        if(currentCategory.current){
+            _loadCompareAssets(currentCategory.current);
+        }
+        
 
     }
 
