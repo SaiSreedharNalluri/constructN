@@ -253,6 +253,12 @@ const Index: React.FC<any> = () => {
       },
     },
     {
+      label: "Uploader",
+      action: (id: string) => {
+        router.push(`/projects/${id}/uploader`);
+      },
+    },
+    {
       label: "Deassign Project",
       action: (id: string) => {
         setShowArchiveProject(true);

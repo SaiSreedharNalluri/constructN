@@ -135,7 +135,7 @@ export const ProjectListCardView = ({
 
           <ListHorizontalDivider active />
 
-          <ProjectActionsContainer>
+        <ProjectActionsContainer className="overflow-y-auto h-[250px]">
             {projectActions.map((item: any, index: number) => {
               return (
                 <ProjectActionItem
