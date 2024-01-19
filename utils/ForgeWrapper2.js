@@ -806,6 +806,8 @@ export const ForgeViewerUtils = function () {
       _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
       // disable the same post load
       _bimWalkExtn.tool.navigator.enableGravity(false)
+    } else if(parameter.extensionId === "Autodesk.Measure"){
+      _viewer.prefs.set(Autodesk.Viewing.Private.Prefs.DISPLAY_UNITS, 'ft-and-decimal-in');
     }
   };
 
