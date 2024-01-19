@@ -365,7 +365,7 @@ export class ForgeDataVisualization {
         let result = this.viewer.clientToWorld(canvasX, canvasY);
 
         if (result) {
-            let viewableData = this.getViewableData();
+            let viewableData = this.getViewableData(type);
             let viewableStyle = this.getViewableStyle(type);
             let dbIdObject = {
                 dbId: ++this.tempViewableLength,
