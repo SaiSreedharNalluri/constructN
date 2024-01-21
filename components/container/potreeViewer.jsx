@@ -133,20 +133,31 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
           </div>
-          <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
-          {getButton()}
+          <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
+            {getButton()}
           </div>
-        {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
-              <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
-          </div>: null}
+          {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
+            <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100' : 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
+          </div> : null}
           {!isCompareViewer ? (
-            <div>
-              {/* <CameraButtons></CameraButtons> */}
-              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} />
-            </div>
-          ) : (
-            ""
-          )}
+              isSupportUser.current ? (<>
+                <div className={`flex-column absolute right-[12px] bottom-[50px] rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
+                  {showPointCloud ?
+                    <Button onClick={() => {
+                      loadAllImages();
+                      setShowPointCloud(false);
+                    }} className='text-[12px]' > <ViewInArIcon className='mr-1.5' /> Hide Point Cloud</Button> :
+                    <Button className='text-[12px]' onClick={() => {
+                      unloadAllImages();
+                      setShowPointCloud(true);
+                    }}><ThreeDRotationIcon className='mr-1.5' /> Show Point Cloud</Button>}
+                </div>
+                <div>
+                  {/* <CameraButtons></CameraButtons> */}
+                  <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} />
+                </div>
+              </>) : <></>)
+            : <></>}
         </div>
       </React.Fragment>
     );

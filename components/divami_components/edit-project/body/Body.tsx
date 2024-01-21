@@ -23,9 +23,7 @@ const Body = ({ setCanBeDisabled, editData, handleFormData,setIsValidate,validat
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(EDIT_PROJECT_FORM_CONFIG);
   const [projectTypes, setProjectTypes] = useState([]);
-  const router = useRouter();
-  console.log(editData,"edit data");
-  
+  const router = useRouter();  
   useEffect(() => {
     if (router.isReady) {
       getProjectTypes()
