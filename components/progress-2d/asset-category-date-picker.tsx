@@ -46,7 +46,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snaps
 
         const snapshots = LightBoxInstance.viewerData().snapshots
 
-        if (snapshots.length > 0) {
+        if (snapshots?.length > 0) {
 
             snapshots.forEach((element: any, i: number) => {
 
@@ -66,7 +66,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snaps
 
             { compare && <OutlinedInput
 
-                size='small' disabled value={snapshotCompare ? _formattedDate(snapshotCompare.date) : ''}
+                size='small' disabled value={(snapshotCompare && snapshotCompare?.date) ? _formattedDate(snapshotCompare.date) : ''}
 
                 sx={{
 
@@ -118,7 +118,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snaps
 
                             disableAll: true,
 
-                            defaultValue: snapshotCompare.date,
+                            defaultValue: snapshotCompare?.date,
 
                             disableDays: _disableWeekends
 
@@ -132,7 +132,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snaps
 
             <OutlinedInput
 
-                size='small' disabled value={_formattedDate(snapshotBase.date)}
+                size='small' disabled value={snapshotBase ? _formattedDate(snapshotBase.date) : null}
 
                 sx={{
 
@@ -184,7 +184,7 @@ export default function AssetCategoryDatePicker({ snapshots, snapshotBase, snaps
 
                             disableAll: true,
 
-                            defaultValue: snapshotBase.date,
+                            defaultValue: snapshotBase?.date,
 
                             disableDays: _disableWeekends
 

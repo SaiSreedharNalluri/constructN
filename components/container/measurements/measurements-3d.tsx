@@ -14,8 +14,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-import PolylineIcon from '@mui/icons-material/Polyline'
-
 import FormatShapesIcon from '@mui/icons-material/FormatShapes'
 
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined'
@@ -39,8 +37,25 @@ import CustomLoader from '../../divami_components/custom_loader/CustomLoader'
 import PopupComponent from '../../popupComponent/PopupComponent'
 import { CustomToast } from '../../divami_components/custom-toaster/CustomToast'
 import { getCookie } from 'cookies-next'
+import Image from 'next/image'
 
 const rightClickNeeded =['Distance','Area','Angle']
+
+const AngleSvg = ({ color = '#000', id ='' , onClick=()=>{} }) => {
+  const [colorIcon, setColorIcon] = useState(color);
+  return(<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" id={id} onClick={onClick} style={{ opacity: colorIcon ==='#fff' ? 1 : 0.6 }} onMouseEnter={()=>{setColorIcon("#fff")}} onMouseLeave={()=>{setColorIcon("#000")}} >
+<g clip-path="url(#clip0_137_880)">
+<path d="M27 23.5H4.11586C4.07202 23.5 4.04941 23.4476 4.07948 23.4157L20.5 6" stroke={colorIcon} stroke-width="2.5" stroke-linecap="round"/>
+<path d="M12 15.5L14.2702 17.2026C15.3032 17.9774 15.7246 19.3263 15.3162 20.5513L14.5 23" stroke={colorIcon} stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<defs>
+<clipPath id="clip0_137_880">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>)
+}
+
 
 const subscribe = (eventName: string, listener: EventListenerOrEventListenerObject) => {
 
@@ -411,7 +426,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
 
       case 'Height': return <HeightIcon  id="rahmanMeasure_height" onClick={removeMeasure} />
 
-      case 'Angle': return <PolylineIcon id="rahmanMeasure_angle" onClick={removeMeasure}/>
+      case 'Angle': return <AngleSvg color='#000' id="rahmanMeasure_angle" onClick={removeMeasure} />
 
       case 'Area': return <FormatShapesIcon id="rahmanMeasure_area" onClick={removeMeasure} />
 
