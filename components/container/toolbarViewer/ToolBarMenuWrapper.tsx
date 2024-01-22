@@ -24,21 +24,20 @@ export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
   RouterIssueRef:(handleMenuInstance:any) => void;
   issueFilterState:(handleMenuInstance:any)=>void;
-  filteredIssueList:(filterIssueList:any)=>void;
   taskFilterState:(taskFilterState:any)=>void;
-  filteredTaskList:(filteredTaskList:any)=> void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any,tasksStatusList:any)=>void;
 };
 export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
   handleRouterIssueRef: (handleMenuInstance: any) => void;
   issueFilterState:(handleMenuInstance:any)=>void;
-  filteredIssueList:(filteredIssueList:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any)=>void;
 };
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
   handleRouterTask:(handleMenuInstance:any)=> void;
   taskFilterState:(taskFilterState:any)=>void;
-  filteredTaskList:(filteredTaskList:any)=>void
+  projectUsersAndStatus:(projectUsers:any,tasksStatusList:any)=>void;
 };
 
 export type designToolHandle = {
@@ -101,21 +100,17 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
         
       },
       issueFilterState(issueFilterState:any){
-        console.log("issue filter state toolbar co",issueFilterState);
         
         issueRef.current?.issueFilterState(issueFilterState)
-        
-      },
-      filteredIssueList(filterIssueList:any){
-        issueRef.current?.filteredIssueList(filterIssueList)
         
       },
       taskFilterState(taskFilterState:any){
         taskRef.current?.taskFilterState(taskFilterState)
       },
-      filteredTaskList(filteredTaskList:any){
-        taskRef.current?.filteredTaskList(filteredTaskList)
-      }
+      projectUsersAndStatus(projectUsers:any,issueStatusList:any,tasksStatusList:any){
+        issueRef.current?.projectUsersAndStatus(projectUsers,issueStatusList)
+        taskRef.current?.projectUsersAndStatus(projectUsers,tasksStatusList)
+      },
 
 
     };

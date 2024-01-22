@@ -46,7 +46,7 @@ import { useRouter } from "next/router";
 export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
   issueFilterState:(handleIssueFilterState:any)=>void;
-  filteredIssueList:(filteredIssueList:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any)=>void;
   
   
 };
@@ -63,7 +63,6 @@ function Issues({
     currentProject,
     issueOpenDrawer,
     issuePriorityList,
-    issueStatusList,
     issueTypesList,
     issueFilterState,
     setIssueFilterState,
@@ -109,7 +108,8 @@ function Issues({
     filterData: {},
     numberOfFilters: 0,
   })
-  const [filterIssList,setFilterIssList] = useState([])
+  const [projectUser,setProjectUsers] = useState([])
+  const [issueStatusList,setIssueStatusList] = useState([])
   useImperativeHandle(ref, () => {
     return{
       handleIssueInstance(IssuetoolInstance:any){
@@ -145,9 +145,10 @@ function Issues({
     issueFilterState(handleIssueFilterState:any){
       setFilterState(handleIssueFilterState)
     },
-    filteredIssueList(filteredIssueList:any){
-      setFilterIssList(filteredIssueList)
-    }
+    projectUsersAndStatus(projectUsers:any,issueStatusList:any){
+      setProjectUsers(projectUsers);      
+      setIssueStatusList(issueStatusList);
+    }   
     }
   },[router.isReady,initData]);
 
@@ -449,7 +450,7 @@ function Issues({
             deleteTheAttachment={deleteTheAttachment}
             openIssueCreateFn={openIssueCreateFn}
             issueMenuClicked={issueMenuClicked}
-            projectUsers={projectUsers}
+            projectUsers={projectUser}
             issueContext={issueContext}
             toolClicked={toolClicked}
             initData={initData.currentIssueList}
@@ -494,7 +495,7 @@ function Issues({
             issueType={issueTypesList}
             issuePriority={issuePriorityList}
             issueStatus={issueStatusList}
-            projectUsers={projectUsers}
+            projectUsers={projectUser}
             currentProject={currentProject}
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}

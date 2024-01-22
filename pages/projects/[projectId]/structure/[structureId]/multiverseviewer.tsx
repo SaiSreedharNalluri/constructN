@@ -5,7 +5,7 @@ import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useRef, useState, Suspense} from "react";
+import React, { useCallback, useEffect, useRef, useState, Suspense, memo} from "react";
 import { CustomToast } from "../../../../../components/divami_components/custom-toaster/CustomToast"
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
@@ -64,6 +64,7 @@ import IssueList from "../../../../../components/container/rightFloatingMenu/iss
 import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
 interface IProps { }
+const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -128,9 +129,8 @@ export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
   RouterIssueRef: (handleMenuInstance: any) => void;
   issueFilterState:(handleMenuInstance:any)=>void;
-  filteredIssueList:(filterIssueList:any)=>void;
   taskFilterState:(taskFilterState:any)=>void;
-  filteredTaskList:(filteredTaskList:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any,tasksStatusList:any)=>void;
 };
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
@@ -206,7 +206,7 @@ const Index: React.FC<IProps> = () => {
 
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
-  const Iframe = React.lazy(() => import('../../../../../components/container/Iframe'));
+ 
 
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
@@ -1432,6 +1432,12 @@ const Index: React.FC<IProps> = () => {
   //   router.push(router);
 
   // }
+  useEffect(()=>{
+    if(projectUsers || issueStatusList || tasksStatusList){
+    ref.current?.projectUsersAndStatus(projectUsers,issueStatusList,tasksStatusList)
+    }
+  },[projectUsers,issueStatusList,tasksStatusList])
+
   const updateITRouter = (type: String, id: string) => {
     console.log("updateITRouter",type,id,router)
     if (type === "selectIssue") {
@@ -1533,7 +1539,10 @@ const Index: React.FC<IProps> = () => {
             //   router.push(router);
             // }
             let vData:IGenData = response.result; 
-            if(router.query.type&& router.query.type !== undefined)
+            if(router.query.type === undefined){
+              vData.currentViewType = getInitViewType(vData)
+            }
+            else if(router.query.type&& router.query.type !== undefined)
             {
               if(isViewTypeAvailable(vData,router.query.type.toString()))
               {
@@ -1598,6 +1607,9 @@ const Index: React.FC<IProps> = () => {
   useEffect(() => {
 
     if (initData) {
+
+      console.log("init data after",initData);
+      
       if (initData.structure.designs?.length) {
         setDesignAvailable(true)
       }
@@ -1643,7 +1655,10 @@ const Index: React.FC<IProps> = () => {
             .then((response) => {
               if (response.success === true) {
                 let vData:IGenData = response.result
-              if(router.query.type&& router.query.type !== undefined)
+              if(router.query.type === undefined){
+                vData.currentViewType = getInitViewType(vData)
+              }
+              else if(router.query.type&& router.query.type !== undefined)
             {
               
               if(isViewTypeAvailable(vData,router.query.type.toString()))
@@ -1938,9 +1953,11 @@ const Index: React.FC<IProps> = () => {
             </div></div></div>
 
         <div>
+        {initData && 
         <Suspense fallback={<CustomLoader />}>
-        {initData && <Iframe isFullScreen={isFullScreen} />}
+     <Iframe isFullScreen={isFullScreen} />
       </Suspense>
+}
       {!multiverseIsReady && <CustomLoader />}
         </div>
 

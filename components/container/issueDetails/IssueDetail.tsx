@@ -1157,7 +1157,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         (formData.length
           ? formData
               .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+              ?.chipString
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1221,12 +1221,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
-    console.log("issu",issueData)
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response:any) => {
         if (response.success === true) {
+          let ChangeToolAction: IToolbarAction = { type: "editIssue", data: response?.result };
+          toolClicked(ChangeToolAction);
           CustomToast("Issue updated successfully","success");
-          getIssues(currentStructure._id);
+          // getIssues(currentStructure._id);
         }
       })
       .catch((error:any) => {
