@@ -25,20 +25,15 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 currentProjectData: action.payload.projectData
             }
         case AppActionType.addCaptureUpload:
-            let inProgressPendingUpload :any = localStorage.getItem('InProgressPendingUploads');
-            if(inProgressPendingUpload != null && inProgressPendingUpload != undefined)
-            {
-                inProgressPendingUpload =   JSON.parse(inProgressPendingUpload);      
-            }
-            if (state.inProgressPendingUploads.length > 0) {
+            let inProgressUploads = localStorage.getItem('InProgressPendingUploads');
+           if (state.inProgressPendingUploads.length > 0) {
                let jobs = state.inProgressPendingUploads.concat([action.payload.job])
-                if(inProgressPendingUpload !=undefined && inProgressPendingUpload != null&& inProgressPendingUpload?.length > 0)
+                if(inProgressUploads !=undefined && inProgressUploads != null)
                 {    
-                    inProgressPendingUpload = inProgressPendingUpload.concat(jobs)
-                    localStorage.setItem('InProgressPendingUploads',stringifySafe(inProgressPendingUpload))
+                    localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat(jobs)))
                     return {
                         ...state,
-                        inProgressPendingUploads: inProgressPendingUpload
+                        inProgressPendingUploads: jobs
                     }   
                 }
                 else{
@@ -50,18 +45,20 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 }
                
             } else {
-             let inProgressPendingUploads = [action.payload.job];
-                if(inProgressPendingUpload && inProgressPendingUpload?.length > 0)
+                if(inProgressUploads !=undefined && inProgressUploads != null)
                 {
-                    inProgressPendingUpload = inProgressPendingUpload.concat(inProgressPendingUploads)
-                    localStorage.setItem('InProgressPendingUploads',stringifySafe(inProgressPendingUpload))
+                    if(JSON.parse(inProgressUploads).some((obj:IJobs)=>obj._id === action.payload.job._id)!=true)
+                    {
+                       
+                        localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat(action.payload.job)))
+                    }
                     return {
                         ...state,
-                        inProgressPendingUploads: inProgressPendingUpload
+                        inProgressPendingUploads: [action.payload.job]
                     }
                 }
                 else{
-                    localStorage.setItem('InProgressPendingUploads', stringifySafe(inProgressPendingUploads))
+                    localStorage.setItem('InProgressPendingUploads', stringifySafe([action.payload.job]))
                     return {
                         ...state,
                         inProgressPendingUploads: [action.payload.job]
@@ -79,11 +76,18 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 ...state,
                 inProgressPendingUploads: restOfTheJobs.concat([action.payload.job])
             }
-        case AppActionType.removeCaptureUpload: 
+        case AppActionType.removeCaptureUpload:
+            let pendingUploads = localStorage.getItem('InProgressPendingUploads'); 
         let pendingJobs = state.inProgressPendingUploads.filter((job, index) => {
             return job._id !== action.payload.job._id
         })
-        localStorage.setItem('InProgressPendingUploads',stringifySafe(pendingJobs))
+        if(pendingUploads!=null && pendingUploads!= undefined)
+        {
+            localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(pendingUploads).filter((job:IJobs) => {
+                return job._id !== action.payload.job._id
+            })))
+        }
+        //localStorage.setItem('InProgressPendingUploads',stringifySafe(pendingJobs))
         return {
             ...state,
             inProgressPendingUploads: pendingJobs

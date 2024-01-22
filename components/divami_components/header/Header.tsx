@@ -236,6 +236,7 @@ const Header: React.FC<any> = ({
     deleteCookie('projectData');
     deleteCookie('isProjectTimeZone');
     localStorage.removeItem('uploaededData')
+    localStorage.removeItem('InProgressPendingUploads')
     // router.push("/login");
     router.push("/login");
   };
@@ -348,9 +349,9 @@ const Header: React.FC<any> = ({
       [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
     ) {
       event.preventDefault();
-      event.returnValue = true;
       localStorage.removeItem('InProgressPendingUploads')
-     }
+      event.returnValue = true;
+    }
    };
    const popStateHandler = () => {
     if (
@@ -380,15 +381,10 @@ const Header: React.FC<any> = ({
     const calculateProjectCounts = () => {
       const counts:ProjectCounts = {};
       let uploadingcount:number  = 0;
-      let  inProgressPendingUploads:any = localStorage.getItem('InProgressPendingUploads');
-          if(inProgressPendingUploads)
+      let  inProgressPendingUploads = localStorage.getItem('InProgressPendingUploads');
+      if(inProgressPendingUploads!=null && inProgressPendingUploads!= undefined)
           {
-            inProgressPendingUploads = JSON.parse(inProgressPendingUploads)
-          }
-       
-          if(inProgressPendingUploads && inProgressPendingUploads?.length >0)
-          {
-            inProgressPendingUploads.forEach((jobInfo:IJobs) => {
+           JSON.parse(inProgressPendingUploads)&&JSON.parse(inProgressPendingUploads).forEach((jobInfo:IJobs) => {
               const projectId = jobInfo.project as string;
   
               if (!counts[projectId]) {
