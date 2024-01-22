@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import calender from "../../../public/divami_icons/calender.svg";
 import dayjs from "dayjs";
 import Icon from "@mui/material/Icon";
+import { IconButton } from "@mui/material";
 
 const CalenderICon = (props: any) => {
   return (
@@ -49,7 +50,7 @@ const CalenderICon = (props: any) => {
     </>
   );
 };
-const CustomDatePicker = styled(DesktopDatePicker)({
+const CustomDatePicker = styled(DatePicker)({
   border: "1px solid #36415d",
   borderRadius: "6px",
   width: "184px",
@@ -105,6 +106,8 @@ const CustomCalender = (props: any) => {
     dataTestId,
   } = props;
 
+  const [isOpen,setIsOpen]= React.useState(false);
+  const customInputRef = React.useRef<HTMLDivElement>(null);
   const [value, setValue] = React.useState<Dayjs | null>(
     
     dayjs(data?.defaultValue) || null
@@ -125,9 +128,12 @@ const CustomCalender = (props: any) => {
           components={{
             OpenPickerIcon: calenderIcon,
           }}
+          open={isOpen}
+          onClose={() => {setIsOpen(false);}}
           PopperProps={
             hideTextField
               ? {
+                anchorEl:customInputRef.current,
                   sx: {
                     "& .MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)": {
                       backgroundColor: "#FFF5EF",
@@ -232,9 +238,12 @@ const CustomCalender = (props: any) => {
           // PopperProps={data.styles ? data.styles : null}
           renderInput={
             hideTextField
-              ? ({ inputRef, inputProps, InputProps }) => (
-                  <Box ref={inputRef}>{InputProps?.endAdornment}</Box>
-                )
+              ? (params) => (
+                <div ref={customInputRef}>
+                  <TextField style={{ opacity: 0, width: 0, height: 0 }} {...params} /> 
+                  <IconButton onClick={() => {setIsOpen(!isOpen);}}><CalenderICon/></IconButton>
+                  </div>
+              )
               : (params) => (
                   <CustomDatePickerInputField
                     {...params}
