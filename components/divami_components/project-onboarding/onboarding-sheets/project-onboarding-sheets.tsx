@@ -38,6 +38,12 @@ const deleteStructure = (projectId: string, structureId: string) => {
 
 }
 
+const deleteDesign = (projectId: string, designId: string) => {
+
+  try { return instance.delete(`${API.BASE_URL}/projects/${projectId}/designs/${designId}`, headers) } catch (error) { throw error }
+
+}
+
 const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader,loader }: IOnboardingProps) => {
 
   useSignalEffect(() => {
@@ -130,6 +136,33 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
 
   }
 
+  const _deleteSheet = (design: string) => {
+    if (showLoader) {
+      showLoader.value = true
+    }
+    deleteDesign(projectId.peek(), design).then(res => {
+      if (showLoader) {
+        showLoader.value = true
+      }
+      fetchStructureHierarchy(projectId.value).then(res => {
+        if (res.data.result) {
+          setHierarchy(res.data.result)
+          CustomToast('Deleted sheet successfully.', 'success')
+          if (showLoader) {
+            showLoader.value = false
+          }
+        }
+      }).catch(err => console.log(err))
+    })
+      .catch(err => {
+        CustomToast('Failed to delete sheet.', 'error')
+        if (showLoader) {
+          showLoader.value = false
+        }
+      })
+
+  }
+
   const _reload = () => {
     fetchStructureHierarchy(projectId.value).then(res => {
       if (res.data.result) {
@@ -161,7 +194,7 @@ const ProjectOnboardingSheets = ({ step, action, projectId, hierarchy,showLoader
       </div>
 
       {mHierarchy && <StructureHierarchy projectId={projectId.value} hierarchy={mHierarchy} 
-        onAdd={_onAdd} onDelete={_onDelete} onSheetAdded={_reload} loader={loader} />}
+        onAdd={_onAdd} onDelete={_onDelete} onSheetAdded={_reload} onSheetDeleted={_deleteSheet} loader={loader} />}
 
     </div>
 
