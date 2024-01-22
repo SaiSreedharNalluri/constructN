@@ -53608,8 +53608,8 @@
 		const heightLabel = new TextSprite('');
 
 		heightLabel.setTextColor({r: 140, g: 250, b: 140, a: 1.0});
-		heightLabel.setBorderColor({r: 0, g: 0, b: 0, a: 1.0});
-		heightLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 1.0});
+		heightLabel.setBorderColor({r: 0, g: 0, b: 0, a: 0.3});
+		heightLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 0.3});
 		heightLabel.fontsize = 16;
 		heightLabel.material.depthTest = false;
 		heightLabel.material.opacity = 1;
@@ -53622,8 +53622,8 @@
 		const areaLabel = new TextSprite('');
 
 		areaLabel.setTextColor({r: 140, g: 250, b: 140, a: 1.0});
-		areaLabel.setBorderColor({r: 0, g: 0, b: 0, a: 1.0});
-		areaLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 1.0});
+		areaLabel.setBorderColor({r: 0, g: 0, b: 0, a: 0.3});
+		areaLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 0.3});
 		areaLabel.fontsize = 16;
 		areaLabel.material.depthTest = false;
 		areaLabel.material.opacity = 1;
@@ -53636,8 +53636,8 @@
 		const circleRadiusLabel = new TextSprite("");
 
 		circleRadiusLabel.setTextColor({r: 140, g: 250, b: 140, a: 1.0});
-		circleRadiusLabel.setBorderColor({r: 0, g: 0, b: 0, a: 1.0});
-		circleRadiusLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 1.0});
+		circleRadiusLabel.setBorderColor({r: 0, g: 0, b: 0, a: 0.3});
+		circleRadiusLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 0.3});
 		circleRadiusLabel.fontsize = 16;
 		circleRadiusLabel.material.depthTest = false;
 		circleRadiusLabel.material.opacity = 1;
@@ -53951,8 +53951,8 @@
 
 			{ // edge labels
 				let edgeLabel = new TextSprite();
-				edgeLabel.setBorderColor({r: 0, g: 0, b: 0, a: 1.0});
-				edgeLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 1.0});
+				edgeLabel.setBorderColor({r: 0, g: 0, b: 0, a: 0.3});
+				edgeLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 0.3});
 				edgeLabel.material.depthTest = false;
 				edgeLabel.visible = false;
 				edgeLabel.fontsize = 16;
@@ -53962,8 +53962,8 @@
 
 			{ // angle labels
 				let angleLabel = new TextSprite();
-				angleLabel.setBorderColor({r: 0, g: 0, b: 0, a: 1.0});
-				angleLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 1.0});
+				angleLabel.setBorderColor({r: 0, g: 0, b: 0, a: 0.3});
+				angleLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 0.3});
 				angleLabel.fontsize = 16;
 				angleLabel.material.depthTest = false;
 				angleLabel.material.opacity = 1;
@@ -53974,8 +53974,8 @@
 
 			{ // coordinate labels
 				let coordinateLabel = new TextSprite();
-				coordinateLabel.setBorderColor({r: 0, g: 0, b: 0, a: 1.0});
-				coordinateLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 1.0});
+				coordinateLabel.setBorderColor({r: 0, g: 0, b: 0, a: 0.3});
+				coordinateLabel.setBackgroundColor({r: 0, g: 0, b: 0, a: 0.3});
 				coordinateLabel.fontsize = 16;
 				coordinateLabel.material.depthTest = false;
 				coordinateLabel.material.opacity = 1;
@@ -54239,8 +54239,19 @@
 			const divisor = gcd(numerator, denominator);
 			
 			numerator /= divisor;                        
-			denominator /= divisor;                       
+			denominator /= divisor;
+
+			if(denominator === 1){
+				return(numerator);
+			}
+
+			if(numerator === denominator){
+				return(numerator/denominator);
+			}
 			
+			if(numerator > denominator){
+				return(Math.floor(numerator/denominator) + "-" + Math.floor(numerator%denominator) + "/" + denominator);
+			}
 			return(Math.floor(numerator) + '/' + Math.floor(denominator));
 		}
 
@@ -54332,7 +54343,7 @@
 						//convertion of ft to ft-inches
 						var feet = Math.floor(distance);
 						var inches = (distance - feet) * 12;
-						edgeLabel.setText(`${feet}ft ${this.getFractionFromDecimal(inches.toFixed(1))}inch`);
+						edgeLabel.setText(`${feet}' ${this.getFractionFromDecimal(inches.toFixed(1))}''`);
 					}
 					edgeLabel.visible = this.showDistances && (index < lastIndex || this.closed) && this.points.length >= 2 && distance > 0;
 				}
@@ -54409,7 +54420,7 @@
 						//convertion of ft to ft-inches
 						var feet = Math.floor(height);
 						var inches = (height - feet) * 12;
-						this.heightLabel.setText(`${feet}ft ${this.getFractionFromDecimal(inches.toFixed(1))}inch`);
+						this.heightLabel.setText(`${feet}' ${this.getFractionFromDecimal(inches.toFixed(1))}''`);
 					}
 				}
 			}
