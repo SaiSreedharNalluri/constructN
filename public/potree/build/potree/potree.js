@@ -54224,6 +54224,26 @@
 			
 		// }
 
+		getFractionFromDecimal(fraction){
+			const gcd = function(a, b) {
+				if (b < 0.0000001) return a;               
+			
+				return gcd(b, Math.floor(a % b));          
+			};
+			
+			const len = fraction.toString().length - 2;
+			
+			let denominator = Math.pow(10, len);
+			let numerator = fraction * denominator;
+			
+			const divisor = gcd(numerator, denominator);
+			
+			numerator /= divisor;                        
+			denominator /= divisor;                       
+			
+			return(Math.floor(numerator) + '/' + Math.floor(denominator));
+		}
+
 		update () {
 			if (this.points.length === 0) {
 				return;
@@ -54308,6 +54328,12 @@
 
 					let txtLength = Utils.addCommas(distance.toFixed(2));
 					edgeLabel.setText(`${txtLength} ${suffix}`);
+					if(this.lengthUnit && this.lengthUnit.code === 'ft'){
+						//convertion of ft to ft-inches
+						var feet = Math.floor(distance);
+						var inches = (distance - feet) * 12;
+						edgeLabel.setText(`${feet}ft ${this.getFractionFromDecimal(inches.toFixed(1))}inch`);
+					}
 					edgeLabel.visible = this.showDistances && (index < lastIndex || this.closed) && this.points.length >= 2 && distance > 0;
 				}
 
@@ -54378,6 +54404,13 @@
 					let txtHeight = Utils.addCommas(height.toFixed(2));
 					let msg = `${txtHeight} ${suffix}`;
 					this.heightLabel.setText(msg);
+					if(this.lengthUnit && this.lengthUnit.code === 'ft'){
+						console.log(Math.floor((height - feet) * 12 * 16),'nsksnkns')
+						//convertion of ft to ft-inches
+						var feet = Math.floor(height);
+						var inches = (height - feet) * 12;
+						this.heightLabel.setText(`${feet}ft ${this.getFractionFromDecimal(inches.toFixed(1))}inch`);
+					}
 				}
 			}
 
