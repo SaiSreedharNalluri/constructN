@@ -42,7 +42,7 @@ import { useRouter } from "next/router";
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
   taskFilterState:(taskFilterState:any)=>void;
-  filteredTaskList:(filteredTaskList:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,tasksStatusList:any)=>void;
   
 };
 function Task({
@@ -69,8 +69,6 @@ function Task({
   handleOnTasksSort,
   taskSubmit,
   deleteTheAttachment,
-  projectUsers,
-  taskStatusList,
   taskPriorityList,
   setShowTaskMarkups,
   showTaskMarkups,
@@ -105,7 +103,8 @@ function Task({
   const [filterState,setFilterState] = useState({isFilterApplied: false,
     filterData: {},
     numberOfFilters: 0,})
-  const [filterTaskList,setFilterTaskList] = useState([])
+  const [projectUsers,setProjectUsers] = useState([])
+  const [taskStatusList,setTaskStatusList] = useState([])
   
 
   useImperativeHandle(ref, () => {
@@ -150,8 +149,9 @@ function Task({
         
         setFilterState(taskFilterState)
       },
-      filteredTaskList(filteredTaskList:any){
-        setFilterTaskList(filteredTaskList)
+      projectUsersAndStatus(projectUsers:any,tasksStatusList:any){
+        setProjectUsers(projectUsers)
+        setTaskStatusList(tasksStatusList)
       }
       
     }},[])

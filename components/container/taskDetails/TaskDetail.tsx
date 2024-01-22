@@ -449,7 +449,7 @@ function BasicTabs(props: any) {
               <ThirdContWatch>Created By</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
-                {/* {taskState?.TabOne?.owner.fullName as string} */}
+                {taskState?.TabOne?.owner?.fullName as string}
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
@@ -1038,7 +1038,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             CustomToast("Task updated successfully","success");
             let ChangeToolAction: IToolbarAction = { type: "editTask", data: response?.result };
             toolClicked(ChangeToolAction);
-            getTasks(currentStructure._id);
+            // getTasks(currentStructure._id);
             setLoading(true);
           } else {
             CustomToast("Error updating the task","error");
@@ -1096,7 +1096,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
         (formData.length
           ? formData
               .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+              ?.chipString
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1175,6 +1175,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     updateTask(projectId as string, issueData, selectedTask?._id)
       .then((response) => {
         if (response.success === true) {
+          let ChangeToolAction: IToolbarAction = { type: "editTask", data: response?.result };
+          toolClicked(ChangeToolAction);
           CustomToast("Task updated successfully","success");
           getTasks(currentStructure._id);
         } else {
