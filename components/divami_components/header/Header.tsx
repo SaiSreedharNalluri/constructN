@@ -56,7 +56,6 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import { UploaderStep } from "../../../state/uploaderState/state";
 import { WebWorkerManager } from "../../../utils/webWorkerManager";
 import { getStructureHierarchy, getStructureList } from "../../../services/structure";
-import { boolean } from "yup";
 import { IBaseResponse } from "../../../models/IBaseResponse";
 import { IProjects } from "../../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../../models/IStructure";
@@ -64,6 +63,7 @@ import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/sta
 import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
 import { ProjectCounts } from "../../../models/IUtils";
+import { IJobs } from "../../../models/IJobs";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -116,6 +116,7 @@ const Header: React.FC<any> = ({
   const { state: appState, appContextAction } = useAppContext();
   const [projectUplObj,setProjectUplObj] = useState<ProjectCounts>({})
   const { appAction } = appContextAction;
+//console.log('uploaderState',uploaderState)
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       let projectId = router?.query?.projectId as string
@@ -423,9 +424,9 @@ const Header: React.FC<any> = ({
       workerExists ||
       [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
     ) {
- 
-       event.preventDefault();
-       event.returnValue = true;
+      event.preventDefault();
+      event.returnValue = true;
+      localStorage.removeItem('InProgressPendingUploads')
      }
    };
    const popStateHandler = () => {
@@ -452,28 +453,52 @@ const Header: React.FC<any> = ({
      })
    }, [url,uploaderState.step,workerExists])
 
-  useEffect(() => {
-    // Calculate project counts when the component mounts or when the originalArray changes
+   useEffect(() => {
     const calculateProjectCounts = () => {
       const counts:ProjectCounts = {};
-      let uploadingcount:number = 0;
-      appState.inProgressPendingUploads.forEach(jobInfo => {
-        const projectId = jobInfo.project as string;
-
-        if (!counts[projectId]) {
-          counts[projectId] = 1;
-          uploadingcount++
-        } else {
-          counts[projectId]++;
-          uploadingcount++
-        }
-      });
+      let uploadingcount:number  = 0;
+      let  inProgressPendingUploads:any = localStorage.getItem('InProgressPendingUploads');
+          if(inProgressPendingUploads)
+          {
+            inProgressPendingUploads = JSON.parse(inProgressPendingUploads)
+          }
+       
+          if(inProgressPendingUploads && inProgressPendingUploads?.length >0)
+          {
+            inProgressPendingUploads.forEach((jobInfo:IJobs) => {
+              const projectId = jobInfo.project as string;
+  
+              if (!counts[projectId]) {
+                counts[projectId] = 1;
+                uploadingcount++;
+              } else {
+                counts[projectId]++;
+                uploadingcount++;
+              }
+            });
+          }
+          else{
+            if (appState.inProgressPendingUploads.length > 0) {
+              appState.inProgressPendingUploads.forEach((jobInfo) => {
+                const projectId = jobInfo.project as string;
+      
+                if (!counts[projectId]) {
+                  counts[projectId] = 1;
+                  uploadingcount++;
+                } else {
+                  counts[projectId]++;
+                  uploadingcount++;
+                }
+              });
+            }
+          }
 
       setProjectUplObj(counts);
-      setUploaderCount(uploadingcount)
+      setUploaderCount(uploadingcount);
     };
+
     calculateProjectCounts();
-    }, [appState.inProgressPendingUploads]);
+  }, [appState.inProgressPendingUploads]);
     return (
     <>
       <HeaderContainer ref={headerRef}>
