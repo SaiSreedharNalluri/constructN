@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import { Grid, OutlinedInput, FormControlLabel, Radio, RadioGroup, FormHelperText } from '@mui/material';
 import { computed, effect, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { validateLatitude, validateLongitude } from '../../../../../utils/utils';
-const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
+const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid, saveState }: any) => {
 
   useSignalEffect(() => {
     isLatLngValid.value = (
@@ -24,6 +24,7 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
       newCoordinates[0] = value === '' ? '' : parseFloat(value);
     }
 
+    // Get address from latitude & longitude.
     latlngDetails.value = {
       ...latlngDetails.value,
       location: {
@@ -32,6 +33,8 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
         coordinates: newCoordinates,
       },
     };
+
+    if(saveState) saveState.value = true
   };
   const handleMeasurementChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -39,6 +42,7 @@ const ProjectLatLngDetails = ({ latlngDetails, isLatLngValid }: any) => {
       ...latlngDetails.value,
       measurement: value,
     };
+    if(saveState) saveState.value = true
   };
 
   const setDefaultMeasurement = () => {

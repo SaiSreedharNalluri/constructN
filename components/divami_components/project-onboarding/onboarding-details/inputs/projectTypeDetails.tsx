@@ -5,7 +5,7 @@ import PopupComponent from '../../../../popupComponent/PopupComponent';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import router from "next/router";
 const ProjectTypeDetails = ({
-  type, isTypeValid
+  type, isTypeValid, saveState
 }: any) => {
 
   useSignalEffect(() => {
@@ -15,6 +15,7 @@ const ProjectTypeDetails = ({
   const handleOnChange = (event: ChangeEvent<{ name?: string; value: unknown }> | SelectChangeEvent<{ name?: string; value: unknown }>) => {
     const { name, value } = event.target
     type.value = { ...type.value, [name as string]: value }
+    if(saveState) saveState.value = true
   }
 
   const showPopUp = useSignal(false)

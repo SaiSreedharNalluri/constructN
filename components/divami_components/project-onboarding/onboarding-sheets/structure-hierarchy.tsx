@@ -30,7 +30,7 @@ import { CustomToast } from '../../custom-toaster/CustomToast'
 
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
-import { TruncatedString } from "../../../../utils/utils";
+import { TruncatedString, validateName, validateText } from "../../../../utils/utils";
 
 import { TooltipText } from "../../../divami_components/side-panel/SidePanelStyles";
 
@@ -392,7 +392,8 @@ const renderAddStructureForm = (
                 Discard
             </Button>
 
-            <Button variant='contained' size='large' disabled={newStructureName.value === ''} className='flex-1 ml-3 bg-[#F1742E]'
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]'
+                disabled={newStructureName.value.trim() === '' || !validateName(newStructureName.value)} 
                 color='warning' onClick={() => {
                     onAdd(newStructureName.value, parent)
                     showPopup.value = false

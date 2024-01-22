@@ -6,7 +6,7 @@ import React from 'react'
 import { IOnboardingProps } from '../projectOnboarding';
 import { useComputed, useSignal } from '@preact/signals-react';
 
-const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
+const ProjectOnboardingFooter = ({ step, action, saveState }: IOnboardingProps) => {
 
   const messages = [
     '* Mandatory Field',
@@ -14,7 +14,7 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
     '', '', ''
   ]
 
-  const saveState = useSignal(false)
+  // const saveState = useSignal(false)
 
   const instruction = useComputed(() => messages[step.value])
 
@@ -22,8 +22,8 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
 
   const nextBtnText = useComputed(() => step.value === 4 ? 'Complete' : 'Next')
 
-  const renderSaveButton = useComputed(() => <Button onClick={onSaveClick} disabled={saveState.value} variant='contained' color='warning' className='mr-2 bg-[#FF853E]'>
-    {saveState.value === true ? 'Saved' : 'Save'}
+  const renderSaveButton = useComputed(() => <Button onClick={onSaveClick} disabled={saveState && saveState.value === false} variant='contained' color='warning' className='mr-2 bg-[#FF853E]'>
+    {saveState!.value === false ? 'Saved' : 'Save'}
   </Button>)
 
   const onBackClick = () => {
@@ -32,7 +32,7 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
     // } else {
     //   step.value--
     // }
-    saveState.value = false
+    saveState!.value = true
     if (action) action.value = `Back-${step.value}`
   }
 
@@ -40,7 +40,7 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
     if(step.value === 5) {
       return
     }
-    saveState.value = false
+    saveState!.value = true
     if (action) action.value = `Next-${step.value}`
   }
 
@@ -48,7 +48,7 @@ const ProjectOnboardingFooter = ({ step, action }: IOnboardingProps) => {
     if(step.value === 5) {
       return
     }
-    saveState.value = true
+    saveState!.value = true
     if (action) action.value = `Save-${step.value}`
   }
 
