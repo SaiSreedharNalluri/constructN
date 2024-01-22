@@ -792,8 +792,8 @@ function GenericViewer(props) {
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
           const options = {
-            utm: project.utm,
-            location: project.location
+            utm: project.utm && project.utm.zone ? project.utm.zone : project.utm,
+            location: project.location && project.location.coordinates ? project.location.coordinates : project.location
           }
           if(currentContext.current) options['context'] = currentContext.current.cameraObject
           mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, options);
@@ -826,12 +826,50 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
-          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: project.utm}, mapboxUtils.current.getMap());
+          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: project.utm && project.utm.zone ? project.utm.zone : project.utm}, mapboxUtils.current.getMap());
           mapboxCompareUtils.current.setType(viewType);
         }
         break;
     }
   };
+  
+  const loadAllImages = () =>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadAllImages();
+    }
+
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.loadAllImages();
+    }
+  }
+
+  const loadMeasurements =(points)=>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadMeasurements(points);
+    }
+
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.loadMeasurements(points);
+    }
+  }
+
+  const onEscape = () =>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.onEscape();
+    }
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.onEscape();
+    }
+  }
+
+  const loadPrevDroneImage = () =>{
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadPrevDroneImage();
+    }
+    if (potreeUtils.current !== undefined) {
+      potreeUtils.current.loadPrevDroneImage();
+    }
+  }
 
   async function loadMinimapData() {
     if (minimapUtils.current != undefined) {
@@ -1220,7 +1258,13 @@ function GenericViewer(props) {
             isSupportUser={isSupportUser.current}
             setPotreeViewer={setpotreeViewerUtils}
             potreeUtils={potreeUtils.current}
+            loadAllImages={loadAllImages}
+            onEscape={onEscape}
             realityMap={realityMap}
+            isCompare={isCompare}
+            isCompareViewer={count === 2 ? true: false}
+            loadPrevDroneImage={loadPrevDroneImage}
+            loadMeasurements={loadMeasurements}
           ></PotreeViewer>
         );
       case 'Mapbox':

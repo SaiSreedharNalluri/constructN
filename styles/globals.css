@@ -257,7 +257,7 @@ body {
 .adsk-viewing-viewer .adsk-toolbar {
   bottom: 110px;
   left: unset !important;
-  right: 30px;
+  right: 48px;
   pointer-events: none;
   position: absolute;
   text-align: center;
@@ -285,6 +285,36 @@ body {
   float: right;
 }
 
+.adsk-viewing-viewer .docking-panel.measure-settings-popup {
+  display: flex !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+  position: absolute !important;
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  right: 50px !important;
+  bottom: 0% !important;
+  width: 250px;
+}
+.adsk-viewing-viewer .docking-panel.measure-settings-popup.hide {
+  display: none !important;
+}
+
+.adsk-viewing-viewer .docking-panel.hud.top {
+  display: flex !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+  position: absolute;
+  padding-top: 15px !important;
+  margin-top: 50px;
+  padding-bottom: 15px !important;
+  right: 0px !important;
+  bottom: 0% !important;
+}
 .adsk-viewing-viewer>.canvas-wrap>canvas {
   cursor: pointer !important;
 }
@@ -611,6 +641,20 @@ td {
   background-color: white !important;
 }
 
+#orange-text{
+  color: #f1742e;
+  
+}
+#black-text{
+  color: #36415D;
+  
+}
+#default{
+  color: #36415D;
+}
+#default:hover{
+  color: #f1742e;
+}
 ::-webkit-scrollbar-track {}
 
 ::-webkit-scrollbar-thumb {

@@ -427,7 +427,7 @@ export const MinimapUtils = () => {
       if(_dataVizUtils) _dataVizUtils.updateNavigator(target, yaw);
       _navPosition = target
       _navRotation = yaw
-      if (isMobile()) {
+      if (isMobile() || !_viewer?.navigation?.isPointVisible(_toLocalPosition(_navPosition))) {
         let z = _viewer.getState({ viewport: true }).viewport.eye[2]
         let localPos = _toLocalPosition(position);
         _viewer.navigation.setPosition({
@@ -522,7 +522,6 @@ export const MinimapUtils = () => {
         //   };
         // } else {
         console.log(`Inside Rag Click click: ${JSON.stringify(targetObject)}`, _viewerId);
-        publish('show-pointcloud', false);
         if(!targetObject.id) return
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();

@@ -82,7 +82,10 @@ export enum UploaderStep {
     Review,
     Upload
 }
-
+ export enum UploadRange{
+    Minimum = 20,
+    Maximum = 1500,
+ }
 export enum UploaderButtonValues{
     GoBack,
     Continue,

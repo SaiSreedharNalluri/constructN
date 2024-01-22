@@ -480,7 +480,6 @@ export const ForgeViewerUtils = function () {
         //     tag: tagObject,
         //   };
         // } else {
-        publish('show-pointcloud', false);
         console.log(`Inside Rag Click click: ${targetObject.position.x}`);
         if (targetObject.id.includes("Temp")) {
           _isAddTagActive = deactivateTool();
@@ -698,6 +697,7 @@ export const ForgeViewerUtils = function () {
             fov: true,
           });
           _viewer.navigation.setIsLocked(true);
+          publish("movement-locked",true);
         }
 
         if (_viewer.getExtension("Autodesk.BimWalk")) {
@@ -806,6 +806,8 @@ export const ForgeViewerUtils = function () {
       _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
       // disable the same post load
       _bimWalkExtn.tool.navigator.enableGravity(false)
+    } else if(parameter.extensionId === "Autodesk.Measure"){
+      _viewer.prefs.set(Autodesk.Viewing.Private.Prefs.DISPLAY_UNITS, 'ft-and-decimal-in');
     }
   };
 

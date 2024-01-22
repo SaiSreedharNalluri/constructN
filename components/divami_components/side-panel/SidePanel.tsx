@@ -50,6 +50,7 @@ import { Tooltip } from "@mui/material";
 import { getCookie } from "cookies-next";
 import moment from 'moment-timezone';
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import Link from "next/link";
 interface IProps {
   onChangeData: () => void;
 }
@@ -308,6 +309,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
+          <Link href={`/projects/${router.query.projectId}/${item.id}`}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
@@ -333,6 +335,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
               </SideMenuOptionImageContainer>
             </TooltipText>
           </SideMenuOption>
+          </Link>
         </SideMenuOptionContainer>
       ))}
       {supportItemsConfig.map((item, index) => (

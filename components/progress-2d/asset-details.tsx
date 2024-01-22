@@ -20,7 +20,7 @@ import authHeader from '../../services/auth-header'
 const headers = {headers: authHeader.authHeader()}
 
 
-const fetchAssetDetails = (assetId: string, date: string) => {
+const fetchAssetDetails = (assetId: string, date: string = '2000-01-01T00:00:00.000Z') => {
 
     try {
 
@@ -40,7 +40,7 @@ const updateAssetDetails = (assetId: string, data: Partial<IAsset>) => {
 
 }
 
-const changeAssetStage = (assetId: string, stage: string, date: Date) => {
+const changeAssetStage = (assetId: string, stage: string, date: string = '2000-01-01T00:00:00.000Z') => {
 
     try {
 
@@ -76,7 +76,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
             setLoading(true)
 
-            fetchAssetDetails(assetId, snapshotBase.date).then(res => {
+            fetchAssetDetails(assetId, snapshotBase?.date).then(res => {
 
                 setLoading(false)
 
@@ -114,9 +114,13 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 setLoading(true)
 
-                changeAssetStage(assetId, values.stage, snapshotBase.date).then(res => {
+                changeAssetStage(assetId, values.stage, snapshotBase?.date).then(res => {
 
-                    onChange && onChange(res.data.result)
+                    if(!(name !== actualName || description !== actualDecription)) {
+
+                        onChange && onChange(res.data.result);
+                    
+                    }
 
                     if(!(name !== actualName || description !== actualDecription)) {
 
