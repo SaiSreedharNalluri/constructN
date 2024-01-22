@@ -758,6 +758,24 @@ const Header: React.FC<any> = ({
                 </NotificationDrawer>
               </div>
             )} */}
+            {openNotification && (
+              <div>
+                <CustomDrawer onClose={handleNotificationClose}>
+                  <div>
+                    <Notifications
+                      notifications={notifications}
+                      loadMoreData={loadMoreData}
+                      updateNotifications={updateNotifications}
+                      filterValue={filterValue}
+                      filterNotificationData={filterNotificationData}
+                      handleNotificationClose={handleNotificationClose}
+                    ></Notifications>
+                  </div>
+
+                  <div></div>
+                </CustomDrawer>
+              </div>
+            )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer>
             <TooltipText title="Menu">
