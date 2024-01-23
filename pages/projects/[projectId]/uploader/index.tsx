@@ -251,7 +251,7 @@ const Index: React.FC<IProps> = () => {
       if(response.success===true)
       {
         let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-        captureJobs.push(job)
+          captureJobs.unshift(job)
           uploaderAction.setCaptureJobs(captureJobs)
           uploaderAction.setSelectedJob(job)
         uploaderAction.setCurrentUploadFiles(getUploadFiles(response.result, job))
