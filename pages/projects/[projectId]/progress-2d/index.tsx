@@ -55,6 +55,8 @@ import authHeader from '../../../../services/auth-header'
 import { useRouter as Router  } from 'next/router'
 
 import PopupComponent from '../../../../components/popupComponent/PopupComponent'
+import EmailButton from '../../../../components/progress-2d/send-email'
+
 
 const headers = {headers: authHeader.authHeader()}
 
@@ -932,7 +934,6 @@ const Progress2DPage: React.FC<any> = () => {
 
             const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
 
-
             return <>
 
                 <Typography fontFamily='Open Sans' variant='subtitle1' className='select-none text-[18px]'>Progress of {currentCategory.current.name}</Typography>
@@ -1187,7 +1188,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         </div>
 
-                                        <div className={'flex flex-col w-1/4 mr-4 py-4'}
+                                        <div className={'flex flex-col w-1/4 mr-4 py-4 pb-0'}
 
                                             style={{ height: 'calc(100vh - 144px)', border: '1px solid #e2e3e5', borderRadius: '6px' }} >
 
@@ -1309,6 +1310,10 @@ const Progress2DPage: React.FC<any> = () => {
                                                 supportUser={isSupportUser}
 
                                                 onChange={_onAssetDetailsChange}/>}
+
+                                            {!selectedAsset && isSupportUser ? <div className='flex py-1'>
+                                                <EmailButton projectId ={params['projectId'] as string} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD-MMM-yyyy')} structure={LightBoxInstance?.viewerData()?.structure?.name} category={selectedCategory?.name} />
+                                            </div>: null}
 
                                         </div>
 
