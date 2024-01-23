@@ -366,7 +366,6 @@ const Header: React.FC<any> = ({
    useEffect(()=>{
    setUrl(window.location.href)
    },[typeof window != undefined,router,router.isReady])
- 
    useEffect(() => {
      window.addEventListener("beforeunload", beforeUnloadHandler);
      history.pushState(null, '', document.URL);
@@ -376,17 +375,40 @@ const Header: React.FC<any> = ({
        window.removeEventListener('popstate', popStateHandler)
      })
    }, [url,uploaderState.step,workerExists])
-
    useEffect(() => {
-    const calculateProjectCounts = () => {
-      const counts:ProjectCounts = {};
-      let uploadingcount:number  = 0;
-      let  inProgressPendingUploads = localStorage.getItem('InProgressPendingUploads');
-      if(inProgressPendingUploads!=null && inProgressPendingUploads!= undefined)
-          {
-           JSON.parse(inProgressPendingUploads)&&JSON.parse(inProgressPendingUploads).forEach((jobInfo:IJobs) => {
+    window.addEventListener("visibilitychange", ()=>{
+      calculateProjectCounts()
+    });
+    return (() => {
+      window.removeEventListener("visibilitychange", ()=>{});
+    })
+  }, [])
+  useEffect(() => {
+  calculateProjectCounts();
+  }, [appState.inProgressPendingUploads]);
+  const calculateProjectCounts = () => {
+    const counts:ProjectCounts = {};
+    let uploadingcount:number  = 0;
+    let  inProgressPendingUploads = localStorage.getItem('InProgressPendingUploads');
+    if(inProgressPendingUploads!=null && inProgressPendingUploads!= undefined)
+        {
+         JSON.parse(inProgressPendingUploads)&&JSON.parse(inProgressPendingUploads).forEach((jobInfo:IJobs) => {
+            const projectId = jobInfo.project as string;
+
+            if (!counts[projectId]) {
+              counts[projectId] = 1;
+              uploadingcount++;
+            } else {
+              counts[projectId]++;
+              uploadingcount++;
+            }
+          });
+        }
+        else{
+          if (appState.inProgressPendingUploads.length > 0) {
+            appState.inProgressPendingUploads.forEach((jobInfo) => {
               const projectId = jobInfo.project as string;
-  
+    
               if (!counts[projectId]) {
                 counts[projectId] = 1;
                 uploadingcount++;
@@ -396,29 +418,12 @@ const Header: React.FC<any> = ({
               }
             });
           }
-          else{
-            if (appState.inProgressPendingUploads.length > 0) {
-              appState.inProgressPendingUploads.forEach((jobInfo) => {
-                const projectId = jobInfo.project as string;
-      
-                if (!counts[projectId]) {
-                  counts[projectId] = 1;
-                  uploadingcount++;
-                } else {
-                  counts[projectId]++;
-                  uploadingcount++;
-                }
-              });
-            }
-          }
+        }
 
-      setProjectUplObj(counts);
-      setUploaderCount(uploadingcount);
-    };
-
-    calculateProjectCounts();
-  }, [appState.inProgressPendingUploads]);
-    return (
+    setProjectUplObj(counts);
+    setUploaderCount(uploadingcount);
+  };
+  return (
     <>
       <HeaderContainer ref={headerRef} >
         {!hideSidePanel && (
