@@ -113,13 +113,16 @@ import {
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
-import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
+import { ActivityLogContainer, ProcoreLogo } from "../issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import AttachmentPreview from "../attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import { truncateString } from "../../../pages/projects";
+import procore from "../../../public/divami_icons/procore.svg";
 import Download from "../../../public/divami_icons/download.svg";
+import ProcoreLink from "../../container/procore/procoreLinks";
+import ProcoreExist from "../../container/procore/procoreExist";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -883,6 +886,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const router = useRouter();
   const [backendComments, setBackendComments] = useState<any>([]);
   const[isLoading,setLoading]=useState(false);
+  const [taskDetail,setTaskDetail] = useState<boolean>(true);
+  const [procorePopup,setProcorePopup]= useState<boolean>(false)
+  const [procoreExist,setPropcoreExist] =useState<boolean>(false)
   const [file, setFile] = useState<File>();
 
   useEffect(() => {
@@ -1187,8 +1193,32 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
     return truncatedText;
   };
+  const handleProcoreLinks = () =>{
+    setProcorePopup(true)
+     setTaskDetail(false)
+   }
+  
+  const  handleProcoreExistPopup =()=>{
+
+    setPropcoreExist(true);
+
+  }
+  const onCloseProcore =() =>{
+    setPropcoreExist(false)
+}
+  const  handleCloseProcore=()=>{
+    setProcorePopup(false)
+    setTaskDetail(true);
+  }
+  const userCredentials = localStorage.getItem('userCredentials');
+  let credential=null;
+  if(userCredentials) credential=JSON.parse(userCredentials);
+   const providerType =credential.provider;
   return (
     <>
+    {procoreExist &&<ProcoreExist selected={selectedTask} onCloseProcore={onCloseProcore} ></ProcoreExist>}
+      {procorePopup && <ProcoreLink task={selectedTask}  handleCloseProcore={handleCloseProcore} getTasks={getTasks}></ProcoreLink>}
+      {taskDetail && 
       <CustomTaskDrawerContainer>
         <HeaderContainer>
           <TitleContainer>
@@ -1213,6 +1243,15 @@ const CustomTaskDetailsDrawer = (props: any) => {
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
+            {providerType === 'procore' && (
+    <div className={`p-[6px] hover:bg-[#E7E7E7]`}>
+      <ProcoreLogo
+        src={procore}
+        alt="logo"
+        onClick={!selectedTask?.integration ? handleProcoreLinks : handleProcoreExistPopup}
+      />
+    </div>
+  )}
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1251,6 +1290,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
+}
       {showPopUp && (
         <PopupComponent
           open={showPopUp}

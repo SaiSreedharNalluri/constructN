@@ -1,5 +1,10 @@
 interface IprocoreActions{
-    action:"setnewRFI" | "closeNewRFI" | "closeProcorePopup",
-    status:boolean;
+    action:"setnewRFI" 
+           | "closeNewRFI" 
+           | "closeProcorePopup"
+           |  "newCloseObservation"
+           | "setnewObservation"
+    status:boolean
+
 
 }

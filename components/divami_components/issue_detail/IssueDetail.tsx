@@ -35,7 +35,6 @@ import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
-import jsPDF from "jspdf";
 import _ from "lodash";
 import {
   createAttachment,
@@ -131,8 +130,9 @@ import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
 import procore from "../../../public/divami_icons/procore.svg";
 import ProcoreLink from "../../container/procore/procoreLinks";
-import LinkNewRFI from "../../container/procore/newRFI/linkNewRfi";
+import jsPDF from "jspdf";
 import { Key } from "@mui/icons-material";
+import ProcoreExist from "../../container/procore/procoreExist";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -956,7 +956,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const[isLoading,setLoading]=useState(false);
   const [procorePopup,setProcorePopup]= useState<boolean>(false)
   const [newRFI,setnewLinkRFI] = useState<boolean>(false);
-  const [taskDetail,setTaskDetail] = useState<boolean>(true)
+  const [issueDetail,setIssueDetail] = useState<boolean>(true)
   const router = useRouter();
   useEffect(() => {
     setSelectedIssue(issue);
@@ -1227,93 +1227,102 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
+  const [gen,setGen]=useState<any>(undefined)
   const handleProcoreLinks = () =>{
     
     setProcorePopup(true)
-    setTaskDetail(false)
+    setIssueDetail(false)
+  }
+const [procoreExist,setPropcoreExist] =useState<boolean>(false)
+  const  handleProcoreExistPopup =()=>{
+    setIssueDetail(false);
+    setPropcoreExist(true);
+   
+
+  } 
+  const onCloseProcore =() =>{
+      setPropcoreExist(false)
+      setIssueDetail(true)
   }
 
   const  handleCloseProcore=()=>{
     setProcorePopup(false)
-    setTaskDetail(true);
+    setIssueDetail(true);
   }
-
-
-console.log(selectedIssue);
-
-
-
-const convertObjectToPdf = () => {
-  console.log("button action");
+  const convertObjectToPdf = () => {
+    // Sample object data
+    const data: any = selectedIssue;
   
-  // Sample object data
-  const data:any = selectedIssue;
+    // Create a new jsPDF instance
+    const pdf = new jsPDF();
+  
+    // Set font size and style
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+  
+    // Define table headers
+    const headers = ["Key", "Value"];
+  
+    // Initialize table data array
+    const tableData = [];
+  
+    // Iterate over object properties and push key-value pairs to tableData
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        // Check if the current property is "assignees"
+        if (key === "assignees") {
+          // Extract names from assignees array and concatenate
+          const assigneeNames = data[key].map((assignee: any) => `${assignee.firstName} ${assignee.lastName}`).join(", ");
+          tableData.push([key, assigneeNames]);
+        } else {
+          // For other properties, push key-value pairs to tableData
+          tableData.push([key, data[key]]);
+        }
+        if (key === "screenshot") {
+          
+          // Handle screenshot separately and add it as an image
+          const screenshotUrl = data[key];
+          const imgWidth = 80; // Adjust as needed
+          const imgHeight = 60; // Adjust as needed
+          pdf.addImage(screenshotUrl, "PNG", 100, 200, imgWidth, imgHeight);
+          tableData.push(["Screenshot", ""]);
+        }
+      }
+    }
+  
+    // Set table column widths and autoTable options
+    const columnWidths = [50, 140];
+  
+    // Add table headers and data to PDF using jspdf-autotable
+    (pdf as any).autoTable({
+      head: [headers],
+      body: tableData,
+      startY: 20,
+      margin: { top: 20 },
+      columnStyles: { 0: { cellWidth: columnWidths[0] } },
+    });
+      
+    // Save the PDF
+    
+    return pdf;
+    pdf.save("object_data.pdf");
+  };
+  const userCredentials = localStorage.getItem('userCredentials');
+  let credential=null;
+  if(userCredentials) credential=JSON.parse(userCredentials);
+   const providerType =credential.provider;
 
-  // Create a new jsPDF instance
-  const pdf = new jsPDF();
-
-  // Set font size and style
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "normal");
-
-  // Define table headers
-  const headers = ["Key", "Value"];
-
-  // Initialize table data array
-  const tableData = [];
- 
-  const imgData = selectedIssue.screenshot;
-  pdf.addImage(imgData, "JPEG",50,50, 100, 100)
    
 
-  // Iterate over object properties and push key-value pairs to tableData
-  for (const key in data) {
-    if (data.hasOwnProperty(key)) {
-      if(key === 'assignees'){
-       let assignee=data[key].map((item:any)=>{
-        return item.fullName
-       }) 
-       tableData.push([key,assignee])
-      }
-      if(key === 'owner'){
-       tableData.push([key,data[key].fullName])
-       }
-       if(key === 'createdAt' || 'updatedAt' || 'context' || 'tags'){
-        return;
-       }
-      else{
-        tableData.push([key, data[key]]);
-      }
-      
-    }
+  const updatedselectedIssue =(issueData:any)=>{
+      setSelectedIssue(issueData)
   }
 
-  // Set table column widths and autoTable options
-  const columnWidths = [50, 140];
-
-  // Add table headers and data to PDF using jspdf-autotable
-  (pdf as any).autoTable({
-    head: [headers],
-    body: tableData,
-    startY: 150,
-    margin: { top: 100 },
-    columnStyles: { 0: { cellWidth: columnWidths[0] } },
-  });
-
-  // Save the PDF
-  console.log("pdfff",pdf)
-  pdf.save("object_data.pdf");
-};
-
-
-
-
-  
   return (
     <>
-   
-      {procorePopup && <ProcoreLink handleCloseProcore={handleCloseProcore}></ProcoreLink>}
-      {taskDetail && 
+      {procoreExist && <ProcoreExist selected={selectedIssue} onCloseProcore={onCloseProcore} ></ProcoreExist>}
+      {procorePopup && <ProcoreLink  issue={selectedIssue} gen={gen} handleCloseProcore={handleCloseProcore} updatedselectedIssue={updatedselectedIssue} getIssues={getIssues}></ProcoreLink>}
+      {issueDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
@@ -1327,9 +1336,9 @@ const convertObjectToPdf = () => {
                   alt={"close icon"}
                   data-testid="back-arrow"
                 />
-                <button onClick={convertObjectToPdf}>Convert to PDF</button>
+                
               </div>
-
+     
               <DarkToolTip
                 title={
                   <SecondAssigneeList>
@@ -1348,9 +1357,21 @@ const convertObjectToPdf = () => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-            <div className="p-[6px] hover:bg-[#E7E7E7]">
-            <ProcoreLogo src={procore} alt="logo" onClick={handleProcoreLinks}/>
-              </div>
+            {providerType === 'procore' ? (    
+    <div className={`p-[6px] hover:bg-[#E7E7E7]`}>
+      <ProcoreLogo
+        src={procore}
+        alt="logo"
+        onClick={selectedIssue.integration ? handleProcoreExistPopup : handleProcoreLinks}
+      />
+    </div> ) : (
+    <ProcoreLogo
+      src={procore} // Provide a disabled version of the logo or adjust the styling
+      alt="logo"
+      title="Login via Procore required"
+    />
+  )}
+ 
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1381,6 +1402,7 @@ const convertObjectToPdf = () => {
         ) : (
           <>
             <BodyContainer footerState={footerState} id="issueDetailsWindow">
+              
               <BasicTabs
                 taskType={issueType}
                 taskPriority={issuePriority}

@@ -1,425 +1,370 @@
 import {
-    AddRfi,
-    ArrowIcon,
-    BodyContainer,
-    CustomTaskProcoreLinks,
-    HeaderContainer,
-    LabelContainer,
-    LeftTitleCont,
-    SpanCont,
-    SpanTile,
+  AddRfi,
+  ArrowIcon,
+  BodyContainer,
+  CustomTaskProcoreLinks,
+  HeaderContainer,
+  LabelContainer,
+  LeftTitleCont,
+  SpanCont,
+  SpanTile,
 } from "../../divami_components/issue_detail/IssueDetailStyles";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
 import { TitleContainer } from "../../divami_components/issue_detail/IssueDetailStyles";
 import { useEffect, useState } from "react";
 import rfiAdd from "../../../public/divami_icons/addButton.svg";
 import { HelpCenterOutlined } from "@mui/icons-material";
+import LinkNewObservation from "./procoreObservations/linkNewObservation";
+import jsPDF from "jspdf";
 import LinkNewRFI from "./newRFI/linkNewRfi";
-import {costImpact, getcoastCode, getLocation, getReceivedFrom, getResponsibleContractor, getRfiManager, getRfiStage, potentialDistributionMembers, scheduleImpact, specSection} from "../../../services/newRfi";
+import {
+  contributingBehaviorList,
+  contributingConditionsList,
+  costImpact,
+  getcoastCode,
+  getLocation,
+  getReceivedFrom,
+  getResponsibleContractor,
+  getRfiManager,
+  getRfiStage,
+  hazardList,
+  listSubmittal,
+  potentialDistributionMembers,
+  scheduleImpact,
+  specSection,
+  tradeList,
+  typesList,
+} from "../../../services/procore";
+import NewLinkSubmittal from "./procoreSubmittal/newLinkSubmittal";
+import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
+import LinkExistingRfi from "./newRFI/linkExistingRfi";
+import LinkExistingObservation from "./procoreObservations/linkExistingObservations";
+import LinkExistingSubmittal from "./procoreSubmittal/linkExistingSubmittal";
+
 const ProcoreLink = (props: any) => {
-    const {
-        handleCloseProcore
-    } = props
-    const [selectedComponent, setSelectedComponent] = useState<any | null>(null)
-    const [rfiManager,setRfiManager] = useState([
-        {
-            "id": 10,
-            "locale": null,
-            "login": "sandbox@procore.com",
-            "name": "API Support (Procore (Test Companies))"
-        },
-        {
-            "id": 99519,
-            "locale": null,
-            "login": "implementation+demo@procore.com",
-            "name": "API Support (Procore (Test Companies))"
-        },
-        {
-            "id": 125490,
-            "locale": null,
-            "login": "dagdargh.zobgogog+sandbox@procore.com",
-            "name": "dagdargh zobgogog (Dagdargh Zobgogog - 6b89e862-5495-4feb-a431-0c50698caaf4)"
-        },
-        {
-            "id": 100297,
-            "locale": null,
-            "login": "implementation+sandbox@procore.com",
-            "name": "kraboozog nagzedul"
-        },
-        {
-            "id": 100299,
-            "locale": null,
-            "login": "implementation+arch@procore.com",
-            "name": "Test Architect (Architect TEST Company)"
-        },
-        {
-            "id": 100298,
-            "locale": null,
-            "login": "implementation+sub@procore.com",
-            "name": "Test Subcontractor (Subcontracting TEST Company)"
-        }
-    ])
-    const [receivedFrom,setReceivedFrom]=useState([
-        {
-            "id": 10,
-            "locale": null,
-            "login": "sandbox@procore.com",
-            "name": "API Support (Procore (Test Companies))"
-        },
-        {
-            "id": 99519,
-            "locale": null,
-            "login": "implementation+demo@procore.com",
-            "name": "API Support (Procore (Test Companies))"
-        },
-        {
-            "id": 125490,
-            "locale": null,
-            "login": "dagdargh.zobgogog+sandbox@procore.com",
-            "name": "dagdargh zobgogog (Dagdargh Zobgogog - 6b89e862-5495-4feb-a431-0c50698caaf4)"
-        },
-        {
-            "id": 100297,
-            "locale": null,
-            "login": "implementation+sandbox@procore.com",
-            "name": "kraboozog nagzedul"
-        },
-        {
-            "id": 100299,
-            "locale": null,
-            "login": "implementation+arch@procore.com",
-            "name": "Test Architect (Architect TEST Company)"
-        },
-        {
-            "id": 100298,
-            "locale": null,
-            "login": "implementation+sub@procore.com",
-            "name": "Test Subcontractor (Subcontracting TEST Company)"
-        }
-    ])
-    const [responsibleContractor,setResponsibleContractor] = useState([
-        {
-            "id": 2821262,
-            "name": "Architect TEST Company"
-        },
-        {
-            "id": 2821235,
-            "name": "Dagdargh Zobgogog - 6b89e862-5495-4feb-a431-0c50698caaf4"
-        },
-        {
-            "id": 2821239,
-            "name": "Procore (Test Companies)"
-        },
-        {
-            "id": 2821261,
-            "name": "Subcontracting TEST Company"
-        }
-    ])
-    const[potentialDistMem,setPotentialDistMem] =useState([
-        {
-            "id": 10,
-            "locale": null,
-            "login": "sandbox@procore.com",
-            "name": "API Support (Procore (Test Companies))"
-        },
-        {
-            "id": 99519,
-            "locale": null,
-            "login": "implementation+demo@procore.com",
-            "name": "API Support (Procore (Test Companies))"
-        },
-        {
-            "id": 125490,
-            "locale": null,
-            "login": "dagdargh.zobgogog+sandbox@procore.com",
-            "name": "dagdargh zobgogog (Dagdargh Zobgogog - 6b89e862-5495-4feb-a431-0c50698caaf4)"
-        },
-        {
-            "id": 100297,
-            "locale": null,
-            "login": "implementation+sandbox@procore.com",
-            "name": "kraboozog nagzedul"
-        },
-        {
-            "id": 100299,
-            "locale": null,
-            "login": "implementation+arch@procore.com",
-            "name": "Test Architect (Architect TEST Company)"
-        },
-        {
-            "id": 100298,
-            "locale": null,
-            "login": "implementation+sub@procore.com",
-            "name": "Test Subcontractor (Subcontracting TEST Company)"
-        }
-    ])
+  const { handleCloseProcore,
+          gen ,
+          issue,
+          setEnabled,
+          task,
+          setSelectedIssue,
+          updatedselectedIssue,
+          getIssues,
+          getTasks,} = props;
+  const [stateCheck, setStateCheck] = useState<boolean>(false)
 
-    const [specSectionn,setspecSection]=useState()
-    const [coastCodee,setCoastCodee] =useState([
-        {
-            "id": 7810415,
-            "name": "General Requirements",
-            "full_code": "01",
-            "origin_id": null,
-            "origin_data": null,
-            "standard_cost_code_id": null,
-            "biller": "Sandbox Test Project",
-            "biller_id": 235946,
-            "biller_type": "Project",
-            "biller_origin_id": null,
-            "budgeted": false,
-            "code": "01",
-            "parent": {
-                "id": null
-            },
-            "sortable_code": "01",
-            "created_at": "2023-11-23T05:17:00Z",
-            "deleted_at": null,
-            "line_item_types": [],
-            "position": null,
-            "updated_at": "2023-11-23T05:17:00Z"
-        },
-        {
-            "id": 7810432,
-            "name": "Purpose",
-            "full_code": "01-000",
-            "origin_id": null,
-            "origin_data": null,
-            "standard_cost_code_id": null,
-            "biller": "Sandbox Test Project",
-            "biller_id": 235946,
-            "biller_type": "Project",
-            "biller_origin_id": null,
-            "budgeted": false,
-            "code": "000",
-            "parent": {
-                "id": 7810415
-            },
-            "sortable_code": "01-000",
-            "created_at": "2023-11-23T05:17:01Z",
-            "deleted_at": null,
-            "line_item_types": [],
-            "position": null,
-            "updated_at": "2023-11-23T05:17:01Z"
-        },])
-    
-    const [location,setLocation]=useState([])
-    const [rfistage,setrfistage]=useState([
-        {
-            "id": 1,
-            "category": null,
-            "is_bidding_stage": true,
-            "name": "Bidding",
-            "readonly": false
-        },
-        {
-            "id": 2,
-            "category": null,
-            "is_bidding_stage": false,
-            "name": "Pre-Construction",
-            "readonly": false
-        },
-        {
-            "id": 3,
-            "category": null,
-            "is_bidding_stage": false,
-            "name": "Course of Construction",
-            "readonly": false
-        },
-        {
-            "id": 4,
-            "category": null,
-            "is_bidding_stage": false,
-            "name": "Warranty",
-            "readonly": false
-        },
-        {
-            "id": 5,
-            "category": null,
-            "is_bidding_stage": false,
-            "name": "Post-Construction",
-            "readonly": false
-        }
-    ])
-    const [scheduleImpactt,setScheduleImpact]=useState([
-        {
-            "value": "yes_known",
-            "name": "Yes"
-        },
-        {
-            "value": "yes_unknown",
-            "name": "Yes (Unknown)"
-        },
-        {
-            "value": "no_impact",
-            "name": "No"
-        },
-        {
-            "value": "tbd",
-            "name": "TBD"
-        },
-        {
-            "value": "n_a",
-            "name": "N/A"
-        }
-    ])
-    const [costImpacts,setcostImpact]=useState([
-        {
-            "value": "yes_known",
-            "name": "Yes"
-        },
-        {
-            "value": "yes_unknown",
-            "name": "Yes (Unknown)"
-        },
-        {
-            "value": "no_impact",
-            "name": "No"
-        },
-        {
-            "value": "tbd",
-            "name": "TBD"
-        },
-        {
-            "value": "n_a",
-            "name": "N/A"
-        }
-    ])
-    useEffect(()=>{
+  const captureToPdf2 = async () => {
+    const element = document.getElementById("targetElementId");
 
-        const fetchData = async () => {
-        try{
-        const apiCalls=[getRfiManager(),
-            getReceivedFrom(),
-            getResponsibleContractor(),
-            potentialDistributionMembers(),
+    if (element) {
+      try {
+        const pdf = new jsPDF();
+        pdf.html(element, {
+          callback: () => {
+            pdf.save("procore_link.pdf");
+          },
+        });
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+      }
+    } else {
+      console.warn("Element not found");
+    }
+  };
+  const [loading, setLoading] = useState(false)
+  const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
+
+  const [rfiManager, setRfiManager] = useState([]);
+  const [receivedFrom, setReceivedFrom] = useState([]);
+  const [responsibleContractor, setResponsibleContractor] = useState([]);
+  const [potentialDistMem, setPotentialDistMem] = useState([]);
+  const [contributingBehavior, setContributingBehavior] = useState([]);
+  const [contributingCondition, setContributingCondition] = useState([]);
+  const [hazard, setHazard] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [specSectionn, setspecSection] = useState();
+  const [coastCodee, setCoastCodee] = useState([]);
+  const [trades, setTrade] = useState([]);
+  const [location, setLocation] = useState([]);
+  const [rfistage, setrfistage] = useState([]);
+  const [scheduleImpactt, setScheduleImpact] = useState([]);
+  const [costImpacts, setcostImpact] = useState([]);
+ 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [
+        rfiManagerData,
+        receivedFromData,
+        responsibleContractorData,
+        potentialDistMemData,
+        specSectionData,
+        locationData,
+        coastCodeData,
+        rfistageData,
+        scheduleImpactData,
+        costImpactsData,
+        tradeData,
+        contributingBehaviorData,
+        contributingConditionData,
+        hazardData,
+        typeData,
+      ] = await Promise.all([
+        getRfiManager(),
+        getReceivedFrom(),
+        getResponsibleContractor(),
+        potentialDistributionMembers(),
         specSection(),
         getLocation(),
         getcoastCode(),
         getRfiStage(),
         scheduleImpact(),
         costImpact(),
-        scheduleImpact(),]
+        tradeList(),
+        contributingBehaviorList(),
+        contributingConditionsList(),
+        hazardList(),
+        typesList(),
+      ]);
 
-        const responses = await Promise.all(apiCalls);
-
-        const dataFromApiCalls = responses.map(response => response.data);
-
-        console.log("dataFrom",dataFromApiCalls)
-        }
-        
-        catch(error){
-
-        };
-       
+      setRfiManager(rfiManagerData);
+      setReceivedFrom(receivedFromData);
+      setResponsibleContractor(responsibleContractorData);
+      setPotentialDistMem(potentialDistMemData);
+      setspecSection(specSectionData);
+      setLocation(locationData);
+      setCoastCodee(coastCodeData);
+      setrfistage(rfistageData);
+      setScheduleImpact(scheduleImpactData);
+      setcostImpact(costImpactsData);
+      setTrade(tradeData);
+      setContributingBehavior(contributingBehaviorData);
+      setContributingCondition(contributingConditionData);
+      setHazard(hazardData);
+      setTypes(typeData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    fetchData()
-    },[])
-
-
-
-    const handleInstanceClick = (componentType: any) => {
-        switch (componentType) {
-            case "RFI":
-                setSelectedComponent(<LinkNewRFI handleInstance={handleInstanceClick} rfiManager={rfiManager} 
-                receivedForm={receivedFrom}
-                responsibleContractor={responsibleContractor}
-                potentialDistMem={potentialDistMem}
-                coastCodee={coastCodee}
-                rfistage={rfistage}
-                scheduleImpactt={scheduleImpactt}
-                costImpacts={costImpacts}
-                specSectionn={specSectionn}/>);
-                break;
-            case "closeNewRFI":
-                setSelectedComponent(null)
-                break;
-            case "New_Observation":
-
-                break;
-            case "Summit":
-
-                break;
-
-            default:
-                setSelectedComponent(null);
-        }
+  const handleInstanceClick = (componentType: any) => {
+    switch (componentType) {
+      case "RFI":
+        setSelectedComponent(
+          <LinkNewRFI
+          getTasks={getTasks}
+          getIssues={getIssues}
+          updatedselectedIssue={updatedselectedIssue}
+          setEnabled={setEnabled}
+            issue={issue}
+            task={task}
+            handleInstance={handleInstanceClick}
+            rfiManager={rfiManager}
+            receivedForm={receivedFrom}
+            responsibleContractor={responsibleContractor}
+            potentialDistMem={potentialDistMem}
+            coastCodee={coastCodee}
+            rfistage={rfistage}
+            scheduleImpactt={scheduleImpactt}
+            costImpacts={costImpacts}
+            specSectionn={specSectionn}
+            handleCloseProcore={handleCloseProcore}
+            setSelectedIssue={setSelectedIssue}
+          />
+        );
+        break;
+      case "closeNewRFI":
+        setSelectedComponent(null);
+        break;
+      case "Existing_RFI":
+        setSelectedComponent(
+            <LinkExistingRfi
+            issue={issue}
+            handleCloseProcore={handleCloseProcore}
+            task={task}
+            handleInstance={handleInstanceClick}></LinkExistingRfi>
+        )
+        break;
+      case "newCloseObservation":
+        setSelectedComponent(null);
+        break;
+      case "New_Observation":
+        setSelectedComponent(
+          <LinkNewObservation
+          getTasks={getTasks}
+          getIssues={getIssues}
+          issue={issue}
+            gen={gen}
+            handleCloseProcore={handleCloseProcore}
+            task={task}
+            rfiManager={rfiManager}
+            handleInstance={handleInstanceClick}
+            potentialDistMem={potentialDistMem}
+            types={types}
+            hazard={hazard}
+            contributingCondition={contributingCondition}
+            contributingBehavior={contributingBehavior}
+          ></LinkNewObservation>
+        );
+        break;
+      case "Existing_Observation":
+        setSelectedComponent(<LinkExistingObservation
+          issue={issue}
+          handleCloseProcore={handleCloseProcore}
+          task={task}
+            handleInstance={handleInstanceClick}></LinkExistingObservation>)
+            break;
+      case "Link_new_submittal":
+        setSelectedComponent(
+          <NewLinkSubmittal
+          getTasks={getTasks}
+          getIssues={getIssues}
+          issue={issue}
+          handleCloseProcore={handleCloseProcore}
+          task={task}
+            rfiManager={rfiManager}
+            receivedForm={receivedFrom}
+            responsibleContractor={responsibleContractor}
+            potentialDistMem={potentialDistMem}
+            coastCodee={coastCodee}
+            handleInstance={handleInstanceClick}
+          ></NewLinkSubmittal>
+        );
+        break;
+      case "Existing_Submittal":
+        setSelectedComponent(<LinkExistingSubmittal
+          issue={issue}
+          handleCloseProcore={handleCloseProcore}
+          task={task}
+          handleInstance={handleInstanceClick}
+          ></LinkExistingSubmittal>)
+        break;
+       default:
+        setSelectedComponent(null);
     }
+  };
 
-    const [footerState, SetFooterState] = useState(false);
+  const [footerState, SetFooterState] = useState(false);
 
-    if (selectedComponent) {
-        return selectedComponent
-    }
+  if (selectedComponent) {
+    return selectedComponent;
+  }
 
-    return (
-        <div className="">
-            <CustomTaskProcoreLinks>
-                <HeaderContainer>
-                    <TitleContainer>
-                        <LeftTitleCont>
-                            <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
-                                <ArrowIcon
-                                    onClick={() => {
-                                        handleCloseProcore()
-                                    }}
-                                    src={BackArrow}
-                                    alt={"close icon"}
-                                    data-testid="back-arrow"
-                                />
-                            </div>
-                            <SpanTile data-testid="issue-detail-header">
-                                Link to Procore<br></br>
-                            </SpanTile>
-                        </LeftTitleCont>
-                    </TitleContainer>
-                </HeaderContainer>
-                <BodyContainer footerState={footerState}>
-                    <LabelContainer
-                        className="cursor-pointer hover:bg-gray-100 "
-                        onClick={() => { handleInstanceClick('RFI') }}
-                    >
-                        <AddRfi className="" src={rfiAdd} alt="Link new RFI"></AddRfi>
-                        <SpanCont className="flex justify-center">LINK NEW RFI</SpanCont>
-                    </LabelContainer>
-                    <LabelContainer className="cursor-pointer hover:bg-gray-100">
-                        <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
+  return (
+    
+    <div className="">
+      {loading?(<div>
+        <CustomLoader></CustomLoader>
+      </div>):(<div>
+      <CustomTaskProcoreLinks id="targetElementId">
+        <HeaderContainer>
+          <TitleContainer>
+            <LeftTitleCont>
+              <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] ">
+                <ArrowIcon
+                  onClick={() => {
+                    handleCloseProcore();
+                  }}
+                  src={BackArrow}
+                  alt={"close icon"}
+                  data-testid="back-arrow"
+                />
+              </div>
+              <SpanTile data-testid="issue-detail-header">
+                Link to Procore<br></br>
+              </SpanTile>
+            </LeftTitleCont>
+          </TitleContainer>
+        </HeaderContainer>
+        <BodyContainer footerState={footerState}>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100 "
+            onClick={() => {
+              handleInstanceClick("RFI");
+            }}
+          >
+            <AddRfi className="" src={rfiAdd} alt="Link new RFI"></AddRfi>
+            <SpanCont className="flex justify-center">LINK NEW RFI</SpanCont>
+          </LabelContainer>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+                handleInstanceClick("Existing_RFI");
+              }}
+            >
+          
+            <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
-                        <SpanCont className="flex justify-center">
-                            LINK EXISTING RFI
-                        </SpanCont>
-                    </LabelContainer>
-                    <LabelContainer className="cursor-pointer hover:bg-gray-100" onClick={() => { handleInstanceClick('New_Observation') }} >
-                        <AddRfi className="" src={rfiAdd} alt="Link new Observation"></AddRfi>
-                        <SpanCont className="flex justify-center">
-                            LINK NEW OBSERVATION
-                        </SpanCont>
-                    </LabelContainer>
-                    <LabelContainer className="cursor-pointer hover:bg-gray-100">
-                        <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
+            <SpanCont className="flex justify-center">
+              LINK EXISTING RFI
+            </SpanCont>
+          </LabelContainer>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+              handleInstanceClick("New_Observation");
+            }}
+          >
+            <AddRfi
+              className=""
+              src={rfiAdd}
+              alt="Link new Observation"
+            ></AddRfi>
+            <SpanCont className="flex justify-center">
+              LINK NEW OBSERVATION
+            </SpanCont>
+          </LabelContainer>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+                handleInstanceClick("Existing_Observation");
+              }}
+          >
+            <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
-                        <SpanCont className="flex justify-center">
-                            LINK EXISTING OBSERVATION
-                        </SpanCont>
-                    </LabelContainer>
-                    <LabelContainer className="cursor-pointer hover:bg-gray-100">
-                        <AddRfi className="" src={rfiAdd} alt="Link new RFI"></AddRfi>
-                        <SpanCont className="flex justify-center">
-                            LINK NEW SUBMITTAL
-                        </SpanCont>
-                    </LabelContainer>
-                    <LabelContainer className="cursor-pointer hover:bg-gray-100">
-                        <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
+            <SpanCont className="flex justify-center">
+              LINK EXISTING OBSERVATION
+            </SpanCont>
+          </LabelContainer>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+              handleInstanceClick("Link_new_submittal");
+            }}
+          >
+            <AddRfi className="" src={rfiAdd} alt="Link new submittal"></AddRfi>
+            <SpanCont className="flex justify-center">
+              LINK NEW SUBMITTAL
+            </SpanCont>
+          </LabelContainer>
+          <LabelContainer
+            id="targetElementId"
+            className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+             handleInstanceClick("Existing_Submittal");
+            
+            }}
+          >
+            <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
-                        <SpanCont className="flex justify-center">
-                            LINK EXISTING SUBMITTAL
-                        </SpanCont>
-                    </LabelContainer>
-                </BodyContainer>
-            </CustomTaskProcoreLinks>
-        </div>
-    );
+            <SpanCont className="flex justify-center">
+              LINK EXISTING SUBMITTAL
+            </SpanCont>
+          </LabelContainer>
+        </BodyContainer>
+      </CustomTaskProcoreLinks>
+      </div>)}
+    </div>
+  );
 };
 
 export default ProcoreLink;

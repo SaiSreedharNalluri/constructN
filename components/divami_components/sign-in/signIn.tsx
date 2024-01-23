@@ -64,9 +64,13 @@ useEffect(()=>{
                   customLogger.logInfo(`user successfully logged`);
                   // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
                   delete userProfileObj.unReadNotifications
-                setCookie("isProjectTimeZone", true);
-                setCookie("user", userProfileObj);
+                  delete userProfileObj.metadata
+                  delete userProfileObj.verificationTimestamps
+                  delete userProfileObj.resetPasswordTimestamps
+                setCookie("isProjectTimeZone", true)
+                setCookie("user",userProfileObj);
                 localStorage.setItem('uploaededData',JSON.stringify({}))
+               
                 CustomToast("User signed in successfully", "success");
                 const previousPage:any = router.query["history"] || "";
                 setLoginEnable(true);
@@ -127,10 +131,7 @@ useEffect(()=>{
 
     }
 },[router.isReady])
-    useEffect(() => {
-        const userObj: any = getCookie("user");
-        if (userObj) router.push("/projects");
-    }, [])
+  
 
     return (
         <>
@@ -140,15 +141,7 @@ useEffect(()=>{
                 <HeaderContainer>
                     <HeaderImageLogo src={constructnLogo} alt="logo" />
                     {loading === true ?
-                <div className="flex justify-center items-center h-screen">
-                    <RotatingLines
-                        strokeColor="grey"
-                        strokeWidth="5"
-                        animationDuration="0.75"
-                        width="96"
-                        visible={true}
-                    />
-                      </div>
+                <CustomLoader></CustomLoader>
                 :''}
                 </HeaderContainer>
 
