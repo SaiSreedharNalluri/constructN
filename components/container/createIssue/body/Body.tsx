@@ -74,7 +74,21 @@ const Body = ({
   const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  const [newValue,newValues] = useState([])
   const router = useRouter();
+  useEffect(()=>{
+    const tempFormData = formConfig.map((item: any) => {
+      if (item.id === "tag-suggestions") {
+        return {
+          ...item,
+          chipString: newValue,
+        };
+      }
+      return item;
+    });
+    setFormConfig(tempFormData);
+  },[newValue])
+  
   useEffect(() => {
     const tempFormData = formConfig.map((item: any) => {
       if (item.id === "tag-suggestions") {
@@ -367,6 +381,7 @@ const Body = ({
           validate={validate}
           setIsValidate={setIsValidate}
           setCanBeDisabled={setCanBeDisabled}
+          newValues={newValues}
         />
         <UploadedImagesList
           formData={formData}

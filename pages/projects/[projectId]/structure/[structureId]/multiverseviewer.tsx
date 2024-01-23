@@ -752,6 +752,12 @@ const Index: React.FC<IProps> = () => {
       case "sortIssue":
         handleOnIssueSort(toolInstance.data)
         break;
+      case "deleteIssueAttachment":
+        deleteTheAttachment(toolInstance.data,"issue")
+        break;
+      case "deleteTaskAttachment":
+        deleteTheAttachment(toolInstance.data,"task")
+        break;
       case 'closeTaskOverlay':
       closeTaskFilterOverlay()
       break;
@@ -1274,27 +1280,26 @@ const Index: React.FC<IProps> = () => {
     });
     setIssueList(issueFilterList);
   };
-  const deleteTheAttachment = (attachmentId: string, entity?: string) => {
+  const deleteTheAttachment = (attachmentId: any, entity?: string) => {
     deleteAttachment(attachmentId)
       .then((response: any) => {
         if (response.success === true) {
           CustomToast(response.message, "success");
           if (entity === "issue") {
-            issueFilterList.map((issueObj) => {
+            initData?.currentIssueList.map((issueObj) => {
               const index = issueObj.attachments.findIndex(
                 (obj: any) => obj._id === attachmentId
               );
               issueObj.attachments.splice(index, 1);
             });
-            setIssueList(issueFilterList);
+            
           } else {
-            taskFilterList.map((taskObj) => {
+              initData?.currentTaskList.map((taskObj) => {
               const index = taskObj.attachments.findIndex(
                 (obj: any) => obj._id === attachmentId
               );
               taskObj.attachments.splice(index, 1);
             });
-            setTasksList(taskFilterList);
           }
         }
       })
