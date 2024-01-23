@@ -114,7 +114,8 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
               }
             }}
           />
-          {validateZipCode(addressDetails.value.address?.zipcode) !== true && (
+       {addressDetails.value.address?.zipcode !== '' && addressDetails.value.address?.zipcode !== undefined &&
+         validateZipCode(addressDetails.value.address?.zipcode) !== true && (
             <FormHelperText className='text-[#FF853E]'>Invalid Zipcode</FormHelperText>
           )}
         </Grid>
