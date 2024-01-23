@@ -61,6 +61,7 @@ import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/sta
 import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
 import { ProjectCounts } from "../../../models/IUtils";
+import { IJobs } from "../../../models/IJobs";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -235,6 +236,7 @@ const Header: React.FC<any> = ({
     deleteCookie('projectData');
     deleteCookie('isProjectTimeZone');
     localStorage.removeItem('uploaededData')
+    localStorage.removeItem('InProgressPendingUploads')
     // router.push("/login");
     router.push("/login");
   };
@@ -346,10 +348,10 @@ const Header: React.FC<any> = ({
       workerExists ||
       [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
     ) {
- 
-       event.preventDefault();
-       event.returnValue = true;
-     }
+      event.preventDefault();
+      localStorage.removeItem('InProgressPendingUploads')
+      event.returnValue = true;
+    }
    };
    const popStateHandler = () => {
     if (
@@ -364,7 +366,6 @@ const Header: React.FC<any> = ({
    useEffect(()=>{
    setUrl(window.location.href)
    },[typeof window != undefined,router,router.isReady])
- 
    useEffect(() => {
      window.addEventListener("beforeunload", beforeUnloadHandler);
      history.pushState(null, '', document.URL);
@@ -374,31 +375,55 @@ const Header: React.FC<any> = ({
        window.removeEventListener('popstate', popStateHandler)
      })
    }, [url,uploaderState.step,workerExists])
-
+   useEffect(() => {
+    window.addEventListener("visibilitychange", ()=>{
+      calculateProjectCounts()
+    });
+    return (() => {
+      window.removeEventListener("visibilitychange", ()=>{});
+    })
+  }, [])
   useEffect(() => {
-    // Calculate project counts when the component mounts or when the originalArray changes
-    const calculateProjectCounts = () => {
-      const counts:ProjectCounts = {};
-      let uploadingcount:number = 0;
-      appState.inProgressPendingUploads.forEach(jobInfo => {
-        const projectId = jobInfo.project as string;
+  calculateProjectCounts();
+  }, [appState.inProgressPendingUploads]);
+  const calculateProjectCounts = () => {
+    const counts:ProjectCounts = {};
+    let uploadingcount:number  = 0;
+    let  inProgressPendingUploads = localStorage.getItem('InProgressPendingUploads');
+    if(inProgressPendingUploads!=null && inProgressPendingUploads!= undefined)
+        {
+         JSON.parse(inProgressPendingUploads)&&JSON.parse(inProgressPendingUploads).forEach((jobInfo:IJobs) => {
+            const projectId = jobInfo.project as string;
 
-        if (!counts[projectId]) {
-          counts[projectId] = 1;
-          uploadingcount++
-        } else {
-          counts[projectId]++;
-          uploadingcount++
+            if (!counts[projectId]) {
+              counts[projectId] = 1;
+              uploadingcount++;
+            } else {
+              counts[projectId]++;
+              uploadingcount++;
+            }
+          });
         }
-      });
+        else{
+          if (appState.inProgressPendingUploads.length > 0) {
+            appState.inProgressPendingUploads.forEach((jobInfo) => {
+              const projectId = jobInfo.project as string;
+    
+              if (!counts[projectId]) {
+                counts[projectId] = 1;
+                uploadingcount++;
+              } else {
+                counts[projectId]++;
+                uploadingcount++;
+              }
+            });
+          }
+        }
 
-      setProjectUplObj(counts);
-      setUploaderCount(uploadingcount)
-    };
-    calculateProjectCounts();
-    }, [appState.inProgressPendingUploads]);
-  
-    return (
+    setProjectUplObj(counts);
+    setUploaderCount(uploadingcount);
+  };
+  return (
     <>
       <HeaderContainer ref={headerRef} >
         {!hideSidePanel && (
