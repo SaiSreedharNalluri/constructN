@@ -131,6 +131,7 @@ import { truncateString } from "../../../pages/projects";
 import procore from "../../../public/divami_icons/procore.svg";
 import ProcoreLink from "../../container/procore/procoreLinks";
 import jsPDF from "jspdf";
+import ProcoreExist from "../../container/procore/procoreExist";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -954,7 +955,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const[isLoading,setLoading]=useState(false);
   const [procorePopup,setProcorePopup]= useState<boolean>(false)
   const [newRFI,setnewLinkRFI] = useState<boolean>(false);
-  const [taskDetail,setTaskDetail] = useState<boolean>(true)
+  const [issueDetail,setIssueDetail] = useState<boolean>(true)
   const router = useRouter();
   useEffect(() => {
     setSelectedIssue(issue);
@@ -1230,12 +1231,23 @@ const CustomIssueDetailsDrawer = (props: any) => {
    const generatePDF= convertObjectToPdf()
    setGen(generatePDF);
     setProcorePopup(true)
-    setTaskDetail(false)
+    setIssueDetail(false)
+  }
+const [procoreExist,setPropcoreExist] =useState<boolean>(false)
+  const  handleProcoreExistPopup =()=>{
+    setIssueDetail(false);
+    setPropcoreExist(true);
+   
+
+  } 
+  const onCloseProcore =() =>{
+      setPropcoreExist(false)
+      setIssueDetail(true)
   }
 
   const  handleCloseProcore=()=>{
     setProcorePopup(false)
-    setTaskDetail(true);
+    setIssueDetail(true);
   }
   const convertObjectToPdf = () => {
     // Sample object data
@@ -1295,13 +1307,22 @@ const CustomIssueDetailsDrawer = (props: any) => {
     return pdf;
     pdf.save("object_data.pdf");
   };
-  
+  const userCredentials = localStorage.getItem('userCredentials');
+  let credential=null;
+  if(userCredentials) credential=JSON.parse(userCredentials);
+   const providerType =credential.provider;
+
+   
+
+  const updatedselectedIssue =(issueData:any)=>{
+      setSelectedIssue(issueData)
+  }
 
   return (
     <>
-   
-      {procorePopup && <ProcoreLink gen={gen} handleCloseProcore={handleCloseProcore}></ProcoreLink>}
-      {taskDetail && 
+      {procoreExist && <ProcoreExist selected={selectedIssue} onCloseProcore={onCloseProcore} ></ProcoreExist>}
+      {procorePopup && <ProcoreLink  issue={selectedIssue} gen={gen} handleCloseProcore={handleCloseProcore} updatedselectedIssue={updatedselectedIssue} getIssues={getIssues}></ProcoreLink>}
+      {issueDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
@@ -1336,9 +1357,21 @@ const CustomIssueDetailsDrawer = (props: any) => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-            <div className="p-[6px] hover:bg-[#E7E7E7]">
-            <ProcoreLogo src={procore} alt="logo" onClick={handleProcoreLinks}/>
-              </div>
+            {providerType === 'procore' ? (    
+    <div className={`p-[6px] hover:bg-[#E7E7E7]`}>
+      <ProcoreLogo
+        src={procore}
+        alt="logo"
+        onClick={selectedIssue.integration ? handleProcoreExistPopup : handleProcoreLinks}
+      />
+    </div> ) : (
+    <ProcoreLogo
+      src={procore} // Provide a disabled version of the logo or adjust the styling
+      alt="logo"
+      title="Login via Procore required"
+    />
+  )}
+ 
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1369,6 +1402,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ) : (
           <>
             <BodyContainer footerState={footerState} id="issueDetailsWindow">
+              
               <BasicTabs
                 taskType={issueType}
                 taskPriority={issuePriority}

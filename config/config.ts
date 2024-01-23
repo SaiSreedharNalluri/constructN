@@ -33,7 +33,20 @@ export const API = {
     LOCAL_URL: 'http://localhost:3001/api/v1',
 
     PROGRESS_2D_URL: 'https://api-progress-2d.qa-devops.constructn.ai/api'
+    
 
+}
+
+export const PROCORE ={
+    LOGIN_URL :"https://login-sandbox.procore.com",
+
+    BASE_URL : 'https://sandbox.procore.com',
+
+    CLIENT_ID : '51ca7ddce0a054f6cd1317d2890a1935bda0c07aaf10847a216fa913f777f8fa',
+
+    REDIRECT_URI : 'http://localhost:3000/login-sso-procore',
+
+    GRANT_TYPE : 'authorization_code',
 }
 
 export const AWS = {
