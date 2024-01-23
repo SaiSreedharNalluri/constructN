@@ -131,6 +131,7 @@ import { truncateString } from "../../../pages/projects";
 import procore from "../../../public/divami_icons/procore.svg";
 import ProcoreLink from "../../container/procore/procoreLinks";
 import jsPDF from "jspdf";
+import { Key } from "@mui/icons-material";
 import ProcoreExist from "../../container/procore/procoreExist";
 
 interface TabPanelProps {
@@ -1228,8 +1229,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   const [gen,setGen]=useState<any>(undefined)
   const handleProcoreLinks = () =>{
-   const generatePDF= convertObjectToPdf()
-   setGen(generatePDF);
+    
     setProcorePopup(true)
     setIssueDetail(false)
   }
