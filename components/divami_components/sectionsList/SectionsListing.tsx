@@ -268,11 +268,11 @@ const[isProcessing,setProcessing]=useState(false);
       const type = "newSnapshot";
       const projectId = router?.query?.projectId as string;
 
-      // fetchAssetCountByStructure(router.query.projectId as string).then((res)=> setAssetCount(res.data.result)).catch(()=>{ setAssetCount({}); CustomToast("error","Failed To Fetch the Asset Count")});
+      fetchAssetCountByStructure(router.query.projectId as string).then((res)=> setAssetCount(res.data.result)).catch(()=>{ setAssetCount({}) });
 
-      // fetchAssetCategories(projectId).then(res => {
-      //   if(res.data.success) setHasProgress2D(res.data.result.length > 0)
-      // }).catch(e => console.log(e))
+      fetchAssetCategories(projectId).then(res => {
+        if(res.data.success) setHasProgress2D(res.data.result.length > 0)
+      }).catch(e => console.log(e))
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
@@ -806,46 +806,46 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
     },
 
 
-    // {
-    //   title: "Progress 2D",
-    //   field: "has2dProgress",
-    //   sorting: false,
-    //   headerStyle: {
-    //     borderBottom: "1px solid #FF843F",
-    //     fontFamily: "Open Sans",
-    //     fontStyle: "normal",
-    //     fontWeight: "500",
-    //     fontSize: "14px",
-    //     lineHeight: "20px",
-    //     color: "#101F4C",
-    //   },
-    //   cellStyle: { width: "20%" },
+    {
+      title: "Progress 2D",
+      field: "has2dProgress",
+      sorting: false,
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
+      cellStyle: { width: "20%" },
    
-    //   render: (rowData: any) => {
+      render: (rowData: any) => {
 
-    //     const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
+        const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
         
-    //     return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
-    //       <TooltipText title="2D Progress">
-    //         <div className="flex justify-center">
-    //           <Progress2DImageIcon
-    //             src={Progress2DImage}
-    //             alt={""}
-    //             onClick={() => {
-    //               if(hasProgress2D) {
-    //                 router.push({
-    //                   pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-    //                   query: { structId: rowData._id },
-    //                 })} else {
-    //                   toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
-    //                 }
-    //             }}
-    //           ></Progress2DImageIcon>
-    //         </div>
-    //       </TooltipText>
-    //       }</div> : 'Not Available';
-    //   },
-    // },
+        return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
+          <TooltipText title="2D Progress">
+            <div className="flex justify-center">
+              <Progress2DImageIcon
+                src={Progress2DImage}
+                alt={""}
+                onClick={() => {
+                  if(hasProgress2D) {
+                    router.push({
+                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+                      query: { structId: rowData._id },
+                    })} else {
+                      toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
+                    }
+                }}
+              ></Progress2DImageIcon>
+            </div>
+          </TooltipText>
+          }</div> : 'Not Available';
+      },
+    },
   ];
 
 
