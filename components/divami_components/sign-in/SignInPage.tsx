@@ -40,6 +40,7 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { PROCORE } from "../../../config/config";
 const SignInPage = () => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
@@ -200,8 +201,7 @@ const SignInPage = () => {
   }, [])
 
   const handleProcoreButtonClick = () => {
-    console.log("procoreurl",process.env.NEXT_PUBLIC_PROCORE_URL)
-    const redirectUrl = `${process.env.NEXT_PUBLIC_PROCORE_URL}&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_REDIRECT_URL}`;
+    const redirectUrl = `${PROCORE.LOGIN_URL}/oauth/authorize?response_type=code&client_id=${PROCORE.CLIENT_ID}&redirect_uri=${PROCORE.REDIRECT_URI}`;
     window.location.href = redirectUrl;
   };
 
@@ -259,7 +259,7 @@ const SignInPage = () => {
             <p className="flex justify-center">or</p>
             <ProcoreButton onClick={handleProcoreButtonClick}>
             <ProcoreLogo src={procore} alt="logo" />
-            <TextContainer>Sign in with procore</TextContainer>
+            <TextContainer>Sign In with procore</TextContainer>
           </ProcoreButton>
 
             <NewUserDiv>

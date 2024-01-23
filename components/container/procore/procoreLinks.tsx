@@ -28,6 +28,7 @@ import {
   getRfiManager,
   getRfiStage,
   hazardList,
+  listSubmittal,
   potentialDistributionMembers,
   scheduleImpact,
   specSection,
@@ -37,8 +38,20 @@ import {
 import NewLinkSubmittal from "./procoreSubmittal/newLinkSubmittal";
 import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
 import LinkExistingRfi from "./newRFI/linkExistingRfi";
+import LinkExistingObservation from "./procoreObservations/linkExistingObservations";
+import LinkExistingSubmittal from "./procoreSubmittal/linkExistingSubmittal";
+
 const ProcoreLink = (props: any) => {
-  const { handleCloseProcore, gen } = props;
+  const { handleCloseProcore,
+          gen ,
+          issue,
+          setEnabled,
+          task,
+          setSelectedIssue,
+          updatedselectedIssue,
+          getIssues,
+          getTasks,} = props;
+  const [stateCheck, setStateCheck] = useState<boolean>(false)
 
   const captureToPdf2 = async () => {
     const element = document.getElementById("targetElementId");
@@ -76,6 +89,7 @@ const ProcoreLink = (props: any) => {
   const [rfistage, setrfistage] = useState([]);
   const [scheduleImpactt, setScheduleImpact] = useState([]);
   const [costImpacts, setcostImpact] = useState([]);
+ 
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -134,7 +148,6 @@ const ProcoreLink = (props: any) => {
     }
   };
   useEffect(() => {
-    console.log('useEffect')
     fetchData();
   }, []);
 
@@ -143,6 +156,12 @@ const ProcoreLink = (props: any) => {
       case "RFI":
         setSelectedComponent(
           <LinkNewRFI
+          getTasks={getTasks}
+          getIssues={getIssues}
+          updatedselectedIssue={updatedselectedIssue}
+          setEnabled={setEnabled}
+            issue={issue}
+            task={task}
             handleInstance={handleInstanceClick}
             rfiManager={rfiManager}
             receivedForm={receivedFrom}
@@ -153,6 +172,8 @@ const ProcoreLink = (props: any) => {
             scheduleImpactt={scheduleImpactt}
             costImpacts={costImpacts}
             specSectionn={specSectionn}
+            handleCloseProcore={handleCloseProcore}
+            setSelectedIssue={setSelectedIssue}
           />
         );
         break;
@@ -162,6 +183,9 @@ const ProcoreLink = (props: any) => {
       case "Existing_RFI":
         setSelectedComponent(
             <LinkExistingRfi
+            issue={issue}
+            handleCloseProcore={handleCloseProcore}
+            task={task}
             handleInstance={handleInstanceClick}></LinkExistingRfi>
         )
         break;
@@ -171,7 +195,12 @@ const ProcoreLink = (props: any) => {
       case "New_Observation":
         setSelectedComponent(
           <LinkNewObservation
+          getTasks={getTasks}
+          getIssues={getIssues}
+          issue={issue}
             gen={gen}
+            handleCloseProcore={handleCloseProcore}
+            task={task}
             rfiManager={rfiManager}
             handleInstance={handleInstanceClick}
             potentialDistMem={potentialDistMem}
@@ -182,9 +211,21 @@ const ProcoreLink = (props: any) => {
           ></LinkNewObservation>
         );
         break;
+      case "Existing_Observation":
+        setSelectedComponent(<LinkExistingObservation
+          issue={issue}
+          handleCloseProcore={handleCloseProcore}
+          task={task}
+            handleInstance={handleInstanceClick}></LinkExistingObservation>)
+            break;
       case "Link_new_submittal":
         setSelectedComponent(
           <NewLinkSubmittal
+          getTasks={getTasks}
+          getIssues={getIssues}
+          issue={issue}
+          handleCloseProcore={handleCloseProcore}
+          task={task}
             rfiManager={rfiManager}
             receivedForm={receivedFrom}
             responsibleContractor={responsibleContractor}
@@ -193,11 +234,16 @@ const ProcoreLink = (props: any) => {
             handleInstance={handleInstanceClick}
           ></NewLinkSubmittal>
         );
-  
-      case "Summit":
         break;
-
-      default:
+      case "Existing_Submittal":
+        setSelectedComponent(<LinkExistingSubmittal
+          issue={issue}
+          handleCloseProcore={handleCloseProcore}
+          task={task}
+          handleInstance={handleInstanceClick}
+          ></LinkExistingSubmittal>)
+        break;
+       default:
         setSelectedComponent(null);
     }
   };
@@ -278,6 +324,9 @@ const ProcoreLink = (props: any) => {
           <LabelContainer
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+                handleInstanceClick("Existing_Observation");
+              }}
           >
             <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
@@ -300,6 +349,10 @@ const ProcoreLink = (props: any) => {
           <LabelContainer
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+             handleInstanceClick("Existing_Submittal");
+            
+            }}
           >
             <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
 
