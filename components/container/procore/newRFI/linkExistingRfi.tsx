@@ -9,6 +9,7 @@ import ProcoreFooter from '../procoreFooter';
 import { ListRfi, linkIssueRfi,linkTaskRfi, } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
+import { IprocoreActions } from '../../../../models/Iprocore';
 
 const LinkExistingRfi = (props: any) => {
   const {issue,task,

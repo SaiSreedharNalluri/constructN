@@ -15,6 +15,7 @@ import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
+import { IprocoreActions } from "../../../../models/Iprocore";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",

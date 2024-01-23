@@ -1,3 +1,11 @@
+import { IGenData } from "./IGenData";
+import { IHotspot } from "./IHotspot";
+import { ILayer } from "./IReality";
+import { ISnapshot } from "./ISnapshot";
+import { IViewerContext } from "./IViewerContext";
+import { Issue } from "./Issue";
+import { ITasks } from "./Itask";
+
 export interface ITools {
   toolName: string;
   toolAction: string;
@@ -38,4 +46,16 @@ export interface IRotation {
   pitch: Number;
   yaw: Number;
   roll: Number;
+}
+
+export interface IToolbarAction {
+  type:  "setViewMode" | "setViewType" | "setViewLayers" | "addViewLayer" | "removeViewLayer" | "setCompareMode" | 'setStructure'| 'setBaseSnapshot' | 'setCompareSnapshot' |
+  "viewIssueList" | "createIssue" | "createSuccessIssue" | "createFailIssue" | "selectIssue" | "showIssue" | "hideIssue" | "removedIssue" | 'setFilteredIssueList' | 'handleIssueFilter' | 'closeFilterOverlay' |
+  "handleTaskFilter" | "closeTaskOverlay" | "viewTaskList" | "createTask" | "createSuccessTask" | "createFailTask" | "selectTask" | "showTask" | "hideTask" | "removedTask" | 'setFilteredTaskList' |
+  "viewHotspotList" | "createHotspot" | "createSuccessHotspot" | "createFailHotspot" | "selectHotspot" | "showHotspot" | "hideHotspot" | "removedHotspot" |
+  "setFullScreenMode" | "closeIssueDrawer" | "closeTaskDrawer" | "editIssue" | "editTask" | "sortIssue" | "sortTask"
+  ,
+  
+  data? :string |[string] | [ITasks] | [Issue] | [IHotspot] | IViewerContext | IGenData | ISnapshot | IContext | ILayer[]
+
 }

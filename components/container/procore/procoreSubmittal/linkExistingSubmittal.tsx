@@ -9,6 +9,7 @@ import ProcoreFooter from '../procoreFooter';
 import { ListRfi,linkIssueSubmittal,linkTaskSubmittal,listObservation, listSubmittal } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
+import { IprocoreActions } from '../../../../models/Iprocore';
 
 const LinkExistingSubmittal = (props: any) => {
   const {issue,

@@ -9,6 +9,7 @@ import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { statusData } from "../../../../utils/Procoreconstants";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
+import { IprocoreActions } from "../../../../models/Iprocore";
 
 const NewLinkSubmittal = (props: any) => {
   const {
