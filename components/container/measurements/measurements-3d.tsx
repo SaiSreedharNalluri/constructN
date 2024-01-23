@@ -78,7 +78,7 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
         params: { snapshot }
       }
     )
-    const filterById = [...(resp.data.result || [])].filter((point)=>(point.context.createdBy === user._id))
+    const filterById = [...(resp.data.result || [])].filter((point)=>(point?.context?.createdBy === user._id))
     setApiPoints(filterById);
   }catch{
     setApiPoints([]);
