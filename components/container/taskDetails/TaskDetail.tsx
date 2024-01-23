@@ -112,7 +112,7 @@ import {
   ThirdContDueDate,
 } from "../../divami_components/task_detail/TaskDetailStyles"
 import { createComment, getCommentsList } from "../../../services/comments";
-import ActivityLog from "../../divami_components/hotspot_detail/ActivityLog";
+import ActivityLog from "../CommentSection/ActivityLog";
 import { ActivityLogContainer } from "../../divami_components/issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
@@ -634,7 +634,7 @@ function BasicTabs(props: any) {
                       onDelete={() => {
                         const newSelectedUser = formState.selectedUser.filter(
                           (selected: any) => selected?.label !== v?.label
-                        );
+                        );             
                         setFormState({
                           ...formState,
                           selectedUser: newSelectedUser,

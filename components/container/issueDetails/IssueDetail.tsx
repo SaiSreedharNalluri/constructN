@@ -117,7 +117,7 @@ import {
   ThirdContDueDate,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
-import ActivityLog from "./ActivityLog";
+import ActivityLog from "../CommentSection/ActivityLog";
 import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";

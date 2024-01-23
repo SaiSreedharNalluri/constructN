@@ -58,7 +58,7 @@ const CloseIcon = styled(Image)`
 `;
 
 const CustomTagSuggestion = (props: any) => {
-  const { data, handleChipMaking, setFormConfig, dataTestId } = props;
+  const { data, handleChipMaking, setFormConfig, dataTestId,newValues } = props;
   const [options, setOptions] = useState(data.chipSuggestions);
   const [autoCompleteValue, setAutoCompleteValue] = useState([]);
 
@@ -141,6 +141,7 @@ const CustomTagSuggestion = (props: any) => {
                 const newValue = autoCompleteValue.filter(
                   (selected: any) => selected !== v
                 );
+                newValues(newValue)
                 setAutoCompleteValue(newValue);
               }}
             />

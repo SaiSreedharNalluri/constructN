@@ -234,6 +234,17 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
     let selectedTaskforDelete: IToolbarAction = { type: "removedTask", data: selectedTask };
     toolClicked(selectedTaskforDelete)
   }
+  const deleteTheAttachment = (id:any,type:string)=>{
+    if(type === "issue"){
+      let IssueAttachmentDelete: IToolbarAction = { type: "deleteIssueAttachment", data: id };
+      toolClicked(IssueAttachmentDelete) 
+    }
+    else if(type === "task"){
+      let TaskAttachmentDelete: IToolbarAction = { type: "deleteTaskAttachment", data: id };
+      toolClicked(TaskAttachmentDelete)
+    }
+    
+  }
   return initData ? (
     <SectionToolBar>
       <ToolbarContainer>
@@ -289,6 +300,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           highlightCreateIcon={highlightCreateIcon}
           handleOnIssueSort={handleOnIssueSort}
           issueMenuClicked={issueMenuClicked}
+          deleteTheAttachment={deleteTheAttachment}
           ref={issueRef}
           toolClicked={toolClicked}
         />
@@ -311,6 +323,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           ref={taskRef}
           toolClicked={toolClicked}
           initData={initData}
+          deleteTheAttachment={deleteTheAttachment}
 
         />
 
