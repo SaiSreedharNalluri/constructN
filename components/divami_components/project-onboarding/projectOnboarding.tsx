@@ -21,6 +21,7 @@ import CustomLoader from '../custom_loader/CustomLoader'
 export type IOnboardingProps = {
   step: Signal<number>
   action?: Signal<string>
+  saveState?: Signal<boolean>
   projectId: Signal<string>
   hierarchy?: Signal<IStructure[]>
   projectDetails: Signal<IProjects>
@@ -34,6 +35,7 @@ const ProjectOnboarding = () => {
   const step = useSignal(0)
   const usersCount = useSignal(0)
   const action = useSignal('')
+  const saveState = useSignal(true)
   const projectId = useSignal('')
   const structureId = useSignal('')
   const hierarchy = useSignal([])
@@ -63,6 +65,7 @@ const ProjectOnboarding = () => {
           step={step}
           projectId={projectId}
           action={action}
+          saveState={saveState}
           projectDetails={projectDetails}
           showLoader={showLoader}
         /></>
@@ -132,7 +135,7 @@ const ProjectOnboarding = () => {
               </div>
             </main>
             <footer className=" pb-[20px]">
-              <ProjectOnboardingFooter step={step} projectId={projectId} action={action} projectDetails={projectDetails} ></ProjectOnboardingFooter>
+              <ProjectOnboardingFooter step={step} saveState={saveState} projectId={projectId} action={action} projectDetails={projectDetails} ></ProjectOnboardingFooter>
             </footer></div>
         </div>
       </div>

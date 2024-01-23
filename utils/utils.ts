@@ -40,7 +40,7 @@ export const getEXIFDataFromImageFile = async (file: File): Promise<ExifReader.T
 }
 
 export const validateName = (name: string): boolean => {
-    return (/^[a-zA-Z0-9][a-zA-Z0-9._ ]+$/).test(name);
+    return (/^[a-zA-Z0-9 !@#$&()\-`.+,/]+$/).test(name);
 };
 
 export const validateText = (name: string): boolean => {
@@ -69,6 +69,10 @@ export const validatingNorthing = (northing: number): boolean => {
 
 export const validateUTMZone = (zone: string): boolean => {
     return (/^([1-9]|[1-5][0-9]|60)([CDEFGHJKLMNPQRSTUVWX])?$/).test(zone);
+}
+
+export const validateZipCode = (zip: string): boolean => {
+    return (/^\d{5,6}?$/).test(zip);
 }
 
 export const getInitialGCPList = (isUTM: boolean): IGCP => {

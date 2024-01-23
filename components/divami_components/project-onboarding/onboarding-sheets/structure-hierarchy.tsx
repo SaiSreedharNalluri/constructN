@@ -30,7 +30,7 @@ import { CustomToast } from '../../custom-toaster/CustomToast'
 
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 
-import { TruncatedString } from "../../../../utils/utils";
+import { TruncatedString, validateName, validateText } from "../../../../utils/utils";
 
 import { TooltipText } from "../../../divami_components/side-panel/SidePanelStyles";
 
@@ -40,17 +40,21 @@ type UploadProgress = {
     percentage: number
 }
 
-const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdded,loader }: any) => {
+const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdded, onSheetDeleted, loader }: any) => {
 
     useSignals()
 
     const addSheetPopup = useSignal(false)
+
+    const deleteSheetPopup = useSignal(false)
 
     const addStructurePopup = useSignal(false)
 
     const removeStructurePopup = useSignal(false)
 
     const currentStructure = useSignal<IStructure | undefined>(undefined)
+
+    const currentDesign = useSignal<IDesign | undefined>(undefined)
 
     const fileToUpload = useSignal<File | undefined>(undefined)
 
@@ -70,6 +74,15 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
     /> : <></>)
 
     const addStructureFormJSX = useComputed(() => renderAddStructureForm(addStructurePopup, currentStructure.value?._id, newStructureName, onAdd))
+
+    const renderDeleteSheetPopup = useComputed(() => deleteSheetPopup.value === true ? <PopupComponent open={deleteSheetPopup.value} hideButtons
+        setShowPopUp={(state: boolean) => deleteSheetPopup.value = state} modalTitle={'Delete sheet'}
+        modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
+        callBackvalue={() => { }} modalContent={deleteSheetFormJSX}
+        backdropWidth={true} showButton={false}
+    /> : <></>)
+
+    const deleteSheetFormJSX = useComputed(() => renderDeleteSheetForm(deleteSheetPopup, currentDesign.value!, onSheetDeleted))
 
     const renderAddStructurePopup = useComputed(() => addStructurePopup.value === true ? <PopupComponent open={addStructurePopup.value} hideButtons
         setShowPopUp={(state: boolean) => addStructurePopup.value = state}
@@ -95,9 +108,12 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
             <Tree treeData={hierarchy} parent={undefined}
                 onAdd={(structure: IStructure) => { currentStructure.value = structure; addStructurePopup.value = true }}
                 onDelete={(structure: IStructure) => { currentStructure.value = structure; removeStructurePopup.value = true }}
-                addSheet={(structure: IStructure) => { currentStructure.value = structure; addSheetPopup.value = true }} />
+                addSheet={(structure: IStructure) => { currentStructure.value = structure; addSheetPopup.value = true }}
+                deleteSheet={(design: IDesign) => { currentDesign.value = design; deleteSheetPopup.value = true }} />
 
             {renderAddSheetPopup}
+
+            {renderDeleteSheetPopup}
 
             {renderAddStructurePopup}
 
@@ -109,7 +125,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
 }
 
 
-const Tree = ({ treeData, parent, onAdd, onDelete, addSheet }: any) => {
+const Tree = ({ treeData, parent, onAdd, onDelete, addSheet, deleteSheet }: any) => {
 
     return (
 
@@ -117,7 +133,7 @@ const Tree = ({ treeData, parent, onAdd, onDelete, addSheet }: any) => {
 
             {treeData.map((node: any) => (
 
-                <TreeNode node={node} parent={node._id} key={node._id} onAdd={onAdd} onDelete={onDelete} addSheet={addSheet} />
+                <TreeNode node={node} parent={node._id} key={node._id} onAdd={onAdd} onDelete={onDelete} addSheet={addSheet} deleteSheet={deleteSheet} />
 
             ))}
 
@@ -126,7 +142,7 @@ const Tree = ({ treeData, parent, onAdd, onDelete, addSheet }: any) => {
 
 }
 
-const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
+const TreeNode = ({ node, parent, onAdd, onDelete, addSheet, deleteSheet }: any) => {
 
     const { children, name } = node
 
@@ -150,6 +166,12 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
         const designs = node.designs
         const drawing = designs?.find((design: IDesign) => design.type === 'Plan Drawings')
         return drawing?.name ?? ''
+    }
+
+    const _sheet = () => {
+        const designs = node.designs
+        const drawing = designs?.find((design: IDesign) => design.type === 'Plan Drawings')
+        return drawing
     }
 
     return (
@@ -182,7 +204,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
                     <Stack direction='row' spacing={1}>
 
-                        {_sheetName() !== '' && <Chip label={_sheetName()} color='default' size='small' onClick={handleClick} />}
+                        {_sheetName() !== '' && <Chip label={_sheetName()} color='default' onDelete={() => deleteSheet(_sheet())} size='small' onClick={handleClick} />}
 
                         {_sheetName() === '' &&
                             <Chip label='Add Drawing' size='small' color='secondary' clickable className='mr-2 text-[12px]'
@@ -210,7 +232,7 @@ const TreeNode = ({ node, parent, onAdd, onDelete, addSheet }: any) => {
 
             <ul className='pl-[2rem]' style={{ borderLeft: '1px dashed #e2e3e5' }}>
 
-                {showChildren && children && children.length > 0 && <Tree treeData={children} parent={node._id} onAdd={onAdd} onDelete={onDelete} addSheet={addSheet} />}
+                {showChildren && children && children.length > 0 && <Tree treeData={children} parent={node._id} onAdd={onAdd} onDelete={onDelete} addSheet={addSheet} deleteSheet={deleteSheet} />}
 
             </ul>
 
@@ -296,13 +318,15 @@ const renderAddSheetForm = (
                 <LinearProgress className='mt-4' color='warning' variant="determinate" value={uploadProgress.value.percentage} />
             </div>
         }
-        {loader.value&&<div style={{  position: "fixed",
-  top: "0",
-  left: "0",
-  width: "100vw",
-  height: "100vh",
-  backgroundColor: "rgba(0, 0, 0, 0.5)" ,
-  zIndex: 9999,}}></div>}
+        {loader.value && <div style={{
+            position: "fixed",
+            top: "0",
+            left: "0",
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 9999,
+        }}></div>}
 
         <div className='flex justify-between mt-6'>
 
@@ -314,6 +338,35 @@ const renderAddSheetForm = (
             <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]' color='warning'
                 disabled={fileToUpload.value === undefined || uploadStatus.value == true} onClick={() =>{ proceedUpload(); loader.value=true}} >
                 Upload
+            </Button>
+
+        </div>
+
+    </div></>)
+
+}
+
+const renderDeleteSheetForm = (
+    showPopup: Signal<boolean>, design: IDesign,
+    onDelete: (design: string) => void) => {
+
+    return (<><div className='flex flex-col'>
+
+        <Typography variant='body1'>{`Are you sure you want to delete sheet ${design?.name} ?`}</Typography>
+
+        <div className='flex justify-between mt-6'>
+
+            <Button variant='outlined' size='large' className='flex-1 mr-3' color='warning'
+                onClick={() => { showPopup.value = false }}>
+                Discard
+            </Button>
+
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]'
+                color='warning' onClick={() => {
+                    onDelete(design._id)
+                    showPopup.value = false
+                }} >
+                Delete
             </Button>
 
         </div>
@@ -339,7 +392,8 @@ const renderAddStructureForm = (
                 Discard
             </Button>
 
-            <Button variant='contained' size='large' disabled={newStructureName.value === ''} className='flex-1 ml-3 bg-[#F1742E]'
+            <Button variant='contained' size='large' className='flex-1 ml-3 bg-[#F1742E]'
+                disabled={newStructureName.value.trim() === '' || !validateName(newStructureName.value)} 
                 color='warning' onClick={() => {
                     onAdd(newStructureName.value, parent)
                     showPopup.value = false

@@ -5,7 +5,7 @@ import { validateName } from '../../../../../utils/utils';
 
 
 const ProjectNameDetails = ({
-  details, isNameValid
+  details, isNameValid, saveState
 }: any) => {
   // const { state, projectContextAction } =useProjectContext();
 
@@ -16,6 +16,7 @@ const ProjectNameDetails = ({
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     details.value = { ...details.value, [name]: value }
+    if(saveState) saveState.value = true
   }
 
   const renderContent = useComputed(() => <Grid container spacing={2} justifyContent="space-between" className='mt-[4px]'>
