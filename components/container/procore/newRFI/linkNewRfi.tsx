@@ -4,13 +4,13 @@ import {
 } from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { Box, Button, TextField } from "@mui/material";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
-import { createRfi } from "../../../../services/procore";
+import { createRfi, linkIssueRfi, linkTaskRfi} from "../../../../services/procore";
 import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
@@ -34,7 +34,13 @@ const LinkNewRFI = (props: any) => {
     rfistage,
     scheduleImpactt,
     costImpacts,
-    specSectionn,
+    specSection,
+    issue,
+    task,
+    updatedselectedIssue,
+    handleCloseProcore,
+    getIssues,
+    getTasks
   } = props;
   const ButtonsContainer = styled(Box)({
     padding: "10px",
@@ -44,13 +50,13 @@ const LinkNewRFI = (props: any) => {
     alignItems: "center",
   });
   const [footerState, SetFooterState] = useState(true);
-  const [questionBody, setQuestionBody] = useState("");
   const [scheduleImpact, setScheduleImpact] = useState("");
   const [costImpact, setCostImpact] = useState("");
   const [attachments, setAttachments] = useState<File[]>();
+  const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const formikRef = useRef<FormikProps<any>>(null);
+  const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
   const onDrop = useCallback((files: File[]) => {}, []);
- 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const initialValues: {
     subject: string;
@@ -80,7 +86,7 @@ const LinkNewRFI = (props: any) => {
     responsible_contractor_id: null,
     drawing_number: "",
     question: {
-      body: "checking",
+      body: "",
       attachment: [],
     },
     specification_section_id: null,
@@ -99,10 +105,7 @@ const LinkNewRFI = (props: any) => {
     assignee_id: 10,
     draft: true,
   };
-
-  const handleQuestionBody = (e: any) => {
-    setQuestionBody(e.target.value);
-  };
+  
   const handleExternalSubmit = () => {
       formikRef.current?.submitForm();
     
@@ -131,22 +134,57 @@ const LinkNewRFI = (props: any) => {
   }) => {
     formData.schedule_impact.status = scheduleImpact;
     formData.cost_impact.status = costImpact;
-    formData.question.body = questionBody;
     createRfi(formData)
-    .then((response) => {
-      if (response) {
-        CustomToast("RFI Created successfully","success");
+  .then((response) => {
+    if (response) {
+      CustomToast("RFI Created successfully", "success");
+
+      if (issue) {
+    
+        linkIssueRfi(issue.project, issue._id, response.data.id)
+          .then((linkResponse) => {
+            if (linkResponse) {
+              CustomToast("RFI linked successfully", 'success');
+              getIssues(issue.structure)
+              handleCloseProcore();
+            }
+          })
+          .catch((linkError) => {
+            if (linkError) {
+              CustomToast("Linking RFI failed", 'error');
+            }
+          });
+      } else {
+        linkTaskRfi(task.project, task._id, response.data.id)
+          .then((linkResponse) => {
+            if (linkResponse) {
+              CustomToast("RFI linked successfully", 'success');
+              getTasks(task.structure)
+              handleCloseProcore();
+            }
+          })
+          .catch((linkError) => {
+            if (linkError) {
+              CustomToast("Linking RFI failed", 'error');
+            }
+          });
       }
-    })
-    .catch((error) => {
-      if (error) {
-        CustomToast("RFI creation failed","error");
-      }
-    });
-  };
+    }
+  })
+  .catch((error) => {
+    if (error) {
+      CustomToast("RFI creation failed", "error");
+    }
+  });
+  }
   const validationSchema = Yup.object().shape({
-    subject: Yup.string().required('Subject is required'),
+    subject: Yup.string().transform(removeSpaces) .required('Subject is required'),
     rfi_manager_id: Yup.number().nullable().required('select Rif manager'),
+    received_from_login_information_id  : Yup.number().nullable().required('select Received From'),
+    question: Yup.object().shape({
+      body: Yup.string().trim().required('Question is required'),
+      attachment: Yup.array(),
+    }),
    
    
   });
@@ -168,12 +206,23 @@ const LinkNewRFI = (props: any) => {
             innerRef={formikRef}
             validationSchema={validationSchema}
           >
-            {({  setFieldValue,errors, touched }) => (
+            {({ setFieldValue,errors, touched ,values }) => {
+              const allFieldsTrue = 
+               Object.values(values).every((value) =>{
+                if(values.subject!=="" && values.rfi_manager_id!==null && values.question.body !==""){
+                   return false;
+                }else{
+                  return true;
+                }
+              }
+                )
+              setIsAllFieldsTrue(allFieldsTrue)
+              return(
               <Form>
                 <div className=" px-1  overflow-y-auto calc-h84 mt-5 ">
                   <div>
                     <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                      SUBJECT <span className="text-red-500">*</span>
+                      SUBJECT <span className="text-border-yellow text-base text-[11px]"> *</span>
                     </label>
                     <div className="mt-1 border-grey-">
                       <Field
@@ -182,7 +231,7 @@ const LinkNewRFI = (props: any) => {
                         name="subject"
                         placeholder="subject"
                       ></Field>{errors.subject && touched.subject && (
-                        <div className="text-red-500 w-[182px]">{errors.subject}</div>
+                        <div className="text-border-yellow  w-[182px]">{errors.subject}</div>
                       )}
                     </div>
                   </div>
@@ -190,7 +239,7 @@ const LinkNewRFI = (props: any) => {
                     <div className="mt-1">
                       <label className="text-gray-700 font-medium text-[11px] mb-1">
                         RFI MANAGER
-                      </label><span className="text-red-500">*</span>
+                      </label><span className="text-border-yellow text-base  text-[11px]"> *</span>
                       <div className="border-grey">
                         <Field
                           required
@@ -212,7 +261,7 @@ const LinkNewRFI = (props: any) => {
                           ))}
                         </Field>
                         {errors.rfi_manager_id && touched.rfi_manager_id && (
-                        <div className="text-red-500 w-[182px]">{errors.rfi_manager_id}</div>
+                        <div className="text-border-yellow  w-[182px]">{errors.rfi_manager_id}</div>
                       )}
 
                       </div>
@@ -247,7 +296,7 @@ const LinkNewRFI = (props: any) => {
                     <div className="mt-1">
                       <label className="text-gray-700 font-medium text-[11px] mb-1">
                         RECEIVED FROM
-                      </label>
+                      </label><span className="text-border-yellow text-base text-[11px]"> *</span>
                       <div className="border-grey">
                         <Field
                           className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
@@ -267,6 +316,9 @@ const LinkNewRFI = (props: any) => {
                             </option>
                           ))}
                         </Field>
+                        {errors.received_from_login_information_id && touched.received_from_login_information_id && (
+                        <div className="text--border-yellow  w-[182px]">{errors.received_from_login_information_id}</div>
+                      )}
                       </div>
                     </div>
                     <div className="mt-1">
@@ -433,7 +485,6 @@ const LinkNewRFI = (props: any) => {
                         as="select"
                         value={costImpact}
                         onChange={(e: any) => {
-                          debugger;
                           setCostImpact(e.target.value);
                         }}
                       >
@@ -462,18 +513,25 @@ const LinkNewRFI = (props: any) => {
                   <div className="">
                     <label className=" text-gray-700 font-medium text-[11px] mb-1">
                       QUESTION
-                    </label>
+                    </label><span className="text-border-yellow text-base text-[11px]"> *</span>
                     <div className="mt-1">
                       <TextField
                         required
                         className=""
-                        name="question"
+                        name="question.body"
                         placeholder=""
                         type="text"
                         fullWidth
                         color="warning"
-                        onChange={handleQuestionBody}
-                      ></TextField>
+                        onChange={(e: any) => {
+                          setFieldValue(
+                            "question.body",
+                            e.target.value
+                          );
+                        }}
+                      ></TextField>{errors.question && touched.question && (
+                        <div className="text-border-yellow  w-[182px]">{errors.question.body}</div>
+                      )}
                     </div>
                   </div>
                   <div {...getRootProps()}>
@@ -501,11 +559,14 @@ const LinkNewRFI = (props: any) => {
                   </div>
                 </div>
               </Form>
-            )}
+              )
+            }}
+            
           </Formik>
         </BodyContainer>
         <ProcoreFooter
           handleExternalSubmit={handleExternalSubmit}
+          allFieldsTrue={isAllFieldsTrue}
         ></ProcoreFooter>
       </CustomTaskProcoreLinks>
     </>

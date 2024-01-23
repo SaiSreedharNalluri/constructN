@@ -1,9 +1,9 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {CustomTaskProcoreLinks,BodyContainer} from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
 import {  Checkbox, Grid, TextField } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-import { createSubmittal } from "../../../../services/procore";
+import { createSubmittal, linkIssueSubmittal, linkTaskSubmittal } from "../../../../services/procore";
 import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
@@ -18,10 +18,16 @@ const NewLinkSubmittal = (props: any) => {
     responsibleContractor,
     potentialDistMem,
     coastCodee,
+    issue,
+    task,
+    handleCloseProcore,
+     getIssues,
+     getTasks,
   } = props as any;
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [footerState, setfooterState] = useState(true);
   const [files, setFiles] = useState<File[]>([]);
+  const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const formikRef = useRef<FormikProps<any>>(null);
   const initialValues: {
     title: string;
@@ -104,6 +110,36 @@ const NewLinkSubmittal = (props: any) => {
       if (response) {
         CustomToast("Submittal Created successfully","success");
       }
+      if (issue) {
+        
+        linkIssueSubmittal(issue.project, issue._id, response.data.id)
+          .then((linkResponse) => {
+            if (linkResponse) {
+              CustomToast("Submittal linked successfully", 'success');
+              getIssues(issue.structure)
+              handleCloseProcore();
+            }
+          })
+          .catch((linkError) => {
+            if (linkError) {
+              CustomToast("Linking Submittal failed", 'error');
+            }
+          });
+      } else {
+        linkTaskSubmittal(task.project, task._id, response.data.id)
+          .then((linkResponse) => {
+            if (linkResponse) {
+              CustomToast("Submittal linked successfully", 'success');
+              getTasks(task.structure)
+              handleCloseProcore();
+            }
+          })
+          .catch((linkError) => {
+            if (linkError) {
+              CustomToast("Linking Submittal failed", 'error');
+            }
+          });
+      }
     })
     .catch((error) => {
       if (error) {
@@ -119,7 +155,7 @@ const NewLinkSubmittal = (props: any) => {
     handleInstance(closeNewRFI);
   };
   const validationSchema = Yup.object().shape({
-    number: Yup.string().required('Title is required'),
+    number: Yup.string().trim().required('Title is required'),
   
    
   });
@@ -134,7 +170,17 @@ const NewLinkSubmittal = (props: any) => {
             innerRef={formikRef}
             validationSchema={validationSchema}
           >
-            {({ errors, touched, setFieldValue }) => (
+             {({ setFieldValue,errors, touched ,values }) => {
+              const allFieldsTrue = Object.values(values).every((value) => {
+                if (values.number !== "") {
+                  return false;
+                } else {
+                  return true;
+                }
+              });
+              setIsAllFieldsTrue(allFieldsTrue)
+            
+              return(
               <Form>
                 <div className=" overflow-y-auto">
                   <Grid
@@ -186,12 +232,13 @@ const NewLinkSubmittal = (props: any) => {
                     </Grid>
                     <Grid item xs={6}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        NUMBER <span className="text-border-yellow">*</span>
+                        NUMBER <span className="text-border-yellow text-base"> *</span>
                       </label>
                       <Field
                         className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
                         name="number"
                         type="text"
+                        pattern="[0-9]+"
                         placeHolder=" number"
                       ></Field>{errors.number && touched.number && (
                         <div className="text-border-yellow w-[182px]">{errors.number}</div>
@@ -552,10 +599,13 @@ const NewLinkSubmittal = (props: any) => {
                   </Grid>
                 </div>
               </Form>
-            )}
+       )
+      }}
+      
           </Formik>
         </BodyContainer>
         <ProcoreFooter
+           allFieldsTrue={isAllFieldsTrue}
           handleExternalSubmit={handleExternalSubmit}
         ></ProcoreFooter>
       </CustomTaskProcoreLinks>

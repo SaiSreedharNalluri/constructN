@@ -1,10 +1,10 @@
-import { Field, Form, Formik, FormikProps } from "formik";
+import { Field, Form, Formik, FormikProps, useFormikContext } from "formik";
 import { Grid, TextField, Checkbox,} from "@mui/material";
 import { CustomTaskProcoreLinks, BodyContainer,} from "../../../divami_components/issue_detail/IssueDetailStyles";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { priorityData, statusData } from "../../../../utils/Procoreconstants";
-import { createObservation } from "../../../../services/procore";
+import { createObservation, linkIssueObservation,linkTaskObservation } from "../../../../services/procore";
 import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
@@ -21,6 +21,11 @@ const LinkNewObservation = (props: any) => {
     hazard,
     contributingBehavior,
     contributingCondition,
+    issue,
+    task,
+    handleCloseProcore,
+    getIssues,
+    getTasks
   } = props;
 
   const initialValues: {
@@ -63,7 +68,7 @@ const LinkNewObservation = (props: any) => {
   const [footerState, setfooterState] = useState(true);
   const formikRef = useRef<FormikProps<any>>(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
+  const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
  
@@ -74,12 +79,11 @@ const LinkNewObservation = (props: any) => {
   const onFileClick = (file: File) => {
     setSelectedFile(file);
   };
-  
+ 
   const handleExternalSubmit = () => {
-    if (formikRef.current) {
-      formikRef.current.submitForm();
-    }
+    formikRef.current?.submitForm();
   };
+
   const handleSubmit = (observation: {
     assignee_id: number | null;
     contributing_behavior_id: number | null;
@@ -104,11 +108,40 @@ const LinkNewObservation = (props: any) => {
       project_id,
       observation,
     };
-      console.log('res observation',requestBody)
     createObservation(requestBody)
     .then((response) => {
       if (response) {
         CustomToast("Observation Created successfully","success");
+      }
+      if (issue) {
+        // Call linkRfi API if issue is defined
+        linkIssueObservation(issue.project, issue._id, response.data.id)
+          .then((linkResponse) => {
+            if (linkResponse) {
+              CustomToast("Observation linked successfully", 'success');
+              getIssues(issue.structure)
+              handleCloseProcore();
+            }
+          })
+          .catch((linkError) => {
+            if (linkError) {
+              CustomToast("Linking observation failed", 'error');
+            }
+          });
+      } else {
+        linkTaskObservation(task.project, task._id, response.data.id)
+          .then((linkResponse) => {
+            if (linkResponse) {
+              CustomToast("Observation linked successfully", 'success');
+              getTasks(task.structure)
+              handleCloseProcore();
+            }
+          })
+          .catch((linkError) => {
+            if (linkError) {
+              CustomToast("Linking Observation failed", 'error');
+            }
+          });
       }
     })
     .catch((error) => {
@@ -118,13 +151,13 @@ const LinkNewObservation = (props: any) => {
     });
   };
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Title is required'),
+    name: Yup.string().trim().required('Title is required'),
     type_id: Yup.number().nullable().required('Type is not selected'),
-    status: Yup.string().required('status is not selected'),
-    description:Yup.string().required('Description is required'),
+    status: Yup.string().trim().required('status is not selected'),
+    description:Yup.string().trim().required('Description is required'),
    
   });
-
+  
   const handleBack = () => {
     let closeNewRFI: IprocoreActions = {
       action: "newCloseObservation",
@@ -144,7 +177,20 @@ const LinkNewObservation = (props: any) => {
             innerRef={formikRef}  
             validationSchema={validationSchema}
           >
-            {({ setFieldValue,errors, touched  }) => (
+
+            {({ setFieldValue,errors, touched ,values }) => {
+              const allFieldsTrue =
+               Object.values(values).every((value) =>{
+                if(values.name!=="" && values.type_id!==null && values.status!=="" && values.description!==""){
+                   return false;
+                }else{
+                  return true;
+                }
+              }
+                )
+              setIsAllFieldsTrue(allFieldsTrue)
+            
+              return(
               <Form>
                 <div className="px-1  overflow-y-auto calc-h84 mt-5">
                   <Grid
@@ -155,7 +201,7 @@ const LinkNewObservation = (props: any) => {
                   >
                     <Grid item xs={6}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        TYPE <span className="text-red-500">*</span>
+                        TYPE <span className="text-border-yellow text-base text-[11px]"> *</span>
                       </label>
                       <Field
                         required
@@ -178,12 +224,12 @@ const LinkNewObservation = (props: any) => {
                           </option>
                         ))}
                       </Field>{errors.type_id && touched.type_id && (
-                        <div className="text-red-500 w-[182px]">{errors.type_id}</div>
+                        <div className="text-border-yellow w-[182px]">{errors.type_id}</div>
                       )}
                     </Grid>
                     <Grid item xs={6}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        STATUS <span className="text-border-yellow">*</span>
+                        STATUS <span className="text-border-yellow text-base text-[11px]"> *</span>
                       </label>
                       <Field
                         required
@@ -218,7 +264,7 @@ const LinkNewObservation = (props: any) => {
                   >
                     <Grid item xs={2}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        TITLE  <span className="text-border-yellow">*</span>
+                        TITLE  <span className="text-border-yellow text-base text-[11px]">*</span>
                       </label>
                       <Field
                         className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
@@ -329,12 +375,12 @@ const LinkNewObservation = (props: any) => {
                         className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
                         name="assignee_id"
                         as="select"
-                        onChange={(e: any) =>
+                        onChange={(e: any) =>{
                           setFieldValue(
                             "assignee_id",
                             parseFloat(e.target.value)
                           )
-                        }
+                        }}
                       >
                         <option value="">Select a person</option>
                           {rfiManager.map((option: any) => (
@@ -487,7 +533,7 @@ const LinkNewObservation = (props: any) => {
                   <Grid container className="pt-[5px]">
                     <Grid item xs={15}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        DESCRIPTION <span className="text-border-yellow">*</span>
+                        DESCRIPTION <span className="text-border-yellow text-base text-[11px]"> *</span>
                       </label>
                       <TextField
                         fullWidth
@@ -559,10 +605,14 @@ const LinkNewObservation = (props: any) => {
                   )}
                 </div>
               </Form>
-            )}
+              )
+            }}
+            
           </Formik>
+
         </BodyContainer>
         <ProcoreFooter
+        allFieldsTrue={isAllFieldsTrue}
           handleExternalSubmit={handleExternalSubmit}
         ></ProcoreFooter>
       </CustomTaskProcoreLinks>
