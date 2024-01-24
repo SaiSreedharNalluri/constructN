@@ -668,6 +668,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
         {apiPoints?.length > 0 ? <OutlinedInput
 				size="small"
 				placeholder="Search"
+        onKeyDown={(e)=> e.stopPropagation()}
 				onChange={(e) => setSearch(e.target.value)}
 				fullWidth
 			/>: null}
