@@ -1312,7 +1312,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                 onChange={_onAssetDetailsChange}/>}
 
                                             {!selectedAsset && isSupportUser ? <div className='flex py-1'>
-                                                <EmailButton projectId ={params['projectId'] as string} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD-MMM-yyyy')} structure={LightBoxInstance?.viewerData()?.structure?.name} category={selectedCategory?.name} />
+                                                <EmailButton projectId ={params['projectId'] as string} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} structure={LightBoxInstance?.viewerData()?.structure?.name} category={selectedCategory?.name} />
                                             </div>: null}
 
                                         </div>
