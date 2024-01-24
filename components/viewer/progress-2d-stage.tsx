@@ -260,7 +260,7 @@ function Progress2DStage(
 
                     <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
-                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics.toFixed(1)} / {edit? <OutlinedInput type='number' size='small' value={+assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } onKeyDown={(e)=>{
+                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics.toFixed(1)} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(e.target.value) } onKeyDown={(e)=>{
                         if(!edit) return;
                         if(e.key === 'Enter'){
                             editCallback();
