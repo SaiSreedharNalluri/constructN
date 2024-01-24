@@ -44,7 +44,7 @@ export const PROCORE ={
 
     CLIENT_ID : '51ca7ddce0a054f6cd1317d2890a1935bda0c07aaf10847a216fa913f777f8fa',
 
-    REDIRECT_URI : 'http://localhost:3000/login-sso-procore',
+    REDIRECT_URI : 'https://app.qa.constructn.ai/login-sso-procore',
 
     GRANT_TYPE : 'authorization_code',
 }

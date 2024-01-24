@@ -259,7 +259,7 @@ const SignInPage = () => {
             <p className="flex justify-center">or</p>
             <ProcoreButton onClick={handleProcoreButtonClick}>
             <ProcoreLogo src={procore} alt="logo" />
-            <TextContainer>Sign In with procore</TextContainer>
+            <TextContainer>Sign In with Procore</TextContainer>
           </ProcoreButton>
 
             <NewUserDiv>
