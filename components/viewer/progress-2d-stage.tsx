@@ -162,7 +162,7 @@ function Progress2DStage(
 
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
 
-    const [assetValue , totalAssetValue]= useState(stage.totalMeasurement || totalValueMetrics)
+    const [assetValue , totalAssetValue]= useState<string |  number>((stage.totalMeasurement || totalValueMetrics).toFixed(1))
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
@@ -174,9 +174,9 @@ function Progress2DStage(
 
     const getProgress = (): number | number[] => {
 
-        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (assetValue|| 1))
+        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (+assetValue|| 1))
 
-        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (assetValue || 1))
+        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (+assetValue || 1))
 
         if(!compare) return baseProgress
 
@@ -184,7 +184,7 @@ function Progress2DStage(
     }
 
     const editCallback = async () =>{
-        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: assetValue }, setLoading, assetValue);
+        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: +assetValue }, setLoading, +assetValue);
         refetchCategories && refetchCategories();
         setEdit(false);
     }
@@ -260,7 +260,7 @@ function Progress2DStage(
 
                     <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
-                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } onKeyDown={(e)=>{
+                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics.toFixed(1)} / {edit? <OutlinedInput type='number' size='small' value={+assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } onKeyDown={(e)=>{
                         if(!edit) return;
                         if(e.key === 'Enter'){
                             editCallback();
