@@ -149,6 +149,8 @@ function Progress2DStage(
         setLoading: Dispatch<SetStateAction<boolean>>
 
     }) {
+    
+    const numberFormatter = new Intl.NumberFormat('en-US',{ maximumFractionDigits: 1 });
 
     const userObj: any = getCookie('user')
 
@@ -260,7 +262,7 @@ function Progress2DStage(
 
                     <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
-                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics.toFixed(1)} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(e.target.value) } onKeyDown={(e)=>{
+                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{numberFormatter.format(+totalCompletedMetrics)} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(e.target.value) } onKeyDown={(e)=>{
                         if(!edit) return;
                         if(e.key === 'Enter'){
                             editCallback();
@@ -268,7 +270,7 @@ function Progress2DStage(
                         if(e.key === 'Escape'){
                             setEdit(false);
                         }
-                        }} /> : assetValue} {edit? null: stage.uom}</Typography>
+                        }} /> : numberFormatter.format(+assetValue)} {edit? null: stage.uom}</Typography>
                         {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
                     </div>
                 </div>
