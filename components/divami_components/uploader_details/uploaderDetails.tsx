@@ -278,6 +278,7 @@ const UploaderDateDetails: React.FC<any> = () => {
              <DatePicker
               className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
               onChange={(date) => handleDateChange(date)}
+              selected={uploaderState.date}
               disabled={!uploaderState.structure?.name}
               maxDate={maxAllowedDate}
               showPopperArrow={false}
