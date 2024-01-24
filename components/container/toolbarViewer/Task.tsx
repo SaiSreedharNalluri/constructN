@@ -38,6 +38,7 @@ import { getTimeInProjectTimezone } from "../../../utils/utils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { MqttConnector } from "../../../utils/MqttConnector";
 import { useRouter } from "next/router";
+import filterdListIcon from "../../../public/divami_icons/FilteredList.svg"
 
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
@@ -400,16 +401,22 @@ function Task({
           onClick={() => {
             handleViewTaskList();
           }}>
-          <CameraIcon
-            src={fileTextIcon}
-            width={12}
-            height={12}
-            alt="Arrow"
-          />
+           {filterState.numberOfFilters>=1?(
+            <CameraIcon
+              src={filterdListIcon}
+              width={12}
+              height={12}
+              alt="Arrow"
+            />):(<CameraIcon
+              src={fileTextIcon}
+              width={12}
+              height={12}
+              alt="Arrow"
+            />)}
         </IssuesSectionFileImg>
       </Tooltip>
 
-      <Tooltip title={showHideTask ? "Tasks Visible" : "Tasks Hidden"}>
+      <Tooltip title={showHideTask ? "Hide Task" : "Show Task"}>
         <IssuesSectionClipImg
           onClick={() => {
             toggleTaskVisibility();

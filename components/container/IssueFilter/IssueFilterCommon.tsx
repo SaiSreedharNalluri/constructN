@@ -611,8 +611,10 @@ const FilterCommon: React.FC<IProps> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees(assignee);
     SetFilterState(temp);
+    if(issueFilterState.numberOfFilters >=1){
     let handleIssueCloseFilter : IToolbarAction = { data:"", type: "closeFilterOverlay" };
     toolClicked(handleIssueCloseFilter)
+    }
     // closeFilterOverlay();
   };
 
