@@ -12,7 +12,7 @@ import fileTextIssue from "../../../public/divami_icons/fileTextIssue.svg";
 import  IssueListing  from "../issueListing/IssueList";
 import { styled } from "@mui/system";
 import IssueList from "../issueListing/IssueList";
-
+import filterdListIcon from "../../../public/divami_icons/FilteredList.svg"
 import {
   IssueBox,
   IssuesSectionPlusImg,
@@ -377,16 +377,22 @@ function Issues({
                 handleViewTaskList();
                 
               }}>
+            {filterState.numberOfFilters>=1 ?(
             <CameraIcon
+              src={filterdListIcon}
+              width={12}
+              height={12}
+              alt="Arrow"
+            />):(<CameraIcon
               src={fileTextIcon}
               width={12}
               height={12}
               alt="Arrow"
-            />
+            />)}
           </IssuesSectionFileImg>
         </Tooltip>
 
-        <Tooltip title={showHideIssue ? "Issues Visible" : "Issues Hidden"}>
+        <Tooltip title={showHideIssue ? "Hide Issue" : "Show Issue"}>
           <IssuesSectionClipImg  onClick={() => {
                   toggleIssueVisibility();
                   
@@ -415,14 +421,14 @@ function Issues({
           anchor={"right"}
           open={openDrawer}
           onClose={() => {
-            // setIssueList([
-            //   ...issuesList.sort((a: any, b: any) => {
-            //     return (
-            //       new Date(b.createdAt).valueOf() -
-            //       new Date(a.createdAt).valueOf()
-            //     );
-            //   }),
-            // ]);
+            setIssueList([
+              ...issuesList.sort((a: any, b: any) => {
+                return (
+                  new Date(b.createdAt).valueOf() -
+                  new Date(a.createdAt).valueOf()
+                );
+              }),
+            ]);
             setOpenDrawer((prev: any) => !prev);
           }}
         >

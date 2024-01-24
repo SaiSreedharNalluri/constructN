@@ -608,8 +608,10 @@ const TaskFilterCommon: React.FC<any> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees([assignees]);
     SetFilterState(temp);
+    if(taskFilterState.numberOfFilters >=1){
     let handleIssueCloseFilter : IToolbarAction = { data:"", type: "closeTaskOverlay" };
     toolClicked(handleIssueCloseFilter)
+    }
     // closeTaskFilterOverlay();
   };
 
