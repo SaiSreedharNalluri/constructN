@@ -52,7 +52,7 @@ const LinkNewObservation = (props: any) => {
     assignee_id: 10,
     contributing_behavior_id: null,
     contributing_condition_id: null,
-    description: issue?.description || task.description,
+    description: issue?.description || task?.description||"",
     due_date: "",
     hazard_id: null,
     personal: false,

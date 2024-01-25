@@ -72,7 +72,7 @@ const NewLinkSubmittal = (props: any) => {
     lead_time: null,
     required_on_site_date: "",
     private: false,
-    description: issue?.description || task.description,
+    description: issue?.description || task?.description || "",
   };
   const onDrop = useCallback((acceptedFiles: any) => {
     setFiles(acceptedFiles);

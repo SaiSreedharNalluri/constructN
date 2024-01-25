@@ -96,7 +96,7 @@ const LinkNewRFI = (props: any) => {
     responsible_contractor_id: null,
     drawing_number: "",
     question: {
-      body:issue?.description || task.description,
+      body:issue?.description || task?.description ||" ",
       attachment: [],
     },
     specification_section_id: null,
