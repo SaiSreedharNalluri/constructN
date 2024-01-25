@@ -1256,7 +1256,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
 
 
   function renderMinimap  (count:number)  {
-    if ( ( currentViewerData.currentSnapshotBase.reality?.length &&currentViewerData.currentSnapshotBase.reality?.length <= 0)) {
+    if ( ( currentViewerData.currentSnapshotBase?.reality?.length &&currentViewerData.currentSnapshotBase.reality?.length <= 0)) {
       return;
     }
     if(currentViewerData.structure.designs)
@@ -2121,7 +2121,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
         <div id="TheView" className="relative basis-1/2 flex grow shrink">
           {isInitReady && renderViewer(1)}
           {isInitReady && renderMinimap(1)}
-          {isInitReady && tmcBase}
+          {isInitReady && currentViewerData.currentSnapshotBase && tmcBase}
           {/* <TimeLineComponent currentSnapshot={currentViewerData.currentSnapshotBase} snapshotList={currentViewerData.snapshotList} snapshotHandler={setCurrentSnapshot} isFullScreen={isFullScreenMode} getSnapshotList={getSnapshotList} setPrevList={setPrevList}
         setNextList={setNextList}
         totalPages={totalPages}
