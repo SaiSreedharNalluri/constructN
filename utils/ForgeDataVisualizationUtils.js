@@ -7,6 +7,13 @@ import {
 
   } from './ViewerDataUtils';
 
+const publish = (eventName, data) => {
+
+    const event = new CustomEvent(eventName, { detail: data })
+
+    document.dispatchEvent(event)
+}
+
 export class ForgeDataVisualization {
     static EXTENSION_ID = "Autodesk.DataVisualization";
     constructor(viewer, dataVisualizationExtension) {
@@ -358,7 +365,7 @@ export class ForgeDataVisualization {
         let result = this.viewer.clientToWorld(canvasX, canvasY);
 
         if (result) {
-            let viewableData = this.getViewableData();
+            let viewableData = this.getViewableData(type);
             let viewableStyle = this.getViewableStyle(type);
             let dbIdObject = {
                 dbId: ++this.tempViewableLength,
@@ -403,6 +410,7 @@ export class ForgeDataVisualization {
     
     onSpriteClicked(event) {
         const targetDbId = event.dbId;
+        publish('viewer-clicked', event.dbId);
 
         // console.log("Inside data viz utils: selected dbId: ", event);
         // console.log(`Sprite clicked: ${this.dbIdMap[targetDbId].name}`);

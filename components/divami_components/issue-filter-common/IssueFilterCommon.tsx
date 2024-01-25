@@ -18,8 +18,6 @@ import {
   HeaderLeftSectionText,
   HeaderRightSection,
   HeaderRightSectionResetIcon,
-  HeaderRightSectionResetText,
-  HeaderRightSectionCancel,
   FilterCardContainer,
   FilterCardTitle,
   FilterCardTitleText,
@@ -602,7 +600,7 @@ const FilterCommon: React.FC<IProps> = ({
     });
     setStartData(DATE_PICKER_DATA);
     setDueData(DATE_PICKER_DATA);
-    setAssignees([assignees]);
+    setAssignees(assignee);
     SetFilterState(temp);
 
     closeFilterOverlay();
@@ -628,28 +626,17 @@ const FilterCommon: React.FC<IProps> = ({
              </HeaderLeftSectionText>
            </HeaderLeftSection>
            <HeaderRightSection>
-             <HeaderRightSectionResetIcon>
+             <HeaderRightSectionResetIcon className="flex items-center" onClick={() => {
+                   onReset();
+                 }}>
                <RefreshIcon
                  src={newRefreshIcon}
                  alt="reset"
-                 onClick={() => {
-                   onReset();
-                 }}
                  data-testid="filter-refresh"
                />
-               {/* <Image
-                 src={ResetIcon}
-                 alt="reset"
-                 onClick={() => {
-                   onReset();
-                 }}
-               /> */}
+               <label className="ml-[10px] br-[10px] border-solid bordder-[#d9d9d9] pr-[15px] font-sans font-normal text-[#F1742E]">Reset</label>
              </HeaderRightSectionResetIcon>
-             <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
-             {/* <Image src={closeIcon} alt="reset"   onClick={() => {
-             handleClose();
-             }} /> */}
-             <HeaderRightSectionCloseIcon>
+            <HeaderRightSectionCloseIcon>
              <CloseIcon
                onClick={() => {
                  handleClose();

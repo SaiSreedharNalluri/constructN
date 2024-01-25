@@ -36,7 +36,7 @@ export const addCapture = (projectId:string,formValue:{
 }) => {
     try {
       const response = await instance
-        .post<IBaseResponse<ICapture>>(`${process.env.NEXT_PUBLIC_HOST}/projects/${projectId}/captures?populate=jobId&createNew=true`, formValue, {
+        .post<IBaseResponse<ICapture>>(`${API.BASE_URL}/projects/${projectId}/captures?populate=jobId&createNew=true`, formValue, {
           headers: authHeader.authHeader(),
         });
       return response.data;

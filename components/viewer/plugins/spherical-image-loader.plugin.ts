@@ -50,6 +50,8 @@ export class SphericalImageLoader extends RealityBasePlugin {
 
     private _initSphericalImage = (sphericalImage: any) => {
 
+        this._scene.background = new THREE.Color(0xffffff);
+
         this._textureLoader.load(sphericalImage.imageName, texture => {
 
             this._imageDimensions = { width: texture.image.naturalWidth, height: texture.image.naturalHeight }
@@ -79,7 +81,11 @@ export class SphericalImageLoader extends RealityBasePlugin {
 
                 this._initSphericalImage(sphericalImage)
 
+                return;
+
             }
+
+            this._scene.children[0].visible = false;
 
             this._textureLoader.load(sphericalImage.imageName, texture => {
 
@@ -96,6 +102,8 @@ export class SphericalImageLoader extends RealityBasePlugin {
                     this._sphericalMesh.material.dispose()
 
                     this._sphericalMesh.material = sphereMaterial
+                    
+                    this._scene.children[0].visible = true;
 
                     this._sphericalMesh.material.needsUpdate = true
 

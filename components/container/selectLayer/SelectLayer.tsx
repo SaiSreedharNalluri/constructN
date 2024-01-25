@@ -29,6 +29,7 @@ import CheckedIcon from "../../../public/divami_icons/checked.svg";
 import UnCheckedIcon from "../../../public/divami_icons/unchecked.svg";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { MqttConnector } from "../../../utils/MqttConnector";
+import { ILayer } from "../../../models/IReality";
 
 const SelectLayer = ({
   title,
@@ -36,8 +37,6 @@ const SelectLayer = ({
   onCloseHandler,
   optionsList,
   onSelect,
-  selectedLayersList,
-  setActiveRealityMap,
   initData,
   layersUpdated,
 }: any) => {
@@ -49,32 +48,25 @@ const SelectLayer = ({
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
-  const LayerUpdate=(currentLayersList:any)=>{
+  // const LayerUpdate=(currentLayersList:any)=>{
     
-      console.log("node_name",JSON.stringify(initData.currentLayersList))
-      const timeoutId = setTimeout(() => {
-      conn?.publishMessage("abc", `{"type": "setViewLayers", "data": ${JSON.stringify(initData.currentLayersList)}}`);
-      },4000)
-  }
+  //     console.log("node_name",JSON.stringify(initData.currentLayersList))
+  //     const timeoutId = setTimeout(() => {
+  //     conn?.publishMessage("abc", `{"type": "setViewLayers", "data": ${JSON.stringify(initData.currentLayersList)}}`);
+  //     },4000)
+  // }
   useEffect(() => {
     setFilteredTreeViewData(treeViewData);
   }, [treeViewData]);
   useEffect(() => {
     setTreeViewData(getTreeViewDataForLayers(optionsList));
   }, [optionsList, layersUpdated]);
-  const renderTreeNode = (node: RenderTree) => (
+  const renderTreeNode = (node: ILayer) => (
     <TreeItemLabelContainer>
       <Checkbox
         icon={<Image src={UnCheckedIcon} alt="" />}
         checkedIcon={<Image src={CheckedIcon} alt="" />}
         size="small"
-        checked={
-          checked
- 
-           // selectedLayersList?.length && selectedLayersList.includes(node.name)
-           //   ? true
-           //   : false
-         }
         onChange={(e) => {
           // const arr = handleSelection(treeViewData, node.id);
           // setTreeViewData([...arr]);
@@ -151,29 +143,31 @@ const SelectLayer = ({
           //   console.log(newTreeViewData, "newtrrreeview");
           //   return newTreeViewData;
           // });
-          // onSelect(e, node.name, node);
+        onSelect(e, node.name, node);
          
-          LayerUpdate(initData.currentLayersList)
+          // LayerUpdate(initData.currentLayersList)
          
         setChecked(!checked)
          
         }}
-        
+        checked={
+          node.isSelected
+        }
         
         
       />
       <TreeLabelContainer>{node.name}</TreeLabelContainer>
     </TreeItemLabelContainer>
   );
-  const renderTree = (nodes: RenderTree) => {
+  const renderTree = (nodes: ILayer,index:number) => {
     return (
       <StyledTreeItem
-        key={nodes.id}
-        nodeId={nodes.id}
+        key={index+nodes.name}
+        nodeId={nodes.name}
         label={renderTreeNode(nodes)}
       >
         {Array.isArray(nodes.children)
-          ? nodes.children.map((node) => renderTree(node))
+          ? nodes.children.map((node,index) => renderTree(node,index))
           : null}
       </StyledTreeItem>
     );
@@ -199,7 +193,7 @@ const SelectLayer = ({
   };
 
   return (
-    <SelectLayerContainer openSelectLayer={openselectlayer}>
+    <SelectLayerContainer openselectlayer={openselectlayer}>
       <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon
@@ -225,14 +219,16 @@ const SelectLayer = ({
           }}
         />
       </SearchContainer>
+     
       <TreeViewContainer>
         <StyledTreeView
           aria-label="rich object"
-          // defaultCollapseIcon={<RemoveIcon />}
-          // defaultExpandIcon={<AddIcon />}
+          //defaultCollapseIcon={<RemoveIcon />}
+          //defaultExpandIcon={<AddIcon />}
         >
-        
-          {initData?.currentLayersList.map((eachNode:any) => renderTree(eachNode))}
+
+          {initData?.currentLayersList.map((eachNode:ILayer,index:number) => {
+            return renderTree(eachNode,index)})}
         </StyledTreeView>
       </TreeViewContainer>
     </SelectLayerContainer>

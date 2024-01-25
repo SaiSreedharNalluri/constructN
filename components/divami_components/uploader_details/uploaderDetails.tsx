@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { ChildrenEntity, IStructure } from "../../../models/IStructure";
-import {
-  getStructureHierarchy,
-  getStructureList,
-} from "../../../services/structure";
-import { CustomToast } from "../custom-toaster/CustomToast";
 import { useRouter } from "next/router";
-import { getSectionsList } from "../../../services/sections";
-import { AxiosResponse } from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SectionList from "../../container/sectionList";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
-import { getProjectDetails } from "../../../services/project";
-import { IProjects } from "../../../models/IProjects";
 import { IJobs, JobStatus } from "../../../models/IJobs";
 import { ICapture } from "../../../models/ICapture";
 import { getTheProjectDateAndTime, setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-import { getStructureIdFromModelOrString } from "../../../utils/utils";
-
 import { TruncatedString } from "../../../utils/utils";
 import { TooltipText } from "../side-panel/SidePanelStyles";
+import moment from "moment";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 const UploaderDateDetails: React.FC<any> = () => {
   const { state: appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
@@ -107,20 +98,20 @@ const UploaderDateDetails: React.FC<any> = () => {
       //   );
       // });
 
-      const errorJobs = uploaderState.pendingUploadJobs.filter((job, index) => {
-        return job.status === JobStatus.uploadFailed
-      })
-      const combinedJobs = uploaderState.pendingProcessJobs.concat(errorJobs)
-      const filteredPendingProcessJobs = combinedJobs.filter((job) => {
-        return (
-          getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
-          new Date(job.date).toLocaleDateString() ===
-          uploaderState?.date?.toLocaleDateString()
-        );
-      });
+      // const errorJobs = uploaderState.pendingUploadJobs.filter((job, index) => {
+      //   return job.status === JobStatus.uploadFailed
+      // })
+      // const combinedJobs = uploaderState.pendingProcessJobs.concat(errorJobs)
+      // const filteredPendingProcessJobs = combinedJobs.filter((job) => {
+      //   return (
+      //     getStructureIdFromModelOrString(job.structure) === uploaderState.structure?._id &&
+      //     new Date(job.date).toLocaleDateString() ===
+      //     uploaderState?.date?.toLocaleDateString()
+      //   );
+      // });
 
-      setFilteredJobs(filteredPendingProcessJobs);
-      console.log("filtered", filteredPendingProcessJobs);
+      // setFilteredJobs(filteredPendingProcessJobs);
+      // console.log("filtered", filteredPendingProcessJobs);
     }
   }, [
     uploaderState.pendingProcessJobs,
@@ -157,7 +148,7 @@ const UploaderDateDetails: React.FC<any> = () => {
       <div className="flex">
         <div className="pr-[14px] mt-[18px] w-[75%]" >
           <p className="pr-2 font-sans text-[#101F4C]  font-semibold text-sm my-[4px]">
-            Section Name
+            View Name
           </p>
           <div
             className="w-full border-t border-solid border-[#F1742E] h-[1px]"
@@ -201,7 +192,7 @@ const UploaderDateDetails: React.FC<any> = () => {
                                 Capture Date
                               </th>
                               <th>
-                                Uploaded on
+                                Upload Date
                               </th>
                               <th>
                                 Status
@@ -221,13 +212,13 @@ const UploaderDateDetails: React.FC<any> = () => {
                                     {
                                       job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
                                         <div>
-                                          {setTheFormatedDate((job.captures[0] as ICapture).captureDateTime)}
+                                          {getTheProjectDateAndTime(setTheFormatedDate((job.captures[0] as ICapture).captureDateTime))}
                                         </div>
                                       ) : ('-')
                                     }
                                   </td>
                                   <td className="p-1 ">
-                                    {getTheProjectDateAndTime(job.updatedAt)}
+                                    {getTheProjectDateAndTime(job.createdAt)}
                                   </td>
                                   <td
                                     style={{
@@ -284,13 +275,16 @@ const UploaderDateDetails: React.FC<any> = () => {
           <div
             className="pt-2"
           >
-            <DatePicker
+             <DatePicker
               className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
-              placeholderText="MM/DD/YYYY"
-              selected={uploaderState.date}
               onChange={(date) => handleDateChange(date)}
               disabled={!uploaderState.structure?.name}
               maxDate={maxAllowedDate}
+              showPopperArrow={false}
+              customInput={<div className="custom-date-picker-input">
+              <input className="outline-none" placeholder="DD/MM/YYYY" type="text" value={uploaderState.date===undefined ? '' :moment(uploaderState.date).format('DD MMM,YYYY')} readOnly/>
+              <CalendarMonthIcon className="calendar-icon" />
+            </div>}
             />
           </div>
           {!uploaderState.structure?.name && (

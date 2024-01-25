@@ -2,6 +2,12 @@ import { autodeskAuth } from "../services/forgeService";
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 import { applyTM, isMobile } from "./ViewerDataUtils";
 
+const publish = (eventName, data) => {
+  const event = new CustomEvent(eventName, { detail: data })
+  document.dispatchEvent(event)
+
+}
+
 export class ForgeInstance {
 
   constructor(viewerId) {
@@ -691,6 +697,7 @@ export const ForgeViewerUtils = function () {
             fov: true,
           });
           _viewer.navigation.setIsLocked(true);
+          publish("movement-locked",true);
         }
 
         if (_viewer.getExtension("Autodesk.BimWalk")) {
@@ -799,6 +806,8 @@ export const ForgeViewerUtils = function () {
       _bimWalkExtn = _viewer.getExtension(parameter.extensionId);
       // disable the same post load
       _bimWalkExtn.tool.navigator.enableGravity(false)
+    } else if(parameter.extensionId === "Autodesk.Measure"){
+      _viewer.prefs.set(Autodesk.Viewing.Private.Prefs.DISPLAY_UNITS, 'ft-and-decimal-in');
     }
   };
 

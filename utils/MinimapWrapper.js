@@ -9,6 +9,13 @@ import {
 } from './ViewerDataUtils';
 import { ForgeDataVisualization } from "./ForgeDataVisualizationUtils";
 import PointTool from './Tools';
+
+const publish = (eventName, data) => {
+  const event = new CustomEvent(eventName, { detail: data })
+  document.dispatchEvent(event)
+
+}
+
 export class ForgeMinimapInstance {
 
   constructor(viewerId) {
@@ -420,7 +427,7 @@ export const MinimapUtils = () => {
       if(_dataVizUtils) _dataVizUtils.updateNavigator(target, yaw);
       _navPosition = target
       _navRotation = yaw
-      if (isMobile()) {
+      if (isMobile() || !_viewer?.navigation?.isPointVisible(_toLocalPosition(_navPosition))) {
         let z = _viewer.getState({ viewport: true }).viewport.eye[2]
         let localPos = _toLocalPosition(position);
         _viewer.navigation.setPosition({

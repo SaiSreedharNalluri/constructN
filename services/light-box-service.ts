@@ -83,11 +83,7 @@ class LightBox {
 
     private deriveEntries() {
 
-        const snapshots = this._viewerData['snapshots']
-
-        if(snapshots && snapshots.length > 0) {
-
-            const modelData: { [key: string]: any[] } = {}
+        const modelData: { [key: string]: any[] } = {}
 
             if(this._viewerData && this._viewerData.structure.designs) {
 
@@ -96,22 +92,27 @@ class LightBox {
                     modelData[Key] = Value as any[]
                 }
 
-                for(const [Key, Value] of Object.entries(this._viewerData['snapshotBase'].realities)) {
+                if(this._viewerData['snapshotBase']?.realities){
+                    for(const [Key, Value] of Object.entries(this._viewerData['snapshotBase'].realities)) {
 
-                    modelData[Key] = Value as any[]
+                        modelData[Key] = Value as any[]
+                    }
                 }
             }
 
-            if(snapshots.length > 1 && this._viewerData['snapshotCompare']) {
+
+
+            if(this._viewerData['snapshotCompare']?.realities){
 
                 for (const [Key, Value] of Object.entries(this._viewerData['snapshotCompare'].realities)) {
 
                     modelData[`${Key}Compare`] = Value as any[]
                 }
+
             }
 
             this._viewerData['modelData'] = modelData
-        }
+
     }
 
     public getViewTypes(): string[] {

@@ -103,7 +103,7 @@ export default function Progress2DToolbar({
 
             <div className='ml-2'></div>
 
-            <AssetCategoryDatePicker 
+            {snapshotBase ? <AssetCategoryDatePicker 
             
                 snapshots={LightBoxInstance.viewerData().snapshots} 
                 
@@ -111,11 +111,11 @@ export default function Progress2DToolbar({
 
                 onChangeToDate={onSnapshotBaseChange}
                 
-                onChangeFromDate={onSnapshotCompareChange}/>
+                onChangeFromDate={onSnapshotCompareChange}/> : null}
 
             <div className='ml-2 flex-1'></div>
 
-            <div className='ml-2'>
+            {snapshotBase ? <div className='ml-2'>
 
                 <FormControlLabel control={<Checkbox color='warning' checked={isCompare} size='small' />} onChange={_onCompareChange} label='Compare'
                 
@@ -123,7 +123,7 @@ export default function Progress2DToolbar({
                 
                 sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Open Sans' } }}  />
 
-            </div>
+            </div>: null}
 
         </Box>
         

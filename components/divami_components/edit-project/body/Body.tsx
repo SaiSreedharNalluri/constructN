@@ -23,7 +23,7 @@ const Body = ({ setCanBeDisabled, editData, handleFormData,setIsValidate,validat
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(EDIT_PROJECT_FORM_CONFIG);
   const [projectTypes, setProjectTypes] = useState([]);
-  const router = useRouter();
+  const router = useRouter();  
   useEffect(() => {
     if (router.isReady) {
       getProjectTypes()
@@ -55,21 +55,22 @@ const Body = ({ setCanBeDisabled, editData, handleFormData,setIsValidate,validat
           if (item.id === "utm_value") {
             return {
               ...item,
-              defaultValue: editData?.utm || " ",
+              isDisabled: true,
+              defaultValue: editData?.utm?.zone || " ",
             };
           }
           if (item.id === "latitude") {
             return {
               ...item,
               isDisabled: true,
-              defaultValue: editData?.location[0] || " ",
+              defaultValue: editData?.location?.coordinates[1] || 0,
             };
           }
           if (item.id === "longitude") {
             return {
               ...item,
               isDisabled: true,
-              defaultValue: editData?.location[1] || " ",
+              defaultValue: editData?.location?.coordinates[0] || 0,
             };
           }
           if (item.id === "projectType") {

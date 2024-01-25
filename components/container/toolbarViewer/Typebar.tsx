@@ -26,7 +26,6 @@ const Typebar = ({
   initData
 }: any) => {
   const customLogger = new CustomLoggerClass();
-  console.log("ini",initData)
   return (
     <ClickAwayListener
       onClickAway={() => {
@@ -34,9 +33,12 @@ const Typebar = ({
       }}
     >
       <ContainerDiv>
-      <TypeParentCont onClick={()=>{ customLogger.logInfo("ToolBar - Change View Type");onListClick()}}>
-          <TypesTitle>
+        <TypeParentCont onClick={() => { customLogger.logInfo("ToolBar - Change View Type"); onListClick() }}>
+          {/* <TypesTitle>
             {selectedValue ? "Type: " + selectedValue : "Select Type"}
+          </TypesTitle> */}
+          <TypesTitle>
+            {selectedValue === "pointCloud" ? "Type: Reality"  : selectedValue === "orthoPhoto" ? "Type: Map" : "Type: " + selectedValue || "Select Type"}
           </TypesTitle>
           <TypeArrowIconDiv>
             {/* <Image src={downArrowIcon} width={12} height={12} alt="Arrow" /> */}
@@ -45,7 +47,7 @@ const Typebar = ({
         </TypeParentCont>
         <SelectLayersWrapper typeOfWindow="type">
           <SelectTypesList
-          initData={initData}
+            initData={initData}
             openselectlayer={openList}
             title={"Select Type"}
             onCloseHandler={() => {

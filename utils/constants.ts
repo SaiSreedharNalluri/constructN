@@ -11,10 +11,6 @@ export const roleData = [
   { id: "collaborator", name: "Collaborator" },
   { id: "viewer", name: "Viewer" },
 ];
-export const userNotificationData = [
-  { id: 1, name: "Unread" },
-  { id: 2, name: "All" },
-];
 export const userNotificationTypes = [
   { id: "All", name: "All" },
   { id: "Project", name: "Project" },
@@ -22,4 +18,8 @@ export const userNotificationTypes = [
   { id: "Task", name: "Task" },
   { id: "Snapshot", name: "Capture" },
   // { id: "Tag", name: "Tag" },
+];
+export const userNotificationData = [
+  { id: 1, name: 'Unread' },
+  { id: 2, name: 'All' },
 ];

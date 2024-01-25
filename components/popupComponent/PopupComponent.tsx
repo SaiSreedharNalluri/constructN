@@ -55,14 +55,15 @@ export interface DialogTitleProps {
   children?: React.ReactNode;
   isUploader:boolean,
   onClose: () => void;
+  hideCloseButton:boolean
 }
 export interface PopupComponentProps {
   modalTitle: string;
-  modalmessage: string;
+  modalmessage: string | JSX.Element;
   primaryButtonLabel: string;
   SecondaryButtonlabel: string;
   callBackvalue?: any;
-  setShowPopUp: (value: boolean) => void;
+  setShowPopUp: (value: any) => void;
   open: boolean;
   modalContent?: any;
   hideButtons?: boolean;
@@ -77,11 +78,17 @@ export interface PopupComponentProps {
   setShowbutton?: any;
   projectId?: string;
   isUploader?:boolean,
-  isUploaderFinal?:boolean
+  disableSecondaryButton?: boolean;
+  disablePrimaryButton?: boolean;
+  secondaryCallback?: any;
+  isShowWarningText?:boolean,
+  isCancelCallBack?:boolean
+handleCancel?:(value:boolean)=>void
+hideCloseButton?:boolean
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children,isUploader, onClose, ...other } = props;
+  const { children,isUploader,hideCloseButton, onClose, ...other } = props;
 
   return (
     <DialogTitle
@@ -118,10 +125,7 @@ export function BootstrapDialogTitle(props: DialogTitleProps) {
             },
           }}
         >
-          {/* <CloseIcon src={CrossIcon} alt={"close icon"} /> */}
-          {
-            isUploader && <CloseIcon src={closeWithCircle} alt={"close icon"} />
-          }
+         {hideCloseButton===true ?<CloseIcon src={closeWithCircle} alt={"close icon"} />:isUploader===false?"":<CloseIcon src={closeWithCircle} alt={"close icon"} />}
           
         </IconButton>
       ) : null}
@@ -157,7 +161,13 @@ const PopupComponent = (props: PopupComponentProps) => {
     imageSrc,
     isImageThere,
     isUploader = true,
-    isUploaderFinal = true
+    disableSecondaryButton = false,
+    disablePrimaryButton = false,
+    secondaryCallback,
+    isShowWarningText = true,
+    handleCancel,
+    isCancelCallBack,
+    hideCloseButton=false
   } = props;
   const handleClosePopup=()=>{
     if(isUploader === false)
@@ -176,6 +186,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     if (setShowbutton) {
       setShowbutton(false);
     }
+    if(secondaryCallback){
+      secondaryCallback()
+    }
   };
   return (
     <div>
@@ -191,8 +204,17 @@ const PopupComponent = (props: PopupComponentProps) => {
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
-          onClose={handleClose}
+          onClose={()=>{
+            if(isCancelCallBack)
+            {
+              handleCancel?.(false)
+            }
+            else{
+             handleClose() 
+            }
+          }}
           isUploader={isUploader}
+          hideCloseButton={hideCloseButton}
         >
           {modalTitle}
         </BootstrapDialogTitle>
@@ -208,7 +230,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             modalContent
           ) : (
             <TextComponent>{isImageThere? <div className="flex">
-              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px]">{ modalmessage}</p> </div>: <div>{modalmessage}</div> }</TextComponent>
+              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px] whitespace-pre-line">{ modalmessage}</p> </div>: <div className="whitespace-pre-line">{modalmessage}</div> }</TextComponent>
           )}
         </DialogContent>
         <DialogActions
@@ -222,10 +244,20 @@ const PopupComponent = (props: PopupComponentProps) => {
               <Button
                 variant={paddingStyle ? "outlined" : "text"}
                 // autoFocus
-                onClick={handleClose}
+                disabled={disableSecondaryButton}
+                onClick={()=>{
+                 
+                  if(isCancelCallBack)
+                  {
+                    handleCancel?.(true)
+                  }
+                  else{
+                    handleClose() 
+                  }
+                }}
                 style={{
                   color: "#F1742E",
-                  width: isUploader  ? "180px":"fit-content",
+                  width: isUploader===false ? "fit-content":"180px",
                   height: "40px",
                   textTransform: "none",
                   marginBottom: "22px",
@@ -240,10 +272,11 @@ const PopupComponent = (props: PopupComponentProps) => {
               <Button
                 variant="contained"
                 onClick={() => callBackvalue("Delete")}
+                disabled={disablePrimaryButton}
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: isUploader && isUploaderFinal ? "180px":"fit-content",
+                  width: isUploader && isShowWarningText ? "180px":"fit-content",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",
@@ -260,7 +293,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             <></>
           )}
         </DialogActions>
-        {!isUploaderFinal &&<p className="text-sm font-extralight italic p-2">* You can upload later by selecting the same date from the uploader tab</p>}
+        {!isShowWarningText &&<p className="text-sm font-extralight italic p-2">* You can discard and retry a new upload with all files</p>}
       </BootstrapDialog>
     </div>
   );

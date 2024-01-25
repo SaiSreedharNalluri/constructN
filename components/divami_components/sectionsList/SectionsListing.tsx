@@ -85,7 +85,12 @@ import { Add, AddBox, ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, De
 import instance from "../../../services/axiosInstance";
 import { API } from "../../../config/config";
 import { toast } from "react-toastify";
+import authHeader from "../../../services/auth-header";
+import { CustomToast } from "../custom-toaster/CustomToast";
+import { getCookie } from "cookies-next";
 // import { ISections } from "../../../models/ISections";
+
+const headers = {headers: authHeader.authHeader()}
 
 interface RowData {
   tableData: { id: number };
@@ -99,7 +104,17 @@ const fetchAssetCategories = (projectId: string) => {
 
   try {
 
-      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`)
+      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
+
+  } catch (error) { throw error }
+
+}
+
+const fetchAssetCountByStructure = (projectId: string) => {
+
+  try {
+
+      return instance.get(`${API.PROGRESS_2D_URL}/assets/asset-count-by-structure`, { headers: headers.headers , params: { project: projectId } })
 
   } catch (error) { throw error }
 
@@ -125,6 +140,9 @@ const customToolbarStyle = {
 };
 
 const SectionsListing = () => {
+  const userObj: any = getCookie("user");
+  const user = JSON.parse(userObj || '{}');
+  const isSupportUser = user?.isSupportUser;
   const router = useRouter();
   const { appContextAction } = useAppContext();
   const { appAction } = appContextAction;
@@ -137,6 +155,7 @@ const SectionsListing = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
   const [hasProgress2D, setHasProgress2D]: any = useState(false);
+  const [assetCount, setAssetCount] = useState({});
   // const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
@@ -247,7 +266,9 @@ const[isProcessing,setProcessing]=useState(false);
   useEffect(() => {
     if (router.isReady &&(!dataLoaded)) {
       const type = "newSnapshot";
-      const projectId = router?.query?.projectId as string
+      const projectId = router?.query?.projectId as string;
+
+      fetchAssetCountByStructure(router.query.projectId as string).then((res)=> setAssetCount(res.data.result)).catch(()=>{ setAssetCount({}) });
 
       fetchAssetCategories(projectId).then(res => {
         if(res.data.success) setHasProgress2D(res.data.result.length > 0)
@@ -553,7 +574,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
         color: "#101F4C",
         cursor:"default"
       },
-      cellStyle: { width: "28%" },
+      cellStyle: { width: "38%" },
       render: (rowData: any) => {
         // router.push(`/projects/${id}/sections`);
         
@@ -801,7 +822,10 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
       cellStyle: { width: "20%" },
    
       render: (rowData: any) => {
-        return <div className="cursor-pointer">{
+
+        const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
+        
+        return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
           <TooltipText title="2D Progress">
             <div className="flex justify-center">
               <Progress2DImageIcon
@@ -819,7 +843,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
               ></Progress2DImageIcon>
             </div>
           </TooltipText>
-          }</div>;
+          }</div> : 'Not Available';
       },
     },
   ];
@@ -986,10 +1010,13 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           callBackvalue={isCaptureAvailable? ()=> router.push({
             pathname: `/projects/${router?.query?.projectId as string}/structure`,
             query: { structId: id },
-          }):()=> router.push({
+          }):()=> {
+            router.push({
             pathname: `/projects/${router?.query?.projectId as string}/structure`,
             query: { structId: id },
-          }) }
+          })
+        setProcessing(false)
+        }}
         />
         )
       :""}
