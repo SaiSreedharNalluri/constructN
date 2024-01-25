@@ -88,6 +88,7 @@ import { toast } from "react-toastify";
 import authHeader from "../../../services/auth-header";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { getCookie } from "cookies-next";
+import { Mixpanel } from "../../analytics/mixpanel";
 // import { ISections } from "../../../models/ISections";
 
 const headers = {headers: authHeader.authHeader()}
@@ -276,6 +277,7 @@ const[isProcessing,setProcessing]=useState(false);
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
+        Mixpanel.track( {name: "views_page_loaded",project_id:projectId,company_id:"unknown",screen_name:"views_page",event_category:"views_list",event_action:"views_page_loaded",user_id:user._id,sorting_type:{...response}})          
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
@@ -605,6 +607,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
               customLogger.logInfo("View Strucuture");
               setProcessing(false)
             }
+        Mixpanel.track( {name: "level_clicked",project_id:rowData.project,company_id:"unknown",screen_name:"views_page",event_category:"views_list",event_action:"level_clicked",user_id:user._id,parent:{parentId:rowData.parentId!==undefined?rowData.parentId:null,strutureId:rowData._id}})          
           }}> 
                 <TooltipText title={rowData?.name?.length > 40 ? rowData?.name : ""} placement="right">
       <div>

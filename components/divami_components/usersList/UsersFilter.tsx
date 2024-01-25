@@ -39,6 +39,7 @@ import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../create-task/body/Constants";
 import CustomButton from "../custom-button/CustomButton";
 import TaskFilterFormWrapper from "../task-filter-common/TaskFilterWrapper";
 import moment from "moment";
+import { Mixpanel } from "../../analytics/mixpanel";
 
 const CloseIcon = styled(Image)({
   cursor: "pointer",
@@ -59,6 +60,8 @@ const UsersFilter: React.FC<any> = ({
   roles,
   taskFilterState,
   setSearchTerm,
+  selectedProjectId,
+  userId
 }) => {
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
@@ -340,6 +343,7 @@ const UsersFilter: React.FC<any> = ({
             </HeaderLeftSection>
             <HeaderRightSection
               onClick={() => {
+    Mixpanel.track( {name:"reset_clicked",project_id:selectedProjectId,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"reset_clicked",user_id:userId._id})                         
                 onReset();
               }}
             >
@@ -356,6 +360,7 @@ const UsersFilter: React.FC<any> = ({
               <HeaderRightSectionCloseIcon>
               <CloseIcon
                 onClick={() => {
+    Mixpanel.track( {name:"cross_button_clicked",project_id:selectedProjectId,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"cross_button_clicked",user_id:userId._id})                         
                   handleClose();
                 }}
                 data-testid="filter-close"
@@ -485,11 +490,17 @@ const UsersFilter: React.FC<any> = ({
             type="outlined"
             label="Cancel"
             formHandler={formHandler}
+            isButton="ManageUsers"
+            projectId={selectedProjectId}
+            userId={userId}
           />
           <CustomButton
             type="contained"
             formHandler={formHandler}
             label="Apply"
+            isButton="ManageUsers"
+            projectId={selectedProjectId}
+            userId={userId}
           />
         </ButtonsContainer>
       </FilterFooter>

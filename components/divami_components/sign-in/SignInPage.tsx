@@ -121,6 +121,13 @@ const SignInPage = () => {
             setCookie("isProjectTimeZone", true);
             setCookie("user", userProfileObj);
             localStorage.setItem('uploaededData',JSON.stringify({}))
+            Mixpanel.identify(response.result._id); 
+            Mixpanel.people.set({ 
+            "user_id":response.result._id,
+            "name":response.result.fullName,
+            "$email":response.result.email
+          });
+            Mixpanel.track( {name: "login_successful",project_id:"unknown",company_id:"unknown",screen_name:"login_page",event_category:"login",event_action:"login_successful",user_id:response.result._id})
             CustomToast("User signed in successfully", "success");
             const previousPage:any = router.query["history"] || "";
             setLoginEnable(true);
@@ -170,11 +177,7 @@ const SignInPage = () => {
         CustomToast(error?.response?.data?.message, "error");
 
         setLoading(false);
-
-        Mixpanel.track("login_fail", {
-          email: email,
-        });
-
+        Mixpanel.track( {name: "login_failed",project_id:"unknown",company_id:"unknown",screen_name:"login_page",event_category:"login",event_action:"login_failed",user_id:"unknown",error_message:error?.response?.data?.message})
         // setLoading(false);
         // setMessage(resMessage);
       });
