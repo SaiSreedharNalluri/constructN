@@ -27,9 +27,9 @@ export const SearchIconStyling = styled("div")({
 });
 
 export const SearchAreaContainer = styled("div")((props: any) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  width: "100%",
+  // display: "flex",
+  // justifyContent: "space-between",
+  // width: "100%",
   gap: "10px",
   height: "24px",
   marginRight: props.marginRight ? "22px" : "",

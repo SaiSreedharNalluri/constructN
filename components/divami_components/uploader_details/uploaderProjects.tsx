@@ -1,10 +1,7 @@
 import React from "react"
 import Header from "../user-profile/header/Header"
 import { ProjectCounts, customHeaderState } from "../../../models/IUtils"
-import { useAppContext } from "../../../state/appState/context"
 import { useRouter } from "next/router"
-import uploadIcon from '../../../public/divami_icons/uploadIcon.svg'
-import Image from "next/image";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 interface IProps{
@@ -13,9 +10,13 @@ interface IProps{
 }
 const UploaderProjects:React.FC<IProps> = ({handleUploaderClose,projectUplObj})=>{
 const router = useRouter();
-const { state: appState } = useAppContext()
 const getProjectName = (projectId:string)=>{
-return appState.projectDataList.find((obj:any)=> obj.project._id === projectId)?.project?.name
+  let projectsList = localStorage.getItem('projectDataList')
+  if(projectsList != null)
+  {
+    let projectsInfo = JSON.parse(projectsList)
+    return projectsInfo.find((obj:any)=> obj.project._id === projectId)?.project?.name
+  }
 }
 return(<React.Fragment>
 <div className="px-4">

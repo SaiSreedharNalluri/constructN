@@ -1,13 +1,10 @@
-import { act } from "react-dom/test-utils";
 import { GCPType, IGCP } from "../../models/IGCP";
 import { IJobs, JobStatus } from "../../models/IJobs";
-import { RawImage, RawImageStatus, location, metaData } from "../../models/IRawImages";
-import { getCaptureIdFromModelOrString, getInitialGCPList, getJobIdFromModelOrString, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
+import { RawImage, RawImageStatus, location, metaData, utmLocation } from "../../models/IRawImages";
+import { getCaptureIdFromModelOrString, getInitialGCPList, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
-import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState } from "./state";
-import { UploadFile } from "@mui/icons-material";
-import { stat } from "fs";
-
+import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState, UploaderPopups,UploadRange } from "./state";
+import { PopupData } from "../../models/Poppup";
 
 export const resetUploaderState = (): UploaderState => {
     return {
@@ -17,20 +14,24 @@ export const resetUploaderState = (): UploaderState => {
 export const uploaderReducer = (state: UploaderState, action: UploaderActions): UploaderState => {
     switch (action.type) {
         case UploaderActionType.startNewUpload: 
+          
             return {
                 ...state,
-                step: UploaderStep.Details,
+                step:state.step === UploaderStep.Upload  ? UploaderStep.Details : UploaderStep.Upload,
                 structure: undefined,
                 date: undefined,
                 isNextEnabled: false,
                 choosenFiles: {
                     validFiles: [],
                     invalidEXIFFiles: [],
-                    duplicateFiles: []
+                    duplicateFiles: [],
+                    currentInvalidEXIFFiles: [],
+                    currentDuplicateFiles: [],
                 },
                 filesDropped: false,
                 gcpType: GCPType.LONGLAT,
                 gcpList: getInitialGCPList(false), // default is LONGLAT
+                errorCount: validateGCPList(getInitialGCPList(false)).error,
                 isGCPInit: true,
                 skipGCP: false,
                 selectedJob: undefined,
@@ -107,7 +108,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 choosenFiles: updatedList,
                 filesDropped: true,
-                isNextEnabled: updatedList.validFiles.length > 0
+                isNextEnabled: updatedList.validFiles.length >= UploadRange.Minimum
             }
         case UploaderActionType.setExtractedFileValue:
             return{
@@ -125,19 +126,55 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     uploadinitiate:action.payload.uploadinitiate
                 }       
         case UploaderActionType.setGCPType:
+            let newGCPList: IGCP = {
+                ...getInitialGCPList(action.payload.type == GCPType.UTM),
+                base64ImageName: state.gcpList.base64ImageName,
+                base64Code: state.gcpList.base64Code,
+                description: state.gcpList.description
+            }
+            let {error: newError, length: newLength} = validateGCPList(newGCPList)
             return {
                 ...state,
                 gcpType: action.payload.type,
-                gcpList: getInitialGCPList(action.payload.type == GCPType.UTM)
+                gcpList: newGCPList,
+                errorCount: newError,
+                isNextEnabled: newError === 0 && newLength >= 4
             }
         case UploaderActionType.setGCPList:
-            let isNextEnabled = validateGCPList(action.payload.list)
+            let gcpList: IGCP = { 
+                ...action.payload.list,
+                base64ImageName: state.gcpList.base64ImageName,
+                base64Code: state.gcpList.base64Code,
+                description: state.gcpList.description
+            }
+            let {error, length} = validateGCPList(gcpList)
+            
             return{
                 ...state,
                 isGCPInit: false,
-                gcpList: action.payload.list,
+                gcpList: gcpList,
                 gcpType: action.payload.type,
-                isNextEnabled: isNextEnabled
+                errorCount: error,
+                isNextEnabled: error === 0 && length >= 4
+            }
+        case UploaderActionType.setGCPBase64:
+            let updatedBase64GCP: IGCP = {
+                ...state.gcpList, 
+                base64Code: action.payload.base64, 
+                base64ImageName: action.payload.imageName
+            }
+            return {
+                ...state,
+                gcpList: updatedBase64GCP
+            }
+        case UploaderActionType.setGCPDescription:
+            let updatedDescriptionGCP: IGCP = {
+                ...state.gcpList, 
+                description: action.payload.description
+            }
+            return {
+                ...state,
+                gcpList: updatedDescriptionGCP
             }
         case UploaderActionType.setCaptureJobs:
             
@@ -194,30 +231,111 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 }
             }
             return state
-        case UploaderActionType.setErrorCount:
-            return{
-                ...state,
-                errorCount:action.payload.errorCount
-            } 
+        // case UploaderActionType.setErrorCount:
+        //     return{
+        //         ...state,
+        //         errorCount:action.payload.errorCount
+        //     } 
         case UploaderActionType.setResetUploaderState:
             return resetUploaderState();
-       
+        case UploaderActionType.deleteJob:
+            return {
+                ...state,
+                selectedJob: action.payload.job,
+                isDelete: true
+            }
+        case UploaderActionType.retryJobUploading:
+            let selectedCaptureId = getCaptureIdFromModelOrString(action.payload.job.captures[0])
+            action.payload.job.status = JobStatus.pendingUpload
+                return {
+                    ...state,
+                    selectedJob: action.payload.job,
+                    currentUploadFiles: state.inProgressWorkers && state.inProgressWorkers[selectedCaptureId]
+                }
+        case UploaderActionType.setShowRetry:
+                return {
+                  ...state,
+                    showRetry:action.payload.showRetry
+                }            
+        case UploaderActionType.setIsShowPopup:
+            let popupVisibility = action.payload.popupVisibility
+            if (popupVisibility.isShowPopup) {
+                let popup = getCurrentPopup(state, popupVisibility.popupType, popupVisibility.message);
+                return {
+                    ...state,
+                    isShowPopup: popupVisibility.isShowPopup,
+                    currentPopup: popup
+                }
+            } else {
+                return {
+                    ...state,
+                    isShowPopup: popupVisibility.isShowPopup,
+                    isDelete: false,
+                    currentPopup: undefined
+                }
+            }
         default:
             return state
     }
 }
 
-const validateGCPList = (list: IGCP): boolean => {
-    if(list.location && list.location.length >= 4 ) {
-        return list.location.reduce((isValid, latLng):boolean => {
-            return isValid && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
-        }, true)
-    } else if (list.utmLocation && list.utmLocation.length >= 4) {
-        return list.utmLocation.reduce((isValid, utm):boolean => {
-            return isValid && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
-        }, true)
+const getCurrentPopup = (state: UploaderState, popupType: UploaderPopups, message?: string): PopupData => {
+    switch (popupType) {
+        case UploaderPopups.completedWithError:
+            return {
+                type: popupType,
+                modalTitle: 'Oops, We Hit a Snag',
+                modalMessage: message ? message : "Some files failed to upload",
+                primaryButtonLabel: 'Skip and Process',
+                secondaryButtonlabel: 'Discard',
+            }
+        case UploaderPopups.deleteJob:
+            return {
+                type: popupType,
+                modalTitle: 'Confirm Discard',
+                modalMessage: `Are you sure you want to discard ? 
+                This action is irreversible, and all data will be lost.`,
+                primaryButtonLabel: 'Yes',
+                secondaryButtonlabel: 'Cancel',
+            }
     }
-    return false;
+}
+
+const validateGCPList = (list: IGCP): {error: number, length: number} => {
+    if(list.location && list.location.length > 0 ) {
+        return {
+            error: list.location.reduce((errorCount, latLng): number => {
+                return errorCount += getLongLatValidationErrorCount(latLng) // && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
+            }, 0), 
+            length: list.location.length
+        }
+    } else if (list.utmLocation && list.utmLocation.length > 0) {
+        return {
+            error: list.utmLocation.reduce((errorCount, utm): number => {
+                return errorCount += getUTMValidationErrorCount(utm) // && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
+            }, 0),
+            length: list.utmLocation.length
+        }
+    }
+    return {
+        error: 0,
+        length: 0
+    };
+}
+
+const getUTMValidationErrorCount = (utm: utmLocation): number => {
+    let errorCount = validateEasting(utm.easting) ? 0 : 1;
+    errorCount += validatingNorthing(utm.northing) ? 0 : 1;
+    errorCount += utm.zone !== undefined && validateUTMZone(utm.zone) ? 0 : 1;
+    errorCount += utm.elevation !== undefined ? validateAltitudeOrElevation(utm.elevation) ?  0 : 1 : 1;
+    return errorCount
+}
+
+const getLongLatValidationErrorCount = (latLng: location): number => {
+    let errorCount = validateLongitude(latLng.coordinates[0]) ? 0 : 1;
+    errorCount += validateLatitude(latLng.coordinates[1]) ? 0 : 1;
+    errorCount += latLng.elevation !== undefined ? validateAltitudeOrElevation(latLng.elevation) ?  0 : 1 : 1;
+    return errorCount
 }
 
 const isNext = (state: UploaderState, step: UploaderStep): boolean => {
@@ -225,9 +343,10 @@ const isNext = (state: UploaderState, step: UploaderStep): boolean => {
         case UploaderStep.Details:
             return state.date ? state.structure ? true : false : false
         case UploaderStep.ChooseFiles:
-            return state.choosenFiles.validFiles.length > 0;
+            return state.choosenFiles.validFiles.length >= UploadRange.Minimum;
         case UploaderStep.ChooseGCPs:
-            return validateGCPList(state.gcpList)
+            let {error, length} = validateGCPList(state.gcpList);
+            return error === 0 && length >= 4
         case UploaderStep.Review:
             return true;
         case UploaderStep.Upload:
@@ -244,59 +363,66 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
     let validEXIFFiles: uploadImage[] = []
     files.forEach((fileWithExif) => {
         let file = fileWithExif.file
-        let deviceId = fileWithExif.exifData?.BodySerialNumber?.description
-        let dateTimeOriginal = fileWithExif.exifData?.DateTimeOriginal?.description
-        let altitude = fileWithExif.exifData?.GPSAltitude?.description ? parseInt(fileWithExif.exifData?.GPSAltitude?.description) : undefined
-        let latitude = fileWithExif.exifData?.GPSLatitude?.description ? parseInt(fileWithExif.exifData?.GPSLatitude?.description) : undefined
-        let longitude = fileWithExif.exifData?.GPSLongitude?.description ? parseInt(fileWithExif.exifData?.GPSLongitude?.description) : undefined
-        if (deviceId && dateTimeOriginal) {
-            let rawImage: RawImage = {
-                filename: file.name,
-                deviceId: deviceId,
-                externalId: deviceId + dateTimeOriginal,
-                dateTime: dateTimeOriginal,
-                status: RawImageStatus.initiated,
-            }
-            if(latitude && longitude && altitude) {
-                
-                let location: location = {
-                    type: "point",
-                    coordinates: [longitude, latitude],
-                    elevation: altitude
+        if (fileWithExif.exifData) {
+            let deviceId = fileWithExif.exifData?.BodySerialNumber?.description
+            let dateTimeOriginal = fileWithExif.exifData?.DateTimeOriginal?.description
+            let altitude = fileWithExif.exifData?.GPSAltitude?.description ? parseInt(fileWithExif.exifData?.GPSAltitude?.description) : undefined
+            let latitude = fileWithExif.exifData?.GPSLatitude?.description ? parseInt(fileWithExif.exifData?.GPSLatitude?.description) : undefined
+            let longitude = fileWithExif.exifData?.GPSLongitude?.description ? parseInt(fileWithExif.exifData?.GPSLongitude?.description) : undefined
+            if (deviceId && dateTimeOriginal) {
+                let rawImage: RawImage = {
+                    filename: file.name,
+                    deviceId: deviceId,
+                    externalId: deviceId + dateTimeOriginal,
+                    dateTime: dateTimeOriginal,
+                    status: RawImageStatus.initiated,
                 }
-                rawImage.location = location
-            }
-            let metaData:metaData={
-                fileSize:file.size
-            }
-            rawImage.metaData = metaData
-            let newUploadImage: uploadImage = {file, ...rawImage}
-            let alreadyUploadedFile;
-            if(state.isAppendingCapture && state.selectedJob) {
-                console.log("TestingUploader in append files reducer: ", state.rawImagesMap, state.selectedJob)
-                alreadyUploadedFile = state.rawImagesMap[getCaptureIdFromModelOrString(state.selectedJob.captures[0])].find((image) => {
-                    return image.deviceId == deviceId && image.dateTime == dateTimeOriginal && image.status !== RawImageStatus.failedTimedOut
+                if(latitude && longitude && altitude) {
+                    
+                    let location: location = {
+                        type: "point",
+                        coordinates: [longitude, latitude],
+                        elevation: altitude
+                    }
+                    rawImage.location = location
+                }
+                let metaData:metaData={
+                    fileSize:file.size
+                }
+                rawImage.metaData = metaData
+                let newUploadImage: uploadImage = {file, ...rawImage}
+                let alreadyUploadedFile;
+                if(state.isAppendingCapture && state.selectedJob) {
+                    console.log("TestingUploader in append files reducer: ", state.rawImagesMap, state.selectedJob)
+                    alreadyUploadedFile = state.rawImagesMap[getCaptureIdFromModelOrString(state.selectedJob.captures[0])].find((image) => {
+                        return image.deviceId == deviceId && image.dateTime == dateTimeOriginal && image.status !== RawImageStatus.failedTimedOut
+                    })
+                }
+                let duplicateFileInCurrent = validEXIFFiles.find((uploadImages) => {
+                    return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
                 })
-            }
-            let duplicateFileInCurrent = validEXIFFiles.find((uploadImages) => {
-                return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
-            })
-            let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
-                return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
-            })
-            if (duplicateFile || alreadyUploadedFile || duplicateFileInCurrent) {
-                duplicateEXIFFiles.push(newUploadImage)
+                let duplicateFile = choosenFiles.validFiles.find((uploadImages) => {
+                    return uploadImages.deviceId == deviceId && uploadImages.dateTime == dateTimeOriginal
+                })
+                if (duplicateFile || alreadyUploadedFile || duplicateFileInCurrent) {
+                    duplicateEXIFFiles.push(newUploadImage)
+                } else {
+                    validEXIFFiles.push(newUploadImage)
+                }
             } else {
-                validEXIFFiles.push(newUploadImage)
+                invalidEXIFFiles.push(fileWithExif.file)
             }
         } else {
             invalidEXIFFiles.push(fileWithExif.file)
         }
+        
     })
     return {
         validFiles: validEXIFFiles.concat(...choosenFiles.validFiles),
         invalidEXIFFiles: invalidEXIFFiles.concat(...choosenFiles.invalidEXIFFiles),
-        duplicateFiles: duplicateEXIFFiles.concat(...choosenFiles.duplicateFiles)
+        duplicateFiles: duplicateEXIFFiles.concat(...choosenFiles.duplicateFiles),
+        currentDuplicateFiles:duplicateEXIFFiles,
+        currentInvalidEXIFFiles:invalidEXIFFiles,
     }
 }
 

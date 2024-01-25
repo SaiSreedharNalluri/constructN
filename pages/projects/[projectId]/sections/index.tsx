@@ -305,7 +305,7 @@ const Index: React.FC = () => {
 
   const columns = [
     {
-      title: "Section Name",
+      title: "View Name",
       field: "name",
       sorting: false,
       filtering: false,

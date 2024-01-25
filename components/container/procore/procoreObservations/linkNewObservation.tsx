@@ -9,6 +9,8 @@ import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
+import { IprocoreActions } from "../../../../models/Iprocore";
+import router from "next/router";
 
 
 const LinkNewObservation = (props: any) => {
@@ -50,7 +52,7 @@ const LinkNewObservation = (props: any) => {
     assignee_id: 10,
     contributing_behavior_id: null,
     contributing_condition_id: null,
-    description: "",
+    description: issue?.description || task?.description||"",
     due_date: "",
     hazard_id: null,
     personal: false,
@@ -61,7 +63,7 @@ const LinkNewObservation = (props: any) => {
     type_id: null,
     distribution_member_ids: [],
     location_id: null,
-    name: "",
+    name: issue?.title|| task.title,
     attachFiles: [],
     number: "",
   };
@@ -71,7 +73,13 @@ const LinkNewObservation = (props: any) => {
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
- 
+  const weburl=()=>{
+    if(issue){
+      return `http://localhost:3000/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+    }else{
+      return `http://localhost:3000/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+    }
+  }
   const onDrop = useCallback((acceptedFiles: any) => {
     setFiles(acceptedFiles);
   }, []);
@@ -104,6 +112,7 @@ const LinkNewObservation = (props: any) => {
     number: string;
   }) => {
     const project_id = 235946;
+    observation.description=observation.description +`<a href=\"${weburl()}\"> View in ConstructN</a>` 
     const requestBody = {
       project_id,
       observation,
@@ -538,6 +547,7 @@ const LinkNewObservation = (props: any) => {
                       <TextField
                         fullWidth
                         required
+                        value={values.description}
                         name="description"
                         id="outlined-multiline-flexible"
                         multiline

@@ -183,6 +183,8 @@ const ProcoreLink = (props: any) => {
       case "Existing_RFI":
         setSelectedComponent(
             <LinkExistingRfi
+            getTasks={getTasks}
+            getIssues={getIssues}
             issue={issue}
             handleCloseProcore={handleCloseProcore}
             task={task}
@@ -213,6 +215,8 @@ const ProcoreLink = (props: any) => {
         break;
       case "Existing_Observation":
         setSelectedComponent(<LinkExistingObservation
+          getTasks={getTasks}
+          getIssues={getIssues}
           issue={issue}
           handleCloseProcore={handleCloseProcore}
           task={task}
@@ -237,6 +241,8 @@ const ProcoreLink = (props: any) => {
         break;
       case "Existing_Submittal":
         setSelectedComponent(<LinkExistingSubmittal
+          getTasks={getTasks}
+          getIssues={getIssues}
           issue={issue}
           handleCloseProcore={handleCloseProcore}
           task={task}

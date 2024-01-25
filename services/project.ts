@@ -24,6 +24,19 @@ export const getProjectsList = async () => {
   }
 };
 
+export const get2dProgressDetails = async () => {
+  try {
+    return await instance.get(
+      `${API.PROGRESS_2D_URL}/asset-categories/category-count-by-project`,
+      {
+        headers: authHeader.authHeader(),
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProjectDetails = async (projectId: string) => {
   try {
     return await instance.get(
@@ -230,5 +243,31 @@ export const getGanttViewData = async (projectId: string) => {
     .catch((error) => {
       console.log("error", error);
       throw error;
+    });
+};
+
+export const createProject = (formData: any) => {
+  return instance
+    .post(`${API.BASE_URL}/projects`,formData, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response?.data;
+    })
+    .catch((error) => {
+      throw error?.response?.data;
+    });
+};
+
+export const deleteProject = (formData: any) => {
+  return instance
+    .delete(`${API.BASE_URL}/projects/${formData}`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      return response?.data;
+    })
+    .catch((error) => {
+      throw error?.response?.data;
     });
 };

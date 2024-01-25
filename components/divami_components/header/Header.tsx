@@ -1,32 +1,16 @@
-import Box from "@mui/material/Box";
-import { Badge } from "@mui/material";
+import { Badge, Menu, MenuItem } from "@mui/material";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-//import constructnLogo from "../../../public/divami_icons/constructnLogo.svg";
+import React, { useEffect, useState } from "react";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
 import helpIcon from "../../../public/divami_icons/Help.svg";
-import profileImageHeader from "../../../public/divami_icons/profileImageHeader.svg";
-import ImgProfile from "../../../public/divami_icons/ImgProfile.svg";
-
 import Notification from "../../../public/divami_icons/Notification.svg";
-import clip from "../../../public/divami_icons/clip.svg";
 import defaultAvatar from "../../../public/divami_icons/defaultAvatar.svg";
-
 import { useRouter } from "next/router";
-import { getCookie, removeCookies, setCookie } from "cookies-next";
-import DesignRealitySwitch from "../../container/designRealitySwitch";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import  uploadIcon from '../../../public/divami_icons/uploadIcon.svg'
-import {
-  faQuestion,
-  faRightFromBracket,
-  faSignOut,
-  faLifeRing,
-  faTicket,
-  faInfoCircle,
-  faClone,
-} from "@fortawesome/free-solid-svg-icons";
+import {faSignOut} from "@fortawesome/free-solid-svg-icons";
 
 import {
   HeaderContainer,
@@ -41,7 +25,6 @@ import {
   ProfileImgIcon,
   ProfileImgSecIcon,
   ProfileImgIconDefault,
-  ProjectSelectorContainer,
   HeaderSupportImageContainer,
   HeaderUploaderImageContainer,
 } from "./HeaderStyles";
@@ -49,7 +32,6 @@ import { ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
 import headerLogSeparator from "../../..//public/divami_icons/headerLogSeparator.svg";
 import { styled } from "@mui/system";
-import UserNotification from "../../container/userNotification";
 import { IUserNotification } from "../../../models/IUserNotification";
 import {
   clearUserNotificationsCount,
@@ -59,17 +41,12 @@ import {
 import CustomDrawer from "../custom-drawer/custom-drawer";
 import Notifications from "../notifications/Notifications";
 import UserProfile from "../user-profile/UserProfile";
-import CustomSelect from "../custom-select/CustomSelect";
-import { getProjectDetails, getProjectsList } from "../../../services/project";
+import { getProjectDetails } from "../../../services/project";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import Link from "next/link";
-import { Circle, Rectangle } from "@mui/icons-material";
-import { json } from "stream/consumers";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { getUserProfile } from "../../../services/userAuth";
-import NotificationDrawer from "../custom-drawer/notification-drawer";
-import { truncate } from "fs/promises";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import * as Sentry from "@sentry/nextjs";
 import { hasCommonElement } from "../../../services/axiosInstance";
@@ -77,15 +54,14 @@ import { useUploaderContext } from "../../../state/uploaderState/context";
 import { UploaderStep } from "../../../state/uploaderState/state";
 import { WebWorkerManager } from "../../../utils/webWorkerManager";
 import { getStructureHierarchy, getStructureList } from "../../../services/structure";
-import { boolean } from "yup";
 import { IBaseResponse } from "../../../models/IBaseResponse";
 import { IProjects } from "../../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../../models/IStructure";
 import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
 import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
-import { IJobs } from "../../../models/IJobs";
 import { ProjectCounts } from "../../../models/IUtils";
+import { IJobs } from "../../../models/IJobs";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -108,28 +84,19 @@ const Header: React.FC<any> = ({
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
   const headerRef: any = React.useRef();
-  let [name, setName] = useState<string>("");
   let toolInstance: ITools = { toolName: "", toolAction: "" };
   const [rightNav, setRighttNav] = useState(false);
-  const [isCompareDesign, setIsCompareDesign] = useState(false);
-  const [isCompareReality, setIsCompareReality] = useState(false);
   const [iViewMode, setIViewMode] = useState(viewMode);
   const [isDesignSelected, setIsDesignSelected] = useState(
     iViewMode === "Reality" ? false : true
   );
-  let [eMail, setEMail] = useState<string>("");
   let [avatar, setAvatar] = useState<string>("");
-  const rightOverlayRef: any = useRef();
-  const rightOverlayRefs: any = useRef();
-  const [active, setActive] = useState();
   const [openNotification, setOpenNotication] = useState(false);
   const [openUploader, setOpenUploader] = useState(false);
   const [notifications, setNotifications] = useState<IUserNotification[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
-  const [menuloading, setMenuLoading] = useState<boolean>(false);
   const [supportMenu, setSupportMenu] = useState<boolean>(false);
-  const [userObjState, setUserObjState] = useState<any>(getCookie("user"));
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName, setProjectName] = useState('')
   const [notificationCount, setNotificationCount] = useState(0);
@@ -138,6 +105,8 @@ const Header: React.FC<any> = ({
   const { state: appState, appContextAction } = useAppContext();
   const [projectUplObj,setProjectUplObj] = useState<ProjectCounts>({})
   const { appAction } = appContextAction;
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       let projectId = router?.query?.projectId as string
@@ -210,23 +179,13 @@ const Header: React.FC<any> = ({
     });
   }
   useEffect(() => {
-    let user = null;
-    if (userObjState) user = JSON.parse(userObjState);
-
-    if (user?.fullName) {
-      setName(user.fullName);
+    const userCookie = getCookie("user");
+    if(userCookie !== undefined) {
+      let user = JSON.parse(userCookie as string)
+      if (user?.avatar) {
+        setAvatar(user.avatar);
+      }
     }
-    if (user?.email) {
-      setEMail(user.email);
-    }
-    if (user?.avatar) {
-      setAvatar(user.avatar);
-    }
-    // if (router.isReady && router.query.projectId) {
-    //   setProjectId(router.query.projectId);
-    // }
-    //getUserNotifications();
-
   }, [router.isReady]);
   useEffect(() => {
     getUserProfile().then((response) => {
@@ -238,10 +197,6 @@ const Header: React.FC<any> = ({
   useEffect(() => {
     setIViewMode(viewMode);
     setIsDesignSelected(viewMode === "Reality" ? false : true);
-    //   document.addEventListener('click', closeStructurePages);
-    //   return () => {
-    //     document.removeEventListener('click', closeStructurePages);
-    //   };
   }, [viewMode]);
 
   const getProjectData = async (projectId: string): Promise<ProjectData | undefined> => {
@@ -277,10 +232,11 @@ const Header: React.FC<any> = ({
     Sentry.setTag("ProjectName", null);
     Sentry.setTag("CompanyName", null);
     Sentry.setTag("ProjectId", null);
-    removeCookies("user");
-    removeCookies('projectData');
-    removeCookies('isProjectTimeZone');
+    deleteCookie("user");
+    deleteCookie('projectData');
+    deleteCookie('isProjectTimeZone');
     localStorage.removeItem('uploaededData')
+    localStorage.removeItem('InProgressPendingUploads')
     // router.push("/login");
     router.push("/login");
   };
@@ -298,7 +254,7 @@ const Header: React.FC<any> = ({
   const onProfilePicClick = () => {
     if (!openProfile) {
       setOpenProfile(true);
-      setMenuLoading(false);
+      setAnchorEl(null)
       setSupportMenu(false);
       setOpenNotication(false);
       customLogger.logInfo("Header - User Profile")
@@ -307,7 +263,6 @@ const Header: React.FC<any> = ({
     }
   };
   const rightMenuClickHandler = (e: any) => {
-    setActive(e.currentTarget.id);
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Design" && isDesignAvailable) {
       toolInstance.toolName = "viewMode";
@@ -322,52 +277,11 @@ const Header: React.FC<any> = ({
       customLogger.logInfo("Reality Toggle")
       // customLogger.logActivity(eMail,"email")
     }
-    // else if (e.currentTarget.id === "compareDesign") {
-    //   toolInstance.toolName = "compareDesign";
-    //   toolInstance.toolAction = isCompareDesign
-    //     ? "closeCompare"
-    //     : "showCompare";
-    //   setIsCompareDesign(isCompareDesign ? false : true);
-    //   setIsCompareReality(false);
-    // } else if (e.currentTarget.id === "compareReality") {
-    //   toolInstance.toolName = "compareReality";
-    //   toolInstance.toolAction = isCompareReality
-    //     ? "closeCompare"
-    //     : "showCompare";
-    //   setIsCompareReality(isCompareReality ? false : true);
-    //   setIsCompareDesign(false);
-    // }
-
     toolClicked(toolInstance);
   };
-
-  //const [defaultValue, setDefaultValue] = useState(2);
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);
   const [isShowPopUp, setIsShowPopUp] = useState(false);
-  // useEffect(() => {
-  //   getUserNotifications();
-  //   getProjectsList()
-  //     .then(async (response) => {
-  //       if (response?.data?.success === true) {
-  //         // setProjects(response.data.result);
-  //         const rolesData = response.data.result.map((each: any) => {
-  //           return {
-  //             label: each.name,
-  //             value: each._id,
-  //             selected: false,
-  //           };
-  //         });
-
-  //         // setConfig([response.data.result]);
-
-  //         setProjects(rolesData);
-
-  //         // setCurrentProject()
-  //       }
-  //     })
-  //     .catch((error) => {});
-  // }, []);
   const getUserNotifications = (
     // condition = defaultValue,
     eventEmitter = filterValue
@@ -387,22 +301,11 @@ const Header: React.FC<any> = ({
       })
       .catch((error) => { });
   };
-
-  const handleOptionChange = (event: any) => {
-    setNotifications(notifications.splice(0, notifications.length));
-    getUserNotifications(event.target.value);
-    //setDefaultValue(event.target.value);
-    setCurrentPage(1);
-    setFilterValue("All");
-  };
   const loadMoreData = () => {
     if (currentPage < totalNotifications / 10) {
       setCurrentPage(currentPage + 1);
     }
   };
-  // useEffect(() => {
-  //   getUserNotifications(defaultValue);
-  // }, [currentPage, defaultValue]);
   const updateNotifications = (notificationId: string) => {
     updateUserNotifications([notificationId]).then((response) => {
       if (response.success === true) {
@@ -439,17 +342,16 @@ const Header: React.FC<any> = ({
   const [url,setUrl]=useState('')
   let WorkerManager = WebWorkerManager.getInstance()
   const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
-   const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
-    
+  const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
     if (
       (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
       workerExists ||
       [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
     ) {
- 
-       event.preventDefault();
-       event.returnValue = true;
-     }
+      event.preventDefault();
+      localStorage.removeItem('InProgressPendingUploads')
+      event.returnValue = true;
+    }
    };
    const popStateHandler = () => {
     if (
@@ -464,7 +366,6 @@ const Header: React.FC<any> = ({
    useEffect(()=>{
    setUrl(window.location.href)
    },[typeof window != undefined,router,router.isReady])
- 
    useEffect(() => {
      window.addEventListener("beforeunload", beforeUnloadHandler);
      history.pushState(null, '', document.URL);
@@ -473,69 +374,81 @@ const Header: React.FC<any> = ({
        window.removeEventListener("beforeunload", beforeUnloadHandler);
        window.removeEventListener('popstate', popStateHandler)
      })
-   }, [url,uploaderState.step])
-
+   }, [url,uploaderState.step,workerExists])
+   useEffect(() => {
+    window.addEventListener("visibilitychange", ()=>{
+      calculateProjectCounts()
+    });
+    return (() => {
+      window.removeEventListener("visibilitychange", ()=>{});
+    })
+  }, [])
   useEffect(() => {
-    // Calculate project counts when the component mounts or when the originalArray changes
-    const calculateProjectCounts = () => {
-      const counts:any = {};
-      appState.inProgressPendingUploads.forEach(jobInfo => {
-        const projectId = jobInfo.project as string;
+  calculateProjectCounts();
+  }, [appState.inProgressPendingUploads]);
+  const calculateProjectCounts = () => {
+    const counts:ProjectCounts = {};
+    let uploadingcount:number  = 0;
+    let  inProgressPendingUploads = localStorage.getItem('InProgressPendingUploads');
+    if(inProgressPendingUploads!=null && inProgressPendingUploads!= undefined)
+        {
+         JSON.parse(inProgressPendingUploads)&&JSON.parse(inProgressPendingUploads).forEach((jobInfo:IJobs) => {
+            const projectId = jobInfo.project as string;
 
-        if (!counts[projectId]) {
-          counts[projectId] = 1;
-        } else {
-          counts[projectId]++;
+            if (!counts[projectId]) {
+              counts[projectId] = 1;
+              uploadingcount++;
+            } else {
+              counts[projectId]++;
+              uploadingcount++;
+            }
+          });
         }
-      });
+        else{
+          if (appState.inProgressPendingUploads.length > 0) {
+            appState.inProgressPendingUploads.forEach((jobInfo) => {
+              const projectId = jobInfo.project as string;
+    
+              if (!counts[projectId]) {
+                counts[projectId] = 1;
+                uploadingcount++;
+              } else {
+                counts[projectId]++;
+                uploadingcount++;
+              }
+            });
+          }
+        }
 
-      setProjectUplObj(counts);
-    };
-    calculateProjectCounts();
-    }, [appState.inProgressPendingUploads]);
-  useEffect(()=>{
-    if(Object?.keys(projectUplObj).length>0)
-    {
-      setUploaderCount(Object.keys(projectUplObj).length)
-    }
-    else{
-      setUploaderCount(0)
-    }
-  },[projectUplObj])
+    setProjectUplObj(counts);
+    setUploaderCount(uploadingcount);
+  };
   return (
     <>
-      <HeaderContainer ref={headerRef}>
+      <HeaderContainer ref={headerRef} >
         {!hideSidePanel && (
           <div
             style={{
               height: fromUsersList ? "8px" : "10px",
               width: fromUsersList ? "56px" : "59px",
-              // height: "10px",
-              // width: "59px",
-
               background: "#ffffff",
               position: "absolute",
               top: "58px",
               zIndex: "1000",
               opacity: "1",
-              //clipPath:  'polygon(66% 27%, 81% 35%, 100% 30%, 100% 100%, 0 100%, 0 0, 57% 0, 56% 11%)',
-              // width: "59px",
-              // background: "#FFFFFF",
-              // position: "absolute",
-              // z-index: "9999999";
-              // top: "58px";
-              // opacity: "1";
             }}
           ></div>
         )}
         <HeaderLeftPart>
           <HeaderLogoImageContainer>
+          <Link href="/projects">
             <Image
               onClick={goToProjectsList}
               src={constructnLogo}
               alt="Constructn Logo"
               data-testid="constructn-logo"
             />
+            </Link>
           </HeaderLogoImageContainer>
           {showBreadcrumbs && <DividerIcon src={headerLogSeparator} alt="" />}
           {showBreadcrumbs && (
@@ -549,44 +462,7 @@ const Header: React.FC<any> = ({
           )}
         </HeaderLeftPart>
         <HeaderRightPart>
-          {/* {projectId ? (
-            <ProjectSelectorContainer>
-              <CustomSelect
-                config={{
-                  options: projects?.length ? projects : [],
-                  defaultValue: projectId ? projectId : "",
-                  textAlign:"right",
-                  maxWidth:"220px",
-                }}
-                hideBorder
-                width={"unset"}
-                id=""
-                sx={{ minWidth: 120 }}
-                setFormConfig={() => {}}
-                isError={false}
-                label=""
-                onChangeHandler={(e: any) => {
-                  const selectedProjectId = e.target.value;
-                  const currentRoute = router.route;
-
-                  //  router.push(
-                  //    `/projects/${router.query.projectId as string}/sections`
-                  //  );
-
-                  const dynamicRoute = currentRoute.replace(
-                    "[projectId]",
-                    selectedProjectId as string
-                  );
-
-                  window.location.href = dynamicRoute;
-                }}
-              />
-            </ProjectSelectorContainer>
-          ) : (
-            ""
-          )} */}
-
-          {(toolClicked && (isDesignAvailable || isRealityAvailable)) ? (
+      {(toolClicked && (isDesignAvailable || isRealityAvailable)) ? (
             <TooltipText title={!isDesignAvailable ? "No Design" : !isRealityAvailable ? "No Reality" : "Switch Mode"}>
               <HeaderToggle>
                 <HeaderToggleButtonOne
@@ -615,18 +491,17 @@ const Header: React.FC<any> = ({
             <></>
           )}
          <HeaderUploaderImageContainer>
-            <TooltipText title="Uploader" onClick={() => {
+            <TooltipText title="Uploads In Progress" onClick={() => {
               if (openUploader) {
                 setOpenUploader(false);
-                customLogger.logInfo("Notifications Hide")
+                customLogger.logInfo("Uploader Hide")
               } else {
-                customLogger.logInfo("Notifications Show")
+                customLogger.logInfo("Uploader Show")
                 setOpenUploader(true);
                 setOpenNotication(false);
-                setMenuLoading(false);
+                setAnchorEl(null)
                 setSupportMenu(false);
                 setOpenProfile(false);
-                clearNotificationsCount();
               }
             }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
@@ -643,7 +518,7 @@ const Header: React.FC<any> = ({
 
             {openUploader && (
               <div>
-                 <CustomDrawer paddingStyle={true} variant="persistent">
+                 <CustomDrawer onClose={handleUploaderClose}>
                  <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplObj={projectUplObj}/></div>
                 </CustomDrawer>
               </div>
@@ -676,7 +551,7 @@ const Header: React.FC<any> = ({
               </TooltipText>
             )}
             {openProfile ? (
-              <CustomDrawer paddingStyle={true} variant="persistent">
+              <CustomDrawer onClose={handleProfileClose}>
                 <div>
                   <UserProfile
                     handleProfileClose={handleProfileClose}
@@ -699,7 +574,7 @@ const Header: React.FC<any> = ({
                       if (!supportMenu) {
                         customLogger.logInfo("Header - Support")
                         setSupportMenu(true);
-                        setMenuLoading(false);
+                        setAnchorEl(null)
                         setOpenNotication(false);
                         setOpenProfile(false);
                       } else {
@@ -722,7 +597,7 @@ const Header: React.FC<any> = ({
                 customLogger.logInfo("Notifications Show")
                 setOpenNotication(true);
                 setOpenUploader(false);
-                setMenuLoading(false);
+                setAnchorEl(null)
                 setSupportMenu(false);
                 setOpenProfile(false);
                 clearNotificationsCount();
@@ -740,7 +615,7 @@ const Header: React.FC<any> = ({
 
             {openNotification && (
               <div>
-                <NotificationDrawer variant="persistent">
+                <CustomDrawer onClose={handleNotificationClose}>
                   <div>
                     <Notifications
                       notifications={notifications}
@@ -753,164 +628,48 @@ const Header: React.FC<any> = ({
                   </div>
 
                   <div></div>
-                </NotificationDrawer>
+                </CustomDrawer>
               </div>
             )}
           </HeaderNotificationImageContainer>
-          <HeaderMenuImageContainer>
-            <TooltipText title="Menu">
-              <div className="rounded-full p-1 hover:bg-[#E7E7E7]">
-                <Image
-                  src={hamburgerMenu}
-                  alt="Menu"
-                  onClick={() => {
-                    if (!menuloading) {
-                      customLogger.logInfo("Signout")
-                      setMenuLoading(true);
+          <HeaderMenuImageContainer onClick={(event) => {
+                    if (anchorEl === null) {
                       setOpenNotication(false);
+                      setAnchorEl(event.currentTarget);
                       setSupportMenu(false);
                       setOpenProfile(false);
                     } else {
-                      setMenuLoading(false);
+                      setAnchorEl(null);
                     }
-                  }}
+                  }}>
+            <TooltipText title="Menu">
+              <div className="rounded-full p-1">
+                <Image
+                  src={hamburgerMenu}
+                  alt="Menu"
+                  
                 />
               </div>
-            </TooltipText>
-          </HeaderMenuImageContainer>
+              </TooltipText>
+              <Menu
+                className="mt-[20px]"
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={()=>{
+                      setAnchorEl(null);
+                    }}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+          >
+          <MenuItem onClick={() => {setshowPopUp(true),setAnchorEl(null)}} className="px-[20px] py-0 hover:bg-white">
+          <FontAwesomeIcon icon={faSignOut} className="mr-[10px] "/>Sign out</MenuItem>
+          </Menu>
+           </HeaderMenuImageContainer>
+          
         </HeaderRightPart>
-
-        {menuloading && (
-          <div className="absolute top-[64px]  shadow-md right-0 bg-gray-50   z-10  border mx-0.5">
-            <div
-              className="flex items-center  cursor-pointer p-2  w-[150px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
-              onClick={() => {
-                setshowPopUp(true);
-              }}
-            >
-              <FontAwesomeIcon icon={faSignOut}></FontAwesomeIcon>
-              <p className="logout-button px-4 py-1">Sign out</p>
-            </div>
-
-            {showPopUp && (
-              <PopupComponent
-                open={showPopUp}
-                setShowPopUp={setshowPopUp}
-                modalTitle={"Sign Out"}
-                modalmessage={`Are you sure you want to 'Sign Out'?`}
-                primaryButtonLabel={"Yes"}
-                SecondaryButtonlabel={"No"}
-                callBackvalue={userLogOut}
-              />
-            )}
-          </div>
-        )}
-
-
-        {/* {supportMenu && (
-          <div className="absolute top-[64px]  shadow-md right-[97px] bg-gray-50   z-[1500]  border mx-0.5">
-            <Link href="https://constructnai.freshdesk.com/support/home" passHref target="_blank">
-              <div
-                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
-                onClick={() => {
-                  //setshowPopUp(true);
-                  //router.push("https://constructnai.freshdesk.com/support/home")
-                }}
-              >
-                <FontAwesomeIcon icon={faLifeRing}></FontAwesomeIcon>
-                <p className="logout-button px-4 py-1">Support</p>
-              </div>
-            </Link>
-
-            <Link href="https://constructnai.freshdesk.com/support/solutions" passHref target="_blank">
-              <div
-                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
-                onClick={() => {
-                  //setshowPopUp(true);
-                }}
-              >
-                <FontAwesomeIcon icon={faInfoCircle}></FontAwesomeIcon>
-                <p className="logout-button px-4 py-1">Knowledge Base</p>
-              </div>
-            </Link>
-
-            <Link href="https://constructnai.freshdesk.com/support/tickets" passHref target="_blank">
-              <div
-                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
-                onClick={() => {
-                  //setshowPopUp(true);
-                }}
-              >
-                <FontAwesomeIcon icon={faClone}></FontAwesomeIcon>
-                <p className="logout-button px-4 py-1">View Tickets</p>
-              </div>
-            </Link>
-
-            <Link href="https://constructnai.freshdesk.com/support/tickets/new" passHref target="_blank">
-              
-              <div
-                className="flex items-center  cursor-pointer p-2  w-[175px]  text-[#101F4C] leading-5  hover:bg-gray-100  py-1 font-normal text-sm "
-                onClick={() => {
-                  //setshowPopUp(true);
-                }}
-              >
-                <FontAwesomeIcon icon={faTicket}></FontAwesomeIcon>
-                <p className="logout-button px-4 py-1">Raise Ticket</p>
-              </div>
-              
-            </Link>
-
-            {/* {showPopUp && (
-              <PopupComponent
-                open={showPopUp}
-                setShowPopUp={setshowPopUp}
-                modalTitle={"Cancel"}
-                modalmessage={`Are you sure you want to Sign out? `}
-                primaryButtonLabel={"Yes"}
-                SecondaryButtonlabel={"No"}
-                callBackvalue={userLogOut}
-              />
-            )} */}
-        {/* </div> */}
-        {/* )} } */}
-        {/* //! This is Open Profile Options */}
-        {/* {loading && (
-          <div className="absolute top-10 right-0 z-50 bg-gray-800 rounded-lg shadow border">
-            <ul className="text-white p-4 ">
-              <li className="font-medium cursor-pointer">
-                <div className="flex items-center justify-center transform transition-colors duration-200">
-                  <div className="mr-3">
-                    <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-                  </div>
-                  Account
-                </div>
-              </li>
-              <li className="font-medium cursor-pointer">
-                <div className="flex items-center justify-center transform transition-colors duration-200 ">
-                  <div className="mr-3">
-                    <FontAwesomeIcon icon={faCog}></FontAwesomeIcon>
-                  </div>
-                  Settings
-                </div>
-              </li>
-              <hr className="border-gray-700" />
-              <li className="font-medium cursor-pointer" onClick={userLogOut}>
-                <div
-                  className="flex items-center justify-center transform transition-colors duration-200 "
-                  data-testid="logout-button"
-                >
-                  <div className="mr-3 ">
-                    <FontAwesomeIcon
-                      icon={faRightFromBracket}
-                    ></FontAwesomeIcon>
-                  </div>
-                  Logout
-                </div>
-              </li>
-            </ul>
-          </div>
-        )} */}
-      </HeaderContainer>
+        </HeaderContainer>
       {
         isShowPopUp && (<PopupComponent
           open={isShowPopUp}
@@ -924,6 +683,17 @@ const Header: React.FC<any> = ({
           }}
         />)
       }
+      {showPopUp && (
+              <PopupComponent
+                open={showPopUp}
+                setShowPopUp={setshowPopUp}
+                modalTitle={"Sign Out"}
+                modalmessage={`Are you sure you want to 'Sign Out'?`}
+                primaryButtonLabel={"Yes"}
+                SecondaryButtonlabel={"No"}
+                callBackvalue={userLogOut}
+              />
+            )}
     </>
   );
 };

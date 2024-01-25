@@ -34,6 +34,7 @@ import {
   getTasksTypes,
 } from "../../../services/task";
 import TaskFilterCommon from "../../divami_components/task-filter-common/TaskFilterCommon";
+
 import CustomTaskDetailsDrawer from "../taskDetails/TaskDetail";
 import {
   AppliedFilter,
@@ -84,6 +85,7 @@ import {
   Watcher,
   TopButton,
 } from "../../divami_components/task_list/TaskListStyles";
+
 import {
   Box,
   Divider,
@@ -111,7 +113,6 @@ import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import Task from "../../../public/divami_icons/Task.svg";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
-
 
 interface IProps {
   closeOverlay: () => void;
@@ -148,7 +149,9 @@ const CustomTaskListDrawer = (props: any) => {
     projectUsers,
     taskPriority,
     taskStatus,
-    taskContext
+    taskContext,
+    initData,
+    toolClicked
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -354,6 +357,7 @@ const CustomTaskListDrawer = (props: any) => {
     }
   };
 
+  console.log("routerrrrrrre",router)
   return (
     <>
       {errorShow?.length > 0 ? (
@@ -400,7 +404,7 @@ const CustomTaskListDrawer = (props: any) => {
                     variant="outlined"
                     autoFocus={true}
                     value={searchTerm}
-                    onChange={(e) => {
+                    onChange={(e:any) => {
                       setSearchTerm(e.target.value);
                     }}
                     InputLabelProps={{ shrink: false }}
@@ -451,7 +455,7 @@ const CustomTaskListDrawer = (props: any) => {
                     <IconContainer
                       src={sort}
                       alt="Arrow"
-                      onClick={(e) => {
+                      onClick={(e:any) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
@@ -511,7 +515,7 @@ const CustomTaskListDrawer = (props: any) => {
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
-                      onClick={(e) => {
+                      onClick={(e:any) => {
                         setIsDownloadMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}
@@ -653,7 +657,12 @@ const CustomTaskListDrawer = (props: any) => {
               <CustomTaskDetailsDrawer
                 taskList={tasksList}
                 task={viewTask}
-                onClose={() => setOpenTaskDetail((prev: any) => !prev)}
+                onClose={() => {setOpenTaskDetail((prev: any) => !prev)
+                let typeChangeToolAction: IToolbarAction = { type: "closeTaskDrawer", data: "" };
+                toolClicked(typeChangeToolAction);
+                  
+                }
+                }
                 taskType={taskType}
                 taskPriority={taskPriority}
                 taskStatus={taskStatus}
@@ -666,6 +675,8 @@ const CustomTaskListDrawer = (props: any) => {
                 getTasks={getTasks}
                 deleteTheAttachment={deleteTheAttachment}
                 setTaskList={setTaskList}
+                initData={initData}
+                toolClicked={toolClicked}
               />
             </Drawer>
           )}
@@ -781,7 +792,7 @@ const CustomTaskListDrawer = (props: any) => {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              {downloadMenuOptions.map((option) => (
+              {downloadMenuOptions.map((option:any) => (
                 <>
                   <StyledMenu
                     key={option.label}

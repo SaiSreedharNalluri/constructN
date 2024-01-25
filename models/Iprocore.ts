@@ -1,4 +1,4 @@
-interface IprocoreActions{
+export interface IprocoreActions{
     action:"setnewRFI" 
            | "closeNewRFI" 
            | "closeProcorePopup"

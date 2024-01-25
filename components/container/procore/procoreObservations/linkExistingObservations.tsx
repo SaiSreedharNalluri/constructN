@@ -9,11 +9,14 @@ import ProcoreFooter from '../procoreFooter';
 import { ListRfi, linkIssueObservation, linkTaskObservation, listObservation } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
+import { IprocoreActions } from '../../../../models/Iprocore';
 
 const LinkExistingObservation = (props: any) => {
   const {issue,
     task,
-    handleCloseProcore}=props as any;
+    handleCloseProcore,
+    getIssues,
+    getTasks,}=props as any;
   const [loading, setLoading] = useState(false)
   const { handleInstance } = props as any;
   const [footerState, SetFooterState] = useState(true);
@@ -40,6 +43,7 @@ const LinkExistingObservation = (props: any) => {
         .then((linkResponse) => {
           if (linkResponse) {
             CustomToast("Observation linked successfully", 'success');
+            getIssues(issue.structure)
             handleCloseProcore();
           }
         })
@@ -53,6 +57,7 @@ const LinkExistingObservation = (props: any) => {
         .then((linkResponse) => {
           if (linkResponse) {
             CustomToast("Observation linked successfully", 'success');
+            getTasks(task.structure)
             handleCloseProcore();
           }
         })

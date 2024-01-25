@@ -9,6 +9,8 @@ import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { statusData } from "../../../../utils/Procoreconstants";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
+import { IprocoreActions } from "../../../../models/Iprocore";
+import router from "next/router";
 
 const NewLinkSubmittal = (props: any) => {
   const {
@@ -51,7 +53,7 @@ const NewLinkSubmittal = (props: any) => {
     private: boolean;
     description: string;
   } = {
-    title: "",
+    title: issue?.title || task.title,
     specification_section_id: null,
     number: "",
     revision: "",
@@ -70,14 +72,19 @@ const NewLinkSubmittal = (props: any) => {
     lead_time: null,
     required_on_site_date: "",
     private: false,
-    description: "",
+    description: issue?.description || task?.description || "",
   };
-
   const onDrop = useCallback((acceptedFiles: any) => {
     setFiles(acceptedFiles);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
- 
+  const weburl=()=>{
+    if(issue){
+      return `http://localhost:3000/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+    }else{
+      return `http://localhost:3000/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+    }
+  }
   const handleExternalSubmit = () => {
     if (formikRef.current) {
       formikRef.current.submitForm();
@@ -105,6 +112,7 @@ const NewLinkSubmittal = (props: any) => {
     private: boolean;
     description: string;
   }) => {
+    formData.description= formData.description + `<a href=\"${weburl()}\"> View in ConstructN</a>`
     createSubmittal(formData)
     .then((response) => {
       if (response) {
@@ -562,7 +570,9 @@ const NewLinkSubmittal = (props: any) => {
                       <TextField
                         fullWidth
                         required
+                        type="text"
                         name="description"
+                        value={values.description}
                         id="outlined-multiline-flexible"
                         multiline
                         onChange={(e: any) => {

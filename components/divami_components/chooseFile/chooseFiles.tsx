@@ -13,7 +13,7 @@ const ChooseFiles:React.FC<IProps>=({onDrop,dragDropText,supportFileText,Uploadi
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop:onDrop,
         disabled:isDisabled,
-        accept:acceptFiles
+        accept:acceptFiles,
       });
     return (<React.Fragment>
   <div className={`border-[2px] text-center rounded-[8px] mt-[16px] w-[50vw] h-[30vh] border-dashed hover:border-[#F1742E]  border-black py-[6vh] px-[2%] cursor-pointer ${isDragActive ? 'border-blue-500' : ''}`} {...getRootProps()}>
@@ -22,7 +22,7 @@ const ChooseFiles:React.FC<IProps>=({onDrop,dragDropText,supportFileText,Uploadi
    <div className='font-sans'>
       <input {...getInputProps()} />
       <p className="m-0 text-gray-700 font-medium text-xl">{dragDropText}</p>
-      <p className='font-thin'>{supportFileText}</p>
+      <span className='font-thin text-center whitespace-pre-line text-sm'>{supportFileText}</span>
     </div>
   </div>
 </div>

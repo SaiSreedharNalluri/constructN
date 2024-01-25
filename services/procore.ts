@@ -1,6 +1,6 @@
 import authHeader from "./auth-header";
 import instance from "./axiosInstance";
-import { API } from "../config/config";
+import { API, PROCORE } from "../config/config";
 import procoreinstance from "./procoreInstance";
 
 
@@ -54,7 +54,7 @@ export const procorerefreshToken = () => {
 export const getRfiManager = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis/potential_rfi_managers`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis/potential_rfi_managers`,
       {
         headers: accesstoken(),
       }
@@ -70,7 +70,7 @@ export const getRfiManager = () => {
 export const getReceivedFrom = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis/potential_received_froms`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis/potential_received_froms`,
       {
         headers: accesstoken(),
       }
@@ -87,7 +87,7 @@ export const getReceivedFrom = () => {
 export const getResponsibleContractor = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis/potential_responsible_contractors`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis/potential_responsible_contractors`,
       {
         headers: accesstoken(),
       }
@@ -103,7 +103,7 @@ export const getResponsibleContractor = () => {
 export const potentialDistributionMembers = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis/potential_distribution_members`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis/potential_distribution_members`,
       {
         headers: accesstoken(),
       }
@@ -118,7 +118,7 @@ export const potentialDistributionMembers = () => {
 export const specSection = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.0/specification_sections?project_id=235946`,
+      `${PROCORE.BASE_URL}/rest/v1.0/specification_sections?project_id=235946`,
       {
         headers: accesstoken(),
       }
@@ -133,7 +133,7 @@ export const specSection = () => {
 
 export const getLocation = () => {
   return procoreinstance
-    .get(`https://sandbox.procore.com/rest/v1.0/projects/235946/locations`, {
+    .get(`${PROCORE.BASE_URL}/rest/v1.0/projects/235946/locations`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -145,7 +145,7 @@ export const getLocation = () => {
 };
 export const getcoastCode = () => {
   return procoreinstance
-    .get(`https://sandbox.procore.com/rest/v1.0/cost_codes?project_id=235946`, {
+    .get(`${PROCORE.BASE_URL}/rest/v1.0/cost_codes?project_id=235946`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -158,7 +158,7 @@ export const getcoastCode = () => {
 export const getRfiStage = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.0/companies/4272096/project_stages?project_id=235946`,
+      `${PROCORE.BASE_URL}/rest/v1.0/companies/4272096/project_stages?project_id=235946`,
       {
         headers: accesstoken(),
       }
@@ -174,7 +174,7 @@ export const getRfiStage = () => {
 export const costImpact = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis/potential_cost_impacts`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis/potential_cost_impacts`,
       {
         headers: accesstoken(),
       }
@@ -190,7 +190,7 @@ export const costImpact = () => {
 export const scheduleImpact = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis/potential_schedule_impacts`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis/potential_schedule_impacts`,
       {
         headers: accesstoken(),
       }
@@ -206,7 +206,7 @@ export const scheduleImpact = () => {
 export const createRfi = (formData: any) => {
   return procoreinstance
     .post(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis`,
       formData,
       {
         headers: accesstoken(),
@@ -225,7 +225,7 @@ export const createRfi = (formData: any) => {
 export const ListRfi = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/rfis?filters[status]=open`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/rfis?filters[status]=open`,
 
       {
         headers: accesstoken(),
@@ -282,7 +282,7 @@ export const linkTaskRfi = (
 
 export const showRfiDetails = (id: number) => {
   return procoreinstance
-    .get(`https://sandbox.procore.com/rest/v1.0/projects/235946/rfis/${id}`, {
+    .get(`${PROCORE.BASE_URL}/rest/v1.0/projects/235946/rfis/${id}`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -297,7 +297,7 @@ export const showRfiDetails = (id: number) => {
 
 export const tradeList = () => {
   return procoreinstance
-    .get(`https://sandbox.procore.com/rest/v1.0/companies/4272096/trades`, {
+    .get(`${PROCORE.BASE_URL}/rest/v1.0/companies/4272096/trades`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -311,7 +311,7 @@ export const tradeList = () => {
 export const typesList = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.0/observations/types?project_id=235946`,
+      `${PROCORE.BASE_URL}/rest/v1.0/observations/types?project_id=235946`,
       {
         headers: accesstoken(),
       }
@@ -327,7 +327,7 @@ export const typesList = () => {
 export const contributingConditionsList = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.0/companies/4272096/contributing_conditions`,
+      `${PROCORE.BASE_URL}/rest/v1.0/companies/4272096/contributing_conditions`,
       {
         headers: accesstoken(),
       }
@@ -343,7 +343,7 @@ export const contributingConditionsList = () => {
 export const contributingBehaviorList = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.0/companies/4272096/contributing_behaviors`,
+      `${PROCORE.BASE_URL}/rest/v1.0/companies/4272096/contributing_behaviors`,
       {
         headers: accesstoken(),
       }
@@ -358,7 +358,7 @@ export const contributingBehaviorList = () => {
 
 export const hazardList = () => {
   return procoreinstance
-    .get(`https://sandbox.procore.com/rest/v1.0/companies/4272096/hazards`, {
+    .get(`${PROCORE.BASE_URL}/rest/v1.0/companies/4272096/hazards`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -372,7 +372,7 @@ export const hazardList = () => {
 export const createObservation = (formData: object) => {
   return procoreinstance
     .post(
-      `https://sandbox.procore.com/rest/v1.0/observations/items`,
+      `${PROCORE.BASE_URL}/rest/v1.0/observations/items`,
       formData,
       {
         headers: accesstoken(),
@@ -389,7 +389,7 @@ export const createObservation = (formData: object) => {
 export const listObservation = () => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.0/observations/items?project_id=235946`,
+      `${PROCORE.BASE_URL}/rest/v1.0/observations/items?project_id=235946`,
       {
         headers: accesstoken(),
       }
@@ -444,7 +444,7 @@ export const linkTaskObservation = (
 
 export const showObservationDetails = (id: number) => {
   return procoreinstance
-    .get(`https://sandbox.procore.com/rest/v1.0/observations/items/${id}?project_id=235946`, {
+    .get(`${PROCORE.BASE_URL}/rest/v1.0/observations/items/${id}?project_id=235946`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -459,7 +459,7 @@ export const showObservationDetails = (id: number) => {
 export const createSubmittal = (formData: object) => {
   return procoreinstance
     .post(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/submittals`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/submittals`,
       formData,
       {
         headers: accesstoken(),
@@ -476,7 +476,7 @@ export const createSubmittal = (formData: object) => {
 
 export const listSubmittal = () => {
   return procoreinstance
-    .get(`https://sandbox.procore.com/rest/v1.1/projects/235946/submittals`, {
+    .get(`${PROCORE.BASE_URL}/rest/v1.1/projects/235946/submittals`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -530,7 +530,7 @@ export const linkTaskSubmittal = (
 export const showSubmittalDetails = (id: number) => {
   return procoreinstance
     .get(
-      `https://sandbox.procore.com/rest/v1.1/projects/235946/submittals/${id}`,
+      `${PROCORE.BASE_URL}/rest/v1.1/projects/235946/submittals/${id}`,
       {
         headers: accesstoken(),
       }

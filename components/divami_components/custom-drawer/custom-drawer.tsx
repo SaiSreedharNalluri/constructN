@@ -17,8 +17,7 @@ const CustomDrawer = (props: any) => {
         variant={props.variant?props.variant:"temporary"}
         data-testid="const-styled-drawer"
         // container={document.getElementById("test_full_screen")}
-
-        // onClose={() => setOpenDrawer((prev) => !prev)}
+        onClose={props.onClose ? props.onClose:()=>{}}
       >
         {props.children}
         {/* listing of */}

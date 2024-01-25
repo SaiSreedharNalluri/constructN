@@ -15,6 +15,9 @@ import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
+import { IprocoreActions } from "../../../../models/Iprocore";
+import router from "next/router";
+import { useLocation } from "react-router-dom";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -58,6 +61,13 @@ const LinkNewRFI = (props: any) => {
   const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
   const onDrop = useCallback((files: File[]) => {}, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const weburl=()=>{
+    if(issue){
+      return `http://localhost:3000/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+    }else{
+      return `http://localhost:3000/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+    }
+  }
   const initialValues: {
     subject: string;
     rfi_manager_id: number | null;
@@ -79,14 +89,14 @@ const LinkNewRFI = (props: any) => {
     assignee_id: number | null;
     draft: boolean;
   } = {
-    subject: "",
+    subject: issue?.title || task.title,
     rfi_manager_id: null,
     distribution_ids: [],
     received_from_login_information_id: null,
     responsible_contractor_id: null,
     drawing_number: "",
     question: {
-      body: "",
+      body:issue?.description || task?.description ||" ",
       attachment: [],
     },
     specification_section_id: null,
@@ -101,7 +111,7 @@ const LinkNewRFI = (props: any) => {
       status: "",
       value: null,
     },
-    reference: "",
+    reference: '',
     assignee_id: 10,
     draft: true,
   };
@@ -110,7 +120,7 @@ const LinkNewRFI = (props: any) => {
       formikRef.current?.submitForm();
     
   };
-
+  
   const handleSubmit = (formData: {
     subject: string;
     rfi_manager_id: number | null;
@@ -132,6 +142,8 @@ const LinkNewRFI = (props: any) => {
     assignee_id: number | null;
     draft: boolean;
   }) => {
+    formData.question.body= formData.question.body +`<a href=\"${weburl()}\"> View in ConstructN</a>` ;
+    
     formData.schedule_impact.status = scheduleImpact;
     formData.cost_impact.status = costImpact;
     createRfi(formData)
@@ -519,6 +531,7 @@ const LinkNewRFI = (props: any) => {
                         required
                         className=""
                         name="question.body"
+                        value={values.question.body}
                         placeholder=""
                         type="text"
                         fullWidth

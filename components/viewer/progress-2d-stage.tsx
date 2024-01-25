@@ -1,17 +1,86 @@
 
 
-import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider } from '@mui/material'
+import { FormControlLabel, Checkbox, LinearProgress, FormGroup, Stack, styled, linearProgressClasses, Typography, Slider, OutlinedInput } from '@mui/material'
 
-import { IAsset, IAssetStage } from '../../models/IAssetCategory'
+import { IAsset, IAssetCategory, IAssetStage } from '../../models/IAssetCategory'
+
+import DoneIcon from '@mui/icons-material/Done';
+
+import EditIcon from '../../public/divami_icons/edit.svg'
+
+import Image from 'next/image'
+import { Dispatch, SetStateAction, useState } from 'react';
+import PopupComponent from '../popupComponent/PopupComponent';
+import { API } from '../../config/config';
+import instance from '../../services/axiosInstance';
+import authHeader from '../../services/auth-header';
+import { CustomToast } from '../divami_components/custom-toaster/CustomToast';
+import { getCookie } from 'cookies-next';
+
+
+const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>, structId: string}) => {
+
+    const { refetch, setCompleted , setLoading, structId } = details;
+
+    try {
+        setLoading(true)
+        await instance.put(`${API.PROGRESS_2D_URL}/assets/mark-as-complete`, null,{
+            headers: authHeader.authHeader(),
+            params: {category: details.category, date: details.date, stage: details.stage, structure: structId}
+        })
+        CustomToast('Mark as completed Successfull!','success')
+        refetch()
+        setCompleted(false)
+
+    } catch (error) { 
+        CustomToast('Mark as completed Failed!','error')
+    } finally{
+        setLoading(false)
+    }
+
+}
+
+const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number }, setLoading: Function, totalMeasurement: number) => {
+	try {
+        setLoading(true);
+		await instance.put(`${API.PROGRESS_2D_URL}/asset-categories/${categoryId}/update-stage`, {totalMeasurement: totalMeasurement}, {
+            headers: authHeader.authHeader(),
+            params: data
+        });
+        CustomToast('Successfully updated!','success');
+	} catch (error) {
+		CustomToast('Failed to update!','error');
+	} finally{
+        setLoading(false)
+    }
+};
+
+
 
 export default function Progress2DStages(
 
-    { stages, assetCount, compare, onToggleVisibility }:
+    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading }:
 
         {
-            stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined, assetCount: number,
+            stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined,
 
-            onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean
+            onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean;
+
+            snapShotDate?: Date
+
+            selectedCategory?: IAssetCategory | undefined
+
+            refetch?: ()=> void
+
+            assets?: IAsset[]
+
+            structId?: string
+
+            refetchCategories?: () => void
+
+            setLoading: Dispatch<SetStateAction<boolean>>
+
+            loading: boolean
 
         }) {
 
@@ -23,9 +92,23 @@ export default function Progress2DStages(
 
                 <Progress2DStage
 
-                    key={stage._id} assetCount={assetCount} stage={stage}
+                    key={stage._id} stage={stage}
 
-                    onToggleVisibility={onToggleVisibility} compare={compare} />)
+                    snapShotDate={snapShotDate}
+
+                    selectedCategory={selectedCategory}
+
+                    refetch={refetch}
+
+                    assets={assets?.filter((asset)=>(asset.status === 'Active')) || []}
+
+                    structId={structId}
+
+                    setLoading={setLoading}
+
+                    loading={loading}
+
+                    onToggleVisibility={onToggleVisibility} compare={compare} refetchCategories={refetchCategories} />)
 
             }
 
@@ -34,25 +117,76 @@ export default function Progress2DStages(
 
 }
 
+
+const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(<div className='ml-3'>
+        <Typography fontFamily='Open Sans' className='text-[16px]'>This Will Make This Stage as Completed</Typography>
+        <Typography fontFamily='Open Sans' className='text-sm font-[700] mt-2'>Total quantity : {quantity} {units}</Typography>
+        <Typography fontFamily='Open Sans' className='text-[10px] font-[400] mt-1'>ConstructN will reach out to you to understand more about this change</Typography>
+    </div>) 
+
 function Progress2DStage(
 
-    { stage, assetCount, compare, onToggleVisibility }: {
+    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading }: {
 
-        stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }, assetCount: number, 
+        stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean },
         
-        onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean
+        onToggleVisibility: (stage: Partial<IAssetStage> & { assets: Partial<IAsset>[] } & { visible: boolean }) => void, compare: boolean;
+
+        snapShotDate?: Date
+
+        selectedCategory?: IAssetCategory | undefined
+
+        refetch?: ()=> void
+
+        assets?: IAsset[]
+
+        structId?: string
+
+        refetchCategories?: () => void
+
+        loading?: boolean
+
+        setLoading: Dispatch<SetStateAction<boolean>>
 
     }) {
 
+    const userObj: any = getCookie('user')
+
+    const user = JSON.parse(userObj || "{}")
+
+    const [edit , setEdit]= useState(false)
+
+    const totalValueMetrics = assets.reduce((newVal, oldVal)=>{
+        return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
+    },0)
+
+    const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
+
+    const [assetValue , totalAssetValue]= useState(stage.totalMeasurement || totalValueMetrics)
+
+    const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
+        return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
+    },0)
+
+    const totalCompletedCompareMetrics = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
+        return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
+    },0)
+
     const getProgress = (): number | number[] => {
 
-        const baseProgress = stage.assets.length == 0 ? 0 : (stage.assets.length * 100 / assetCount)
+        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (assetValue|| 1))
 
-        const compareProgress = stage.assetsCompare.length == 0 ? 0 : (stage.assetsCompare.length * 100 / assetCount)
+        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (assetValue || 1))
 
         if(!compare) return baseProgress
 
         else return [compareProgress, baseProgress]
+    }
+
+    const editCallback = async () =>{
+        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: assetValue }, setLoading, assetValue);
+        refetchCategories && refetchCategories();
+        setEdit(false);
     }
 
     const getProgressValue = (): string => {
@@ -61,7 +195,7 @@ function Progress2DStage(
 
         if(typeof(progress) === 'number') return `${(progress as number).toFixed(1)}`
 
-        else return `${(progress as number[])[progress.length - 1].toFixed(1)}`
+        else return `${(((progress as number[])[1] - (progress as number[])[0] >= 0) ? (progress as number[])[1] - (progress as number[])[0]: -1*((progress as number[])[1] - (progress as number[])[0])).toFixed(1)}`
     }
 
     const onVisibilityChange = (event: any) => {
@@ -74,11 +208,11 @@ function Progress2DStage(
 
     }
 
-    const _progressLabelFormatter = (value: number) => `${value.toFixed(1)}%`
+    const _progressLabelFormatter = (value: number) => `${(value || 0).toFixed(1)}%`
 
     return (<>
 
-        <div className='p-4 mt-3 select-none' style={{ border: '1px solid #e2e3e5', borderRadius: '6px' }}>
+        <div className='p-4 pr-[28px] mt-3 select-none' style={{ border: '1px solid #e2e3e5', borderRadius: '6px' }}>
 
             <FormGroup>
 
@@ -115,16 +249,52 @@ function Progress2DStage(
                     className='w-full mt-4' valueLabelDisplay='on'
                     
                     valueLabelFormat={value => _progressLabelFormatter(value)} value={getProgress()} />
+                
 
             </Stack>
 
-            <div className='w-full flex justify-between mt-1'>
+            <div className='w-full flex justify-between align-middle mt-1'>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{getProgressValue()}%</Typography>
+                <div className='flex justify-between w-full'>
 
-                <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{stage.assets.length} / {assetCount} assets</Typography>
+
+                    <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
+                    <div className='flex ml-2'>
+                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } onKeyDown={(e)=>{
+                        if(!edit) return;
+                        if(e.key === 'Enter'){
+                            editCallback();
+                        }
+                        if(e.key === 'Escape'){
+                            setEdit(false);
+                        }
+                        }} /> : assetValue} {edit? null: stage.uom}</Typography>
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
+                    </div>
+                </div>
+
 
             </div>
+            {((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics )) < 1) ? <div className='flex mt-2'>
+                    <Typography fontFamily='Open Sans' onClick={(e)=> setCompleted({checked: true, details: stage})} className='text-[12px] text-[#0000FF] underline cursor-pointer'>Mark as Complete</Typography>
+            </div> :null}
+
+            {completed?.checked && ((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics)) < 1) && (
+                    <PopupComponent
+                        open={completed?.checked}
+                        setShowPopUp={setCompleted}
+                        modalTitle={"Mark as complete?"}
+                        modalmessage={<ModalMessage units={completed?.details?.uom || ''} quantity={totalCompletedMetrics}/>}
+                        primaryButtonLabel={"Confirm"}
+                        SecondaryButtonlabel={"Cancel"}
+                        disableSecondaryButton={loading}
+                        disablePrimaryButton={loading}
+                        callBackvalue={async()=>{ 
+                            await markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch, setLoading , structId});
+                            setEdit(false);
+                        }}
+                    />
+                )}
 
         </div>
 
