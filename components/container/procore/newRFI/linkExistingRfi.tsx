@@ -13,7 +13,9 @@ import { IprocoreActions } from '../../../../models/Iprocore';
 
 const LinkExistingRfi = (props: any) => {
   const {issue,task,
-    handleCloseProcore}=props as any;
+    handleCloseProcore,
+    getIssues,
+    getTasks,}=props as any;
   const [loading, setLoading] = useState(false)
   const { handleInstance } = props as any;
   const [footerState, SetFooterState] = useState(true);
@@ -41,6 +43,7 @@ const LinkExistingRfi = (props: any) => {
         .then((linkResponse) => {
           if (linkResponse) {
             CustomToast("RFI linked successfully", 'success');
+            getIssues(issue.structure)
             handleCloseProcore();
           }
         })
@@ -54,6 +57,7 @@ const LinkExistingRfi = (props: any) => {
         .then((linkResponse) => {
           if (linkResponse) {
             CustomToast("RFI linked successfully", 'success');
+            getTasks(task.structure)
             handleCloseProcore();
           }
         })

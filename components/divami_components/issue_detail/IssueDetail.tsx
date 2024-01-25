@@ -429,6 +429,21 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
               fontWeight: "400",
             }}
           />
+          {taskState.TabOne.integration&&(
+           <Tab
+            label="Procore"
+            {...a11yProps(0)}
+            style={{
+              marginRight: "40px",
+              paddingLeft: "0px",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+          />
+          )}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -891,13 +906,8 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           )}
         </TabOneDiv>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <ActivityLog
-          ActivityLog={taskState.TabTwo}
-          comments={backendComments}
-          getComments={getComments}
-          setIsAdding={setIsAdding}
-        />
+      <CustomTabPanel value={value} index={1}>        
+        <ProcoreExist selected={taskState.TabOne.integration}></ProcoreExist>
       </CustomTabPanel>
       {/* <>
         <AddCommentContainerSecond>
@@ -1082,6 +1092,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       tags: selectedIssue?.tags,
       status: selectedIssue?.status,
       title: selectedIssue?.title,
+      procore:selectedIssue?.integration,
     };
     setTaskState((prev: any) => {
       return {
@@ -1233,19 +1244,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     setProcorePopup(true)
     setIssueDetail(false)
   }
-const [procoreExist,setPropcoreExist] =useState<boolean>(false)
-  const  handleProcoreExistPopup =()=>{
-    setIssueDetail(false);
-    setPropcoreExist(true);
-   
-
-  } 
-  const onCloseProcore =() =>{
-      setPropcoreExist(false)
-      setIssueDetail(true)
-  }
-
-  const  handleCloseProcore=()=>{
+const  handleCloseProcore=()=>{
     setProcorePopup(false)
     setIssueDetail(true);
   }
@@ -1320,7 +1319,7 @@ const [procoreExist,setPropcoreExist] =useState<boolean>(false)
 
   return (
     <>
-      {procoreExist && <ProcoreExist selected={selectedIssue} onCloseProcore={onCloseProcore} ></ProcoreExist>}
+    
       {procorePopup && <ProcoreLink  issue={selectedIssue} gen={gen} handleCloseProcore={handleCloseProcore} updatedselectedIssue={updatedselectedIssue} getIssues={getIssues}></ProcoreLink>}
       {issueDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
@@ -1358,15 +1357,19 @@ const [procoreExist,setPropcoreExist] =useState<boolean>(false)
             </LeftTitleCont>
             <RightTitleCont>
             {providerType === 'procore' ? (    
-    <div className={`p-[6px] hover:bg-[#E7E7E7]`}>
+    <div className="p-[6px] hover:bg-[#E7E7E7] "
+    >
+
       <ProcoreLogo
         src={procore}
         alt="logo"
-        onClick={selectedIssue.integration ? handleProcoreExistPopup : handleProcoreLinks}
+        style={{ cursor: selectedIssue.integration ? 'not-allowed' : 'pointer' }}
+    onClick={()=>{
+if(!selectedIssue.integration){ handleProcoreLinks()}}}
       />
     </div> ) : (
     <ProcoreLogo
-      src={procore} // Provide a disabled version of the logo or adjust the styling
+      src={procore} 
       alt="logo"
       title="Login via Procore required"
     />
@@ -1529,3 +1532,4 @@ const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
     //  color: 'red',
   },
 }));
+

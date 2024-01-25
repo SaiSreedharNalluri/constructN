@@ -14,7 +14,9 @@ import { IprocoreActions } from '../../../../models/Iprocore';
 const LinkExistingSubmittal = (props: any) => {
   const {issue,
     task,
-    handleCloseProcore}=props as any;
+    handleCloseProcore,
+    getIssues,
+    getTasks,}=props as any;
   const [loading, setLoading] = useState(false)
   const { handleInstance,} = props as any;
   
@@ -42,6 +44,7 @@ const LinkExistingSubmittal = (props: any) => {
         .then((linkResponse) => {
           if (linkResponse) {
             CustomToast("Submittal linked successfully", 'success');
+            getIssues(issue.structure)
             handleCloseProcore();
           }
         })
@@ -55,6 +58,7 @@ const LinkExistingSubmittal = (props: any) => {
         .then((linkResponse) => {
           if (linkResponse) {
             CustomToast("Submittal linked successfully", 'success');
+            getTasks(task.structure)
             handleCloseProcore();
           }
         })

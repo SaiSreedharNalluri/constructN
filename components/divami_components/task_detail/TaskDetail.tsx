@@ -390,6 +390,21 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
+          {taskState.TabOne.integration&&(
+           <Tab
+            label="Procore"
+            {...a11yProps(0)}
+            style={{
+              marginRight: "40px",
+              paddingLeft: "0px",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+          />
+          )}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -850,12 +865,7 @@ function BasicTabs(props: any) {
         </TabOneDiv>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ActivityLog
-          ActivityLog={taskState.TabTwo}
-          comments={backendComments}
-          getComments={getComments}
-          setIsAdding={setIsAdding}
-        />
+      <ProcoreExist selected={taskState.TabOne.integration}></ProcoreExist>
       </CustomTabPanel>
     </Box>
   );
@@ -982,6 +992,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           : "",
       id: selectedTask?._id,
       status: selectedTask?.status,
+      procore: selectedTask?.integration,
     };
     setTaskState((prev: any) => {
       return {
@@ -1198,14 +1209,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
      setTaskDetail(false)
    }
   
-  const  handleProcoreExistPopup =()=>{
-
-    setPropcoreExist(true);
-
-  }
-  const onCloseProcore =() =>{
-    setPropcoreExist(false)
-}
   const  handleCloseProcore=()=>{
     setProcorePopup(false)
     setTaskDetail(true);
@@ -1216,7 +1219,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
    const providerType =credential.provider;
   return (
     <>
-    {procoreExist &&<ProcoreExist selected={selectedTask} onCloseProcore={onCloseProcore} ></ProcoreExist>}
       {procorePopup && <ProcoreLink task={selectedTask}  handleCloseProcore={handleCloseProcore} getTasks={getTasks}></ProcoreLink>}
       {taskDetail && 
       <CustomTaskDrawerContainer>
@@ -1243,15 +1245,24 @@ const CustomTaskDetailsDrawer = (props: any) => {
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
-            {providerType === 'procore' && (
-    <div className={`p-[6px] hover:bg-[#E7E7E7]`}>
-      <ProcoreLogo
-        src={procore}
-        alt="logo"
-        onClick={!selectedTask?.integration ? handleProcoreLinks : handleProcoreExistPopup}
-      />
-    </div>
-  )}
+            {providerType === 'procore' ? (
+   <div className="p-[6px] hover:bg-[#E7E7E7] "
+   >
+
+     <ProcoreLogo
+       src={procore}
+       alt="logo"
+       style={{ cursor: selectedTask.integration ? 'not-allowed' : 'pointer' }}
+   onClick={()=>{
+if(!selectedTask.integration){ handleProcoreLinks()}}}
+     />
+   </div> ) : (
+   <ProcoreLogo
+     src={procore} 
+     alt="logo"
+     title="Login via Procore required"
+   />
+      )}
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}

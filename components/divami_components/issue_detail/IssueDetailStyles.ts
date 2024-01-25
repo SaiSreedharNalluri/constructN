@@ -14,6 +14,11 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+export const PopupIcon = styled (Image)`
+marginRight:4px;
+cursor:pointer;
+width:15px;
+height:15px`;
 
 export const ProcoreLogo = styled(Image)`
   cursor:pointer;
