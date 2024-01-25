@@ -305,11 +305,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   //   }, 1000); 
   //   return () => clearInterval(interval); 
   // }, []);
+  let queryParams = ''
+  if(router.query.structId) queryParams = `?structId=${router.query.structId}`
  return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
-          <Link href={`/projects/${router.query.projectId}/${item.id}`}>
+          <Link href={`/projects/${router.query.projectId}/${item.id}${queryParams}`}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
