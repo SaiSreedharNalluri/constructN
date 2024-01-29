@@ -17,8 +17,7 @@ import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
-import { useLocation } from "react-router-dom";
-import { APP, PROCORE } from "../../../../config/config";
+
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
