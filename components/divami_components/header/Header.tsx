@@ -107,6 +107,8 @@ const Header: React.FC<any> = ({
   const { appAction } = appContextAction;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  let WorkerManager = WebWorkerManager.getInstance()
+  const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       let projectId = router?.query?.projectId as string
@@ -241,9 +243,16 @@ const Header: React.FC<any> = ({
     router.push("/login");
   };
 
-  const goToProjectsList = () => {
-    if (hasCommonElement(['uploader'], router.asPath?.split("/")) === true && uploaderState.step !== UploaderStep.Upload) {
-      setIsShowPopUp(true)
+  const goToProjectsList = (event:React.MouseEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    if (
+      (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
+      workerExists ||
+      [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
+    ) {
+     setIsShowPopUp(true)
+     return
     }
     else {
       router.push("/projects");
@@ -340,8 +349,6 @@ const Header: React.FC<any> = ({
     }).catch((error) => { });
   }
   const [url,setUrl]=useState('')
-  let WorkerManager = WebWorkerManager.getInstance()
-  const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
   const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
     if (
       (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
@@ -441,9 +448,8 @@ const Header: React.FC<any> = ({
         )}
         <HeaderLeftPart>
           <HeaderLogoImageContainer>
-          <Link href="/projects">
+          <Link href="/projects" onClick={(event)=>{goToProjectsList(event)}}>
             <Image
-              onClick={goToProjectsList}
               src={constructnLogo}
               alt="Constructn Logo"
               data-testid="constructn-logo"
