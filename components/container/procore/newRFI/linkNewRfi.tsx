@@ -17,7 +17,7 @@ import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
-import { useLocation } from "react-router-dom";
+
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -63,9 +63,9 @@ const LinkNewRFI = (props: any) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const weburl=()=>{
     if(issue){
-      return `https://app.qa.constructn.ai/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
     }else{
-      return `https://app.qa.constructn.ai/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
     }
   }
   const initialValues: {
