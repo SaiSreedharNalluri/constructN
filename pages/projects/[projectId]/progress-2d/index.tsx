@@ -56,6 +56,7 @@ import { useRouter as Router  } from 'next/router'
 
 import PopupComponent from '../../../../components/popupComponent/PopupComponent'
 import EmailButton from '../../../../components/progress-2d/send-email'
+import { getProjectUsers } from '../../../../services/project'
 
 
 const headers = {headers: authHeader.authHeader()}
@@ -219,6 +220,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [clipValue, setClipValue] = useState(50);
 
+    const [projectUsers, setProjectUsers] =  useState<[] | { name: string; role: string; user: { _id: string }; }[] | []>([]);
+
+
     const structId = searchParams.get('structId')
 
     const handleMouseMove = (e: { buttons: number; clientX: number }) => {
@@ -284,7 +288,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             setShowProgress(true)
 
-            Promise.all([fetchStructureHierarchy(projId!), fetchAssetCategories(projId!)]).then(response => {
+            Promise.all([fetchStructureHierarchy(projId!), fetchAssetCategories(projId!), getProjectUsers(params['projectId'] as string)]).then(response => {
 
                 setShowProgress(false)
 
@@ -304,6 +308,10 @@ const Progress2DPage: React.FC<any> = () => {
 
                     if(response[1].data.result.length > 0) _onCategorySelected(response[1].data.result[0])
 
+                }
+
+                if(response?.[2]?.result){
+                    setProjectUsers(response?.[2]?.result);
                 }
                 
             }).catch(e => setShowProgress(false))
@@ -1280,6 +1288,8 @@ const Progress2DPage: React.FC<any> = () => {
                                                 setLoading = {setLoading}
                                                 
                                                 loading={loading}
+
+                                                projectUsers={projectUsers}
                                                 
                                                 refetch={()=>{ _loadAssetsForCategory(selectedCategory as IAssetCategory, selectedAsset) }}
                                                 

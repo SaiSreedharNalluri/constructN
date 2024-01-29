@@ -59,7 +59,7 @@ const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: s
 
 export default function Progress2DStages(
 
-    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading }:
+    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading, projectUsers }:
 
         {
             stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined,
@@ -81,6 +81,8 @@ export default function Progress2DStages(
             setLoading: Dispatch<SetStateAction<boolean>>
 
             loading: boolean
+
+            projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
 
         }) {
 
@@ -108,6 +110,8 @@ export default function Progress2DStages(
 
                     loading={loading}
 
+                    projectUsers={projectUsers}
+
                     onToggleVisibility={onToggleVisibility} compare={compare} refetchCategories={refetchCategories} />)
 
             }
@@ -126,7 +130,7 @@ const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(
 
 function Progress2DStage(
 
-    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading }: {
+    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading, projectUsers }: {
 
         stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean },
         
@@ -146,6 +150,8 @@ function Progress2DStage(
 
         loading?: boolean
 
+        projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
+
         setLoading: Dispatch<SetStateAction<boolean>>
 
     }) {
@@ -154,7 +160,9 @@ function Progress2DStage(
 
     const userObj: any = getCookie('user')
 
-    const user = JSON.parse(userObj || "{}")
+    const userDetails = JSON.parse(userObj || "{}")
+
+    const roleforProject =  projectUsers.find((user: { user: { _id: string }; role: string })=>(user.user._id === userDetails._id ));
 
     const [edit , setEdit]= useState(false)
 
@@ -271,7 +279,13 @@ function Progress2DStage(
                             setEdit(false);
                         }
                         }} /> : numberFormatter.format(+assetValue)} {edit? null: stage.uom}</Typography>
-                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>{
+                            if(!['collaborator','admin'].includes(roleforProject?.role || '')){
+                                CustomToast("Do not have access - contact Admin","error");
+                                return;
+                            }
+                            setEdit(true)}
+                            } />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
                     </div>
                 </div>
 
