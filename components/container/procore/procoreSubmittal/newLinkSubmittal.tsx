@@ -11,6 +11,7 @@ import { statusData } from "../../../../utils/Procoreconstants";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
+import { useAppContext } from "../../../../state/appState/context";
 
 const NewLinkSubmittal = (props: any) => {
   const {
@@ -31,6 +32,9 @@ const NewLinkSubmittal = (props: any) => {
   const [files, setFiles] = useState<File[]>([]);
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const formikRef = useRef<FormikProps<any>>(null);
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const initialValues: {
     title: string;
     specification_section_id: number | null;
@@ -113,7 +117,7 @@ const NewLinkSubmittal = (props: any) => {
     description: string;
   }) => {
     formData.description= formData.description + `<a href=\"${weburl()}\"> View in ConstructN</a>`
-    createSubmittal(formData)
+    createSubmittal(formData,procoreProjectId)
     .then((response) => {
       if (response) {
         CustomToast("Submittal Created successfully","success");

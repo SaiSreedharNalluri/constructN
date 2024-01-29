@@ -17,6 +17,7 @@ import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
+import { useAppContext } from "../../../../state/appState/context";
 
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
@@ -61,6 +62,9 @@ const LinkNewRFI = (props: any) => {
   const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
   const onDrop = useCallback((files: File[]) => {}, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const weburl=()=>{
     if(issue){
       return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
@@ -146,7 +150,7 @@ const LinkNewRFI = (props: any) => {
     
     formData.schedule_impact.status = scheduleImpact;
     formData.cost_impact.status = costImpact;
-    createRfi(formData)
+    createRfi(formData,procoreProjectId)
   .then((response) => {
     if (response) {
       CustomToast("RFI Created successfully", "success");

@@ -40,6 +40,8 @@ import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
 import LinkExistingRfi from "./newRFI/linkExistingRfi";
 import LinkExistingObservation from "./procoreObservations/linkExistingObservations";
 import LinkExistingSubmittal from "./procoreSubmittal/linkExistingSubmittal";
+import { useUploaderContext } from "../../../state/uploaderState/context";
+import { useAppContext } from "../../../state/appState/context";
 
 const ProcoreLink = (props: any) => {
   const { handleCloseProcore,
@@ -90,6 +92,11 @@ const ProcoreLink = (props: any) => {
   const [scheduleImpactt, setScheduleImpact] = useState([]);
   const [costImpacts, setcostImpact] = useState([]);
  
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
+  
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -110,21 +117,21 @@ const ProcoreLink = (props: any) => {
         hazardData,
         typeData,
       ] = await Promise.all([
-        getRfiManager(),
-        getReceivedFrom(),
-        getResponsibleContractor(),
-        potentialDistributionMembers(),
-        specSection(),
-        getLocation(),
-        getcoastCode(),
-        getRfiStage(),
-        scheduleImpact(),
-        costImpact(),
-        tradeList(),
-        contributingBehaviorList(),
-        contributingConditionsList(),
-        hazardList(),
-        typesList(),
+        getRfiManager(procoreProjectId),
+        getReceivedFrom(procoreProjectId),
+        getResponsibleContractor(procoreProjectId),
+        potentialDistributionMembers(procoreProjectId),
+        specSection(procoreProjectId),
+        getLocation(procoreProjectId),
+        getcoastCode(procoreProjectId),
+        getRfiStage(procoreProjectId,procoreCompanyId),
+        scheduleImpact(procoreProjectId),
+        costImpact(procoreProjectId),
+        tradeList(procoreCompanyId),
+        contributingBehaviorList(procoreCompanyId),
+        contributingConditionsList(procoreCompanyId),
+        hazardList(procoreCompanyId),
+        typesList(procoreProjectId),
       ]);
 
       setRfiManager(rfiManagerData);
