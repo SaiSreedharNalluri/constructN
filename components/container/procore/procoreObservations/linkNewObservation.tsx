@@ -11,7 +11,6 @@ import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
-import { APP } from "../../../../config/config";
 
 
 const LinkNewObservation = (props: any) => {
@@ -76,9 +75,9 @@ const LinkNewObservation = (props: any) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const weburl=()=>{
     if(issue){
-      return `${APP.BASE_URL}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
     }else{
-      return `${APP.BASE_URL}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
     }
   }
   const onDrop = useCallback((acceptedFiles: any) => {

@@ -62,12 +62,11 @@ const LinkNewRFI = (props: any) => {
   const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
   const onDrop = useCallback((files: File[]) => {}, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  console.log('procore url',router)
   const weburl=()=>{
     if(issue){
-      return `${APP.BASE_URL}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
     }else{
-      return `${APP.BASE_URL}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
     }
   }
   const initialValues: {
