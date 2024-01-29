@@ -1,0 +1,76 @@
+export const hazard=[
+   {id:"Caught In/ between",name:"Caught In/ between"},
+   {id:"Chemical",name:"Chemical"},
+   {id:"Electrical",name:"Electrical"},
+   {id:"Environmental",name:"Environmental"},
+   {id:"Ergonomic(Repetitive Motion)",name:"Ergonomic(Repetitive Motion)"},
+   {id:"Exposure",name:"Exposure"},
+   {id:"Fall",name:"Fall"},
+   {id:"Heat / Fire / Explosion ",name:"Heat / Fire / Explosion "},
+   {id:"Impalement",name:"Impalement"},
+   {id:"Overexertion",name:"Overexertion"},
+   {id:"Radiation",name:"Radiation"},
+   {id:"Respiratory",name:"Respiratory"},
+   {id:"Slip",name:"Slip"},
+   {id:"Struck By",name:"Struck By"},
+   {id:"Trip",name:"Trip"},
+   {id:"Violence",name:"Violence"},
+]
+
+export const priorityData = [
+    {id:"Low",name: "Low"},
+    {id:"Medium",name: "medium"},
+    {id:"High",name: "High"},
+    {id:"Urgent",name: "Uregent"},
+]
+
+export const statusData = [
+    {id:"initiated",name: "Initiated"},
+    {id:"ready_for_review",name: "Ready for Review"},
+    {id:"not_accepted",name: "Not Accepted"},
+    {id:"closed",name: "Closed"},
+]
+
+export const contributingBehavior =[
+    {id:"assignmentPersonnel",name: "Assignment / Personnel"},
+    {id:"authorization",name: "Authorization"},
+    {id:"communication",name: "Communication"},
+    {id:"distraction",name: "Distraction"},
+    {id:"horseplay",name: "Horseplay"},
+    {id:"lockout",name: "Lock Out / Tag Out"},
+    {id:"methods",name: "Methods / Procedures / Rules"},
+    {id:"misconduct",name: "Misconduct"},
+    {id:"ppe",name: "PPE"},
+    {id:"planning",name: "Planning"},
+    {id:"position",name: "Position / Posture"},
+    {id:"speed",name: "Speed / Distance"},
+    {id:"stress",name: "Stress"},
+    {id:"supervision",name: "Supervision"},
+    {id:"training",name: "Training"},
+    {id:"use",name: "Use"},
+]
+
+export const contributingConditions = [
+    {id:"access",name:"Access / Egress"},
+    {id:"clothing",name:"Clothing"},
+    {id:"environment",name:"Environment"},
+    {id:"equipment",name:"Equipment"},
+    {id:"ergonomics",name:"Ergonomics"},
+    {id:"groundConditions",name:"GroundConditions"},
+    {id:"guard",name:"Guard / Barrier"},
+    {id:"housekeeping",name:"Housekeeping"},
+    {id:"information",name:"Information / Signage"},
+    {id:"lighting",name:"Lighting"},
+    {id:"materialSelection",name:"MaterialSelection"},
+    {id:"noise",name:"Noise"},
+    {id:"ppe",name:"PPE"},
+    {id:"security",name:"Security"},
+    {id:"shoring",name:"Shoring / Bracing"},
+    {id:"storedEnergy",name:"Stored Energy"},
+    {id:"tool",name:"Tool"},
+    {id:"traffic",name:"Traffic"},
+    {id:"trafficControls",name:"Traffic Controls"},
+    {id:"ventilation",name:"Ventialtion"},
+    {id:"weather",name:"Weather"},
+    {id:"workstationLayout",name:"Workstation Layout"},
+]

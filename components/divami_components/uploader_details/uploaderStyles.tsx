@@ -68,6 +68,8 @@ export const UploaderStyledTreeView = styled(TreeView)({
     alignItems: 'center',
     width: "100%",
     height: "34px",
+    backgroundColor:"#F1742E",
+    
     // position: "relative",
   });
 

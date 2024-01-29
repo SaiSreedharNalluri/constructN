@@ -35,7 +35,6 @@ import { editIssue } from "../../../services/issue";
 import router, { useRouter } from "next/router";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import CustomMiniLoader from "../custom_loader/CustomMiniLoader";
-
 import _ from "lodash";
 import {
   createAttachment,
@@ -116,7 +115,10 @@ import {
   DueDateTitle,
   SecondContDueDate,
   ThirdContDueDate,
+  ProcoreLogo,
+  
 } from "./IssueDetailStyles";
+import "jspdf-autotable";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "../task_detail/ActivityLog";
 import Chip from "@mui/material/Chip";
@@ -126,6 +128,12 @@ import AttachmentPreview from "../attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
+import procore from "../../../public/divami_icons/procore.svg";
+import ProcoreLink from "../../container/procore/procoreLinks";
+import jsPDF from "jspdf";
+import { Key } from "@mui/icons-material";
+import ProcoreExist from "../../container/procore/procoreExist";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -421,6 +429,21 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
               fontWeight: "400",
             }}
           />
+          {taskState.TabOne.integration&&(
+           <Tab
+            label="Procore"
+            {...a11yProps(0)}
+            style={{
+              marginRight: "40px",
+              paddingLeft: "0px",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+          />
+          )}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -883,13 +906,8 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           )}
         </TabOneDiv>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <ActivityLog
-          ActivityLog={taskState.TabTwo}
-          comments={backendComments}
-          getComments={getComments}
-          setIsAdding={setIsAdding}
-        />
+      <CustomTabPanel value={value} index={1}>        
+        <ProcoreExist selected={taskState.TabOne.integration}></ProcoreExist>
       </CustomTabPanel>
       {/* <>
         <AddCommentContainerSecond>
@@ -946,6 +964,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [footerState, SetFooterState] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(issue);
   const[isLoading,setLoading]=useState(false);
+  const [procorePopup,setProcorePopup]= useState<boolean>(false)
+  const [newRFI,setnewLinkRFI] = useState<boolean>(false);
+  const [issueDetail,setIssueDetail] = useState<boolean>(true)
   const router = useRouter();
   useEffect(() => {
     setSelectedIssue(issue);
@@ -1071,6 +1092,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       tags: selectedIssue?.tags,
       status: selectedIssue?.status,
       title: selectedIssue?.title,
+      procore:selectedIssue?.integration,
     };
     setTaskState((prev: any) => {
       return {
@@ -1216,9 +1238,90 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
+  const [gen,setGen]=useState<any>(undefined)
+  const handleProcoreLinks = () =>{
+    
+    setProcorePopup(true)
+    setIssueDetail(false)
+  }
+const  handleCloseProcore=()=>{
+    setProcorePopup(false)
+    setIssueDetail(true);
+  }
+  const convertObjectToPdf = () => {
+    // Sample object data
+    const data: any = selectedIssue;
+  
+    // Create a new jsPDF instance
+    const pdf = new jsPDF();
+  
+    // Set font size and style
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+  
+    // Define table headers
+    const headers = ["Key", "Value"];
+  
+    // Initialize table data array
+    const tableData = [];
+  
+    // Iterate over object properties and push key-value pairs to tableData
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        // Check if the current property is "assignees"
+        if (key === "assignees") {
+          // Extract names from assignees array and concatenate
+          const assigneeNames = data[key].map((assignee: any) => `${assignee.firstName} ${assignee.lastName}`).join(", ");
+          tableData.push([key, assigneeNames]);
+        } else {
+          // For other properties, push key-value pairs to tableData
+          tableData.push([key, data[key]]);
+        }
+        if (key === "screenshot") {
+          
+          // Handle screenshot separately and add it as an image
+          const screenshotUrl = data[key];
+          const imgWidth = 80; // Adjust as needed
+          const imgHeight = 60; // Adjust as needed
+          pdf.addImage(screenshotUrl, "PNG", 100, 200, imgWidth, imgHeight);
+          tableData.push(["Screenshot", ""]);
+        }
+      }
+    }
+  
+    // Set table column widths and autoTable options
+    const columnWidths = [50, 140];
+  
+    // Add table headers and data to PDF using jspdf-autotable
+    (pdf as any).autoTable({
+      head: [headers],
+      body: tableData,
+      startY: 20,
+      margin: { top: 20 },
+      columnStyles: { 0: { cellWidth: columnWidths[0] } },
+    });
+      
+    // Save the PDF
+    
+    return pdf;
+    pdf.save("object_data.pdf");
+  };
+  const userCredentials = localStorage.getItem('userCredentials');
+  let credential=null;
+  if(userCredentials) credential=JSON.parse(userCredentials);
+   const providerType =credential.provider;
+
+   
+
+  const updatedselectedIssue =(issueData:any)=>{
+      setSelectedIssue(issueData)
+  }
 
   return (
     <>
+    
+      {procorePopup && <ProcoreLink  issue={selectedIssue} gen={gen} handleCloseProcore={handleCloseProcore} updatedselectedIssue={updatedselectedIssue} getIssues={getIssues}></ProcoreLink>}
+      {issueDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
@@ -1232,8 +1335,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   alt={"close icon"}
                   data-testid="back-arrow"
                 />
+                
               </div>
-
+     
               <DarkToolTip
                 title={
                   <SecondAssigneeList>
@@ -1252,6 +1356,25 @@ const CustomIssueDetailsDrawer = (props: any) => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
+            {providerType === 'procore' ? (    
+    <div className="p-[6px] hover:bg-[#E7E7E7] "
+    >
+
+      <ProcoreLogo
+        src={procore}
+        alt="logo"
+        style={{ cursor: selectedIssue.integration ? 'not-allowed' : 'pointer' }}
+    onClick={()=>{
+if(!selectedIssue.integration){ handleProcoreLinks()}}}
+      />
+    </div> ) : (
+    <ProcoreLogo
+      src={procore} 
+      alt="logo"
+      title="Login via Procore required"
+    />
+  )}
+ 
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1282,6 +1405,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         ) : (
           <>
             <BodyContainer footerState={footerState} id="issueDetailsWindow">
+              
               <BasicTabs
                 taskType={issueType}
                 taskPriority={issuePriority}
@@ -1296,7 +1420,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
             </BodyContainer>
           </>
         )}
+        
       </CustomTaskDrawerContainer>
+    
+}
+
 
       {openCreateTask && (
         <CustomDrawer open variant="temporary">
@@ -1342,7 +1470,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
         />
       )} */}
     </>
+    
   );
+  
 };
 
 export default CustomIssueDetailsDrawer;
@@ -1402,3 +1532,4 @@ const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
     //  color: 'red',
   },
 }));
+
