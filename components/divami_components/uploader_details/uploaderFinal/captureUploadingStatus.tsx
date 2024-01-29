@@ -141,7 +141,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           return(
             <div>
             {uploaderState.showRetry && uploaderState.selectedJob && uploaderState.selectedJob.status === JobStatus.uploadFailed && job._id === uploaderState.showRetry ?
-            (<div><AutorenewIcon color="warning" className="text-white bg-[#F1742E] rounded-full cursor-pointer"onClick={()=>{
+            (<div><AutorenewIcon color="warning" className="text-white bg-[#F1742E] rounded-full cursor-pointer"onClick={(event)=>{
+              event.stopPropagation();
             let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
             if(filesList != undefined)
             {

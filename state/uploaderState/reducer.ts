@@ -250,7 +250,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 return {
                     ...state,
                     selectedJob: action.payload.job,
-                    currentUploadFiles: state.inProgressWorkers && state.inProgressWorkers[selectedCaptureId]
+                    retryUploadFiles: state.inProgressWorkers && state.inProgressWorkers[selectedCaptureId]
                 }
         case UploaderActionType.setShowRetry:
                 return {

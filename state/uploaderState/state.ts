@@ -72,7 +72,8 @@ export interface UploaderState {
     isDelete: boolean,
     currentPopup? : PopupData,
     errorCount:number;
-    showRetry:string | null
+    showRetry:string | null,
+    retryUploadFiles?:IUploadFile<RawImage>[]
 }
 
 export enum UploaderStep {

@@ -91,3 +91,16 @@ export const addCapture = (projectId:string,formValue:{
       headers: authHeader.authHeader(),
     })
   }
+
+  export const retryRawImages = (projectId:string,captureID:string,formValue:Array<string>) => {
+    return instance
+      .post(`${API.BASE_URL}/projects/${projectId}/captures/${captureID}/retry-raw-images`,{rawImagesIds:formValue},{
+        headers: authHeader.authHeader(),
+      })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
