@@ -142,7 +142,7 @@ function PotreeViewer(props) {
           {!isCompareViewer ? (
             <div>
               {/* <CameraButtons></CameraButtons> */}
-              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} />
+              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} viewerId={viewerId} />
             </div>
           ) : (
             ""
