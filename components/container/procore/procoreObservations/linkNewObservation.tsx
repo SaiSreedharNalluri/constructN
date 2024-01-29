@@ -75,9 +75,9 @@ const LinkNewObservation = (props: any) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const weburl=()=>{
     if(issue){
-      return `http://localhost:3000/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
     }else{
-      return `http://localhost:3000/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
     }
   }
   const onDrop = useCallback((acceptedFiles: any) => {
