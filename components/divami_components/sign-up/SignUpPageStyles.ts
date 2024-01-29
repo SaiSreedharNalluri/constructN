@@ -239,6 +239,7 @@ export const ButtonSection = styled("div")<ContainerProps>`
   align-items: center;
 `;
 
+
 export const NewUserDiv = styled("div")({
   marginTop: "20px",
   fontFamily: "Open Sans",

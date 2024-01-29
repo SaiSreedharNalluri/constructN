@@ -33,7 +33,8 @@ import {
   getTaskStatus,
   getTasksTypes,
 } from "../../../services/task";
-import TaskFilterCommon from "../taskFilter/TaskFilterCommon";
+import TaskFilterCommon from "../../divami_components/task-filter-common/TaskFilterCommon";
+
 import CustomTaskDetailsDrawer from "../taskDetails/TaskDetail";
 import {
   AppliedFilter,
@@ -83,7 +84,8 @@ import {
   AssigneeList,
   Watcher,
   TopButton,
-} from "./TaskListStyles"
+} from "../../divami_components/task_list/TaskListStyles";
+
 import {
   Box,
   Divider,
@@ -98,11 +100,9 @@ import {
 import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import { IToolbarAction, ITools } from "../../../models/ITools";
-import {
-  downloadMenuOptions
-} from "../issueListing/Constants";
+import { downloadMenuOptions} from "../../divami_components/issue-listing/Constants";
 import { DownloadTable } from "../toolbarViewer/DownloadTable";
-import { MenuOptionLabel } from "../issueListing/IssueListStyles";
+import { MenuOptionLabel } from "../../divami_components/issue-listing/IssueListStyles";
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 import filterElip from "../../../public/divami_icons/filterElip.svg";
 import progressHour from "../../../public/divami_icons/progressHour.svg";
@@ -356,6 +356,7 @@ const CustomTaskListDrawer = (props: any) => {
       taskContRef.current.scrollTop = 0;
     }
   };
+
   console.log("routerrrrrrre",router)
   return (
     <>
@@ -651,11 +652,7 @@ const CustomTaskListDrawer = (props: any) => {
             <Drawer
               anchor={"right"}
               open={openTaskDetail}
-              onClose={() => {setOpenTaskDetail((prev: any) => !prev)
-                // delete router.query.iss
-                // router.push(router)
-              }
-              }
+              onClose={() => setOpenTaskDetail((prev: any) => !prev)}
             >
               <CustomTaskDetailsDrawer
                 taskList={tasksList}

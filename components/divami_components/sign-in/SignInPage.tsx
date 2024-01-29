@@ -17,10 +17,14 @@ import {
   RememberDiv,
   SectionShowcase,
   SignInHeader,
+  ProcoreButton,
+  ProcoreLogo,
+  TextContainer
 } from "./SignInPageStyle";
 
 import { useRouter } from "next/router";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
+import procore from "../../../public/divami_icons/procore.svg";
 // import Logo from "../../../public/divami_icons/Logo.svg";
 
 import Checked from "../../../public/divami_icons/checked.svg";
@@ -36,6 +40,7 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { PROCORE } from "../../../config/config";
 const SignInPage = () => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
@@ -97,7 +102,7 @@ const SignInPage = () => {
   ) => {
     if(loginEnable){
       setLoginEnable(false)
-      login(email?.toLocaleLowerCase(), password)
+      login(email?.toLocaleLowerCase(), password,12345)
       .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified) {
@@ -195,6 +200,11 @@ const SignInPage = () => {
     if (userObj) router.push("/projects");
   }, [])
 
+  const handleProcoreButtonClick = () => {
+    const redirectUrl = `${PROCORE.LOGIN_URL}/oauth/authorize?response_type=code&client_id=${PROCORE.CLIENT_ID}&redirect_uri=${PROCORE.REDIRECT_URI}`;
+    window.location.href = redirectUrl;
+  };
+
   return (
     <>
       {loading && <CustomLoader />}
@@ -245,6 +255,12 @@ const SignInPage = () => {
 
               {/* Render the loader if loading state is true */}
             </ButtonSection>
+            <br />
+            <p className="flex justify-center">or</p>
+            <ProcoreButton onClick={handleProcoreButtonClick}>
+            <ProcoreLogo src={procore} alt="logo" />
+            <TextContainer>Sign In with Procore</TextContainer>
+          </ProcoreButton>
 
             <NewUserDiv>
               New User?{"   "}

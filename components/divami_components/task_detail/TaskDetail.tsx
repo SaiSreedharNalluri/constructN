@@ -113,13 +113,16 @@ import {
 } from "./TaskDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
 import ActivityLog from "./ActivityLog";
-import { ActivityLogContainer } from "../issue_detail/IssueDetailStyles";
+import { ActivityLogContainer, ProcoreLogo } from "../issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
 import AttachmentPreview from "../attachmentPreview";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import { truncateString } from "../../../pages/projects";
+import procore from "../../../public/divami_icons/procore.svg";
 import Download from "../../../public/divami_icons/download.svg";
+import ProcoreLink from "../../container/procore/procoreLinks";
+import ProcoreExist from "../../container/procore/procoreExist";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -387,6 +390,21 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
+          {taskState.TabOne.integration&&(
+           <Tab
+            label="Procore"
+            {...a11yProps(0)}
+            style={{
+              marginRight: "40px",
+              paddingLeft: "0px",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+          />
+          )}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -814,7 +832,7 @@ function BasicTabs(props: any) {
                       variant="standard"
                       placeholder="Add Comment"
                       value={comments}
-                      onChange={(e) => {
+                      onChange={(e:any) => {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
@@ -847,12 +865,7 @@ function BasicTabs(props: any) {
         </TabOneDiv>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ActivityLog
-          ActivityLog={taskState.TabTwo}
-          comments={backendComments}
-          getComments={getComments}
-          setIsAdding={setIsAdding}
-        />
+      <ProcoreExist selected={taskState.TabOne.integration}></ProcoreExist>
       </CustomTabPanel>
     </Box>
   );
@@ -883,6 +896,9 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const router = useRouter();
   const [backendComments, setBackendComments] = useState<any>([]);
   const[isLoading,setLoading]=useState(false);
+  const [taskDetail,setTaskDetail] = useState<boolean>(true);
+  const [procorePopup,setProcorePopup]= useState<boolean>(false)
+  const [procoreExist,setPropcoreExist] =useState<boolean>(false)
   const [file, setFile] = useState<File>();
 
   useEffect(() => {
@@ -976,6 +992,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           : "",
       id: selectedTask?._id,
       status: selectedTask?.status,
+      procore: selectedTask?.integration,
     };
     setTaskState((prev: any) => {
       return {
@@ -1187,8 +1204,23 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
     return truncatedText;
   };
+  const handleProcoreLinks = () =>{
+    setProcorePopup(true)
+     setTaskDetail(false)
+   }
+  
+  const  handleCloseProcore=()=>{
+    setProcorePopup(false)
+    setTaskDetail(true);
+  }
+  const userCredentials = localStorage.getItem('userCredentials');
+  let credential=null;
+  if(userCredentials) credential=JSON.parse(userCredentials);
+   const providerType =credential.provider;
   return (
     <>
+      {procorePopup && <ProcoreLink task={selectedTask}  handleCloseProcore={handleCloseProcore} getTasks={getTasks}></ProcoreLink>}
+      {taskDetail && 
       <CustomTaskDrawerContainer>
         <HeaderContainer>
           <TitleContainer>
@@ -1213,6 +1245,24 @@ const CustomTaskDetailsDrawer = (props: any) => {
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
+            {providerType === 'procore' ? (
+   <div className="p-[6px] hover:bg-[#E7E7E7] "
+   >
+
+     <ProcoreLogo
+       src={procore}
+       alt="logo"
+       style={{ cursor: selectedTask.integration ? 'not-allowed' : 'pointer' }}
+   onClick={()=>{
+if(!selectedTask.integration){ handleProcoreLinks()}}}
+     />
+   </div> ) : (
+   <ProcoreLogo
+     src={procore} 
+     alt="logo"
+     title="Login via Procore required"
+   />
+      )}
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1233,6 +1283,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
                   data-testid="delete-icon"
                 />
               </div>
+              
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
@@ -1250,6 +1301,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
           />
         </BodyContainer>
       </CustomTaskDrawerContainer>
+}
       {showPopUp && (
         <PopupComponent
           open={showPopUp}
