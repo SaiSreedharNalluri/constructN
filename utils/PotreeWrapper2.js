@@ -315,7 +315,7 @@ export const PotreeViewerUtils = () => {
         loadPointCloud(pointClouds);
         
         // loadSupportTools();
-        loadMeasurementModule();
+        // loadMeasurementModule();
         
     }
 
@@ -2304,7 +2304,7 @@ export const PotreeViewerUtils = () => {
         let childIndex = -1;
 
         unloadAllImages();
-        pointCloudView(false);
+        // pointCloudView(false);
 
         _viewer.scene.removeAllMeasurements();
 
