@@ -123,6 +123,7 @@ const SignInPage = () => {
               customLogger.logInfo(`user successfully logged`);
               // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
               delete userProfileObj.unReadNotifications
+              delete userProfileObj.avatar
             setCookie("isProjectTimeZone", true);
             setCookie("user", userProfileObj);
             localStorage.setItem('uploaededData',JSON.stringify({}))
