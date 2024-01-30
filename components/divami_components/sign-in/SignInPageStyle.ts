@@ -15,7 +15,7 @@ export const ProcoreLogo = styled(Image)`
 export const ProcoreButton = styled("div")`
   margin-top: 30px;
   flex-direction: coloumn;
-  background-color:#FF7F11;
+  background-color: #F1742E;
   cursor: pointer;
   border-radius: 8px;
   padding: 10px 20px;
