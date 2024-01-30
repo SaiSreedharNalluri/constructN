@@ -130,7 +130,8 @@ const SignInPage = () => {
             Mixpanel.people.set({ 
             "user_id":response.result._id,
             "name":response.result.fullName,
-            "$email":response.result.email
+            "$email":response.result.email,
+            "$avatar":response.result.avatar!==undefined?response.result.avatar:"https://constructn-attachments-us.s3.us-west-2.amazonaws.com/avatars/USR475391-1706175403640.png"
           });
             Mixpanel.track( {name: "login_successful",project_id:"unknown",company_id:"unknown",screen_name:"login_page",event_category:"login",event_action:"login_successful",user_id:response.result._id})
             CustomToast("User signed in successfully", "success");
