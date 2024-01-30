@@ -225,11 +225,11 @@ const CustomCalender = (props: any) => {
               ? config[0]?.defaultValue
               : null
           }
-          maxDate={
-            config && config[1] && data.id === "start-date"
-              ? config[1]?.defaultValue
-              : null
-          }
+          // maxDate={
+          //   config && config[1] && data.id === "start-date"
+          //     ? config[1]?.defaultValue
+          //     : null
+          // }
           onChange={(newValue: any) => {
             setValue(newValue);
             onChange(newValue);

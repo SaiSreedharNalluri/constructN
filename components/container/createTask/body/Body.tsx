@@ -1,7 +1,8 @@
 import { styled } from "@mui/system";
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import Moment from "moment";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 // import CustomLabel from '../../Common/custom-label/CustomLabel'
 // import FormWrapper from '../../Common/form-wrapper/FormWrapper'
@@ -198,6 +199,12 @@ const Body = ({
                   if (each.id == "start-date") {
                     return {
                       ...each,
+                      formLabel:<div>
+                      Start Date
+                      <Tooltip title='Expected / Actual start date of the task'>
+                      <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                      </Tooltip>
+                    </div>,
                       defaultValue: editData?.startDate ?? null,
                     };
                   } else {
@@ -302,14 +309,23 @@ const Body = ({
               return {
                 ...item,
                 fields: item.fields.map((each: any) => {
-                  if (each.id == "start-date") {
+                  if (each.id == "start-date" && editData === undefined) {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Expected Start Date
+                        <Tooltip title='Expected start date for the assigned user on this task'>
+                        <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                        </Tooltip>
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
                   } else {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Due Date
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
                   }
