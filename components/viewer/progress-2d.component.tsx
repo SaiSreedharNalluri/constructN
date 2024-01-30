@@ -286,9 +286,11 @@ function Progress2DComponent(props: _ViewerProps) {
 
         let mTm = _tm.current
         if(_currentStructure.current === 'STR940183') {
-            mTm = applyRotationTm(mTm!)
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
         } else if(_currentStructure.current === 'STR967653') {
-            mTm = applyRotationTm(mTm!)
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR886181') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.015)
         }
 
         return mTm!
@@ -299,7 +301,9 @@ function Progress2DComponent(props: _ViewerProps) {
         let mOffset = _offset.current
         if(_currentStructure.current === 'STR940183') {
             mOffset = [1.2, -0.85, 0]
-        } if(_currentStructure.current === 'STR967653') {
+        } else if(_currentStructure.current === 'STR886181') {
+            mOffset = [0.31, -0.225, 0]
+        } else if(_currentStructure.current === 'STR967653') {
             mOffset = [1.375, -0.7, 0]
         } else if(_currentStructure.current === 'STR719122') {
             mOffset = [0.075, -0.9, 0]
@@ -310,7 +314,7 @@ function Progress2DComponent(props: _ViewerProps) {
         return mOffset!
     }
 
-    const applyRotationTm = (originalMatrix: THREE.Matrix4) => {
+    const applyRotationTm = (originalMatrix: THREE.Matrix4, axis: THREE.Vector3, angle: number) => {
         // Assuming you have your original transformation matrix named 'originalMatrix'
 
         // Decompose the original matrix
@@ -322,7 +326,7 @@ function Progress2DComponent(props: _ViewerProps) {
         // Adjust the rotation as needed
         // For example, rotate around Y axis by 90 degrees
         // quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.4));
-        quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), 0.06));
+        quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(axis, angle));
 
         // Compose a new matrix with the adjusted rotation
         var newMatrix = new THREE.Matrix4();
