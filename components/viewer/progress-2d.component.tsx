@@ -188,10 +188,8 @@ function Progress2DComponent(props: _ViewerProps) {
         _offset.current = offset
 
         if (_edit2dUtils.current) {
-
-            if(_currentStructure.current === 'STR719122' || _currentStructure.current === 'STR709859') _offset.current = [0.075, -0.9, 0]
             
-            _edit2dUtils.current.setTransform(_tm.current, _offset.current)
+            _edit2dUtils.current.setTransform(_getTm(), _getOffset())
 
             _edit2dUtils.current?.loadAssets(_assets.current)
 
@@ -237,9 +235,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _edit2dUtils.current = new ForgeEdit2DUtils(_forge.current!, _extn as Autodesk.Extensions.Edit2D, props.isSupportUser)
 
-            if(_currentStructure.current === 'STR719122' || _currentStructure.current === 'STR709859') _offset.current = [0.075, -0.9, 0]
-
-            if (_tm.current && _offset.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
+            if (_tm.current && _offset.current) _edit2dUtils.current.setTransform(_getTm(), _getOffset())
 
         }
 
@@ -284,6 +280,54 @@ function Progress2DComponent(props: _ViewerProps) {
            } catch(e) { console.log(e) }
 
         }
+    }
+
+    const _getTm = () => {
+
+        let mTm = _tm.current
+        if(_currentStructure.current === 'STR940183') {
+            mTm = applyRotationTm(mTm!)
+        } else if(_currentStructure.current === 'STR967653') {
+            mTm = applyRotationTm(mTm!)
+        }
+
+        return mTm!
+    }
+
+    const _getOffset = () => {
+
+        let mOffset = _offset.current
+        if(_currentStructure.current === 'STR940183') {
+            mOffset = [1.2, -0.85, 0]
+        } if(_currentStructure.current === 'STR967653') {
+            mOffset = [1.375, -0.7, 0]
+        } else if(_currentStructure.current === 'STR719122') {
+            mOffset = [0.075, -0.9, 0]
+        } else if(_currentStructure.current === 'STR709859') {
+            mOffset = [0.075, -0.9, 0]
+        }
+
+        return mOffset!
+    }
+
+    const applyRotationTm = (originalMatrix: THREE.Matrix4) => {
+        // Assuming you have your original transformation matrix named 'originalMatrix'
+
+        // Decompose the original matrix
+        var position = new THREE.Vector3();
+        var quaternion = new THREE.Quaternion();
+        var scale = new THREE.Vector3();
+        originalMatrix.decompose(position, quaternion, scale);
+
+        // Adjust the rotation as needed
+        // For example, rotate around Y axis by 90 degrees
+        // quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.4));
+        quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), 0.06));
+
+        // Compose a new matrix with the adjusted rotation
+        var newMatrix = new THREE.Matrix4();
+        newMatrix.compose(position, quaternion, scale);
+        return newMatrix
     }
 
     return (
