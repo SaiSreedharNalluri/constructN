@@ -9,6 +9,7 @@ import {
 } from "../issue-listing/IssueListStyles";
 import { IconContainer } from "../task_list/TaskListStyles";
 import { MenuWrapper } from "../project-users-list/ProjectUsersListStyles";
+import { Mixpanel } from "../../analytics/mixpanel";
 
 export const CustomMenu = ({
   imageSrc,
@@ -26,6 +27,38 @@ export const CustomMenu = ({
     setAnchorEl(null);
   };
   const [isActive, setIsActive] = useState(false);
+  const trackSortingEvent = (option: any) => {
+    let sortingType = "";
+    switch (option.method) {
+      case "userAsc":
+        sortingType = "user_inc";
+        break;
+      case "userDesc":
+        sortingType = "user_desc";
+        break;
+      case "updatedAsc":
+        sortingType = "last_updated_inc";
+        break;
+      case "updatedDesc":
+        sortingType = "last_updated_desc";
+        break;
+
+      default:
+        sortingType = option.method; 
+        break;
+    }
+
+    Mixpanel.track({
+      name: "sorting_type_clicked",
+      project_id: "unknown",
+      company_id: "unknown",
+      screen_name: "projects_list_page",
+      event_category: "sort",
+      event_action: "sorting_type_clicked",
+      user_id: "unknown",
+      sorting_type:{ sortingType},
+    });
+  };
   return (
     <Tooltip title={"Sort"}>
     <MenuWrapper className={`${id} ${isActive ? "active" : ""} cursor-pointer`}>
@@ -41,6 +74,7 @@ export const CustomMenu = ({
           setShowMoreActions(true);
           setAnchorEl(e.target);
           setIsActive(true);
+        Mixpanel.track({name: "sort_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"sort",event_action:"sort_clicked",user_id:"unknown"})
         }}
       />
       <Menu
@@ -91,7 +125,11 @@ export const CustomMenu = ({
               className="custom-styled-menu"
               key={option.label}
               onClick={() => {
-                if (option.onClick) option.onClick();
+                if (option.onClick) 
+                {
+                  trackSortingEvent(option);
+                option.onClick();              
+              }
                 else if (option.action && data) {
                   option.action(data?._id);
                 }

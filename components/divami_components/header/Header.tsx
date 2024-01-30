@@ -62,6 +62,7 @@ import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
 import { ProjectCounts } from "../../../models/IUtils";
 import { IJobs } from "../../../models/IJobs";
+import { Mixpanel } from "../../analytics/mixpanel";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -105,6 +106,7 @@ const Header: React.FC<any> = ({
   const { state: appState, appContextAction } = useAppContext();
   const [projectUplObj,setProjectUplObj] = useState<ProjectCounts>({})
   const { appAction } = appContextAction;
+  let [userId, setUserId] = useState<string>("");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   useEffect(() => {
@@ -185,6 +187,9 @@ const Header: React.FC<any> = ({
       if (user?.avatar) {
         setAvatar(user.avatar);
       }
+      else if(user?._id){
+        setUserId(user?._id)
+      }
     }
   }, [router.isReady]);
   useEffect(() => {
@@ -229,6 +234,7 @@ const Header: React.FC<any> = ({
 
   const userLogOut = () => {
     customLogger.logActivity("null");
+    Mixpanel.track( {name: "signout_successful",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"signout",event_action:"signout_successful",user_id:userId})
     Sentry.setTag("ProjectName", null);
     Sentry.setTag("CompanyName", null);
     Sentry.setTag("ProjectId", null);
@@ -258,6 +264,7 @@ const Header: React.FC<any> = ({
       setSupportMenu(false);
       setOpenNotication(false);
       customLogger.logInfo("Header - User Profile")
+    Mixpanel.track( {name: "profile_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"profile",event_action:"profile_clicked",user_id:userId})
     } else {
       setOpenProfile(false);
     }
@@ -324,12 +331,15 @@ const Header: React.FC<any> = ({
   }, [filterValue, currentPage]);
   const handleNotificationClose = () => {
     setOpenNotication(false);
+    Mixpanel.track( {name: "notifications_window_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"notifications",event_action:"notifications_window_closed",user_id:userId,notifications_count:notificationCount})
   };
   const handleProfileClose = () => {
     setOpenProfile(false);
+    Mixpanel.track( {name: "profile_window_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"profile",event_action:"profile_window_closed",user_id:userId}) 
   };
   const handleUploaderClose =()=>{
     setOpenUploader(false)
+    Mixpanel.track( {name: "uploader_notification_window_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_notification_window_closed",user_id:userId,notifications_count:uploaderCount})
   }
   const clearNotificationsCount = () => {
     clearUserNotificationsCount().then((response) => {
@@ -502,6 +512,7 @@ const Header: React.FC<any> = ({
                 setAnchorEl(null)
                 setSupportMenu(false);
                 setOpenProfile(false);
+                Mixpanel.track( {name: "uploader_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_clicked",user_id:userId,notifications_count:uploaderCount})
               }
             }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
@@ -519,6 +530,7 @@ const Header: React.FC<any> = ({
             {openUploader && (
               <div>
                  <CustomDrawer onClose={handleUploaderClose}>
+             { Mixpanel.track( {name: "uploader_notification_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_notification_window_loaded",user_id:userId,notifications_count:uploaderCount})}
                  <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplObj={projectUplObj}/></div>
                 </CustomDrawer>
               </div>
@@ -552,6 +564,7 @@ const Header: React.FC<any> = ({
             )}
             {openProfile ? (
               <CustomDrawer onClose={handleProfileClose}>
+             { Mixpanel.track( {name: "profile_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"profile",event_action:"profile_window_loaded",user_id:userId})}
                 <div>
                   <UserProfile
                     handleProfileClose={handleProfileClose}
@@ -577,6 +590,7 @@ const Header: React.FC<any> = ({
                         setAnchorEl(null)
                         setOpenNotication(false);
                         setOpenProfile(false);
+    Mixpanel.track( {name: "support_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"support",event_action:"support_clicked",user_id:userId})
                       } else {
                         setSupportMenu(false);
                       }
@@ -600,6 +614,7 @@ const Header: React.FC<any> = ({
                 setAnchorEl(null)
                 setSupportMenu(false);
                 setOpenProfile(false);
+    Mixpanel.track( {name: "notifications_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"notifications",event_action:"notifications_clicked",user_id:userId,notifications_count:notificationCount})
                 clearNotificationsCount();
               }
             }}>
@@ -616,6 +631,8 @@ const Header: React.FC<any> = ({
             {openNotification && (
               <div>
                 <CustomDrawer onClose={handleNotificationClose}>
+    {Mixpanel.track( {name: "notifications_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"notifications",event_action:"notifications_window_loaded",user_id:userId,notifications_count:notificationCount})}
+                  
                   <div>
                     <Notifications
                       notifications={notifications}
@@ -624,6 +641,8 @@ const Header: React.FC<any> = ({
                       filterValue={filterValue}
                       filterNotificationData={filterNotificationData}
                       handleNotificationClose={handleNotificationClose}
+                      userId={userId}
+                      notificationCount={notificationCount}
                     ></Notifications>
                   </div>
 
@@ -638,6 +657,7 @@ const Header: React.FC<any> = ({
                       setAnchorEl(event.currentTarget);
                       setSupportMenu(false);
                       setOpenProfile(false);
+    Mixpanel.track( {name: "hamberger_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"signout",event_action:"hamberger_clicked",user_id:userId})                     
                     } else {
                       setAnchorEl(null);
                     }
@@ -663,7 +683,10 @@ const Header: React.FC<any> = ({
                       'aria-labelledby': 'basic-button',
                     }}
           >
-          <MenuItem onClick={() => {setshowPopUp(true),setAnchorEl(null)}} className="px-[20px] py-0 hover:bg-white">
+          <MenuItem onClick={() => {
+            Mixpanel.track( {name: "signout_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"signout",event_action:"signout_clicked",user_id:userId})
+            setshowPopUp(true),setAnchorEl(null)
+}} className="px-[20px] py-0 hover:bg-white">
           <FontAwesomeIcon icon={faSignOut} className="mr-[10px] "/>Sign out</MenuItem>
           </Menu>
            </HeaderMenuImageContainer>

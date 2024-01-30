@@ -47,13 +47,15 @@ import { role } from "../../../utils/constants";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { Mixpanel } from "../../analytics/mixpanel";
 export const AddUsersEmailOverlay = ({
   form,
   setOpenDrawer,
   roles,
   selectedProjectId,
   appendToTable,
-  tableData
+  tableData,
+  userId
 }: any) => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
@@ -317,6 +319,7 @@ if(addedUsers.length>0){
           <div className=" rounded-full p-[6px] hover:bg-[#E7E7E7]">
           <CloseIcon
             onClick={() => {
+    Mixpanel.track( {name: "cross_button_clicked",project_id:selectedProjectId,company_id:"unknown",screen_name:"manage_users_page",event_category:"manage_users",event_action:"cross_button_clicked",user_id:userId._id})          
               onClickBack();
             }}
             src={closeWithCircle}
@@ -431,6 +434,9 @@ if(addedUsers.length>0){
               type={"outlined"}
               label={"Back"}
               formHandler={onClickBack}
+            projectId={selectedProjectId}
+              userId={userId}
+              isButton="addUser"
             />
           </BackButton>
 
@@ -438,6 +444,9 @@ if(addedUsers.length>0){
             type={addedUsers.length >= 1 && isDisabled ? "contained":"disabled"}
             label={"Add User"}
             formHandler={onAddUser}
+            projectId={selectedProjectId}
+            userId={userId}
+            isButton="addUser"
           />
         </ButtonWrapper>
       </FooterWrapper>
