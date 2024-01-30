@@ -59,7 +59,7 @@ const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: s
 
 export default function Progress2DStages(
 
-    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading }:
+    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading, projectUsers }:
 
         {
             stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined,
@@ -81,6 +81,8 @@ export default function Progress2DStages(
             setLoading: Dispatch<SetStateAction<boolean>>
 
             loading: boolean
+
+            projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
 
         }) {
 
@@ -108,6 +110,8 @@ export default function Progress2DStages(
 
                     loading={loading}
 
+                    projectUsers={projectUsers}
+
                     onToggleVisibility={onToggleVisibility} compare={compare} refetchCategories={refetchCategories} />)
 
             }
@@ -126,7 +130,7 @@ const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(
 
 function Progress2DStage(
 
-    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading }: {
+    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading, projectUsers }: {
 
         stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean },
         
@@ -146,13 +150,19 @@ function Progress2DStage(
 
         loading?: boolean
 
+        projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
+
         setLoading: Dispatch<SetStateAction<boolean>>
 
     }) {
+    
+    const numberFormatter = new Intl.NumberFormat('en-US',{ maximumFractionDigits: 1 });
 
     const userObj: any = getCookie('user')
 
-    const user = JSON.parse(userObj || "{}")
+    const userDetails = JSON.parse(userObj || "{}")
+
+    const roleforProject =  projectUsers.find((user: { user: { _id: string }; role: string })=>(user.user._id === userDetails._id ));
 
     const [edit , setEdit]= useState(false)
 
@@ -162,7 +172,7 @@ function Progress2DStage(
 
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
 
-    const [assetValue , totalAssetValue]= useState(stage.totalMeasurement || totalValueMetrics)
+    const [assetValue , totalAssetValue]= useState<string |  number>((stage.totalMeasurement || totalValueMetrics).toFixed(1))
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
@@ -174,9 +184,9 @@ function Progress2DStage(
 
     const getProgress = (): number | number[] => {
 
-        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (assetValue|| 1))
+        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (+assetValue|| 1))
 
-        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (assetValue || 1))
+        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (+assetValue || 1))
 
         if(!compare) return baseProgress
 
@@ -184,7 +194,7 @@ function Progress2DStage(
     }
 
     const editCallback = async () =>{
-        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: assetValue }, setLoading, assetValue);
+        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: +assetValue }, setLoading, +assetValue);
         refetchCategories && refetchCategories();
         setEdit(false);
     }
@@ -260,7 +270,7 @@ function Progress2DStage(
 
                     <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
-                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } onKeyDown={(e)=>{
+                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{numberFormatter.format(+totalCompletedMetrics)} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(e.target.value) } onKeyDown={(e)=>{
                         if(!edit) return;
                         if(e.key === 'Enter'){
                             editCallback();
@@ -268,8 +278,14 @@ function Progress2DStage(
                         if(e.key === 'Escape'){
                             setEdit(false);
                         }
-                        }} /> : assetValue} {edit? null: stage.uom}</Typography>
-                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
+                        }} /> : numberFormatter.format(+assetValue)} {edit? null: stage.uom}</Typography>
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>{
+                            if(!['collaborator','admin'].includes(roleforProject?.role || '')){
+                                CustomToast("Do not have access - contact Admin","error");
+                                return;
+                            }
+                            setEdit(true)}
+                            } />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
                     </div>
                 </div>
 

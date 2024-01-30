@@ -16,6 +16,10 @@ import { API } from '../../config/config'
 
 import Metrics from './metrics-details'
 import authHeader from '../../services/auth-header'
+import EmailButton from './send-email'
+import { useParams } from 'next/navigation'
+import { LightBoxInstance } from '../../services/light-box-service'
+import moment from 'moment'
 
 const headers = {headers: authHeader.authHeader()}
 
@@ -64,6 +68,8 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
     ({ assetId, snapshotBase, onChange, supportUser }) => {
 
+        const params = useParams();
+
         const [asset, setAsset] = useState<IAsset>()
 
         const [selectedTab, setSelectedTab] = useState<string>('asset-details')
@@ -102,7 +108,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {} } = asset || {}
         
-        const { stages} = category as IAssetCategory || {}
+        const { stages, name: actualCategoryName } = category as IAssetCategory || {}
         
         const { stage: actualStage } = progress  as IAssetProgress || {}
 
@@ -257,6 +263,10 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
 
                         {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} asset={asset} onChange={onChange} /></div>}
+
+                        {(selectedTab !== 'asset-timeline' && supportUser) ? <div className='absolute bottom-3 right-4'>
+                            <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
+                        </div>: null}
 
                     </div>
                 }

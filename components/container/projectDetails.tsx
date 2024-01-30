@@ -39,7 +39,7 @@ const getCompanies = ({setCompanyList}: {setCompanyList: React.Dispatch<React.Se
     })
     .then((response) => {
       procoreinstance.get(
-        `${PROCORE.BASE_URL}//rest/v1.0/companies`,
+        `${PROCORE.SANDBOX_URL}//rest/v1.0/companies`,
         {
         headers: { Authorization: "Bearer " + response?.data?.result?.metadata?.procore?.accessToken}
         }
@@ -65,7 +65,7 @@ const getProjects = ({ setProjectsList, companyId , setProjectsLoading}: {setPro
     })
     .then((response) => {
       procoreinstance.get(
-        `${PROCORE.BASE_URL}//rest/v1.0/companies/${companyId}/projects`,
+        `${PROCORE.SANDBOX_URL}//rest/v1.0/companies/${companyId}/projects`,
         {
         headers: { Authorization: "Bearer " + response?.data?.result?.metadata?.procore?.accessToken}
         }
@@ -211,7 +211,7 @@ const ProjectDetails: React.FC = () => {
               <h1 className="text-[#101F4C] font-normal font-sans text-lg">Project Details</h1>
             </div>
             <div className="flex">
-              {procoreProjectId ? <div className="text-[#252BBE] cursor-pointer mr-4" onClick={()=>(window.open(`${PROCORE.BASE_URL}/${procoreProjectId}/project/home`,'_blank'))}>Project Id : {procoreProjectId}</div> :<div
+              {procoreProjectId ? <div className="text-[#252BBE] cursor-pointer mr-4" onClick={()=>(window.open(`${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/home`,'_blank'))}>Project Id : {procoreProjectId}</div> :<div
                 className=" text-[#F1742E] cursor-pointer mr-4"
                 onClick={() =>setShowLink(true)}
               >

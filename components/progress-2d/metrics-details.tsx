@@ -211,7 +211,7 @@ export default function Metrics({
         	primaryButtonLabel={"Confirm"}
         	SecondaryButtonlabel={"Cancel"}
         	callBackvalue={async ()=>{
-				await onStatusToggle({ assetId, status: asset.status ==='Active'? 'InActive': 'Active', setLoading , refetchAssets });
+				await onStatusToggle({ assetId, status: asset.status ==='Active'? 'Inactive': 'Active', setLoading , refetchAssets });
 				onChange && onChange(asset);
 			}}
         	/>: null}

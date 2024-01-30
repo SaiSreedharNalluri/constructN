@@ -55,6 +55,9 @@ import authHeader from '../../../../services/auth-header'
 import { useRouter as Router  } from 'next/router'
 
 import PopupComponent from '../../../../components/popupComponent/PopupComponent'
+import EmailButton from '../../../../components/progress-2d/send-email'
+import { getProjectUsers } from '../../../../services/project'
+
 
 const headers = {headers: authHeader.authHeader()}
 
@@ -217,6 +220,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [clipValue, setClipValue] = useState(50);
 
+    const [projectUsers, setProjectUsers] =  useState<[] | { name: string; role: string; user: { _id: string }; }[] | []>([]);
+
+
     const structId = searchParams.get('structId')
 
     const handleMouseMove = (e: { buttons: number; clientX: number }) => {
@@ -282,7 +288,7 @@ const Progress2DPage: React.FC<any> = () => {
 
             setShowProgress(true)
 
-            Promise.all([fetchStructureHierarchy(projId!), fetchAssetCategories(projId!)]).then(response => {
+            Promise.all([fetchStructureHierarchy(projId!), fetchAssetCategories(projId!), getProjectUsers(params['projectId'] as string)]).then(response => {
 
                 setShowProgress(false)
 
@@ -302,6 +308,10 @@ const Progress2DPage: React.FC<any> = () => {
 
                     if(response[1].data.result.length > 0) _onCategorySelected(response[1].data.result[0])
 
+                }
+
+                if(response?.[2]?.result){
+                    setProjectUsers(response?.[2]?.result);
                 }
                 
             }).catch(e => setShowProgress(false))
@@ -932,7 +942,6 @@ const Progress2DPage: React.FC<any> = () => {
 
             const date = moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD MMM, yyyy')
 
-
             return <>
 
                 <Typography fontFamily='Open Sans' variant='subtitle1' className='select-none text-[18px]'>Progress of {currentCategory.current.name}</Typography>
@@ -1187,7 +1196,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                         </div>
 
-                                        <div className={'flex flex-col w-1/4 mr-4 py-4'}
+                                        <div className={'flex flex-col w-1/4 mr-4 py-4 pb-0'}
 
                                             style={{ height: 'calc(100vh - 144px)', border: '1px solid #e2e3e5', borderRadius: '6px' }} >
 
@@ -1279,6 +1288,8 @@ const Progress2DPage: React.FC<any> = () => {
                                                 setLoading = {setLoading}
                                                 
                                                 loading={loading}
+
+                                                projectUsers={projectUsers}
                                                 
                                                 refetch={()=>{ _loadAssetsForCategory(selectedCategory as IAssetCategory, selectedAsset) }}
                                                 
@@ -1309,6 +1320,10 @@ const Progress2DPage: React.FC<any> = () => {
                                                 supportUser={isSupportUser}
 
                                                 onChange={_onAssetDetailsChange}/>}
+
+                                            {!selectedAsset && isSupportUser ? <div className='flex py-1'>
+                                                <EmailButton projectId ={params['projectId'] as string} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} structure={LightBoxInstance?.viewerData()?.structure?.name} category={selectedCategory?.name} />
+                                            </div>: null}
 
                                         </div>
 

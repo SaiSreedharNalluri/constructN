@@ -30,7 +30,7 @@ const ProjectNameDetails = ({
         value={details.value.name}
         onChange={handleOnChange}
       />
-      {validateName(details.value.name.trim()) !== true && (
+      {validateName(details.value.name !== undefined ? details.value.name.trim() : undefined) !== true && (
         <FormHelperText className='text-[#FF853E]'>Invalid Name</FormHelperText>
       )}
     </Grid>

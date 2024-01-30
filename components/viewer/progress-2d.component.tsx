@@ -188,6 +188,8 @@ function Progress2DComponent(props: _ViewerProps) {
         _offset.current = offset
 
         if (_edit2dUtils.current) {
+
+            if(_currentStructure.current === 'STR719122' || _currentStructure.current === 'STR709859') _offset.current = [0.075, -0.9, 0]
             
             _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 
@@ -234,6 +236,8 @@ function Progress2DComponent(props: _ViewerProps) {
         } else if (extensionId === 'Autodesk.Edit2D') {
 
             _edit2dUtils.current = new ForgeEdit2DUtils(_forge.current!, _extn as Autodesk.Extensions.Edit2D, props.isSupportUser)
+
+            if(_currentStructure.current === 'STR719122' || _currentStructure.current === 'STR709859') _offset.current = [0.075, -0.9, 0]
 
             if (_tm.current && _offset.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 

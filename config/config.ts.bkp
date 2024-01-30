@@ -48,10 +48,11 @@ export const AWS = {
 
 }
 
-export const PROCORE ={
-     LOGIN_URL :"https://login-sandbox.procore.com",
+export const PROCORE = {
 
-    BASE_URL : 'https://sandbox.procore.com',
+    LOGIN_URL : "https://login-sandbox.procore.com",
+
+    SANDBOX_URL : 'https://sandbox.procore.com',
 
     CLIENT_ID : '51ca7ddce0a054f6cd1317d2890a1935bda0c07aaf10847a216fa913f777f8fa',
 

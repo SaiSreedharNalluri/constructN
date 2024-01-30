@@ -18,7 +18,7 @@ const Progress2dAssets = ({
 	const [search, setSearch] = useState("");
 	const [showInActiveAssets, setShowInActiveAssets] = useState(false);
 
-	const inActiveAssets = showInActiveAssets ? assets.filter((asset)=>(asset.status === 'Inactive')): assets
+	const inActiveAssets = showInActiveAssets ? assets.filter((asset)=>(['Inactive','InActive'].includes(asset.status || ''))): assets
 
 	const filteredAssets = inActiveAssets.filter(
 		(asset) =>
