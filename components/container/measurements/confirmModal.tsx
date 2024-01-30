@@ -98,8 +98,8 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
           modalmessage={""}
           primaryButtonLabel={"Confirm"}
           SecondaryButtonlabel={"Cancel"}
-          disableSecondaryButton={loading}
-          disablePrimaryButton={loading}
+          disableSecondaryButton={!name?.trim() || loading}
+          disablePrimaryButton={!name?.trim() || loading}
           callBackvalue={callBack}
           secondaryCallback={onCancel}
         />
