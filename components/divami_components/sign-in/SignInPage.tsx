@@ -102,7 +102,7 @@ const SignInPage = () => {
   ) => {
     if(loginEnable){
       setLoginEnable(false)
-      login(email?.toLocaleLowerCase(), password,12345)
+      login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified) {

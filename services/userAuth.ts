@@ -3,9 +3,9 @@ import { setCookie, getCookie,deleteCookie } from "cookies-next";
 import authHeader from "./auth-header";
 import { API } from "../config/config";
 import axios from "axios";
-export const login = (email: string, password: string, code:any) => {
+export const login = (email: string, password: string) => {
   return instance
-    .post(`${API.BASE_URL}/users/signin?code=${code}`, {
+    .post(`${API.BASE_URL}/users/signin`, {
       email,
       password,
     })
