@@ -25,9 +25,11 @@ import PopupComponent from "../components/popupComponent/PopupComponent";
 import { IntercomProvider } from 'react-use-intercom'
 import { UploaderContextProvider } from "../state/uploaderState/context";
 import { AppContextProvider } from "../state/appState/context";
+import { MIX_PANEL_TOKEN } from "../config/config";
+import { Mixpanel } from "../components/analytics/mixpanel";
 config.autoAddCss = false;
 export default function App({ Component, pageProps }: AppProps) {
-  mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
+  // mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, { debug: true });
   const router = useRouter();
   const signInRoutes = ["/login"];
   const setupFirebase = async () => {
@@ -88,6 +90,14 @@ export default function App({ Component, pageProps }: AppProps) {
     setupFirebase();
   }, []);
  const [showPopUp, setshowPopUp] = useState(false);
+useEffect(()=>{
+  mixpanel.init(MIX_PANEL_TOKEN|| "",{
+    debug:true,
+    ignore_dnt:true
+  });
+  Mixpanel.track( {name: router.pathname==="/login"?"login_page_loaded":router.pathname==="/signup"?"signup_page_loaded":"",project_id:"unknown",company_id:"unknown",screen_name: router.pathname==="/login"?"login_page":"signup_page",event_category:router.pathname==="/login"?"login":"signup",event_action:router.pathname==="/login"?"login_page_loaded":"signup_page_loaded ",user_id:"unknown"})
+  
+},[])
   return (
     <AppContextProvider>
       <UploaderContextProvider>

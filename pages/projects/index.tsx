@@ -82,6 +82,7 @@ import chatOpenHightlighted from "../../public/divami_icons/chatOpenHightlighted
 import CustomLoggerClass from "../../components/divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../state/appState/context";
 import { IProjects } from "../../models/IProjects";
+import { Mixpanel } from "../../components/analytics/mixpanel";
 // import { Button} from "@material-ui/core";
 export const truncateString = (text: string, maxLength: number) => {
   let truncatedText = text;
@@ -266,7 +267,8 @@ const Index: React.FC<any> = () => {
       },
     },
   ];
-
+  const userObj: any = getCookie('user');
+	const userId :any= JSON.parse(userObj || "{}");
   const handleSearchWindow = () => {
     setSearchTableData(projects);
     if (searchTerm === "") {
@@ -296,8 +298,10 @@ const Index: React.FC<any> = () => {
   };
   const handleOpenChat = (e: any) => {
     e.stopPropagation()
-    if(!isOpen)
+    if(!isOpen){
+    Mixpanel.track( {name: "chat_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"chat_clicked",user_id:userId._id})           
     openChat();
+    }
     else
     closeChat();
   };
@@ -343,6 +347,7 @@ const Index: React.FC<any> = () => {
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
+    Mixpanel.track( {name: "projects_list_page_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"projects_list_page_loaded",user_id:userId._id})           
             if (response?.data?.result.length == 0) {
               setShowWelcomeMessage(true);
             }
@@ -580,7 +585,10 @@ const Index: React.FC<any> = () => {
             <ProjectsHeader>
               <HeaderLabel>Project(s) </HeaderLabel>
               <HeaderActions>
-              <Button onClick={()=>router.push("project-onboarding")} style={{backgroundColor:"#FF853E",marginRight:"22px",color:"white"}}>+ Create New Project</Button>
+              <Button onClick={()=>{
+    Mixpanel.track( {name: "create_new_project_clicked",project_id:"unknown",company_id:"unknown",screen_name:"onboarding_page",event_category:"create_new_project_clicked",event_action:"create_new_project_clicked",user_id:userId._id})
+                router.push("project-onboarding")
+                }} style={{backgroundColor:"#FF853E",marginRight:"22px",color:"white"}}>+ Create New Project</Button>
                 {isSearching ? (
                   <SearchAreaContainer marginRight>
                     <CustomSearchField
@@ -612,6 +620,7 @@ const Index: React.FC<any> = () => {
                             <CloseIcon
                               onClick={() => {
                                 handleSearchWindow();
+    Mixpanel.track( {name: "search_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"search_closed",event_action:"search_clicked",user_id:userId._id})
                               }}
                               src={CrossIcon}
                               alt={"close icon"}
@@ -634,6 +643,7 @@ const Index: React.FC<any> = () => {
                     height={24}
                     onClick={() => {
                       setIsSearching(true);
+    Mixpanel.track( {name: "search_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"search_flow",event_action:"search_clicked",user_id:userId._id})
                     }}
                   />
                   </Tooltip>
@@ -657,6 +667,7 @@ const Index: React.FC<any> = () => {
                   height={24}
                   onClick={() => {
                     setOpenFilter(true);
+    Mixpanel.track( {name: "filters_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"filters",event_action:"filters_clicked",user_id:userId._id})
                   }}
                 />
                 </Tooltip>
@@ -666,6 +677,7 @@ const Index: React.FC<any> = () => {
                     <GridViewButton
                       onClick={() => {
                         setIsGridView(true);
+            Mixpanel.track( {name: "grid_view_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"grid_view_clicked",user_id:userId._id,layout:"grid"})
                       }}
                       toggleStatus={isGridView}
                       data-testid="design-button"
@@ -681,6 +693,7 @@ const Index: React.FC<any> = () => {
                     <GridViewButtonRight
                       onClick={() => {
                         setIsGridView(false);
+            Mixpanel.track( {name: "list_view_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"list_view_clicked",user_id:userId._id,layout:"list"})
                       }}
                       toggleStatus={!isGridView}
                       data-testid="design-button"
@@ -715,6 +728,7 @@ const Index: React.FC<any> = () => {
                 truncateString={truncateString}
                 onDelete={onDelete}
                 d2Details={d2Details}
+                userId={userId}
               />
             ) : (
               <ProjectListFlatView
@@ -722,14 +736,17 @@ const Index: React.FC<any> = () => {
                 projectActions={projectActions}
                 truncateString={truncateString}
                 onDelete={onDelete}
+                userId={userId}
               />
             )}
             {openFilter && (
               <CustomDrawer open variant="persistent">
+                {       Mixpanel.track( {name: "filters_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"filters",event_action:"filters_window_loaded",user_id:userId._id})        }
                 <ProjectListFilter
                   taskFilterState={taskFilterState}
                   onClose={() => {
                     setOpenFilter(false);
+                    Mixpanel.track( {name: "filters_window_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"filters",event_action:"filters_window_closed",user_id:userId._id})        
                   }}
                   handleOnApplyFilter={(formState: any) =>
                     handleFilter(formState)
@@ -737,6 +754,7 @@ const Index: React.FC<any> = () => {
                   setTaskFilterState={setTaskFilterState}
                   setIsFilterApplied={setIsFilterApplied}
                   setSearchTerm={setSearchTerm}
+                  user={userId}
                 />
               </CustomDrawer>
             )}

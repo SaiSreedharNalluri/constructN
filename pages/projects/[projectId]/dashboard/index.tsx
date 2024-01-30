@@ -5,6 +5,7 @@ import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import SidePanelMenu from "../../../../components/divami_components/side-panel/SidePanel";
 import { getdashBoardUrls } from "../../../../services/s3Service";
 import { getCookie } from "cookies-next";
+import { Mixpanel } from "../../../../components/analytics/mixpanel";
 const Index: React.FC = () => {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
@@ -22,6 +23,7 @@ const Index: React.FC = () => {
       //   .catch((error) => {
       //     setLoadData(true);
       //   });
+      Mixpanel.track( {name: "dashboards_reports_page_loaded",project_id:router.query?.projectId,company_id:"unknown",screen_name:"dashboards_reports_page",event_category:"dashboards_reports",event_action:"dashboards_reports_page_loaded",user_id:""})          
       const pDataList= getCookie('projectData') as string;
       let pData :string| null= null;
       if(pDataList)

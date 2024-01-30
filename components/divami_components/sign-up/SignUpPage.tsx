@@ -41,6 +41,7 @@ import PasswordRequired from "../password-field/PasswordRequired";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import Link from "next/link";
+import { Mixpanel } from "../../analytics/mixpanel";
 const SignUpPage = () => {
   const router = useRouter();
 
@@ -215,6 +216,7 @@ const SignUpPage = () => {
       .then((response) => {
         setRegisterEnable(true)
         if (response.success === true) {
+          Mixpanel.track( {name: "signup_successful",project_id:"unknown",company_id:"unknown",screen_name:"sign_page",event_category:"signup",event_action:"sign_successful",user_id:"unknown"})
           CustomToast("You have Successfully Registered", "success");
       if( response.result.verified===true)
       {
@@ -233,6 +235,7 @@ const SignUpPage = () => {
       })
       .catch((error) => {
         setRegisterEnable(true)
+        Mixpanel.track( {name: "signup_failed",project_id:"unknown",company_id:"unknown",screen_name:"sign_page",event_category:"signup",event_action:"signup_failed",user_id:"unknown",error_message:error.response.data.message})
         CustomToast(error.response.data.message,"error");
       });
     }

@@ -9,6 +9,7 @@ import CustomDrawer from "../../custom-drawer/custom-drawer";
 import ChangePassword from "../ChangePassword";
 import EditUserProfile from "../editUserProfile";
 import { AWS } from "../../../../config/config";
+import { Mixpanel } from "../../../analytics/mixpanel";
 
 const Body = ({
   userDetails,
@@ -32,6 +33,7 @@ const Body = ({
   
   const handlePasswordChange = () => {
     setIsDrawerOpen(true);
+    Mixpanel.track( {name: "change_password_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"profile",event_action:"change_password_clicked",user_id:userDetails._id}) 
   };
   const closeDrawer = () => {
     setIsDrawerOpen(false);
@@ -153,7 +155,9 @@ const Body = ({
 
       {isDrawerOpen && (
         <CustomDrawer onClose={closeDrawer}>
-          <ChangePassword closeDrawer={closeDrawer}></ChangePassword>
+    { Mixpanel.track( {name: "change_password_page_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"change_password",event_action:"change_password_page_loaded",user_id:userDetails._id})}
+          <ChangePassword closeDrawer={closeDrawer} userDetails={userDetails}>         
+      </ChangePassword>
         </CustomDrawer>
       )}
       {isUserProfileDrawerOpen && (
