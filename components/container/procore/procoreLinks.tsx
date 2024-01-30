@@ -53,26 +53,9 @@ const ProcoreLink = (props: any) => {
           updatedselectedIssue,
           getIssues,
           getTasks,} = props;
-  const [stateCheck, setStateCheck] = useState<boolean>(false)
+  console.log('procore pdf link page',gen)
 
-  const captureToPdf2 = async () => {
-    const element = document.getElementById("targetElementId");
-
-    if (element) {
-      try {
-        const pdf = new jsPDF();
-        pdf.html(element, {
-          callback: () => {
-            pdf.save("procore_link.pdf");
-          },
-        });
-      } catch (error) {
-        console.error("Error generating PDF:", error);
-      }
-    } else {
-      console.warn("Element not found");
-    }
-  };
+ 
   const [loading, setLoading] = useState(false)
   const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
 
@@ -163,6 +146,7 @@ const ProcoreLink = (props: any) => {
       case "RFI":
         setSelectedComponent(
           <LinkNewRFI
+          gen={gen}
           getTasks={getTasks}
           getIssues={getIssues}
           updatedselectedIssue={updatedselectedIssue}

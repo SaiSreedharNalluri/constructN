@@ -37,9 +37,9 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
 
   const generateLink = (type: string, id: string) => {
     if(type === "observation"){
-    return `${PROCORE.BASE_URL}/235946/project/${type}s/items/${id}`
+    return `${PROCORE.BASE_URL}/${procoreProjectId}/project/${type}s/items/${id}`
     }else{
-      return `${PROCORE.BASE_URL}/235946/project/submittal_logs/${id}`
+      return `${PROCORE.BASE_URL}/${procoreProjectId}/project/submittal_logs/${id}`
     }
   };
 

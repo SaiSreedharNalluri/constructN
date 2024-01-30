@@ -65,6 +65,18 @@ const LinkNewRFI = (props: any) => {
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const userObj=localStorage.getItem('userCredentials')
+  const procoreAssigneeId=()=>{
+    if (userObj) {
+      const  user = JSON.parse(userObj);
+      const metaData = user.metadata.procore
+       console.log('procore id',metaData.id);
+       
+      return metaData.id
+     }
+    
+    }
+  
   const weburl=()=>{
     if(issue){
       return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
@@ -116,7 +128,7 @@ const LinkNewRFI = (props: any) => {
       value: null,
     },
     reference: '',
-    assignee_id: 10,
+    assignee_id:procoreAssigneeId(),
     draft: true,
   };
   
