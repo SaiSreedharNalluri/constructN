@@ -1,5 +1,5 @@
 import { styled } from "@mui/system";
-import { Box } from "@mui/material";
+import { Box,Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 // import CustomLabel from '../../Common/custom-label/CustomLabel'
 // import FormWrapper from '../../Common/form-wrapper/FormWrapper'
@@ -22,12 +22,12 @@ import { ISnapshot } from "../../../../models/ISnapshot";
 import { IStructure } from "../../../../models/IStructure";
 import { IToolResponse } from "../../../../models/ITools";
 import UploadedImagesList from "../../../divami_components/uploaded-images-list/UploadedImagesList";
-
 import Moment from "moment";
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { useApiDataContext } from "../../../../state/projectConfig/projectConfigContext";
-
+import userCount from "../../../../public/divami_icons/AddUserIcon.svg";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
   paddingRight: "20px",
@@ -217,9 +217,15 @@ const Body = ({
               return {
                 ...item,
                 fields: item.fields.map((each: any) => {
-                  if (each.id == "start-date") {
+                  if (each.id == "start-date" && editData) {
                     return {
                       ...each,
+                      formLabel:<div>
+                      Start Date
+                      <Tooltip title='Expected / Actual start date of the task'>
+                      <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                      </Tooltip>
+                    </div>,
                       defaultValue: editData.startDate ?? null,
                     };
                   } else {
@@ -327,18 +333,27 @@ const Body = ({
                 }),
               };
             }
-            if (item.id === "dates") {
+            if (item.id === "dates" && editData === undefined) {
               return {
                 ...item,
                 fields: item.fields.map((each: any) => {
-                  if (each.id == "start-date") {
+                  if (each.id == "start-date" && editData === undefined) {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Expected Start Date
+                        <Tooltip title='Expected start date for the assigned user on this task'>
+                        <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                        </Tooltip>
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
-                  } else {
+                  } else if(each.id == "due-date" && editData === undefined) {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Due Date
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
                   }
@@ -346,6 +361,8 @@ const Body = ({
               };
             }
 
+           
+            
             return item;
           });
         });
