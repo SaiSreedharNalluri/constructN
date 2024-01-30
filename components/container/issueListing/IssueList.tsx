@@ -85,6 +85,7 @@ import {
   IconContainer,
 } from "../../divami_components/task_list/TaskListStyles";
 import { getIssuesList } from "../../../services/issue";
+import { getDownladableList } from "../../divami_components/issue-listing/Constants";
 
 
 interface IProps {
@@ -421,7 +422,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
 
   return (
     <>
-      {errorShow.length > 0 ? (
+      {errorShow.length > 0 || issueFilterState.numberOfFilters>=1 ? (
         <TaskListContainer id="download-test">
           <HeaderContainer>
             <TitleContainer>
@@ -524,7 +525,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     issueFilterState?.numberOfFilters > 0 ? (
                     <FilterIndication />
                   ) : null}
-                  {/* <CSVLink
+                  <CSVLink
                     data={getDownladableList(issueList)}
                     filename={"my-issues.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
@@ -532,7 +533,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
                     data-testid="download"
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink> */}
+                  </CSVLink>
                 </>
               )}
             </MiniSymbolsContainer>

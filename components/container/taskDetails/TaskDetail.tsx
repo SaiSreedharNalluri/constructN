@@ -121,7 +121,7 @@ import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import { truncateString } from "../../../pages/projects";
 import Download from "../../../public/divami_icons/download.svg";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
-import CreateTask from "../../divami_components/create-task/CreateTask";
+import CreateTask from "../createTask/CreateTask";
 import { IToolbarAction } from "../../../models/ITools";
 interface ContainerProps {
   footerState: boolean;
