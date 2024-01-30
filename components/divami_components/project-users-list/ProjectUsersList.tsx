@@ -346,7 +346,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
   };
   useEffect(() => {
     if (router.isReady && router.query.projectId || projectId) {
-      Mixpanel.track( {name: "manage_users_page_loaded",project_id:router.query.projectId?router.query.projectId:"unknown" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"manage_users",event_action:"manage_users_page_loaded",user_id:user._id})
+      Mixpanel.track( {name: "manage_users_page_loaded",project_id:router.query.projectId?router.query.projectId:"unknown" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"manage_users",event_action:"manage_users_page_loaded",user_id:user?._id})
       getUsersList();
       getUserRoles().then((res: any) => {
         const rolesData = res.result.map((each: any) => {
@@ -462,7 +462,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
                     <InputAdornment position="start">
                       <CloseIcon
                         onClick={() => {
-      Mixpanel.track( {name: "search_closed",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"search_flow",event_action:"search_closed",user_id:user._id})          
+      Mixpanel.track( {name: "search_closed",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"search_flow",event_action:"search_closed",user_id:user?._id})          
                           handleSearchWindow();
                         }}
                         src={CrossIcon}
@@ -481,7 +481,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
               width={24}
               height={24}
               onClick={() => {
-      Mixpanel.track( {name: "search_clicked",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"search_flow",event_action:"search_clicked",user_id:user._id})          
+      Mixpanel.track( {name: "search_clicked",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"search_flow",event_action:"search_clicked",user_id:user?._id})          
                 setIsSearching(true);
               }}
             />
@@ -492,7 +492,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
             width={24}
             height={24}
             onClick={() => {
-      Mixpanel.track( {name: "filter_clicked",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"filter_clicked",user_id:user._id})          
+      Mixpanel.track( {name: "filter_clicked",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"filter_clicked",user_id:user?._id})          
               setOpenFilter(true);
             }}
           />}       
@@ -503,7 +503,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
             label={"Add User"}
             formHandler={formHandler}
             projectId={router.query.projectId}
-            userId={user._id}
+            userId={user?._id}
           />
         </HeaderActions>
       </TableHeader>   
@@ -579,7 +579,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
      
       <TableCell  width="10%">
      {isHover===rowData._id? 
-     rowData._id===user._id?"":<div className="flex items-center">
+     rowData._id===user?._id?"":<div className="flex items-center">
      {/* <TooltipText title="chat" > 
       <div className="flex" >
       <ChatIconImage src={ChatIcon} alt="" />
@@ -623,7 +623,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
 </TableContainer>:<CustomLoader />}
       {openFilter && (
         <CustomDrawer open>
-{Mixpanel.track( {name: "filters_window_panel_opened",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"filters_window_panel_opened",user_id:user._id})}
+{Mixpanel.track( {name: "filters_window_panel_opened",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"filters_window_panel_opened",user_id:user?._id})}
           <UsersFilter
             setTaskFilterState={setTaskFilterState}
             taskFilterState={taskFilterState}
@@ -635,7 +635,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
             }}
             setSearchTerm={setSearchTerm}
             selectedProjectId={router.query.projectId}
-            userId={user._id}
+            userId={user?._id}
           />
         </CustomDrawer>
       )}
@@ -714,7 +714,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
           selectedProjectId={router.query.projectId || projectId}
           appendToTable={appendToTable}
           tableData={tableData}
-          userId={user._id}
+          userId={user?._id}
         />
       </Drawer>:<></>}
 
