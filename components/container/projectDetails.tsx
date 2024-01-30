@@ -92,6 +92,7 @@ const ProjectDetails: React.FC = () => {
   const [companyList, setCompanyList] = useState([]);
   const [company, setCompany] = useState('');
   const [project, setProject] = useState('');
+  const [providerType, setProviderType] = useState('');
   const [projectsLoading, setProjectsLoading] =  useState(false);
   const router = useRouter();
   const refetchProject = () => {
@@ -125,13 +126,18 @@ const ProjectDetails: React.FC = () => {
     if (user?.fullName) {
       setUser(user);
     };
-    getCompanies({ setCompanyList });
+    const userCredentials = localStorage.getItem('userCredentials');
+    const creds = JSON.parse(userCredentials || "{}");
+    setProviderType(creds?.provider);
+    if(creds?.provider === 'procore'){
+      getCompanies({ setCompanyList });
+    }
   }, []);
   useEffect(()=>{
-    if(company){
+    if(company && providerType === 'procore'){
       getProjects({ setProjectsList, companyId: company , setProjectsLoading});
     }
-  },[company])
+  },[company, providerType])
   const latitude = projectData?.location?.coordinates[1]  != undefined ? projectData?.location?.coordinates[1] : 0;
   const longitude = projectData?.location?.coordinates[0]  != undefined ? projectData?.location?.coordinates[0] : 0;
   const utm = projectData?.utm?.zone ? projectData?.utm?.zone : "NA";
@@ -210,7 +216,7 @@ const ProjectDetails: React.FC = () => {
             <div>
               <h1 className="text-[#101F4C] font-normal font-sans text-lg">Project Details</h1>
             </div>
-            <div className="flex">
+            {providerType === 'procore' ? <div className="flex">
               {procoreProjectId ? <div className="text-[#252BBE] cursor-pointer mr-4" onClick={()=>(window.open(`${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/home`,'_blank'))}>Project Id : {procoreProjectId}</div> :<div
                 className=" text-[#F1742E] cursor-pointer mr-4"
                 onClick={() =>setShowLink(true)}
@@ -223,7 +229,7 @@ const ProjectDetails: React.FC = () => {
               >
                 <p>Edit Details</p>
               </div>
-            </div>
+            </div>: null}
           </div>
           <div className=" px-4 " >
           <div className="w-full  flex border-2 border-gray-400 rounded-md">

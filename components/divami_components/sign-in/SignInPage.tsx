@@ -102,7 +102,7 @@ const SignInPage = () => {
   ) => {
     if(loginEnable){
       setLoginEnable(false)
-      login(email?.toLocaleLowerCase(), password,12345)
+      login(email?.toLocaleLowerCase(), password)
       .then((response: any) => {
         if (response.success === true) {
           if (response?.result?.verified) {
@@ -123,6 +123,7 @@ const SignInPage = () => {
               customLogger.logInfo(`user successfully logged`);
               // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
               delete userProfileObj.unReadNotifications
+              delete userProfileObj.avatar
             setCookie("isProjectTimeZone", true);
             setCookie("user", userProfileObj);
             localStorage.setItem('uploaededData',JSON.stringify({}))
