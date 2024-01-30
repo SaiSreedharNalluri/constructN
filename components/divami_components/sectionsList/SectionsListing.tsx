@@ -277,7 +277,7 @@ const[isProcessing,setProcessing]=useState(false);
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
-        Mixpanel.track( {name: "views_page_loaded",project_id:projectId,company_id:"unknown",screen_name:"views_page",event_category:"views_list",event_action:"views_page_loaded",user_id:user._id,sorting_type:{...response}})          
+        Mixpanel.track( {name: "views_page_loaded",project_id:projectId,company_id:"unknown",screen_name:"views_page",event_category:"views_list",event_action:"views_page_loaded",user_id:user._id})          
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
