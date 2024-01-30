@@ -80,7 +80,9 @@ export class ForgeEdit2DUtils {
 
         }));
 
-        (poly as any).name = assetId
+        (poly as any).name = assetId;
+        
+        (poly as any).shapeType = "Polygon";
 
         this._edit2DLayer.addShape(poly)
     }
@@ -97,7 +99,9 @@ export class ForgeEdit2DUtils {
 
         }));
 
-        (poly as any).name = assetId
+        (poly as any).name = assetId;
+
+        (poly as any).shapeType = "Polyline";
 
         this._edit2DLayer.addShape(poly)
     }
@@ -278,7 +282,10 @@ export class ForgeEdit2DUtils {
 
         const shape = this._edit2DLayer.shapes.find((value: Autodesk.Edit2D.Shape, index: number, obj: Autodesk.Edit2D.Shape[]) => shapeId == value.id)
 
-        if(shape !== undefined) (shape as any).name = assetId;
+        if(shape !== undefined){
+            (shape as any).name = assetId;
+            (shape as any).shapeType = (shape as any).isClosed ? 'Polygon' : 'Polyline';
+        }
 
         (this._edit2DContext as any).selection.selectOnly(shape)
 
@@ -396,13 +403,47 @@ export class ForgeEdit2DUtils {
 
                 const matches = this._viewer.toolController.getActiveTool().getName().match(new RegExp('Edit2_' + '(.*)' + '_default'))
 
-                publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: matches ? matches[1].replace('Tool', '') : '' })
+                const type = matches?.[1].replace('Tool', '');
+
+                if(type === 'PolygonEdit' && event?.isUndo){
+                    publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name });
+                    break;
+                }
+                
+                if(type === 'PolygonEdit' && !event?.isUndo){
+                    publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: event.action.shape.shapeType })
+                    break;
+                }
+
+                if((event.action.shape?._loops?.[0]?.[0]?.x === event.action.shape?._loops?.[0]?.[1]?.x) && (event.action.shape?._loops?.[0]?.[0]?.y === event.action.shape?._loops?.[0]?.[1]?.y)){
+                    this._edit2DLayer.removeShape(event.action.shape);
+                    break;
+                };
+
+                publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: matches ? type : '' })
 
                 break
 
             case 'RemoveShape':
 
-                if(this._editable) publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name })
+                const matchesShape = this._viewer.toolController.getActiveTool().getName().match(new RegExp('Edit2_' + '(.*)' + '_default'))
+                
+                const shapeType = matchesShape?.[1].replace('Tool', '');
+
+                if(this._editable){
+                    
+                    if(shapeType === 'PolygonEdit' && event?.isUndo){
+                        publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: event.action.shape.shapeType })
+                        break;
+                    }
+                
+                    if(shapeType === 'PolygonEdit' && !event?.isUndo){
+                        publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name });
+                        break;
+                    }
+
+                    publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name })
+                }
 
                 else {
                     
