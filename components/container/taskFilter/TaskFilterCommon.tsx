@@ -60,12 +60,13 @@ import CustomLabel from "../../divami_components/custom-label/CustomLabel";
 import FormWrapper from "../../divami_components/form-wrapper/FormWrapper";
 import { DATE_PICKER_DATA } from "../../divami_components/create-issue/body/Constants"; 
 import CustomButton from "../../divami_components/custom-button/CustomButton";
-import TaskFilterFormWrapper from "./TaskFilterWrapper";
+import TaskFilterFormWrapper from "../../divami_components/task-filter-common/TaskFilterWrapper";
 import { IProjectUsers } from "../../../models/IProjects";
 import { getProjectUsers } from "../../../services/project";
 import CustomMiniLoader from "../../divami_components/custom_loader/CustomMiniLoader";
 import router from "next/router";
 import { IToolbarAction } from "../../../models/ITools";
+import { useApiDataContext } from "../../../state/projectConfig/projectConfigContext";
 interface IProps {
   closeOverlay?: () => void;
   visibility?: boolean;
@@ -106,6 +107,7 @@ const TaskFilterCommon: React.FC<any> = ({
   toolClicked
 }) => {
   // console.log("tasksListapi", tasksList);
+  const { taskinitialTypes,taskinitialPriority,taskinitialStatus,initialProjectUsersList,taskTagsList } = useApiDataContext();
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
   const [taskTypes, setTaskType] = useState<[string]>();
@@ -119,10 +121,10 @@ const TaskFilterCommon: React.FC<any> = ({
     {
       title: "Type",
       code: "taskType",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "RFI", optionStatus: "T" },
-        { optionTitle: "Transmittals", optionStatus: "T" },
+        { optionTitle: "RFI", optionStatus: "F" },
+        { optionTitle: "Transmittals", optionStatus: "f" },
         { optionTitle: "Submittals", optionStatus: "F" },
         // { optionTitle: "Commissioning", optionStatus: "T" },
         // { optionTitle: "Design", optionStatus: "F" },
@@ -131,20 +133,20 @@ const TaskFilterCommon: React.FC<any> = ({
     {
       title: "Priority",
       code: "taskPriority",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Low", optionStatus: "T" },
-        { optionTitle: "Medium", optionStatus: "T" },
+        { optionTitle: "Low", optionStatus: "F" },
+        { optionTitle: "Medium", optionStatus: "F" },
         { optionTitle: "High", optionStatus: "F" },
       ],
     },
     {
       title: "Status",
       code: "taskStatus",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "In Progress", optionStatus: "T" },
-        { optionTitle: "Blocked", optionStatus: "T" },
+        { optionTitle: "In Progress", optionStatus: "F" },
+        { optionTitle: "Blocked", optionStatus: "F" },
         { optionTitle: "To-do", optionStatus: "F" },
         { optionTitle: "Completed", optionStatus: "F" },
       ],
@@ -184,39 +186,44 @@ const TaskFilterCommon: React.FC<any> = ({
     setLoader(true)
     if (router.isReady) {
       try{
-        getTasksTypes(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            setTaskType(response.result);
-          }
-        });
-        getTasksPriority(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            setTaskPriority(response.result);
-          }
-        });
-        getProjectUsers(router.query.projectId as string)
-          .then((response) => {
-            if (response.success === true) {
-              setProjectUsers(response.result);
-            }
-          })
-          .catch();
-        getTaskStatus(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            setTaskStatus(response.result);
-          }
-        });
-        getTaskTags(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            let newArr = [...response.result[0].tagList]
-            setTagStatus(response.result[0].tagList);
+        setTaskType(taskinitialTypes)
+        setTaskPriority(taskinitialPriority)
+        setProjectUsers(initialProjectUsersList)
+        setTaskStatus(taskinitialStatus)
+        setTagStatus(taskTagsList)
+        // getTasksTypes(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     setTaskType(response.result);
+        //   }
+        // });
+        // getTasksPriority(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     setTaskPriority(response.result);
+        //   }
+        // });
+        // getProjectUsers(router.query.projectId as string)
+        //   .then((response) => {
+        //     if (response.success === true) {
+        //       setProjectUsers(response.result);
+        //     }
+        //   })
+        //   .catch();
+        // getTaskStatus(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     setTaskStatus(response.result);
+        //   }
+        // });
+        // getTaskTags(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     let newArr = [...response.result[0].tagList]
+        //     setTagStatus(response.result[0].tagList);
            
-          }
+        //   }
           setLoader(false)
-        });
+        // });
        
       }catch(error){
-        setLoader(false)
+        // setLoader(false)
       } 
     }
   }, []);
@@ -640,14 +647,13 @@ const TaskFilterCommon: React.FC<any> = ({
             <HeaderLeftSection>
               <HeaderLeftSectionText>Filters</HeaderLeftSectionText>
             </HeaderLeftSection>
-            <HeaderRightSection>
+            <HeaderRightSection onClick={() => {
+                    onReset();
+                  }}>
               <HeaderRightSectionResetIcon>
                 <RefreshIcon
                   src={newRefreshIcon}
                   alt="reset"
-                  onClick={() => {
-                    onReset();
-                  }}
                 />
                 {/* <Image
                   src={ResetIcon}
@@ -656,8 +662,8 @@ const TaskFilterCommon: React.FC<any> = ({
                     onReset();
                   }}
                 /> */}
-              </HeaderRightSectionResetIcon>
               <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
+              </HeaderRightSectionResetIcon>
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
               handleClose();
               }} /> */}

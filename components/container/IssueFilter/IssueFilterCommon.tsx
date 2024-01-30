@@ -45,7 +45,7 @@ import {
 import { Issue } from "../../../models/Issue";
 import { DATE_PICKER_DATA, SEARCH_CONFIG } from "../../divami_components/create-task/body/Constants";
 // import Fil from "../form-wrapper/FormWrapper";
-import IssueFilterFormWrapper from "./IssueFilterWrapper";
+import IssueFilterFormWrapper from "../../divami_components/issue-filter-common/IssueFilterWrapper";
 import CustomLabel from "../../divami_components/custom-label/CustomLabel";
 import { ButtonsContainer } from "./IssueStyledComponent"; 
 import CustomButton from "../../divami_components/custom-button/CustomButton";
@@ -62,6 +62,7 @@ import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 import CustomMiniLoader from "../../divami_components/custom_loader/CustomMiniLoader";
 import { IFilterProps } from "../issueListing/IssueList"; 
 import { IToolbarAction } from "../../../models/ITools";
+import { useApiDataContext } from "../../../state/projectConfig/projectConfigContext";
 
 interface IProps {
   closeOverlay: () => void;
@@ -127,7 +128,7 @@ const FilterCommon: React.FC<IProps> = ({
   ];
 
 
-
+  const { initialTypes,initialPriority,initialStatus,initialProjectUsersList,issueTagsList } = useApiDataContext();
   const [FilterState, SetFilterState] = useState<any>(Filters);
   const [optionState, setOptionState] = useState<any>("clash");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
@@ -231,38 +232,47 @@ const FilterCommon: React.FC<IProps> = ({
   useEffect(() => {
     setLoader(true)
     if (router.isReady) {
-    try{
-      getIssuesTypes(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskType(response.result);
-        }
-      });
-      getIssuesPriority(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskPriority(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
-      getIssuesStatus(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          setTaskStatus(response.result);
+    try{ 
+      setTaskType(initialTypes)
+      setTaskPriority(initialPriority)
+      setProjectUsers(initialProjectUsersList)
+      setTaskStatus(initialStatus)
+      setTagStatus(issueTagsList[0].tagList)
+      
+      // getIssuesTypes(router.query.projectId as string).then((response) => {
+      //   if (response.success === true) {
+      //     setTaskType(response.result);
+      //   }
+      // });
+      // getIssuesPriority(router.query.projectId as string).then((response) => {
+      //   if (response.success === true) {
+      //     setTaskPriority(response.result);
+      //   }
+      // });
+      // getProjectUsers(router.query.projectId as string)
+      //   .then((response) => {
+      //     if (response.success === true) {
+      //       setProjectUsers(response.result);
+      //     }
+      //   })
+      //   .catch();
+      // getIssuesStatus(router.query.projectId as string).then((response) => {
+      //   if (response.success === true) {
+      //     setTaskStatus(response.result);
   
-        }
-      });
-      getIssueTags(router.query.projectId as string).then((response) => {
-        if (response.success === true) {
-          let newArr = [...response.result[0].tagList]
-          setTagStatus(response.result[0].tagList);
-         
-        }
+      //   }
+      // });
+      
+      // getIssueTags(router.query.projectId as string).then((response) => {
+      //   if (response.success === true) {
+      //     let newArr = [...response.result[0].tagList]
+      //     //  setTagStatus(response.result[0].tagList);
+      //     console.log("result of Api",response.result[0].tagList);
+          
+      //   }
+
         setLoader(false)
-      })
+      // })
     }catch(error){
       setLoader(false)
     }

@@ -421,14 +421,14 @@ function Issues({
           anchor={"right"}
           open={openDrawer}
           onClose={() => {
-            setIssueList([
-              ...issuesList.sort((a: any, b: any) => {
-                return (
-                  new Date(b.createdAt).valueOf() -
-                  new Date(a.createdAt).valueOf()
-                );
-              }),
-            ]);
+            // setIssueList([
+            //   ...issuesList.sort((a: any, b: any) => {
+            //     return (
+            //       new Date(b.createdAt).valueOf() -
+            //       new Date(a.createdAt).valueOf()
+            //     );
+            //   }),
+            // ]);
             setOpenDrawer((prev: any) => !prev);
           }}
         >

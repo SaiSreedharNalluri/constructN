@@ -37,6 +37,7 @@ import {
 import {
   deleteIssue,
   editIssue,
+  getIssueTags,
   getIssuesList,
   getIssuesPriority,
   getIssuesStatus,
@@ -47,6 +48,8 @@ import {
   getTasksList,
   getTasksPriority,
   getTaskStatus,
+  getTasksTypes,
+  getTaskTags,
 } from "../../../../../services/task";
 import enterfullscreenIcon from "../../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../../public/divami_icons/exitfullscreen.svg";
@@ -63,6 +66,7 @@ import { MqttConnector, OnMessageCallbak } from "../../../../../utils/MqttConnec
 import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
 import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
+import {ApiDataContextProvider} from "../../../../../state/projectConfig/projectConfigContext";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -142,7 +146,7 @@ const Index: React.FC<IProps> = () => {
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
-  const [projectUsers, setProjectUsers] = useState<IProjects>();
+  // const [projectUsers, setProjectUsers] = useState<IProjects>();
   const [showIssueMarkups, setShowIssueMarkups] = useState(true);
   const [showTaskMarkups, setShowTaskMarkups] = useState(true);
   const [isRealityAvailable, setRealityAvailable] = useState(false);
@@ -172,11 +176,11 @@ const Index: React.FC<IProps> = () => {
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [tasList, setTasList] = useState<any>([]);
-  const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
+  // const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [tasksPriotityList, setTasksPriorityList] = useState<[string]>([""]);
-  const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  // const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [tasksStatusList, setTasksStatusList] = useState<[string]>([""]);
-  const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
+  // const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
   const [layersUpdated, setLayersUpdated] = useState(false);
 
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
@@ -207,6 +211,15 @@ const Index: React.FC<IProps> = () => {
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
  
+  const [issueTypesList, setIssueTypesList] = useState<any>(null);
+  const [issuePriorityList, setIssuePriorityList] = useState<any>(null);
+  const [issueStatusList, setIssueStatusList] = useState<any>(null);
+  const [projectUsers, setProjectUsers] = useState<any>(null);
+  const [taskTypesList, setTaskTypesList] = useState<any>(null);
+  const [taskPriorityList, setTaskPriorityList] = useState<any>(null);
+  const [taskStatusList, setTaskStatusList] = useState<any>(null);
+  const [issueTagStatus, setIssueTagStatus] = useState<string[]>([]);
+  const [TaskTagStatus, setTaskTagStatus] = useState<[string]>();
 
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
@@ -305,7 +318,7 @@ const Index: React.FC<IProps> = () => {
       getTasksPriority(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
-            setTasksPriorityList(response.result);
+            setTaskPriorityList(response.result);
           }
         })
         .catch((error: any) => {
@@ -324,7 +337,7 @@ const Index: React.FC<IProps> = () => {
       getTaskStatus(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
-            setTasksStatusList(response.result);
+            setTaskStatusList(response.result);
           }
         })
         .catch((error: any) => {
@@ -338,6 +351,27 @@ const Index: React.FC<IProps> = () => {
         })
         .catch((error: any) => {
           CustomToast("failed to load data", "error");
+        });
+
+        getTasksTypes(router.query.projectId as string).then((response: any) => {
+          if (response.success === true) {
+            // response.result.push('Please select the task type');
+            setTaskTypesList(response.result);
+          }
+        });
+      getIssueTags(router.query.projectId as string).then((response) => {
+          if (response.success === true) {
+            let newArr = [...response.result[0].tagList]
+            setIssueTagStatus(response.result);
+           
+          }
+        });
+        getTaskTags(router.query.projectId as string).then((response) => {
+          if (response.success === true) {
+            let newArr = [...response.result[0].tagList]
+            setTaskTagStatus(response.result[0].tagList);
+           
+          }
         });
       getProjectDetails(router.query.projectId as string)
         .then((response: any) => {
@@ -1160,7 +1194,7 @@ const Index: React.FC<IProps> = () => {
             !formData?.taskTag) &&
           (item.assignees.filter(
             (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-          ) ||
+          ).length ||
             formData?.assigneesData?.length == 0 ||
             !formData?.assigneesData)
           &&
@@ -1206,7 +1240,7 @@ const Index: React.FC<IProps> = () => {
       numberOfFilters: 0,
     });
     let data:any=taskFilterList
-    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredIssueList"}
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredTaskList"}
     toolClicked(issueFilterMessage)
   };
   const deleteTheIssue = async (issueObj: any): Promise<boolean> => {
@@ -1559,7 +1593,7 @@ const Index: React.FC<IProps> = () => {
              
             }
              
-            if(router.query.snap&& router.query.snap!== vData.currentSnapshotBase._id)
+            if(router.query.snap&& router.query.snap!== vData.currentSnapshotBase?._id)
             {
               let urlSnap:ISnapshot|undefined=vData.snapshotList.find((snp:ISnapshot)=>{
                 if(snp._id===router.query.snap?.toString())
@@ -1821,6 +1855,17 @@ const Index: React.FC<IProps> = () => {
 
 
   return (
+    <ApiDataContextProvider  
+    initialTypes={issueTypesList}
+    initialPriority={issuePriorityList}
+    initialStatus={issueStatusList}
+    initialProjectUsersList={projectUsers}
+    taskinitialTypes={taskTypesList}
+    taskinitialPriority={taskPriorityList}
+    taskinitialStatus={taskStatusList} 
+    issueTagsList={issueTagStatus}
+    taskTagsList={TaskTagStatus}
+    >
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
         {!isFullScreen && (
@@ -1968,6 +2013,7 @@ const Index: React.FC<IProps> = () => {
 
       </div>
     </div>
+    </ApiDataContextProvider>
   );
 };
 export default Index;

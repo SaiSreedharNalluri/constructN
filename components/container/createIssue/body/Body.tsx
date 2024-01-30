@@ -26,6 +26,7 @@ import UploadedImagesList from "../../../divami_components/uploaded-images-list/
 import Moment from "moment";
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
+import { useApiDataContext } from "../../../../state/projectConfig/projectConfigContext";
 
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
@@ -67,13 +68,15 @@ const Body = ({
   formData,
   setFormData
 }: any) => {
+  const { initialTypes,initialPriority,initialStatus,initialProjectUsersList,issueTagsList } = useApiDataContext();
+  
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
-  const [issueTypes, setIssueTypes] = useState([]);
-  const [issuePriorities, setIssuePriorities] = useState([]);
-  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [issueTypes, setIssueTypes] = useState(initialTypes);
+  const [issuePriorities, setIssuePriorities] = useState(initialPriority);
+  const [projectUsersList, setProjectUsers] = useState<IProjectUsers[]>(initialProjectUsersList);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
-  const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  const [issueStatusLists, setIssueStatusList] = useState<[string]>(initialStatus);
   const [newValue,newValues] = useState([])
   const router = useRouter();
   useEffect(()=>{
@@ -104,36 +107,36 @@ const Body = ({
 
   useEffect(() => {
     if (router.isReady) {
-      getIssuesTypes(router.query.projectId as string).then((response: any) => {
-        if (response.success === true) {
-          setIssueTypes(response.result);
-        }
-      });
-      getIssuesPriority(router.query.projectId as string).then(
-        (response: any) => {
-          if (response.success === true) {
-            setIssuePriorities(response.result);
-          }
-        }
-      );
-      getIssuesStatus(router.query.projectId as string)
-      .then((response: any) => {
-        if (response.success === true) {
-          setIssueStatusList(response.result);
-          console.log("status response",response.result);
+      // getIssuesTypes(router.query.projectId as string).then((response: any) => {
+      //   if (response.success === true) {
+      //     setIssueTypes(response.result);
+      //   }
+      // });
+      // getIssuesPriority(router.query.projectId as string).then(
+      //   (response: any) => {
+      //     if (response.success === true) {
+      //       setIssuePriorities(response.result);
+      //     }
+      //   }
+      // );
+      // getIssuesStatus(router.query.projectId as string)
+      // .then((response: any) => {
+      //   if (response.success === true) {
+      //     setIssueStatusList(response.result);
+      //     console.log("status response",response.result);
           
-        }
-      })
-      .catch((error: any) => {
-        CustomToast("failed to load data", "error");
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response: any) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
+      //   }
+      // })
+      // .catch((error: any) => {
+      //   CustomToast("failed to load data", "error");
+      // });
+      // getProjectUsers(router.query.projectId as string)
+      //   .then((response: any) => {
+      //     if (response.success === true) {
+      //       setProjectUsers(response.result);
+      //     }
+      //   })
+      //   .catch();
     }
     const userObj: any = getCookie("user");
     let user = null;
@@ -143,7 +146,7 @@ const Body = ({
     }
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
-    if (projectUsers.length && issuePriorities.length && issueTypes.length) {
+    if (projectUsersList.length && issuePriorities.length && issueTypes.length) {
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
@@ -198,7 +201,7 @@ const Body = ({
             if (item.id === "assignedTo") {
               return {
                 ...item,
-                listOfEntries: projectUsers?.map((eachUser: any) => {
+                listOfEntries: projectUsersList?.map((eachUser: any) => {
                   return {
                     ...eachUser,
                     label: eachUser?.user?.fullName,
@@ -264,7 +267,7 @@ const Body = ({
               isReq: true,
               isflex: false,
               formLabel: "Select issue status",
-              options: issueStatusList?.map((item: any) => {
+              options: issueStatusLists?.map((item: any) => {
                 return {
                   ...item,
                   label: item,
@@ -315,7 +318,7 @@ const Body = ({
             if (item.id === "assignedTo") {
               return {
                 ...item,
-                listOfEntries: projectUsers?.map((eachUser: any) => {
+                listOfEntries: projectUsersList?.map((eachUser: any) => {
                   return {
                     ...eachUser,
                     label: eachUser?.user?.fullName,
@@ -348,7 +351,7 @@ const Body = ({
         });
       }
     }
-  }, [projectUsers, issuePriorities, issueTypes]);
+  }, [projectUsersList, issuePriorities, issueTypes]);
 
   useEffect(() => {
     let updatedFormData = [

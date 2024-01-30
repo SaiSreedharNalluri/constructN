@@ -113,6 +113,7 @@ import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import Task from "../../../public/divami_icons/Task.svg";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
+import { getDownladableList } from "../../divami_components/issue-listing/Constants";
 
 interface IProps {
   closeOverlay: () => void;
@@ -361,7 +362,7 @@ const CustomTaskListDrawer = (props: any) => {
   };
   return (
     <>
-      {errorShow?.length > 0 ? (
+      {errorShow?.length > 0 || taskFilterState.numberOfFilters>=1 ? (
         <TaskListContainer>
           <HeaderContainer>
             <TitleContainer>
@@ -512,7 +513,7 @@ const CustomTaskListDrawer = (props: any) => {
                   {taskFilterState?.isFilterApplied && taskFilterState?.numberOfFilters ? (
                     <FilterIndication />
                   ) : null}
-                  <Tooltip title="Download Menu">
+                  {/* <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
@@ -521,8 +522,8 @@ const CustomTaskListDrawer = (props: any) => {
                         handleSortClick(e);
                       }}
                     />
-                  </Tooltip> 
-                  {/* <CSVLink
+                  </Tooltip>  */}
+                  <CSVLink
                     data={getDownladableList(taskList)}
                     filename={"my-tasks.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
@@ -530,7 +531,7 @@ const CustomTaskListDrawer = (props: any) => {
                     data-testid="download"
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink> */}
+                  </CSVLink>
                 </>
               )}
             </MiniSymbolsContainer>

@@ -23,7 +23,7 @@ import {
   CameraIcon,
 } from "./ToolBarStyles";
 import TaskList from "../taskListing/TaskList"
-import CreateTask from "../../divami_components/create-task/CreateTask";
+import CreateTask from "../createTask/CreateTask";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import { createTask, createTaskWithAttachments } from "../../../services/task";
 import { IContext, IToolResponse, IToolbarAction, ITools } from "../../../models/ITools";
