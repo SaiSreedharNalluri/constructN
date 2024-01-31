@@ -80,7 +80,6 @@ const RealityPage: FC<any> = (props) => {
 
         if(props.snapshot) {
 
-            _generateTmData()
             
             _layers.current = props.snapshot.layers
 
@@ -88,7 +87,7 @@ const RealityPage: FC<any> = (props) => {
 
     }, [props.snapshot])
 
-    const onRealityItemClick = (event: Event) => {
+    const onRealityItemClick = async (event: Event) => {
 
         const reality = (event as CustomEvent).detail
 
@@ -97,6 +96,13 @@ const RealityPage: FC<any> = (props) => {
         let nearestImage: any
 
         let nearest: number = Number.MAX_VALUE
+
+
+        if(!_sphericalImageLoader.current){
+            await _generateTmData();
+            _initializePlugins();
+        }
+
 
         if(_layers.current && _layers.current[reality.type]) {
 
@@ -221,6 +227,7 @@ const RealityPage: FC<any> = (props) => {
         }
     }
 
+
     const onInit = async (scene: MutableRefObject<THREE.Scene>, camera: MutableRefObject<THREE.PerspectiveCamera>, renderer: MutableRefObject<THREE.WebGLRenderer>) => {
 
         _scene.current = scene.current
@@ -231,7 +238,10 @@ const RealityPage: FC<any> = (props) => {
 
         await _generateTmData()
 
-        _initializePlugins()
+
+        if(!_sphericalImageLoader.current){
+            _initializePlugins()
+        }
 
         const suffix = isCompare ? 'Compare' : ''
 
