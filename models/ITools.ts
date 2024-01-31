@@ -34,6 +34,7 @@ export interface IContext {
     tagPosition: IPosition;
     screenShot?: string;
   };
+  screenShot?:Blob;
 }
 
 export interface IPosition {

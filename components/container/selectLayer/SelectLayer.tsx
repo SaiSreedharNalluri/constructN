@@ -70,6 +70,7 @@ const SelectLayer = ({
   }
   useEffect(() => {
     setFilteredTreeViewData(treeViewData);
+    setFilteredViewData(optionsList);
   }, [treeViewData]);
   useEffect(() => {
     setTreeViewData(getTreeViewDataForLayers(optionsList));
@@ -244,7 +245,7 @@ const SelectLayer = ({
           //defaultExpandIcon={<AddIcon />}
         >
 
-          {filtedViewData.map((eachNode:ILayer,index:number) => {
+          {filtedViewData?.map((eachNode:ILayer,index:number) => {
             return renderTree(eachNode,index)})}
         </StyledTreeView>
       </TreeViewContainer>
