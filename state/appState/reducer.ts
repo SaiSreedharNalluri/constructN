@@ -30,7 +30,10 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                let jobs = state.inProgressPendingUploads.concat([action.payload.job])
                 if(inProgressUploads !=undefined && inProgressUploads != null)
                 {    
-                    localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat(jobs)))
+                    if(JSON.parse(inProgressUploads).some((obj:IJobs)=>obj._id === action.payload.job._id)!=true)
+                    {
+                    localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat([action.payload.job])))
+                    }
                     return {
                         ...state,
                         inProgressPendingUploads: jobs

@@ -10,11 +10,12 @@ uploadFiles:IUploadFile<UploadType>[]
 }
 self.onmessage = async (event: MessageEvent<eventType>) => {
     const filesList = event.data.uploadFiles
-    const completedFileList: IUploadFile<UploadType>[] = []
+    let completedFileList: IUploadFile<UploadType>[] =  filesList.filter((fileObj)=>fileObj.status === 1)
     if(filesList?.length===0) {
         return;
     }
     let currentTask = 0
+    completedFileList = filesList.filter((fileObj)=>fileObj.status === 1)
     for (currentTask = 0; currentTask < Math.min(5, filesList.length); currentTask++) {
          uploadTask(currentTask);    
     }
