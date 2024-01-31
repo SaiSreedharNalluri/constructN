@@ -683,7 +683,7 @@ export class ForgeDataVizUtils {
 
     _removeListeners = () => {
 
-        this._viewer.addEventListener(Autodesk.DataVisualization.Core.MOUSE_CLICK, this._onSpriteClick)
+        this._viewer.removeEventListener(Autodesk.DataVisualization.Core.MOUSE_CLICK, this._onSpriteClick)
 
         unsubscribe('viewerState', this._onViewerStateChange)
     }
