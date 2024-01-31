@@ -388,7 +388,9 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
   const mapReality = JSON.stringify(realityMap)
 
   useEffect(()=>{
-    refetch();
+    if(snapshot){
+      refetch();
+    }
   },[mapReality])
   
 
