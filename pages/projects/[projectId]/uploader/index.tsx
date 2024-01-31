@@ -34,12 +34,8 @@ const Index: React.FC<IProps> = () => {
   const router = useRouter();
   const { state: appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
-  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const [popUpHeading,setPopUPHeading] =useState('')
-  const [popUpClose,setPopUPClose] =useState('')
-  const [popUpConform,setPopUPConform] =useState('')
   let WorkerManager = WebWorkerManager.getInstance()
   const renderCenterContent = () => {
     switch (uploaderState.step) {
@@ -60,6 +56,7 @@ const Index: React.FC<IProps> = () => {
       }
   };
   const refreshJobs = (projectId: string) =>{
+    console.log("TestingUploader: refreshJobs", projectId)
     uploaderAction.setIsLoading(true)
     getJobsByStatusMode(projectId, [JobStatus.uploadFailed, JobStatus.pendingUpload,], uploaderState.captureMode).then((response)=>{
       console.log("TestingUploader: getJobs", response.data.result)
@@ -69,6 +66,7 @@ const Index: React.FC<IProps> = () => {
       console.log("TestingUploader: Error: ", error)
       uploaderAction.setIsLoading(false)
     })
+    console.log("TestingUploader: refreshJobs 2", projectId)
   }
 
   /**
@@ -100,7 +98,7 @@ const Index: React.FC<IProps> = () => {
    * UseEffect to update jobs when update job status is true
    */
   useEffect(() => {
-    console.log("TestingUploader updateJobs UseEffect: ", uploaderState.updateJobs, router.query.projectId as string)
+    console.log("TestingUploader: updateJobs UseEffect: ", uploaderState.updateJobs, router.query.projectId as string)
     if(uploaderState.updateJobs && router.query.projectId as string) {
       refreshJobs(router.query.projectId as string)
     }
@@ -119,7 +117,7 @@ const Index: React.FC<IProps> = () => {
    * useEffect to show loading animation
    */
   useEffect(() => {
-
+    
   }, [uploaderState.isLoading])
 
   useEffect(() => {
@@ -158,30 +156,12 @@ const Index: React.FC<IProps> = () => {
         uploaderAction.setIsLoading(false)
       })
     } else {
-      uploaderAction.setIsLoading(false)
-    }
-  }, [uploaderState.pendingUploadJobs])
-
-  useEffect(() => {
-    if(uploaderState.completionState !== undefined) {
-      switch(uploaderState.completionState) {
-        case UploaderFinishState.withError:
-          setIsShowPopUp(true)
-          setPopUPHeading('Upload complete with errors')
-          setPopUPConform('Skip Files and Complete')
-          setPopUPClose('Re-upload error files')
-          return
-        case UploaderFinishState.withoutError:
-          setIsShowPopUp(true)
-          setPopUPHeading('All files and GCPs uploaded successfully')
-          setPopUPConform('Process')
-          setPopUPClose('Don’t Process Add images Later')
-          return
-        default:
-          return
+      console.log("TestingUploader: pendingUpload useEffect")
+      if (uploaderState.isLoading == true) {
+        uploaderAction.setIsLoading(false)
       }
     }
-  }, [uploaderState.completionState])
+  }, [uploaderState.pendingUploadJobs])
 
   useEffect(()=>{
     if(uploaderState.uploadinitiate)
