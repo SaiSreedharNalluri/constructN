@@ -344,6 +344,7 @@ const Index: React.FC<any> = () => {
 
       get2dProgressDetails().then((res)=>(setD2Details(res.data.result))).catch(()=>{ setD2Details({})});
       
+      appAction.projectListViewLoaded();
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
