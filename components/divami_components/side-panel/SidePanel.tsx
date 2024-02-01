@@ -196,7 +196,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     switch (e.currentTarget.id) {
       case "dashboard":
         iconClicked = "dashboards_reports_clicked";
-        router.push(`/projects/${router.query.projectId as string}/dashboard`);
+        router.push({pathname:`/projects/[projectId]/dashboard`,
+            query:{projectId:router.query.projectId as string}});
 
         break;
       case "progress-2d":
@@ -223,19 +224,25 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         router.push(`/projects/${router.query.projectId as string}/lineChart`);
         break;
       case "settings":
+
         iconClicked = "project_details_clicked";
-        router.push(`/projects/${router.query.projectId as string}/settings`);
+
+        router.push({pathname:`/projects/[projectId]/settings`,
+        query:{projectId:router.query.projectId as string}});
+
         break;
       case "tasks":
         router.push(`/projects/${router.query.projectId as string}/tasks`);
         break;
       case "sections":
         iconClicked = "views_clicked";
-        router.push(`/projects/${router.query.projectId as string}/sections`);
+        router.push({pathname:`/projects/[projectId]/sections`,
+        query:{projectId:router.query.projectId as string}});
         break;
       case "usersList":
         iconClicked = "users_clicked";
-        router.push(`/projects/${router.query.projectId as string}/usersList`);
+        router.push({pathname:`/projects/[projectId]/usersList`,
+        query:{projectId:router.query.projectId as string}});
         break;
         case "uploader":
           iconClicked = "uploader_clicked";
@@ -247,10 +254,12 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         openChat();
         break;
       case "timeZone":
-        router.push(`/projects/${router.query.projectId as string}/settings`);
+        router.push({pathname:`/projects/[projectId]/settings`,
+        query:{projectId:router.query.projectId as string}});
         break;
       default:
-        router.push(`/projects/${router.query.projectId as string}/structure`);
+        router.push({pathname:`/projects/[projectId]/sections`,
+        query:{projectId:router.query.projectId as string}});
     }
     setActive(router.pathname.split("/").pop());
     Mixpanel.track({

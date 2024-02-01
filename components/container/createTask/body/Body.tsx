@@ -1,7 +1,8 @@
 import { styled } from "@mui/system";
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import Moment from "moment";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 // import CustomLabel from '../../Common/custom-label/CustomLabel'
 // import FormWrapper from '../../Common/form-wrapper/FormWrapper'
@@ -25,6 +26,7 @@ import {
 import { getProjectUsers } from "../../../../services/project";
 import UploadedImagesList from "../../../divami_components/uploaded-images-list/UploadedImagesList";
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
+import { useApiDataContext } from "../../../../state/projectConfig/projectConfigContext";
 
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
@@ -67,13 +69,14 @@ const Body = ({
   formData,
   setFormData
 }: any) => {
+  const { taskinitialTypes,taskinitialPriority,taskinitialStatus,initialProjectUsersList } = useApiDataContext();
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
-  const [taskTypes, setTaskTypes] = useState([]);
-  const [taskPriorities, setTaskPriorities] = useState([]);
-  const [taskStatusList, setTaskStatusList] = useState([]);
+  const [taskTypes, setTaskTypes] = useState(taskinitialTypes);
+  const [taskPriorities, setTaskPriorities] = useState(taskinitialPriority);
+  const [taskStatusList, setTaskStatusList] = useState(taskinitialStatus);
 
-  const [projectUsers, setProjectUsers] = useState([]);
+  const [projectUsers, setProjectUsers] = useState(initialProjectUsersList);
   const [loggedInUserId, SetLoggedInUserId] = useState(null);
   const router = useRouter();
 
@@ -92,33 +95,33 @@ const Body = ({
 
   useEffect(() => {
     if (router.isReady) {
-      getTasksTypes(router.query.projectId as string).then((response: any) => {
-        if (response.success === true) {
-          // response.result.push('Please select the task type');
-          setTaskTypes(response.result);
-        }
-      });
-      getTasksPriority(router.query.projectId as string).then(
-        (response: any) => {
-          if (response.success === true) {
-            // response.result.push('Please select the task priority');
-            setTaskPriorities(response.result);
-          }
-        }
-      );
-      getTaskStatus(router.query.projectId as string).then((response: any) => {
-        if (response.success === true) {
-          // response.result.push('Please select the task priority');
-          setTaskStatusList(response.result);
-        }
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response: any) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
+      // getTasksTypes(router.query.projectId as string).then((response: any) => {
+      //   if (response.success === true) {
+      //     // response.result.push('Please select the task type');
+      //     setTaskTypes(response.result);
+      //   }
+      // });
+      // getTasksPriority(router.query.projectId as string).then(
+      //   (response: any) => {
+      //     if (response.success === true) {
+      //       // response.result.push('Please select the task priority');
+      //       setTaskPriorities(response.result);
+      //     }
+      //   }
+      // );
+      // getTaskStatus(router.query.projectId as string).then((response: any) => {
+      //   if (response.success === true) {
+      //     // response.result.push('Please select the task priority');
+      //     setTaskStatusList(response.result);
+      //   }
+      // });
+      // getProjectUsers(router.query.projectId as string)
+      //   .then((response: any) => {
+      //     if (response.success === true) {
+      //       setProjectUsers(response.result);
+      //     }
+      //   })
+      //   .catch();
     }
     const userObj: any = getCookie("user");
     let user = null;
@@ -196,6 +199,12 @@ const Body = ({
                   if (each.id == "start-date") {
                     return {
                       ...each,
+                      formLabel:<div>
+                      Start Date
+                      <Tooltip title='Expected / Actual start date of the task'>
+                      <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                      </Tooltip>
+                    </div>,
                       defaultValue: editData?.startDate ?? null,
                     };
                   } else {
@@ -300,14 +309,23 @@ const Body = ({
               return {
                 ...item,
                 fields: item.fields.map((each: any) => {
-                  if (each.id == "start-date") {
+                  if (each.id == "start-date" && editData === undefined) {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Expected Start Date
+                        <Tooltip title='Expected start date for the assigned user on this task'>
+                        <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                        </Tooltip>
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
                   } else {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Due Date
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
                   }

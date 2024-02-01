@@ -600,8 +600,8 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
              }
            else if (Object.keys(rowData.snapshots?.latestSnapshot).length >= 0 && rowData.snapshots?.snapshotActiveCount>0 ) {
               router.push({
-                pathname: `/projects/${router?.query?.projectId as string}/structure`,
-                query: { structId: rowData._id },
+                pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+                query: { structureId: rowData._id,projectId:router?.query?.projectId as string },
               });
               setCaptureAvailable(false)
               customLogger.logInfo("View Strucuture");
@@ -1011,15 +1011,12 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           isImageThere={true}
           SecondaryButtonlabel={"No"}
           callBackvalue={isCaptureAvailable? ()=> router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure`,
-            query: { structId: id },
-          }):()=> {
-            router.push({
-            pathname: `/projects/${router?.query?.projectId as string}/structure`,
-            query: { structId: id },
-          })
-        setProcessing(false)
-        }}
+            pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+            query: { structureId: id, projectId:router?.query?.projectId as string },
+          }):()=> router.push({
+            pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+            query: { structureId: id, projectId:router?.query?.projectId as string },
+          }) }
         />
         )
       :""}

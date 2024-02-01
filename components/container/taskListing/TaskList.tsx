@@ -113,6 +113,7 @@ import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import Task from "../../../public/divami_icons/Task.svg";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
+import { getDownladableList } from "../../divami_components/issue-listing/Constants";
 
 interface IProps {
   closeOverlay: () => void;
@@ -232,9 +233,10 @@ const CustomTaskListDrawer = (props: any) => {
     setAnchorEl(null);
   };
 
-  const handleSortMenuClick = (sortMethod: string) =>
-    handleOnTasksSort(sortMethod);
-
+  const handleSortMenuClick = (sortMethod: string) =>{
+  let handleOnTaskSort: IToolbarAction = { type: "sortTask", data:sortMethod };
+  toolClicked(handleOnTaskSort)
+  }
   const handleViewTaskList = () => {
     setOpenDrawer(true);
   };
@@ -277,7 +279,9 @@ const CustomTaskListDrawer = (props: any) => {
   };
 
   const handleViewTask = (task: any) => {
-    filteredTaskList.forEach((item: any) => {
+    console.log("handletask",task);
+    
+    initData?.currentTaskList.forEach((item: any) => {
       if (task._id === item._id) {
         setViewTask(item);
         // taskContext(task)
@@ -357,10 +361,9 @@ const CustomTaskListDrawer = (props: any) => {
     }
   };
 
-  console.log("routerrrrrrre",router)
   return (
     <>
-      {errorShow?.length > 0 ? (
+      {errorShow?.length > 0 || taskFilterState.numberOfFilters>=1 ? (
         <TaskListContainer>
           <HeaderContainer>
             <TitleContainer>
@@ -511,7 +514,7 @@ const CustomTaskListDrawer = (props: any) => {
                   {taskFilterState?.isFilterApplied && taskFilterState?.numberOfFilters ? (
                     <FilterIndication />
                   ) : null}
-                  <Tooltip title="Download Menu">
+                  {/* <Tooltip title="Download Menu">
                     <DownloadIcon
                       src={Download}
                       alt="Arrow"
@@ -520,8 +523,8 @@ const CustomTaskListDrawer = (props: any) => {
                         handleSortClick(e);
                       }}
                     />
-                  </Tooltip> 
-                  {/* <CSVLink
+                  </Tooltip>  */}
+                  <CSVLink
                     data={getDownladableList(taskList)}
                     filename={"my-tasks.csv"}
                     className="text-black btn btn-primary fill-black fa fa-Download "
@@ -529,7 +532,7 @@ const CustomTaskListDrawer = (props: any) => {
                     data-testid="download"
                   >
                     <DownloadIcon src={Download} alt="Arrow" />
-                  </CSVLink> */}
+                  </CSVLink>
                 </>
               )}
             </MiniSymbolsContainer>
@@ -572,12 +575,14 @@ const CustomTaskListDrawer = (props: any) => {
 
                           <PriorityChild>
                             {" "}
-                            {val?.assignees}{" "}
-                            {/* {val?.assignees?.slice(1)}{" "}
-                            {val?.assignees
+                            {val?.assignees[0]?.firstName
                               .charAt(0)
                               .toUpperCase()}
-                            {val?.assignees?.slice(1)} */}
+                            {val?.assignees[0]?.firstName.slice(1)}{" "}
+                            {val?.assignees[0]?.lastName
+                              .charAt(0)
+                              .toUpperCase()}
+                            {val?.assignees[0]?.lastName.slice(1)}
                           </PriorityChild>
                           <LightTooltip
                             arrow
@@ -585,17 +590,17 @@ const CustomTaskListDrawer = (props: any) => {
                               <AssigneeList>
                                 {val?.assignees?.map(
                                   (assignName: any, index: number) => {
-                                    if (index) {
+                                    if (index != 0) {
                                       return (
                                         <>
                                           {index !== val?.assignees?.length - 1
-                                            ? assignName +
+                                            ? assignName?.firstName +
                                               " " +
-                                              assignName +
+                                              assignName.lastName +
                                               " | "
-                                            : assignName +
+                                            : assignName?.firstName +
                                               " " +
-                                              assignName}
+                                              assignName.lastName}
                                         </>
                                       );
                                     }
@@ -697,6 +702,7 @@ const CustomTaskListDrawer = (props: any) => {
                 handleOnFilter={handleOnTaskFilter}
                 onClose={() => setOpenDrawer((prev: any) => !prev)}
                 taskFilterState={taskFilterState}
+                toolClicked={toolClicked}
               />
             </Drawer>
           )}

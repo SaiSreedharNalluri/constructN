@@ -23,7 +23,7 @@ import {
   CameraIcon,
 } from "./ToolBarStyles";
 import TaskList from "../taskListing/TaskList"
-import CreateTask from "../../divami_components/create-task/CreateTask";
+import CreateTask from "../createTask/CreateTask";
 import CustomDrawer from "../../divami_components/custom-drawer/custom-drawer";
 import { createTask, createTaskWithAttachments } from "../../../services/task";
 import { IContext, IToolResponse, IToolbarAction, ITools } from "../../../models/ITools";
@@ -38,10 +38,12 @@ import { getTimeInProjectTimezone } from "../../../utils/utils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { MqttConnector } from "../../../utils/MqttConnector";
 import { useRouter } from "next/router";
+import filterdListIcon from "../../../public/divami_icons/FilteredList.svg"
 
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
-  
+  taskFilterState:(taskFilterState:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,tasksStatusList:any)=>void;
   
 };
 function Task({
@@ -68,8 +70,6 @@ function Task({
   handleOnTasksSort,
   taskSubmit,
   deleteTheAttachment,
-  projectUsers,
-  taskStatusList,
   taskPriorityList,
   setShowTaskMarkups,
   showTaskMarkups,
@@ -101,8 +101,13 @@ function Task({
   const [contextInfo,setContextInfo] = useState<any>()
   let taskMenuInstance: IToolbarAction = { data: "",type:"showTask"};
   const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
+  const [filterState,setFilterState] = useState({isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,})
+  const [projectUsers,setProjectUsers] = useState([])
+  const [taskStatusList,setTaskStatusList] = useState([])
+  
 
- 
   useImperativeHandle(ref, () => {
     return{
       handleTaskInstance(tasktoolInstance:any){
@@ -139,7 +144,17 @@ function Task({
         
         }
 
+      },
+      taskFilterState(taskFilterState:any){
+        console.log("taskFilter state",taskFilterState);
+        
+        setFilterState(taskFilterState)
+      },
+      projectUsersAndStatus(projectUsers:any,tasksStatusList:any){
+        setProjectUsers(projectUsers)
+        setTaskStatusList(tasksStatusList)
       }
+      
     }},[])
 
   useEffect(() => {
@@ -168,7 +183,6 @@ function Task({
     }
   };
   const clickTaskSubmit = (formData: any) => {
-console.log("form datttaaa",formData)
     setEnableSubmit(false);
     let data: any = {};
     const userIdList = formData
@@ -176,11 +190,10 @@ console.log("form datttaaa",formData)
       ?.selectedName?.map((each: any) => {
         return each._id || each.value;
       });
-    data.structure = router.query.structId;
-    data.snapshot = currentSnapshot?._id;
+    data.structure = initData?.structure?._id;
+    data.snapshot = initData.currentSnapshotBase._id;
     data.status = "To Do";
     data.context = contextInfo;
-    console.log("contextInfo",contextInfo)
     Object.keys(contextInfo).forEach((key) => {
       if (key !== "id") {
         data.context = { ...data.context, [key]: contextInfo[key] };
@@ -293,9 +306,13 @@ console.log("form datttaaa",formData)
 
   const onCancelCreate = () => {
     // taskMenuInstance.toolAction = "taskCreateFail";
+    taskMenuInstance.type = "createFailTask";
+    taskMenuInstance.data= "task"
+    taskMenuClicked(taskMenuInstance);
     setOpenCreateTask(false);
     taskMenuClicked(taskMenuInstance);
     setOpenCreateTask(false)
+    setHighlightCreateTaskIcon(false)
     
   };
   const taskSubmitFn = (formdata: any) => {
@@ -303,6 +320,7 @@ console.log("form datttaaa",formData)
     taskMenuClicked(taskMenuInstance);
     setEnableSubmit(true);
     setOpenCreateTask(false)
+    setHighlightCreateTaskIcon(false)
   };
   const openTaskCreateFn = () => {
     //setCreateOverlay(true);
@@ -383,16 +401,22 @@ console.log("form datttaaa",formData)
           onClick={() => {
             handleViewTaskList();
           }}>
-          <CameraIcon
-            src={fileTextIcon}
-            width={12}
-            height={12}
-            alt="Arrow"
-          />
+           {filterState.numberOfFilters>=1?(
+            <CameraIcon
+              src={filterdListIcon}
+              width={12}
+              height={12}
+              alt="Arrow"
+            />):(<CameraIcon
+              src={fileTextIcon}
+              width={12}
+              height={12}
+              alt="Arrow"
+            />)}
         </IssuesSectionFileImg>
       </Tooltip>
 
-      <Tooltip title={showHideTask ? "Tasks Visible" : "Tasks Hidden"}>
+      <Tooltip title={showHideTask ? "Hide Task" : "Show Task"}>
         <IssuesSectionClipImg
           onClick={() => {
             toggleTaskVisibility();
@@ -435,7 +459,7 @@ console.log("form datttaaa",formData)
           }}
         >
           <TaskList
-            tasksList={tasksList}
+            tasksList={initData.currentTaskList}
             taskMenuClicked={taskMenuClicked}
             currentProject={myProject}
             currentStructure={myStructure}
@@ -445,7 +469,7 @@ console.log("form datttaaa",formData)
             handleOnTaskFilter={handleOnTaskFilter}
             onClose={() => setOpenDrawer((prev: any) => !prev)}
             deleteTheTask={deleteTheTask}
-            taskFilterState={taskFilterState}
+            taskFilterState={filterState}
             getTasks={getTasks}
             handleOnTasksSort={handleOnTasksSort}
             deleteTheAttachment={deleteTheAttachment}
@@ -456,6 +480,7 @@ console.log("form datttaaa",formData)
             taskStatus={taskStatusList} 
             taskContext={taskContext} // taskContext
             toolClicked={toolClicked}
+            initData={initData}
           />
         </Drawer>
       )}

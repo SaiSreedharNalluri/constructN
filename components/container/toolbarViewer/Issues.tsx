@@ -12,7 +12,7 @@ import fileTextIssue from "../../../public/divami_icons/fileTextIssue.svg";
 import  IssueListing  from "../issueListing/IssueList";
 import { styled } from "@mui/system";
 import IssueList from "../issueListing/IssueList";
-
+import filterdListIcon from "../../../public/divami_icons/FilteredList.svg"
 import {
   IssueBox,
   IssuesSectionPlusImg,
@@ -45,6 +45,8 @@ import { useRouter } from "next/router";
 
 export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
+  issueFilterState:(handleIssueFilterState:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any)=>void;
   
   
 };
@@ -61,7 +63,6 @@ function Issues({
     currentProject,
     issueOpenDrawer,
     issuePriorityList,
-    issueStatusList,
     issueTypesList,
     issueFilterState,
     setIssueFilterState,
@@ -102,7 +103,13 @@ function Issues({
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [contextInfo,setContextInfo] = useState<any>()
   const[isLoading,setLoading]=useState(false)
-
+  const [filterState,setFilterState] = useState({
+    isFilterApplied: false,
+    filterData: {},
+    numberOfFilters: 0,
+  })
+  const [projectUser,setProjectUsers] = useState([])
+  const [issueStatusList,setIssueStatusList] = useState([])
   useImperativeHandle(ref, () => {
     return{
       handleIssueInstance(IssuetoolInstance:any){
@@ -134,9 +141,17 @@ function Issues({
         setSelectedIssue(selectedObj)
         setOpenIssueDetails(true)
       }
+    },
+    issueFilterState(handleIssueFilterState:any){
+      setFilterState(handleIssueFilterState)
+    },
+    projectUsersAndStatus(projectUsers:any,issueStatusList:any){
+      setProjectUsers(projectUsers);      
+      setIssueStatusList(issueStatusList);
+    }   
     }
-    }
-  },[]);
+  },[router.isReady,initData]);
+
   
   useEffect(() => {
     setMyProject(currentProject);
@@ -176,8 +191,8 @@ function Issues({
     const formData = new FormData();
     let data: any = {};
 
-    data.structure = router.query.structId;
-    data.snapshot = currentSnapshot?._id;
+    data.structure = initData.structure?._id;
+    data.snapshot = initData.currentSnapshotBase?._id;
     data.status = "To Do";
     data.owner = values?.owner;
 
@@ -247,7 +262,6 @@ function Issues({
     if (data.title && data.type && data.priority) {
       createIssueWithAttachments(projectId as string, formData)
         .then((response) => {
-          console.log("issue comp res",response)
           if (response.success === true) {
             CustomToast(" Issue created successfully","success");
             setEnableSubmit(true);
@@ -279,6 +293,7 @@ function Issues({
     issueMenuInstance.type = "createFailIssue";
     issueMenuClicked(issueMenuInstance);
     setOpenCreateIssue(false);
+    setHighlightCreateIcon(false);
   };
   // useEffect(() => {
     
@@ -293,6 +308,7 @@ function Issues({
     // closeIssueCreate();
     // issueSubmit(formdata);
     setEnableSubmit(true);
+    setHighlightCreateIcon(false)
   };
   const openIssueCreateFn = () => {
     issueMenuInstance.type = "createIssue";
@@ -361,16 +377,22 @@ function Issues({
                 handleViewTaskList();
                 
               }}>
+            {filterState.numberOfFilters>=1 ?(
             <CameraIcon
+              src={filterdListIcon}
+              width={12}
+              height={12}
+              alt="Arrow"
+            />):(<CameraIcon
               src={fileTextIcon}
               width={12}
               height={12}
               alt="Arrow"
-            />
+            />)}
           </IssuesSectionFileImg>
         </Tooltip>
 
-        <Tooltip title={showHideIssue ? "Issues Visible" : "Issues Hidden"}>
+        <Tooltip title={showHideIssue ? "Hide Issue" : "Show Issue"}>
           <IssuesSectionClipImg  onClick={() => {
                   toggleIssueVisibility();
                   
@@ -412,7 +434,7 @@ function Issues({
         >
           <CustomIssueListDrawer
             closeFilterOverlay={closeFilterOverlay}
-            issuesList={initData}
+            issuesList={initData.currentIssueList}
             visibility={listOverlay}
             closeOverlay={closeIssueList}
             handleOnFilter={handleOnFilter}
@@ -427,16 +449,18 @@ function Issues({
             contextInfo={contextInfo}
             currentProject={currentProject}
             issueTypesList={issueTypesList}
-            issueFilterState={issueFilterState}
+            issueFilterState={filterState}
             setIssueFilterState={setIssueFilterState}
             getIssues={getIssues}
             handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
             openIssueCreateFn={openIssueCreateFn}
             issueMenuClicked={issueMenuClicked}
-            projectUsers={projectUsers}
+            projectUsers={projectUser}
             issueContext={issueContext}
             toolClicked={toolClicked}
+            initData={initData.currentIssueList}
+           
 
           />
         </Drawer>
@@ -477,7 +501,7 @@ function Issues({
             issueType={issueTypesList}
             issuePriority={issuePriorityList}
             issueStatus={issueStatusList}
-            projectUsers={projectUsers}
+            projectUsers={projectUser}
             currentProject={currentProject}
             currentStructure={currentStructure}
             currentSnapshot={currentSnapshot}
@@ -485,7 +509,7 @@ function Issues({
             setIssueList={setIssueList}
             deleteTheAttachment={deleteTheAttachment}
             getIssues={getIssues}
-            issuesList={issuesList}
+            issuesList={initData.currentIssueList}
             deleteTheIssue={deleteTheIssue}
             issueLoader={issueLoader}
             setIssueLoader={setIssueLoader}

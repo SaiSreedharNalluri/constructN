@@ -5,7 +5,7 @@ import _ from "lodash";
 import Moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, Suspense, memo} from "react";
 import { CustomToast } from "../../../../../components/divami_components/custom-toaster/CustomToast"
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
@@ -37,6 +37,7 @@ import {
 import {
   deleteIssue,
   editIssue,
+  getIssueTags,
   getIssuesList,
   getIssuesPriority,
   getIssuesStatus,
@@ -47,6 +48,8 @@ import {
   getTasksList,
   getTasksPriority,
   getTaskStatus,
+  getTasksTypes,
+  getTaskTags,
 } from "../../../../../services/task";
 import enterfullscreenIcon from "../../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../../public/divami_icons/exitfullscreen.svg";
@@ -60,11 +63,12 @@ import CustomLoggerClass from "../../../../../components/divami_components/custo
 import { getGenViewerData } from "../../../../../services/genviewer";
 import { IGenData } from "../../../../../models/IGenData";
 import { MqttConnector, OnMessageCallbak } from "../../../../../utils/MqttConnector";
-import Iframe from "../../../../../components/container/Iframe"
 import IssueList from "../../../../../components/container/rightFloatingMenu/issueMenu/issueList";
 import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
+import {ApiDataContextProvider} from "../../../../../state/projectConfig/projectConfigContext";
 interface IProps { }
+const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -128,6 +132,9 @@ const LeftOverLayContainer = styled("div")(({ isFullScreen }: any) => ({
 export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
   RouterIssueRef: (handleMenuInstance: any) => void;
+  issueFilterState:(handleMenuInstance:any)=>void;
+  taskFilterState:(taskFilterState:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any,tasksStatusList:any)=>void;
 };
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
@@ -139,7 +146,7 @@ const Index: React.FC<IProps> = () => {
   const [currentProjectId, setActiveProjectId] = useState("");
   const [structuresList, setStructuresList] = useState<IStructure[]>([]);
   const [project, setProject] = useState<IProjects>();
-  const [projectUsers, setProjectUsers] = useState<IProjects>();
+  // const [projectUsers, setProjectUsers] = useState<IProjects>();
   const [showIssueMarkups, setShowIssueMarkups] = useState(true);
   const [showTaskMarkups, setShowTaskMarkups] = useState(true);
   const [isRealityAvailable, setRealityAvailable] = useState(false);
@@ -165,13 +172,15 @@ const Index: React.FC<IProps> = () => {
   const [clickedTool, setClickedTool] = useState<ITools>();
   const [toolUpdate, setToolUpdate] = useState<IToolbarAction>();
   const [loggedInUserId, SetLoggedInUserId] = useState("");
+  const [isList, setIsList] = useState<any>([]);
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
-  const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
+  const [tasList, setTasList] = useState<any>([]);
+  // const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [tasksPriotityList, setTasksPriorityList] = useState<[string]>([""]);
-  const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  // const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
   const [tasksStatusList, setTasksStatusList] = useState<[string]>([""]);
-  const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
+  // const [issueTypesList, setIssueTypesList] = useState<[string]>([""]);
   const [layersUpdated, setLayersUpdated] = useState(false);
 
   const [issueFilterList, setIssueFilterList] = useState<Issue[]>([]);
@@ -201,6 +210,16 @@ const Index: React.FC<IProps> = () => {
 
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
+ 
+  const [issueTypesList, setIssueTypesList] = useState<any>(null);
+  const [issuePriorityList, setIssuePriorityList] = useState<any>(null);
+  const [issueStatusList, setIssueStatusList] = useState<any>(null);
+  const [projectUsers, setProjectUsers] = useState<any>(null);
+  const [taskTypesList, setTaskTypesList] = useState<any>(null);
+  const [taskPriorityList, setTaskPriorityList] = useState<any>(null);
+  const [taskStatusList, setTaskStatusList] = useState<any>(null);
+  const [issueTagStatus, setIssueTagStatus] = useState<string[]>([]);
+  const [TaskTagStatus, setTaskTagStatus] = useState<[string]>();
 
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
@@ -299,7 +318,7 @@ const Index: React.FC<IProps> = () => {
       getTasksPriority(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
-            setTasksPriorityList(response.result);
+            setTaskPriorityList(response.result);
           }
         })
         .catch((error: any) => {
@@ -318,7 +337,7 @@ const Index: React.FC<IProps> = () => {
       getTaskStatus(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
-            setTasksStatusList(response.result);
+            setTaskStatusList(response.result);
           }
         })
         .catch((error: any) => {
@@ -332,6 +351,27 @@ const Index: React.FC<IProps> = () => {
         })
         .catch((error: any) => {
           CustomToast("failed to load data", "error");
+        });
+
+        getTasksTypes(router.query.projectId as string).then((response: any) => {
+          if (response.success === true) {
+            // response.result.push('Please select the task type');
+            setTaskTypesList(response.result);
+          }
+        });
+      getIssueTags(router.query.projectId as string).then((response) => {
+          if (response.success === true) {
+            let newArr = [...response.result[0].tagList]
+            setIssueTagStatus(response.result);
+           
+          }
+        });
+        getTaskTags(router.query.projectId as string).then((response) => {
+          if (response.success === true) {
+            let newArr = [...response.result[0].tagList]
+            setTaskTagStatus(response.result[0].tagList);
+           
+          }
         });
       getProjectDetails(router.query.projectId as string)
         .then((response: any) => {
@@ -503,8 +543,7 @@ const Index: React.FC<IProps> = () => {
     // getIssues(structure._id);
     // getTasks(structure._id);
   };
-
-  useEffect(() => {
+  useEffect(() => { 
     if (structure && project) {
       setBreadCrumbsData((prev: any) => [
         project,
@@ -515,12 +554,12 @@ const Index: React.FC<IProps> = () => {
     } else if (project) {
       setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
     }
-    // if (router.isReady && structure) {
-    //   //router.query.structId = structure?._id;
-    //   router.query.structureId = structure?._id;
+    if (router.isReady && structure) {
+      //router.query.structId = structure?._id;
+      router.query.structureId = structure?._id as string;
 
-    //   router.push(router);
-    //}
+      router.push({pathname:router.pathname,query:{...router.query,structureId:structure._id as string}})
+    }
   }, [structure, project]);
 
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
@@ -661,6 +700,9 @@ const Index: React.FC<IProps> = () => {
           case "pointCloud":
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
             break;
+          case "orthoPhoto":
+            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "orthoPhoto"}`);
+            break;
         }
         break;
 
@@ -720,7 +762,6 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
         break;
       case "selectIssue":
-        console.log("select issue publish")
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "removedIssue":
@@ -732,6 +773,28 @@ const Index: React.FC<IProps> = () => {
           }
         })();
         break;
+      case 'handleIssueFilter':
+          handleOnIssueFilter(toolInstance.data)
+          
+        break;
+      case 'setFilteredIssueList':
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break;
+      case 'closeFilterOverlay':
+        closeFilterOverlay()
+        break;
+      case "sortIssue":
+        handleOnIssueSort(toolInstance.data)
+        break;
+      case "deleteIssueAttachment":
+        deleteTheAttachment(toolInstance.data,"issue")
+        break;
+      case "deleteTaskAttachment":
+        deleteTheAttachment(toolInstance.data,"task")
+        break;
+      case 'closeTaskOverlay':
+      closeTaskFilterOverlay()
+      break;
       case "viewTaskList":
         //setOpenIssueView(true);
         break;
@@ -748,6 +811,7 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
         break;
       case "createFailTask":
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailTask","data":" "}');
         break;
       case "createSuccessTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
@@ -767,14 +831,22 @@ const Index: React.FC<IProps> = () => {
       case "removedTask":
         (async () => {
           const TaskDetelteStatus = await deleteTheTask(toolInstance.data);
-          console.log(TaskDetelteStatus)
           if (TaskDetelteStatus) {
             let taskId = (toolInstance.data as { _id: any })._id;
-            console.log("issueId", taskId)
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
           }
         })();
         // setClickedTool(toolInstance);
+        break;
+     
+      case 'handleTaskFilter':
+        handleOnTaskFilter(toolInstance.data);
+        break;
+      case 'setFilteredTaskList':
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        break; 
+      case 'sortTask':
+        handleOnTasksSort(toolInstance.data)
         break;
       case "setViewLayers":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
@@ -829,181 +901,200 @@ const Index: React.FC<IProps> = () => {
   //   }
   // };
 
-  const handleOnIssueSort = (sortMethod: string) => {
-
+  const handleOnIssueSort = (sortMethod: any) => {
     switch (sortMethod) {
       case "Last Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
             if (a.dueDate > b.dueDate) {
               return 1;
             } else if (b.dueDate > a.dueDate) {
               return -1;
             }
             return 0;
-          })
-        );
+          });
+        
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "First Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
             if (a.updatedAt > b.updatedAt) {
               return -1;
             } else if (b.updatedAt > a.updatedAt) {
               return 1;
             }
             return 0;
-          })
-        );
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
       case "Asc DueDate":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) => {
-            return (
-              new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "Dsc DueDate":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) => {
-            return (
-              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "Asc Priority":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            a.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "Dsc Priority":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            b.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "status_asc":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            a.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.status.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
+            return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
+          });
+          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
+          setInintData(updatedInitData);
+        }
+        
 
         break;
       case "status_desc":
-        setIssueList([
-          ...issuesList.sort((a: any, b: any) =>
-            b.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.status.trim().toLowerCase())
-          ),
-        ]);
-
+        if (initData) {
+          const sortedData = [...initData.currentIssueList].sort((a: any, b: any) =>
+            b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase())
+          );
+          const updatedInitData = { ...initData, currentIssueList: sortedData };
+          setInintData(updatedInitData);
+        }
         break;
       default:
         break;
     }
   };
 
-  const handleOnTasksSort = (sortMethod: string) => {
+  const handleOnTasksSort = (sortMethod: any) => {
 
     switch (sortMethod) {
       case "Last Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
             if (a.updatedAt > b.updatedAt) {
               return 1;
             } else if (b.updatedAt > a.updatedAt) {
               return -1;
             }
             return 0;
-          })
-        );
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "First Updated":
-        setIssueList(
-          issuesList.sort((a, b) => {
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
             if (a.updatedAt > b.updatedAt) {
               return -1;
             } else if (b.updatedAt > a.updatedAt) {
               return 1;
             }
             return 0;
-          })
-        );
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
       case "Asc DueDate":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) => {
-            return (
-              new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "Dsc DueDate":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) => {
-            return (
-              new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf()
-            );
-          }),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
         break;
       case "Asc Priority":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            a.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "Dsc Priority":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            b.priority
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.priority.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
         break;
       case "status_asc":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            a.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(b.status.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }        
 
         break;
       case "status_desc":
-        setTasksList([
-          ...tasksList.sort((a: any, b: any) =>
-            b.status
-              .trim()
-              .toLowerCase()
-              .localeCompare(a.status.trim().toLowerCase())
-          ),
-        ]);
+        if (initData) {
+          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase());
+          });
+        
+          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
+          setInintData(updatedInitData);
+        }
+        
 
         break;
       default:
@@ -1053,22 +1144,36 @@ const Index: React.FC<IProps> = () => {
     }
     if (formData?.fromDate) {
       count = count + 1;
-    }
-    setIssueList(result);
+    }   
+    setIsList(result);
     setIssueFilterState({
       isFilterApplied: true,
       filterData: formData,
       numberOfFilters: count,
     });
+    let data : any = result
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredIssueList"}
+    toolClicked(issueFilterMessage)
+   
+  
+
   };
   const closeFilterOverlay = () => {
-    setIssueList(issueFilterList);
+    setIsList(issueFilterList);
     setIssueFilterState({
       isFilterApplied: false,
       filterData: {},
       numberOfFilters: 0,
     });
+    let data:any=issueFilterList
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredIssueList"}
+    toolClicked(issueFilterMessage)
+   
   };
+
+  useEffect(()=>{
+    ref.current?.issueFilterState(issueFilterState)
+  },[issueFilterState])
 
   const handleOnTaskFilter = (formData: any) => {
     const result = taskFilterList.filter(
@@ -1089,7 +1194,7 @@ const Index: React.FC<IProps> = () => {
             !formData?.taskTag) &&
           (item.assignees.filter(
             (userInfo: any) => userInfo._id === formData.assigneesData?.user?._id
-          ) ||
+          ).length ||
             formData?.assigneesData?.length == 0 ||
             !formData?.assigneesData)
           &&
@@ -1112,13 +1217,20 @@ const Index: React.FC<IProps> = () => {
     if (formData?.fromDate) {
       count = count + 1;
     }
-    setTasksList(result);
+    setTasList(result);
     setTaskFilterState({
       isFilterApplied: true,
       filterData: formData,
       numberOfFilters: count,
     });
+    let data : any = result
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredTaskList"}
+    toolClicked(issueFilterMessage)
   };
+
+  useEffect(()=>{
+    ref.current?.taskFilterState(taskFilterState)
+  },[taskFilterState])
 
   const closeTaskFilterOverlay = () => {
     setTasksList(taskFilterList);
@@ -1127,6 +1239,9 @@ const Index: React.FC<IProps> = () => {
       filterData: {},
       numberOfFilters: 0,
     });
+    let data:any=taskFilterList
+    let issueFilterMessage : IToolbarAction = {data:data , type:"setFilteredTaskList"}
+    toolClicked(issueFilterMessage)
   };
   const deleteTheIssue = async (issueObj: any): Promise<boolean> => {
     try {
@@ -1199,27 +1314,26 @@ const Index: React.FC<IProps> = () => {
     });
     setIssueList(issueFilterList);
   };
-  const deleteTheAttachment = (attachmentId: string, entity?: string) => {
+  const deleteTheAttachment = (attachmentId: any, entity?: string) => {
     deleteAttachment(attachmentId)
       .then((response: any) => {
         if (response.success === true) {
           CustomToast(response.message, "success");
           if (entity === "issue") {
-            issueFilterList.map((issueObj) => {
+            initData?.currentIssueList.map((issueObj) => {
               const index = issueObj.attachments.findIndex(
                 (obj: any) => obj._id === attachmentId
               );
               issueObj.attachments.splice(index, 1);
             });
-            setIssueList(issueFilterList);
+            
           } else {
-            taskFilterList.map((taskObj) => {
+              initData?.currentTaskList.map((taskObj) => {
               const index = taskObj.attachments.findIndex(
                 (obj: any) => obj._id === attachmentId
               );
               taskObj.attachments.splice(index, 1);
             });
-            setTasksList(taskFilterList);
           }
         }
       })
@@ -1317,7 +1431,7 @@ const Index: React.FC<IProps> = () => {
 
   useEffect(() => {
     if (router.query.iss !== null && initData) {
-      let sel_iss: Issue | undefined = initData?.currentIssueList.find((t) => t._id === router.query.iss)
+      let sel_iss: Issue | undefined = initData?.currentIssueList?.find((t) => t._id === router.query.iss)
       if (sel_iss) {
         handleMenuInstance.type = "selectIssue"
         handleMenuInstance.data = sel_iss._id
@@ -1357,6 +1471,12 @@ const Index: React.FC<IProps> = () => {
   //   router.push(router);
 
   // }
+  useEffect(()=>{
+    if(projectUsers || issueStatusList || tasksStatusList){
+    ref.current?.projectUsersAndStatus(projectUsers,issueStatusList,tasksStatusList)
+    }
+  },[projectUsers,issueStatusList,tasksStatusList])
+
   const updateITRouter = (type: String, id: string) => {
     console.log("updateITRouter",type,id,router)
     if (type === "selectIssue") {
@@ -1369,21 +1489,111 @@ const Index: React.FC<IProps> = () => {
     }
     router.push(router)
   }
+  const getInitViewType = (vData:IGenData):string =>{
+    if(vData.structure.designs&& vData.structure.designs.length >= 1){
+      if(vData.structure.designs.find((des:any)=>{
+        if(des.type==="Plan Drawings"){
+          return des
+        }    
+      }))
+      {
+        
+        return "Plan Drawings"
+      }
+      else if(vData.structure.designs.find((des:any)=>{
+        if(des.type==="BIM"){
+          return des
+        }    
+      })){
+        
+        return "BIM"
+      }
+
+    }
+    else if(vData.currentSnapshotBase.reality?.length && vData.currentSnapshotBase.reality.length >=1){
+      return "pointCloud"
+    }
+    
+     
+    
+    
+  return ""
+}
+  
+ const isViewTypeAvailable = (vData:IGenData,checkType:string):boolean=>{
+  
+    switch(checkType){
+      case 'Plan Drawings':
+        if(vData.structure.designs&& vData.structure.designs.length >= 1){
+          if(vData.structure.designs.find((des:any)=>{
+            if(des.type==="Plan Drawings"){
+              return des
+            }    
+          }))
+          {
+            
+            return true;
+          }
+        }
+        break;
+      case 'BIM':
+        if(vData.structure.designs&& vData.structure.designs.length >= 1){
+          if(vData.structure.designs.find((des:any)=>{
+            if(des.type==="BIM"){
+              return des
+            }    
+          }))
+          {
+            
+            return true;
+          }
+        }
+        break;
+      case 'pointCloud':
+        if(vData.currentSnapshotBase.reality?.length && vData.currentSnapshotBase.reality.length >=1){
+          return true;
+        }
+        break
+      case 'orthoPhoto':
+        break;
+
+    }
+    return false
+ }
+
+
+  
   useEffect(() => {
 
     if (router.isReady) {
       getGenViewerData(router.query.projectId as string, router.query.structureId as string)
         .then((response) => {
-          if (response.success === true) {
+          if (response.success === true) {  
+            setIssueFilterList(response.result.currentIssueList) 
+            setTaskFilterList(response.result.currentTaskList)
+
             // if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
             //   router.query.type = response.result.data?.currentViewType as string;
             //   router.query.snap = response.result.data?.currentSnapshotBase._id as string;
             //   router.push(router);
             // }
             let vData:IGenData = response.result; 
-            if(router.query.type&& router.query.type!== vData.currentViewType)
-              vData.currentViewType = router.query.type.toString()
-            if(router.query.snap&& router.query.snap!== vData.currentSnapshotBase._id)
+            if(router.query.type === undefined){
+              vData.currentViewType = getInitViewType(vData)
+            }
+            else if(router.query.type&& router.query.type !== undefined)
+            {
+              if(isViewTypeAvailable(vData,router.query.type.toString()))
+              {
+                vData.currentViewType = router.query.type.toString()
+              }
+              else{
+                vData.currentViewType = getInitViewType(vData)
+              }
+             
+            }
+             
+            if(router.query.snap&& router.query.snap!== vData.currentSnapshotBase?._id)
             {
               let urlSnap:ISnapshot|undefined=vData.snapshotList.find((snp:ISnapshot)=>{
                 if(snp._id===router.query.snap?.toString())
@@ -1394,7 +1604,10 @@ const Index: React.FC<IProps> = () => {
               if(urlSnap)
                 vData.currentSnapshotBase=urlSnap;
             }
-
+            vData.taskShow=true;
+            vData.issueShow=true;
+            vData.isIssueFiltered=false;
+            vData.isTaskFiltered=false;
             setInintData(vData);
             // if(initData && router.query.iss || router.query.tsk){
 
@@ -1412,12 +1625,12 @@ const Index: React.FC<IProps> = () => {
             //   }
             // }
             if (mViewerStatus === "Waiting") {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
               console.log("Handshake setGenData", response.result)
               setMViewerStatus("Connected")
             }
             else if (mViewerStatus === "Connected") {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(response.result) + '}')
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(vData) + '}')
 
             }
           }
@@ -1433,13 +1646,16 @@ const Index: React.FC<IProps> = () => {
   useEffect(() => {
 
     if (initData) {
+
+      console.log("init data after",initData);
+      
       if (initData.structure.designs?.length) {
         setDesignAvailable(true)
       }
       else {
         setDesignAvailable(false)
       }
-      if (initData.currentSnapshotBase.reality?.length) {
+      if (initData.currentSnapshotBase?.reality?.length) {
         setRealityAvailable(true)
       }
       else {
@@ -1449,6 +1665,7 @@ const Index: React.FC<IProps> = () => {
         conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
         console.log("Handshake setGenData", initData)
         setMViewerStatus("Connected")
+        
       }
       updateURLQuery(initData as IGenData)
       if (initData.currentViewType === "Plan Drawings" || initData.currentViewType === "BIM") {
@@ -1476,10 +1693,33 @@ const Index: React.FC<IProps> = () => {
           getGenViewerData(router.query.projectId as string, router.query.structureId as string)
             .then((response) => {
               if (response.success === true) {
+                let vData:IGenData = response.result
+              if(router.query.type === undefined){
+                vData.currentViewType = getInitViewType(vData)
+              }
+              else if(router.query.type&& router.query.type !== undefined)
+            {
+              
+              if(isViewTypeAvailable(vData,router.query.type.toString()))
+              {
+                vData.currentViewType = router.query.type.toString()
+              }
+              else{
+                vData.currentViewType = getInitViewType(vData)
+              }
+             
+            }
+                vData.taskShow=true;
+                vData.issueShow=true;
+                vData.isIssueFiltered=false;
+                vData.isTaskFiltered=false;
+                setInintData(vData);
+                setIssueFilterList(response.result.currentIssueList)
+                setIsList(response.result.currentIssueList)  
+                setTaskFilterList(response.result.currentTaskList)
+                setTasList(response.result.currentTaskList)
 
-                setInintData(response.result);
-
-                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(response.result) + '}')
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
                 console.log("Handshake setGenData", response.result)
                 setMViewerStatus("Connected")
 
@@ -1532,21 +1772,33 @@ const Index: React.FC<IProps> = () => {
   const updateURLQuery = (newData: IGenData) => {
 
     if (router) {
-      console.log("callback trying to update router");
       // (router.query.structId !== newData.structure._id) ? router.query.structId = newData.structure._id : null;
       // (router.query.structureId !== newData.structure._id) ? router.query.structureId = newData.structure._id : null;
       // (router.query.projectId !== newData.structure.project) ? router.query.projectId = newData.structure.project : null;
       // (router.query.type !== newData.currentViewType) ? router.query.type = newData.currentViewType : null;
       // (router.query.snap !== newData.currentSnapshotBase._id) ? router.query.snap = newData.currentSnapshotBase._id : null;
       router.push({pathname:router.pathname,query:
-        {...router.query,projectId:newData.structure.project,structureId:newData.structure._id,type:newData.currentViewType,snap:newData.currentSnapshotBase._id}},
+        {...router.query,projectId:newData.structure.project,structureId:newData.structure._id,type:newData.currentViewType,snap:newData.currentSnapshotBase?._id}},
         undefined,{});
     }
 
   }
+//   useEffect(()=>{
+//     if(issueFilterState.isFilterApplied === false) 
+//    {
+//    ref.current?.issueFilterState(issueFilterState)
+   
+//    }
+//    if(taskFilterState.isFilterApplied === false){
+//      ref.current?.taskFilterState(taskFilterState)
+//    }
+//  },[issueFilterState,taskFilterState])
+
+
   const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("callback data", JSON.parse(msg.toString()))
+    
 
     // if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
     //   updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
@@ -1555,7 +1807,11 @@ const Index: React.FC<IProps> = () => {
     //   updateITRouter(message.type,message.data.id) //Router current Task/Issue
     // }
     if (message.type === "syncGenViewer") {
-      setInintData(message.data);     
+      setInintData(message.data);
+      
+     
+     
+      
       // updateURLQuery(message.data as IGenData);
       //setViewMode(message.data.viewMode);
       
@@ -1599,6 +1855,17 @@ const Index: React.FC<IProps> = () => {
 
 
   return (
+    <ApiDataContextProvider  
+    initialTypes={issueTypesList}
+    initialPriority={issuePriorityList}
+    initialStatus={issueStatusList}
+    initialProjectUsersList={projectUsers}
+    taskinitialTypes={taskTypesList}
+    taskinitialPriority={taskPriorityList}
+    taskinitialStatus={taskStatusList} 
+    issueTagsList={issueTagStatus}
+    taskTagsList={TaskTagStatus}
+    >
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
         {!isFullScreen && (
@@ -1731,16 +1998,22 @@ const Index: React.FC<IProps> = () => {
                   ref={ref}
                 ></ToolBarMenuWrapper>
 
+                
                 : <></>}
             </div></div></div>
 
         <div>
-          {initData && <Iframe></Iframe>}
-          {!multiverseIsReady && <CustomLoader />}
+        {initData && 
+        <Suspense fallback={<CustomLoader />}>
+     <Iframe isFullScreen={isFullScreen} />
+      </Suspense>
+}
+      {!multiverseIsReady && <CustomLoader />}
         </div>
 
       </div>
     </div>
+    </ApiDataContextProvider>
   );
 };
 export default Index;

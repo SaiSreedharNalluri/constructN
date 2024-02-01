@@ -25,5 +25,12 @@ export interface IGenData {
         selectedIssue?: Issue,
         selectedHotspot?: IHotspot,
         projectUTM?:string,
+        taskShow?:boolean,
+        issueShow?:boolean,
+        isTaskFiltered?:boolean,
+        isIssueFiltered?:boolean,
+        filteredTaskList?:ITasks[],
+        filteredIssueList?:Issue[],
+
         currentTypesList:string[]
       }
