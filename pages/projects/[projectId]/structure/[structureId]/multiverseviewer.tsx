@@ -67,6 +67,7 @@ import IssueList from "../../../../../components/container/rightFloatingMenu/iss
 import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
 import {ApiDataContextProvider} from "../../../../../state/projectConfig/projectConfigContext";
+import { useAppContext } from "../../../../../state/appState/context";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -226,6 +227,8 @@ const Index: React.FC<IProps> = () => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
 
+  const { state: appState, appContextAction } = useAppContext();
+  
   const isObjectEmpty = (objectName: any) => {
     return (
       objectName &&
@@ -721,7 +724,10 @@ const Index: React.FC<IProps> = () => {
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
           case "compareReality":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+            if(initData&& initData.currentViewType==='orthoPhoto')
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"compareMap"}');
+            else  
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
 
         }
@@ -738,7 +744,10 @@ const Index: React.FC<IProps> = () => {
 
             break;
           case "Reality":
-            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
+            if(initData&& initData.currentViewType==='orthoPhoto')
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"compareMap"}');
+            else
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
             break;
 
         }
@@ -1608,6 +1617,8 @@ const Index: React.FC<IProps> = () => {
             vData.issueShow=true;
             vData.isIssueFiltered=false;
             vData.isTaskFiltered=false;
+            vData.projectUTM=appState.currentProjectData?.project?.utm || undefined ;
+            vData.projectLocation = appState.currentProjectData?.project?.location || undefined ;
             setInintData(vData);
             // if(initData && router.query.iss || router.query.tsk){
 
@@ -1713,6 +1724,8 @@ const Index: React.FC<IProps> = () => {
                 vData.issueShow=true;
                 vData.isIssueFiltered=false;
                 vData.isTaskFiltered=false;
+                vData.projectUTM=appState.currentProjectData?.project?.utm || undefined ;
+                vData.projectLocation = appState.currentProjectData?.project?.location || undefined ;
                 setInintData(vData);
                 setIssueFilterList(response.result.currentIssueList)
                 setIsList(response.result.currentIssueList)  

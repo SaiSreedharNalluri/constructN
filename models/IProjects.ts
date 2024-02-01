@@ -10,8 +10,8 @@ export interface IProjects {
   contact?: Contact;
   address?: Address;
   // location?: number[] | null;
-  location?: location[];
-  utmLocation?:utmLocation[];
+  location?: location;
+  utm?:utmLocation;
   createdAt: string;
   updatedAt: string;
   jobsOpened?: number;
