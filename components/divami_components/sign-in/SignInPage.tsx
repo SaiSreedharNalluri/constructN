@@ -117,15 +117,19 @@ const SignInPage = () => {
               "userCredentials",
               JSON.stringify(userProfileObj)
             );
-          //  Sentry.setUser({email:userProfileObj.email})
-              //  CustomLogger("set user", userProfileObj.email,"email")
-              customLogger.logActivity(userProfileObj.email, "email")
-              customLogger.logInfo(`user successfully logged`);
-              // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
-              delete userProfileObj.unReadNotifications
-              delete userProfileObj.avatar
+            //  Sentry.setUser({email:userProfileObj.email})
+            //  CustomLogger("set user", userProfileObj.email,"email")
+            customLogger.logActivity(userProfileObj.email, "email")
+            customLogger.logInfo(`user successfully logged`);
+            // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
             setCookie("isProjectTimeZone", true);
-            setCookie("user", userProfileObj);
+            setCookie("user", JSON.stringify({
+                _id: userProfileObj._id,
+                email: userProfileObj.email,
+                token: userProfileObj.token,
+                refreshToken: userProfileObj.refreshToken,
+                avatar: userProfileObj.avatar || ''
+            }));
             localStorage.setItem('uploaededData',JSON.stringify({}))
             Mixpanel.identify(response.result._id); 
             Mixpanel.people.set({ 
