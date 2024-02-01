@@ -17,7 +17,8 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
           
             return {
                 ...state,
-                step:state.step === UploaderStep.Upload  ? UploaderStep.Details : UploaderStep.Upload,
+                // step:state.step === UploaderStep.Upload  ? UploaderStep.Details : UploaderStep.Upload,
+                step: UploaderStep.Details,
                 structure: undefined,
                 date: undefined,
                 isNextEnabled: false,
@@ -57,13 +58,18 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 filesDropped: false,
                 isNextEnabled: isNext(state, previousStep)
             }
-        case UploaderActionType.Next: 
-        console.log("TestingUploader: in reducer next");
+        case UploaderActionType.Next:
             let nextStep = state.step + 1
             return {
                 ...state,
                 step: nextStep,
                 isNextEnabled: isNext(state, nextStep),
+            }
+        case UploaderActionType.Discard:
+            return {
+                ...state,
+                step: UploaderStep.Upload,
+                updateJobs: true
             }
         case UploaderActionType.skipGCP: 
             return {
@@ -222,6 +228,25 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 inProgressWorkers: newWorkerStatus
             }
+        case UploaderActionType.updateJobStatus:
+            let jobToUpdate = action.payload.job
+            if (jobToUpdate.project == state.project?._id && state.step == UploaderStep.Upload) {
+                let captureJobs = state.pendingProcessJobs.concat(state.pendingUploadJobs)
+                captureJobs.forEach((job) => {
+                  if (job._id === jobToUpdate._id) {
+                    job.status = jobToUpdate.status
+                  }
+                })
+                let pendingUploadJobs: IJobs[] = captureJobs.filter((e) => (e.status === JobStatus.pendingUpload || e.status === JobStatus.uploadFailed));
+                let pendingProcessJobs: IJobs[] = captureJobs.filter((e) => e.status === JobStatus.uploaded);
+                return {
+                    ...state,
+                    pendingUploadJobs: pendingUploadJobs,
+                    pendingProcessJobs: pendingProcessJobs,
+                    selectedJob: jobToUpdate.status == JobStatus.uploadFailed ? jobToUpdate : undefined
+                }
+            }
+            return state
         case UploaderActionType.removeWorker:
             if( state.inProgressWorkers) {
                 let {[action.payload.captureId]: _, ...workersMap} = state.inProgressWorkers
@@ -292,11 +317,19 @@ const getCurrentPopup = (state: UploaderState, popupType: UploaderPopups, messag
         case UploaderPopups.deleteJob:
             return {
                 type: popupType,
-                modalTitle: 'Confirm Discard',
-                modalMessage: `Are you sure you want to discard ? 
+                modalTitle: 'Confirm Delete',
+                modalMessage: `Are you sure you want to Delete ? 
                 This action is irreversible, and all data will be lost.`,
                 primaryButtonLabel: 'Yes',
                 secondaryButtonlabel: 'Cancel',
+            }
+        case UploaderPopups.discard:
+            return {
+                type: popupType,
+                modalTitle: 'Confirm Discard',
+                modalMessage: `All your progress will be lost and cannot be recovered. Are you sure you want to discard?`,
+                primaryButtonLabel: 'Yes',
+                secondaryButtonlabel: 'No',
             }
     }
 }

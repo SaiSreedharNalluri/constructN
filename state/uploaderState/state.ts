@@ -35,7 +35,8 @@ export interface workerFileMap {
 
 export enum UploaderPopups {
     deleteJob,
-    completedWithError
+    completedWithError,
+    discard
 }
 
 export interface UploaderState {

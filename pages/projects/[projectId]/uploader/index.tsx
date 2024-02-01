@@ -366,15 +366,13 @@ const Index: React.FC<IProps> = () => {
     let jobProject = appState.projectDataList.find((projectData) => {
       return projectData.project._id === projectId
     })
-    if (appState.currentProjectData && jobProject && appState.currentProjectData.project._id === jobProject.project._id) {
-      uploaderAction.setIsLoading(true)
-    }
     updateJobStatus(projectId, jobId, JobStatus.uploaded).then((response)=>{
       uploaderAction.setIsLoading(false)
       if(response.data.success===true) {
         let job = response.data.result
         appAction.removeCaptureUpload(job)
-        updateJobStatusOnView(job, jobProject);
+        uploaderAction.updateJobStatus(job)
+        uploaderAction.removeWorker(getCaptureIdFromModelOrString(job.captures[0]));
         if (jobProject) {
           CustomToast(`SUCCESSFULLY uploaded all file(s) for the ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
         } else {
@@ -386,7 +384,7 @@ const Index: React.FC<IProps> = () => {
       if(axiosError && axiosError.response?.status === 422) {
         let job = axiosError.response.data.result
         appAction.removeCaptureUpload(job)
-        updateJobStatusOnView(job, jobProject);
+        uploaderAction.updateJobStatus(job)
         if (jobProject) {
           CustomToast(`Upload completed with ERRORS for the ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
         } else {
@@ -397,25 +395,6 @@ const Index: React.FC<IProps> = () => {
       uploaderAction.setIsLoading(false)
       console.log("TestingUploader uploadCompletionStatus: catch error ", error)
     })
-  }
-
-  const updateJobStatusOnView = (updatedJob:IJobs, jobProject: ProjectData | undefined) => {
-    if (jobProject) {
-      if (appState.currentProjectData && appState.currentProjectData.project._id === jobProject.project._id) {
-        let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-        captureJobs.forEach((job) => {
-          if (job._id === updatedJob._id) {
-            job.status = updatedJob.status
-          }
-        })
-        uploaderAction.setCaptureJobs(captureJobs)
-        if(updatedJob.status === JobStatus.uploadFailed) {
-          uploaderAction.setSelectedJob(updatedJob)
-        } else {
-          uploaderAction.removeWorker(getCaptureIdFromModelOrString(updatedJob.captures[0]));
-        }
-      }
-    }
   }
 
   const updateJobStatusBasedOnAction = (deleteJob:boolean) => {
@@ -556,6 +535,10 @@ const Index: React.FC<IProps> = () => {
             updateJobStatusBasedOnAction(false)
             uploaderAction.setIsShowPopup({isShowPopup: false})
             return
+          case UploaderPopups.discard:
+            uploaderAction.discard()
+            uploaderAction.setIsShowPopup({isShowPopup: false})
+            return
         }
       }}
       handleCancel={(value)=>{
@@ -569,6 +552,9 @@ const Index: React.FC<IProps> = () => {
             } else {
               uploaderAction.setIsShowPopup({isShowPopup: false})
             }
+            return
+          case UploaderPopups.discard:
+            uploaderAction.setIsShowPopup({isShowPopup: false})
             return
         }
       }}

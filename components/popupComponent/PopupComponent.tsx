@@ -164,7 +164,7 @@ const PopupComponent = (props: PopupComponentProps) => {
     disableSecondaryButton = false,
     disablePrimaryButton = false,
     secondaryCallback,
-    isShowWarningText = true,
+    isShowWarningText = false,
     handleCancel,
     isCancelCallBack,
     hideCloseButton=false
@@ -276,7 +276,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                 style={{
                   backgroundColor: "#FF843F",
                   color:"white",
-                  width: isUploader && isShowWarningText ? "180px":"fit-content",
+                  width: isUploader ? "180px":"fit-content",
                   height: "40px",
                   marginBottom: "22px",
                   marginRight: "22px",
@@ -293,7 +293,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             <></>
           )}
         </DialogActions>
-        {!isShowWarningText &&<p className="text-sm font-extralight italic p-2">* You can discard and retry a new upload with all files</p>}
+        {(isShowWarningText == true) &&<p className="text-sm font-extralight italic p-2">* You can discard and retry a new upload with all files</p>}
       </BootstrapDialog>
     </div>
   );
