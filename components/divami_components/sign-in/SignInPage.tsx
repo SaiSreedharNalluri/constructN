@@ -17,10 +17,14 @@ import {
   RememberDiv,
   SectionShowcase,
   SignInHeader,
+  ProcoreButton,
+  ProcoreLogo,
+  TextContainer
 } from "./SignInPageStyle";
 
 import { useRouter } from "next/router";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
+import procore from "../../../public/divami_icons/procore.svg";
 // import Logo from "../../../public/divami_icons/Logo.svg";
 
 import Checked from "../../../public/divami_icons/checked.svg";
@@ -36,6 +40,7 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import { PROCORE } from "../../../config/config";
 const SignInPage = () => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
@@ -118,9 +123,18 @@ const SignInPage = () => {
               customLogger.logInfo(`user successfully logged`);
               // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
               delete userProfileObj.unReadNotifications
+              delete userProfileObj.avatar
             setCookie("isProjectTimeZone", true);
             setCookie("user", userProfileObj);
             localStorage.setItem('uploaededData',JSON.stringify({}))
+            Mixpanel.identify(response.result._id); 
+            Mixpanel.people.set({ 
+            "user_id":response.result._id,
+            "name":response.result.fullName,
+            "$email":response.result.email,
+            "$avatar":response.result.avatar!==undefined?response.result.avatar:"https://constructn-attachments-us.s3.us-west-2.amazonaws.com/avatars/USR475391-1706175403640.png"
+          });
+            Mixpanel.track( {name: "login_successful",project_id:"unknown",company_id:"unknown",screen_name:"login_page",event_category:"login",event_action:"login_successful",user_id:response.result._id})
             CustomToast("User signed in successfully", "success");
             const previousPage:any = router.query["history"] || "";
             setLoginEnable(true);
@@ -170,11 +184,7 @@ const SignInPage = () => {
         CustomToast(error?.response?.data?.message, "error");
 
         setLoading(false);
-
-        Mixpanel.track("login_fail", {
-          email: email,
-        });
-
+        Mixpanel.track( {name: "login_failed",project_id:"unknown",company_id:"unknown",screen_name:"login_page",event_category:"login",event_action:"login_failed",user_id:"unknown",error_message:error?.response?.data?.message})
         // setLoading(false);
         // setMessage(resMessage);
       });
@@ -194,6 +204,11 @@ const SignInPage = () => {
     const userObj: any = getCookie("user");
     if (userObj) router.push("/projects");
   }, [])
+
+  const handleProcoreButtonClick = () => {
+    const redirectUrl = `${PROCORE.LOGIN_URL}/oauth/authorize?response_type=code&client_id=${PROCORE.CLIENT_ID}&redirect_uri=${PROCORE.REDIRECT_URI}`;
+    window.location.href = redirectUrl;
+  };
 
   return (
     <>
@@ -245,6 +260,12 @@ const SignInPage = () => {
 
               {/* Render the loader if loading state is true */}
             </ButtonSection>
+            <br />
+            <p className="flex justify-center">or</p>
+            <ProcoreButton onClick={handleProcoreButtonClick}>
+            <ProcoreLogo src={procore} alt="logo" />
+            <TextContainer>Sign In with Procore</TextContainer>
+          </ProcoreButton>
 
             <NewUserDiv>
               New User?{"   "}

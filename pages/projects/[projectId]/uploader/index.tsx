@@ -10,8 +10,8 @@ import { UploaderFinishState, UploaderPopups, UploaderStep, captureRawImageMap }
 import UploaderFinal from "../../../../components/divami_components/uploader_details/uploaderFinal/uploaderFinal";
 import UploaderGCP from "../../../../components/divami_components/uploader_details/uploaderGCP";
 import UploaderReview from "../../../../components/divami_components/uploader_details/uploaderReview";
-import { addGcp, addNewCaptureOnly, addRawImages, getCaptureDetails, getRawImages } from "../../../../services/captureManagement";
-import { RawImage, RawImageCreateResp } from "../../../../models/IRawImages";
+import { addGcp, addNewCaptureOnly, addRawImages, getCaptureDetails, getRawImages, retryRawImages } from "../../../../services/captureManagement";
+import { RawImage, RawImageCreateResp, RawImageStatus } from "../../../../models/IRawImages";
 import { WebWorkerManager } from "../../../../utils/webWorkerManager";
 import { useRouter } from "next/router";
 import { useAppContext } from "../../../../state/appState/context";
@@ -251,7 +251,7 @@ const Index: React.FC<IProps> = () => {
       if(response.success===true)
       {
         let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-        captureJobs.push(job)
+          captureJobs.unshift(job)
           uploaderAction.setCaptureJobs(captureJobs)
           uploaderAction.setSelectedJob(job)
         uploaderAction.setCurrentUploadFiles(getUploadFiles(response.result, job))
@@ -285,7 +285,53 @@ const Index: React.FC<IProps> = () => {
     }, [])
     return uploadFiles
   }
-
+  const getUploadRetryFiles = (fileList:RawImageCreateResp[], job: IJobs): IUploadFile<RawImage>[] => {
+   
+    const uploadFiles: IUploadFile<RawImage>[] | undefined = uploaderState.retryUploadFiles?.map((retryFileObj) => {
+      const currentFileObj = fileList.find((fileObj: RawImageCreateResp) => fileObj._id === retryFileObj.uploadObject._id);
+  
+      if (currentFileObj) {
+          retryFileObj.destination = currentFileObj.putSignedURL;
+          retryFileObj.uploadObject = currentFileObj;
+          retryFileObj.status = UploadStatus.inProgress;
+          retryFileObj.progress = { value: 0 };
+      }
+  
+      return retryFileObj;
+  });
+   
+    return uploadFiles || []
+  }
+  useEffect(() => {
+    if(uploaderState.retryUploadFiles && uploaderState.retryUploadFiles.length > 0 && uploaderState.selectedJob) {
+      retryRawImagesTOCapture(uploaderState.selectedJob)
+    }
+  }, [uploaderState.retryUploadFiles])
+  
+  const retryRawImagesTOCapture=(job: IJobs)=>{
+    let captureId = getCaptureIdFromModelOrString(job.captures[0]) 
+    let rawImagesIds:string[] |undefined =  uploaderState.retryUploadFiles && uploaderState.retryUploadFiles.filter(retryObj =>retryObj.status === 2).map(retryObj =>retryObj.uploadObject._id as string)
+    
+    if(rawImagesIds !=undefined && rawImagesIds.length >0)
+    {
+    retryRawImages(uploaderState.project?._id as string,captureId,rawImagesIds).then((response)=>{
+      
+      if(response.success===true)
+      {
+        let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
+          captureJobs.unshift(job)
+        uploaderAction.setCurrentUploadFiles(getUploadRetryFiles(response.result, job))
+        appAction.addCaptureUpload(job)
+        CustomToast(`Started retry files uploading ${rawImagesIds?.length} file(s)`,'success')
+      }
+    }).catch((error)=>{
+      uploaderAction.setIsLoading(false)
+      uploaderAction.changeUploadinitiate(false)
+      CustomToast('Something went wrong. Please try again after some time.','error')
+    })
+   } 
+  
+  }
   useEffect(() => {
     if(uploaderState.currentUploadFiles && uploaderState.currentUploadFiles.length > 0) {
       sendingFilesToworker(uploaderState.currentUploadFiles)
@@ -293,6 +339,18 @@ const Index: React.FC<IProps> = () => {
   }, [uploaderState.currentUploadFiles])
 
   const sendingFilesToworker=(uploadFiles: IUploadFile<RawImage>[])=>{
+    if(uploadFiles.some(obj => obj.status === 1))
+    {
+      uploadFiles.sort((a, b) => {
+        if (a.status === b.status) {
+          return 0;
+        }
+        if (a.status === 0) {
+          return -1;
+        }
+        return 1;
+      });
+    }
     let captureId = uploadFiles[0].uploadObject.capture
     if(captureId) {
       let worker = new Worker(new URL('../../../../components/divami_components/web_worker/fileUploadManager.ts',import.meta.url), {name: captureId});

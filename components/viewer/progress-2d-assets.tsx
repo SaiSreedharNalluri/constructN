@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import moment from "moment";
 import { publish } from "../../services/light-box-service";
 import { IAsset, IAssetStage } from "../../models/IAssetCategory";
+import { getCookie } from "cookies-next";
 
 interface Props {
 	assets: IAsset[];
@@ -11,10 +12,13 @@ interface Props {
 const Progress2dAssets = ({
 	assets = [],
 }: Props) => {
+
+	const userObj: any = getCookie("user");
+	const user = JSON.parse(userObj || "{}");
 	const [search, setSearch] = useState("");
 	const [showInActiveAssets, setShowInActiveAssets] = useState(false);
 
-	const inActiveAssets = showInActiveAssets ? assets.filter((asset)=>(asset.status === 'Inactive')): assets
+	const inActiveAssets = showInActiveAssets ? assets.filter((asset)=>(['Inactive','InActive'].includes(asset.status || ''))): assets
 
 	const filteredAssets = inActiveAssets.filter(
 		(asset) =>
@@ -24,7 +28,7 @@ const Progress2dAssets = ({
 				?.includes(search?.toLowerCase())
 	);
 
-	const SingleCard = ({ row }: { row: IAsset }) => {
+	const SingleCard = ({ row, isSupportUser }: { row: IAsset; isSupportUser: boolean }) => {
 		return (
 			<div
 				className="p-[8px] border border-[#E2E3E5] rounded-[6px] mt-2 hover:bg-[#f2f2f2] cursor-pointer"
@@ -42,9 +46,9 @@ const Progress2dAssets = ({
 							"DD MMM, yyyy HH:mm"
 						) || "-"}
 					</div>
-					<div className="text-[11px] mt-[2px] text-[#ccc] mr-2">
+					{isSupportUser && <div className="text-[11px] mt-[2px] text-[#ccc] mr-2">
 						{row.status}
-					</div>
+					</div>}
 				</div>
 			</div>
 		);
@@ -53,7 +57,7 @@ const Progress2dAssets = ({
 	return (
 		<div className="m-2 mt-0 bg-white">
 			<div className="pt-4 mb-2 sticky top-0 bg-white z-10 flex justify-between">
-				<div className="w-[calc(70%-30px)]">
+				<div className={`${user?.isSupportUser ? 'w-[calc(70%-30px)]': 'w-full'}`}>
 					<OutlinedInput
 					className="mb-2"
 					size="small"
@@ -62,7 +66,7 @@ const Progress2dAssets = ({
 					fullWidth
 					/>
 				</div>
-				<div>
+				{user?.isSupportUser && <div>
 					<Checkbox sx={{
 						'&.Mui-checked': {
 						color: '#F1742E',
@@ -72,10 +76,10 @@ const Progress2dAssets = ({
 						}
 					}} checked={showInActiveAssets}  onChange={(e) => setShowInActiveAssets(e.target.checked) } />
 						<span className="text-[12px] mr-1" >Show InActive</span>
-				</div>
+				</div>}
 			</div>
 			{(filteredAssets || []).map((row) => (
-				<SingleCard row={row} key={row._id} />
+				<SingleCard row={row} key={row._id} isSupportUser={user?.isSupportUser}/>
 			))}
 		</div>
 	);

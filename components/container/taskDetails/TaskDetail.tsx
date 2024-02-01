@@ -1366,3 +1366,18 @@ const DarkToolTip = styled(({ className, ...props }: TooltipProps) => (
     //  color: 'red',
   },
 }));
+interface ContainerProps {
+  footerState: boolean;
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+interface Task {
+  _id: string;
+}
+
+

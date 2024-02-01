@@ -9,6 +9,7 @@ import {
 } from "./CustomBreadcrumbsStyles";
 import { truncateString } from "../../../pages/projects";
 import { ToolTipText } from "../ProgressBarMode/ProgressBarStyles";
+import {useRouter } from "next/router";
 
 const CustomBreadcrumbs: React.FC<any> = ({
   breadCrumbData,
@@ -18,6 +19,7 @@ const CustomBreadcrumbs: React.FC<any> = ({
   const [breadcrumbsConfig, setBreadcrumbsConfig] = useState<any>([
     breadCrumbData,
   ]);
+const router = useRouter();
 
   useEffect(() => {
     setBreadcrumbsConfig(breadCrumbData);
@@ -38,10 +40,10 @@ const CustomBreadcrumbs: React.FC<any> = ({
           {showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.map((breadcrumb: any, index: number) => (
               <ToolTipText key={index} title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
-              <BreadcrumbsLabel
-               key={index}
-                color="text.primary"
+              <BreadcrumbsLabel href={`/projects/${router.query.projectId}/sections`}
+               key={index}        
                 onClick={() => handleBreadCrumbClick(breadcrumb, index)}
+                style={{color:"#36415D"}}
               >
                 {truncateString(breadcrumb?.name,50)}
               </BreadcrumbsLabel>
@@ -50,10 +52,10 @@ const CustomBreadcrumbs: React.FC<any> = ({
           ) : !showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.slice(1).map((breadcrumb: any, index: number) => (
               <ToolTipText key={index} title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
-              <BreadcrumbsLabel
+              <BreadcrumbsLabel href={`/projects/${router.query.projectId}/structure?${router.query.projectId !== breadcrumb._id ? `structId=${breadcrumb._id}` : ''}`}
                key={index}
-                color="text.primary"
                 onClick={() => handleBreadCrumbClick(breadcrumb, index)}
+                id={breadcrumb.parent===null?"black-text":router.query.structId===breadcrumb._id  ?"orange-text": "default"}
               >
                 {truncateString(breadcrumb?.name,50)}
               </BreadcrumbsLabel>

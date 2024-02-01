@@ -9,7 +9,8 @@ import { changePassword } from '../../../services/userAuth';
 import Header from "./header/Header";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 import { customHeaderState } from '../../../models/IUtils';
-const ChangePassword = ({closeDrawer}:any) => {
+import { Mixpanel } from '../../analytics/mixpanel';
+const ChangePassword = ({closeDrawer,userDetails}:any) => {
   const initialValues = {
     currentPassword: '',
     new_password: '',
@@ -60,12 +61,14 @@ const ChangePassword = ({closeDrawer}:any) => {
         if (response.success === true) {
           setShow(true);
           CustomToast('Password changed successful',"success");
+          Mixpanel.track( {name: "change_password_successful",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"change_password",event_action:"change_password_successful",user_id:userDetails._id})
           resetForm();
         }
       })
       .catch((error) => {
         if (error.success === false) {
           CustomToast(error.message,"error");
+          Mixpanel.track( {name: "change_password_failed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"change_password",event_action:"change_password_failed",user_id:userDetails._id,error_message:error.message})
         } else {
           CustomToast('Unable to update your Password. Please Try Again.',"error");
         }
@@ -213,7 +216,8 @@ const ChangePassword = ({closeDrawer}:any) => {
                     <button
                       type="submit"
                       className=" w-full mx-4 p-2 bg-[#f1742e] font-normal text-base leading-4 text-[#ffffff] hover:bg-[#f1742e]  rounded-md"
-                    >
+                   onClick={()=>{ Mixpanel.track( {name: "confirm_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"change_password",event_action:"confirm_clicked",user_id:userDetails._id}) }}
+                   >
                       Confirm
                     </button> 
                   </div>

@@ -11,7 +11,7 @@ interface IProps {
 }
 let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
   const router = useRouter();
-  Mixpanel.track("projects_list_page_open");
+  // Mixpanel.track("projects_list_page_open");
   return (
     <div className=" calc-h overflow-y-auto overflow-x-hidden grid  lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 p-2 ">
       {loading ? (
@@ -24,7 +24,7 @@ let ProjectsList: React.FC<IProps> = ({ projects, loading }) => {
                     onClick={() => {
                       window.localStorage.setItem("nodeData", "");
                       window.localStorage.setItem("expandedNodes", "");
-                      Mixpanel.track("projects_list_page_close");
+                      // Mixpanel.track("projects_list_page_close");
                       router.push(`projects/${pData._id}/structure`);
                     }}
                   >

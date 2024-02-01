@@ -50,6 +50,8 @@ import { Tooltip } from "@mui/material";
 import { getCookie } from "cookies-next";
 import moment from 'moment-timezone';
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
+import Link from "next/link";
+import { Mixpanel } from "../../analytics/mixpanel";
 interface IProps {
   onChangeData: () => void;
 }
@@ -74,14 +76,14 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       toolTipMsg: "Views",
     },
 
-    // {
-    //   id: "progress-2d",
-    //   icon: progress2d,
-    //   activeIcon: progress2dHighlighted,
-    //   isActive: router.pathname.includes("progress-2d"),
-    //   nextPage: "",
-    //   toolTipMsg: "2D Progress",
-    // },
+    {
+      id: "progress-2d",
+      icon: progress2d,
+      activeIcon: progress2dHighlighted,
+      isActive: router.pathname.includes("progress-2d"),
+      nextPage: "",
+      toolTipMsg: "2D Progress",
+    },
 
     {
       id: "schedule",
@@ -190,16 +192,19 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   }, [router.isReady]);
 
   const leftClickHandler = (e: any) => {
+    let iconClicked = "";
     switch (e.currentTarget.id) {
       case "dashboard":
+        iconClicked = "dashboards_reports_clicked";
         router.push({pathname:`/projects/[projectId]/dashboard`,
-        query:{projectId:router.query.projectId as string}});
+            query:{projectId:router.query.projectId as string}});
 
         break;
       case "progress-2d":
         let queryParams = ''
         if(router.query.structId) queryParams = `?structId=${router.query.structId}`
         router.push(`/projects/${router.query.projectId as string}/progress-2d${queryParams}`);
+        iconClicked = "2d_progress_clicked";
 
         break;
       case "views":
@@ -212,31 +217,40 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         router.push(`/projects/${router.query.projectId as string}/issue`);
         break;
       case "schedule":
+        iconClicked = "schedule_clicked";
         router.push(`/projects/${router.query.projectId as string}/schedule`);
         break;
       case "lineChart":
         router.push(`/projects/${router.query.projectId as string}/lineChart`);
         break;
       case "settings":
+
+        iconClicked = "project_details_clicked";
+
         router.push({pathname:`/projects/[projectId]/settings`,
         query:{projectId:router.query.projectId as string}});
+
         break;
       case "tasks":
         router.push(`/projects/${router.query.projectId as string}/tasks`);
         break;
       case "sections":
+        iconClicked = "views_clicked";
         router.push({pathname:`/projects/[projectId]/sections`,
         query:{projectId:router.query.projectId as string}});
         break;
       case "usersList":
+        iconClicked = "users_clicked";
         router.push({pathname:`/projects/[projectId]/usersList`,
         query:{projectId:router.query.projectId as string}});
         break;
         case "uploader":
+          iconClicked = "uploader_clicked";
           router.push(`/projects/${router.query.projectId as string}/uploader`);
           break;
       case "chatSupport":
         //add open Chat code
+        iconClicked = "chat_clicked";
         openChat();
         break;
       case "timeZone":
@@ -248,6 +262,15 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         query:{projectId:router.query.projectId as string}});
     }
     setActive(router.pathname.split("/").pop());
+    Mixpanel.track({
+      name: iconClicked,
+      project_id: "unknown",
+      company_id: "unknown",
+      screen_name: "projects_list_page",
+      event_category: "sort",
+      event_action: iconClicked,
+      user_id: "unknown",
+    });
   };
   function openChat(): void {
     // {
@@ -310,10 +333,13 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   //   }, 1000); 
   //   return () => clearInterval(interval); 
   // }, []);
+  let queryParams = ''
+  if(router.query.structId) queryParams = `?structId=${router.query.structId}`
  return (
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
+          <Link href={`/projects/${router.query.projectId}/${item.id}${queryParams}`}>
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
@@ -339,6 +365,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
               </SideMenuOptionImageContainer>
             </TooltipText>
           </SideMenuOption>
+          </Link>
         </SideMenuOptionContainer>
       ))}
       {supportItemsConfig.map((item, index) => (

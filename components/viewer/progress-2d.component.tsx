@@ -15,6 +15,8 @@ import { IAsset, IAssetCategory } from '../../models/IAssetCategory'
 import ClickTypesPicker from './segment-class-filters'
 
 import { Paper } from '@mui/material'
+import dayjs from 'dayjs'
+import moment from 'moment'
 
 interface _ViewerProps {
 
@@ -71,6 +73,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const _currentStructure = useRef<string>()
 
+    const newStructure = LightBoxInstance.viewerData().structure?._id
+
 
     const onInit = async (forge: Autodesk.Viewing.GuiViewer3D | undefined, alreadyInitialised: boolean) => {
 
@@ -86,7 +90,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
 
-                setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+                setModelsData(LightBoxInstance.viewerData()['modelData']?.['Plan Drawings'])
             }
 
         }
@@ -140,13 +144,13 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _layers.current = props.snapshot.layers
 
-            const newStructure = LightBoxInstance.viewerData().structure._id
+        }
 
             if(_currentStructure.current !== newStructure) {
 
                 if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
 
-                    setModelsData(LightBoxInstance.viewerData()['modelData']['Plan Drawings'])
+                    setModelsData(LightBoxInstance.viewerData()['modelData']?.['Plan Drawings'])
                     
                 }
     
@@ -154,13 +158,11 @@ function Progress2DComponent(props: _ViewerProps) {
     
             } else {
 
-                if (_model.current) loadLayers(props.snapshot.layers)
+                if (_model.current && props.snapshot) loadLayers(props.snapshot.layers)
 
             }
 
-        }
-
-    }, [props.snapshot])
+    }, [props.snapshot, newStructure])
 
     useEffect(() => {
 
@@ -186,6 +188,8 @@ function Progress2DComponent(props: _ViewerProps) {
         _offset.current = offset
 
         if (_edit2dUtils.current) {
+
+            if(_currentStructure.current === 'STR719122' || _currentStructure.current === 'STR709859') _offset.current = [0.075, -0.9, 0]
             
             _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 
@@ -219,7 +223,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _dataVizUtils.current?.setTransform(_tm.current!, _offset.current!)
 
-            if (layers) _dataVizUtils.current.loadMediaData(layers)
+            if (layers && props.snapshot) _dataVizUtils.current.loadMediaData(layers, props.snapshot.date)
         }
     }
 
@@ -232,6 +236,8 @@ function Progress2DComponent(props: _ViewerProps) {
         } else if (extensionId === 'Autodesk.Edit2D') {
 
             _edit2dUtils.current = new ForgeEdit2DUtils(_forge.current!, _extn as Autodesk.Extensions.Edit2D, props.isSupportUser)
+
+            if(_currentStructure.current === 'STR719122' || _currentStructure.current === 'STR709859') _offset.current = [0.075, -0.9, 0]
 
             if (_tm.current && _offset.current) _edit2dUtils.current.setTransform(_tm.current, _offset.current)
 
@@ -283,7 +289,7 @@ function Progress2DComponent(props: _ViewerProps) {
     return (
         <>
 
-            {props.snapshot && <Forge
+            <Forge
 
                 viewType={viewType}
 
@@ -297,7 +303,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
                 compare={props.right}
 
-                onExtnLoaded={onExtnLoaded} /> }
+                onExtnLoaded={onExtnLoaded} />
 
             {!props.compare ? <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
@@ -309,8 +315,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
             </div>: null}
 
-            {props.compare ? <div className={`flex absolute bottom-2 ${props.right ? 'right-0': 'left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} style={{ zIndex: 5 }}>
-                {props.right?'From' : 'To'}
+            {props.compare ? <div className={`flex absolute bottom-2 ${!props.right ? 'right-0': 'left-2' } text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} style={{ zIndex: 5 }}>
+                {moment(new Date(props.snapshot?.date)).format('DD MMM, yyyy')}
             </div> : null}
 
         </>

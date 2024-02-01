@@ -82,7 +82,7 @@ const interceptor=instance.interceptors.response.use(
         deleteCookie('isProjectTimeZone')
         if (typeof window !== "undefined") {
             console.log("Moving Out....",error2.config);
-            window.location.href = `/login?history=${encodeURIComponent(window.location.pathname+window.location.search)}&reason=SessionExpiry`;
+           // window.location.href = `/login?history=${encodeURIComponent(window.location.pathname+window.location.search)}&reason=SessionExpiry`;
         }
         return Promise.reject(error2);
       })

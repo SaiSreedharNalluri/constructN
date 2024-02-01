@@ -7,6 +7,8 @@ interface ContainerProps {
   footerState: boolean;
 }
 
+
+
 export const HeaderContainer = styled(Box)`
   background-color: white;
   height: 51px;

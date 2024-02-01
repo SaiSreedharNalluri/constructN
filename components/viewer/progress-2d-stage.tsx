@@ -15,6 +15,7 @@ import { API } from '../../config/config';
 import instance from '../../services/axiosInstance';
 import authHeader from '../../services/auth-header';
 import { CustomToast } from '../divami_components/custom-toaster/CustomToast';
+import { getCookie } from 'cookies-next';
 
 
 const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>, structId: string}) => {
@@ -39,18 +40,16 @@ const markAsComplete = async (details: { category?: string, date?: Date, stage?:
 
 }
 
-const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number }, setLoading: Function, refetch: Function) => {
+const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number }, setLoading: Function, totalMeasurement: number) => {
 	try {
         setLoading(true);
-		await instance.put(`${API.PROGRESS_2D_URL}/asset-categories/${categoryId}/update-stage`, null, {
+		await instance.put(`${API.PROGRESS_2D_URL}/asset-categories/${categoryId}/update-stage`, {totalMeasurement: totalMeasurement}, {
             headers: authHeader.authHeader(),
             params: data
         });
         CustomToast('Successfully updated!','success');
-        refetch();
 	} catch (error) {
 		CustomToast('Failed to update!','error');
-        refetch();
 	} finally{
         setLoading(false)
     }
@@ -60,7 +59,7 @@ const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: s
 
 export default function Progress2DStages(
 
-    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='' }:
+    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading, projectUsers }:
 
         {
             stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined,
@@ -76,6 +75,14 @@ export default function Progress2DStages(
             assets?: IAsset[]
 
             structId?: string
+
+            refetchCategories?: () => void
+
+            setLoading: Dispatch<SetStateAction<boolean>>
+
+            loading: boolean
+
+            projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
 
         }) {
 
@@ -99,7 +106,13 @@ export default function Progress2DStages(
 
                     structId={structId}
 
-                    onToggleVisibility={onToggleVisibility} compare={compare} />)
+                    setLoading={setLoading}
+
+                    loading={loading}
+
+                    projectUsers={projectUsers}
+
+                    onToggleVisibility={onToggleVisibility} compare={compare} refetchCategories={refetchCategories} />)
 
             }
 
@@ -117,7 +130,7 @@ const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(
 
 function Progress2DStage(
 
-    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='' }: {
+    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading, projectUsers }: {
 
         stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean },
         
@@ -133,20 +146,33 @@ function Progress2DStage(
 
         structId?: string
 
-    }) {
+        refetchCategories?: () => void
 
+        loading?: boolean
+
+        projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
+
+        setLoading: Dispatch<SetStateAction<boolean>>
+
+    }) {
+    
+    const numberFormatter = new Intl.NumberFormat('en-US',{ maximumFractionDigits: 1 });
+
+    const userObj: any = getCookie('user')
+
+    const userDetails = JSON.parse(userObj || "{}")
+
+    const roleforProject =  projectUsers.find((user: { user: { _id: string }; role: string })=>(user.user._id === userDetails._id ));
+
+    const [edit , setEdit]= useState(false)
 
     const totalValueMetrics = assets.reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
     },0)
 
-    const [edit , setEdit]= useState(false)
-
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
 
-    const [loading, setLoading] = useState(false)
-
-    const [assetValue , totalAssetValue]= useState(stage.totalMeasurement || totalValueMetrics)
+    const [assetValue , totalAssetValue]= useState<string |  number>((stage.totalMeasurement || totalValueMetrics).toFixed(1))
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
@@ -158,13 +184,19 @@ function Progress2DStage(
 
     const getProgress = (): number | number[] => {
 
-        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (totalValueMetrics || 1))
+        const baseProgress = stage.assets?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedMetrics * 100 / (+assetValue|| 1))
 
-        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (totalValueMetrics || 1))
+        const compareProgress = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).length == 0 ? 0 : (totalCompletedCompareMetrics * 100 / (+assetValue || 1))
 
         if(!compare) return baseProgress
 
         else return [compareProgress, baseProgress]
+    }
+
+    const editCallback = async () =>{
+        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: +assetValue }, setLoading, +assetValue);
+        refetchCategories && refetchCategories();
+        setEdit(false);
     }
 
     const getProgressValue = (): string => {
@@ -173,7 +205,7 @@ function Progress2DStage(
 
         if(typeof(progress) === 'number') return `${(progress as number).toFixed(1)}`
 
-        else return `${(progress as number[])[progress.length - 1].toFixed(1)}`
+        else return `${(((progress as number[])[1] - (progress as number[])[0] >= 0) ? (progress as number[])[1] - (progress as number[])[0]: -1*((progress as number[])[1] - (progress as number[])[0])).toFixed(1)}`
     }
 
     const onVisibilityChange = (event: any) => {
@@ -238,21 +270,32 @@ function Progress2DStage(
 
                     <Typography fontFamily='Open Sans' className='text-sm text-[#727375] font-[600]'>{getProgressValue() || 0}%</Typography>
                     <div className='flex ml-2'>
-                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{totalCompletedMetrics} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(parseInt(e.target.value)) } /> : assetValue} {edit? null: stage.uom}</Typography>
-                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>setEdit(true)} />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={()=>{
-                            // updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: assetValue }, setLoading, refetch)} 
+                        <Typography fontFamily='Open Sans' className='text-sm text-[#727375]'>{numberFormatter.format(+totalCompletedMetrics)} / {edit? <OutlinedInput type='number' size='small' value={assetValue} className='w-[60px] h-[24px] input-no-arrows' onChange={(e)=> totalAssetValue(e.target.value) } onKeyDown={(e)=>{
+                        if(!edit) return;
+                        if(e.key === 'Enter'){
+                            editCallback();
+                        }
+                        if(e.key === 'Escape'){
                             setEdit(false);
-                        }} />}
+                        }
+                        }} /> : numberFormatter.format(+assetValue)} {edit? null: stage.uom}</Typography>
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>{
+                            if(!['collaborator','admin'].includes(roleforProject?.role || '')){
+                                CustomToast("Do not have access - contact Admin","error");
+                                return;
+                            }
+                            setEdit(true)}
+                            } />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
                     </div>
                 </div>
 
 
             </div>
-            {((totalCompletedMetrics / totalValueMetrics) < 1) ? <div className='flex mt-2'>
+            {((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics )) < 1) ? <div className='flex mt-2'>
                     <Typography fontFamily='Open Sans' onClick={(e)=> setCompleted({checked: true, details: stage})} className='text-[12px] text-[#0000FF] underline cursor-pointer'>Mark as Complete</Typography>
             </div> :null}
 
-            {completed?.checked && ((totalCompletedMetrics / totalValueMetrics) < 1) && (
+            {completed?.checked && ((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics)) < 1) && (
                     <PopupComponent
                         open={completed?.checked}
                         setShowPopUp={setCompleted}
@@ -262,7 +305,10 @@ function Progress2DStage(
                         SecondaryButtonlabel={"Cancel"}
                         disableSecondaryButton={loading}
                         disablePrimaryButton={loading}
-                        callBackvalue={()=>{ markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch, setLoading , structId})}}
+                        callBackvalue={async()=>{ 
+                            await markAsComplete({ stage: completed.details?._id , date: snapShotDate, category: selectedCategory?._id, setCompleted, refetch, setLoading , structId});
+                            setEdit(false);
+                        }}
                     />
                 )}
 

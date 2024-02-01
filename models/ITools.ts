@@ -55,6 +55,7 @@ export interface IToolbarAction {
   "handleTaskFilter" | "closeTaskOverlay" | "viewTaskList" | "createTask" | "createSuccessTask" | "createFailTask" | "selectTask" | "showTask" | "hideTask" | "removedTask" | 'setFilteredTaskList' |
   "viewHotspotList" | "createHotspot" | "createSuccessHotspot" | "createFailHotspot" | "selectHotspot" | "showHotspot" | "hideHotspot" | "removedHotspot" |
   "setFullScreenMode" | "closeIssueDrawer" | "closeTaskDrawer" | "editIssue" | "editTask" | "sortIssue" | "sortTask" | "deleteIssueAttachment" | "deleteTaskAttachment"
+
   ,
   
   data? :string |[string] | [ITasks] | [Issue] | [IHotspot] | IViewerContext | IGenData | ISnapshot | IContext | ILayer[]

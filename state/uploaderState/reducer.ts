@@ -3,7 +3,7 @@ import { IJobs, JobStatus } from "../../models/IJobs";
 import { RawImage, RawImageStatus, location, metaData, utmLocation } from "../../models/IRawImages";
 import { getCaptureIdFromModelOrString, getInitialGCPList, validateAltitudeOrElevation, validateEasting, validateLatitude, validateLongitude, validateUTMZone, validatingNorthing } from "../../utils/utils";
 import { UploaderActionType, UploaderActions } from "./action";
-import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState, UploaderPopups } from "./state";
+import { UploaderStep, UploaderState, choosenFileObject, uploadImage, fileWithExif, initialUploaderState, UploaderPopups,UploadRange } from "./state";
 import { PopupData } from "../../models/Poppup";
 
 export const resetUploaderState = (): UploaderState => {
@@ -14,9 +14,10 @@ export const resetUploaderState = (): UploaderState => {
 export const uploaderReducer = (state: UploaderState, action: UploaderActions): UploaderState => {
     switch (action.type) {
         case UploaderActionType.startNewUpload: 
+          
             return {
                 ...state,
-                step: UploaderStep.Details,
+                step:state.step === UploaderStep.Upload  ? UploaderStep.Details : UploaderStep.Upload,
                 structure: undefined,
                 date: undefined,
                 isNextEnabled: false,
@@ -107,7 +108,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 choosenFiles: updatedList,
                 filesDropped: true,
-                isNextEnabled: updatedList.validFiles.length > 0
+                isNextEnabled: updatedList.validFiles.length >= UploadRange.Minimum
             }
         case UploaderActionType.setExtractedFileValue:
             return{
@@ -243,6 +244,19 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 selectedJob: action.payload.job,
                 isDelete: true
             }
+        case UploaderActionType.retryJobUploading:
+            let selectedCaptureId = getCaptureIdFromModelOrString(action.payload.job.captures[0])
+            action.payload.job.status = JobStatus.pendingUpload
+                return {
+                    ...state,
+                    selectedJob: action.payload.job,
+                    retryUploadFiles: state.inProgressWorkers && state.inProgressWorkers[selectedCaptureId]
+                }
+        case UploaderActionType.setShowRetry:
+                return {
+                  ...state,
+                    showRetry:action.payload.showRetry
+                }            
         case UploaderActionType.setIsShowPopup:
             let popupVisibility = action.payload.popupVisibility
             if (popupVisibility.isShowPopup) {
@@ -329,7 +343,7 @@ const isNext = (state: UploaderState, step: UploaderStep): boolean => {
         case UploaderStep.Details:
             return state.date ? state.structure ? true : false : false
         case UploaderStep.ChooseFiles:
-            return state.choosenFiles.validFiles.length > 0;
+            return state.choosenFiles.validFiles.length >= UploadRange.Minimum;
         case UploaderStep.ChooseGCPs:
             let {error, length} = validateGCPList(state.gcpList);
             return error === 0 && length >= 4

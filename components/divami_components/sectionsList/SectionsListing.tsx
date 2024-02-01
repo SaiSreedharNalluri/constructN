@@ -86,6 +86,9 @@ import instance from "../../../services/axiosInstance";
 import { API } from "../../../config/config";
 import { toast } from "react-toastify";
 import authHeader from "../../../services/auth-header";
+import { CustomToast } from "../custom-toaster/CustomToast";
+import { getCookie } from "cookies-next";
+import { Mixpanel } from "../../analytics/mixpanel";
 // import { ISections } from "../../../models/ISections";
 
 const headers = {headers: authHeader.authHeader()}
@@ -103,6 +106,16 @@ const fetchAssetCategories = (projectId: string) => {
   try {
 
       return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, headers)
+
+  } catch (error) { throw error }
+
+}
+
+const fetchAssetCountByStructure = (projectId: string) => {
+
+  try {
+
+      return instance.get(`${API.PROGRESS_2D_URL}/assets/asset-count-by-structure`, { headers: headers.headers , params: { project: projectId } })
 
   } catch (error) { throw error }
 
@@ -128,6 +141,9 @@ const customToolbarStyle = {
 };
 
 const SectionsListing = () => {
+  const userObj: any = getCookie("user");
+  const user = JSON.parse(userObj || '{}');
+  const isSupportUser = user?.isSupportUser;
   const router = useRouter();
   const { appContextAction } = useAppContext();
   const { appAction } = appContextAction;
@@ -140,6 +156,7 @@ const SectionsListing = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [roles, setRoles] = useState<string[] | []>([]);
   const [hasProgress2D, setHasProgress2D]: any = useState(false);
+  const [assetCount, setAssetCount] = useState({});
   // const [showLoader, setShowLoader]: any = useState(true);
 
   // let [state, setState] = useState<ChildrenEntity[] | any[]>([]);
@@ -250,7 +267,9 @@ const[isProcessing,setProcessing]=useState(false);
   useEffect(() => {
     if (router.isReady &&(!dataLoaded)) {
       const type = "newSnapshot";
-      const projectId = router?.query?.projectId as string
+      const projectId = router?.query?.projectId as string;
+
+      fetchAssetCountByStructure(router.query.projectId as string).then((res)=> setAssetCount(res.data.result)).catch(()=>{ setAssetCount({}) });
 
       fetchAssetCategories(projectId).then(res => {
         if(res.data.success) setHasProgress2D(res.data.result.length > 0)
@@ -258,6 +277,7 @@ const[isProcessing,setProcessing]=useState(false);
       
       getSectionsList(projectId)
         .then((response: AxiosResponse<any>) => {
+        Mixpanel.track( {name: "views_page_loaded",project_id:projectId,company_id:"unknown",screen_name:"views_page",event_category:"views_list",event_action:"views_page_loaded",user_id:user._id})          
           setGridData([response?.data?.result]);
           let removeGrandParent = response?.data?.result?.children?.map(
             (item: any, index: number) => {
@@ -587,6 +607,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
               customLogger.logInfo("View Strucuture");
               setProcessing(false)
             }
+        Mixpanel.track( {name: "level_clicked",project_id:rowData.project,company_id:"unknown",screen_name:"views_page",event_category:"views_list",event_action:"level_clicked",user_id:user._id,parent:{parentId:rowData.parentId!==undefined?rowData.parentId:null,strutureId:rowData._id}})          
           }}> 
                 <TooltipText title={rowData?.name?.length > 40 ? rowData?.name : ""} placement="right">
       <div>
@@ -788,46 +809,46 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
     },
 
 
-    // {
-    //   title: "Progress 2D",
-    //   field: "has2dProgress",
-    //   sorting: false,
-    //   headerStyle: {
-    //     borderBottom: "1px solid #FF843F",
-    //     fontFamily: "Open Sans",
-    //     fontStyle: "normal",
-    //     fontWeight: "500",
-    //     fontSize: "14px",
-    //     lineHeight: "20px",
-    //     color: "#101F4C",
-    //   },
-    //   cellStyle: { width: "20%" },
+    {
+      title: "Progress 2D",
+      field: "has2dProgress",
+      sorting: false,
+      headerStyle: {
+        borderBottom: "1px solid #FF843F",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "500",
+        fontSize: "14px",
+        lineHeight: "20px",
+        color: "#101F4C",
+      },
+      cellStyle: { width: "20%" },
    
-    //   render: (rowData: any) => {
+      render: (rowData: any) => {
 
-    //     const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
+        const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
         
-    //     return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
-    //       <TooltipText title="2D Progress">
-    //         <div className="flex justify-center">
-    //           <Progress2DImageIcon
-    //             src={Progress2DImage}
-    //             alt={""}
-    //             onClick={() => {
-    //               if(hasProgress2D) {
-    //                 router.push({
-    //                   pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
-    //                   query: { structId: rowData._id },
-    //                 })} else {
-    //                   toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
-    //                 }
-    //             }}
-    //           ></Progress2DImageIcon>
-    //         </div>
-    //       </TooltipText>
-    //       }</div> : 'Not Available';
-    //   },
-    // },
+        return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
+          <TooltipText title="2D Progress">
+            <div className="flex justify-center">
+              <Progress2DImageIcon
+                src={Progress2DImage}
+                alt={""}
+                onClick={() => {
+                  if(hasProgress2D) {
+                    router.push({
+                      pathname: `/projects/${router?.query?.projectId as string}/progress-2d`,
+                      query: { structId: rowData._id },
+                    })} else {
+                      toast.warn('This feature is not enabled. Please contact support!', {autoClose: 6000})
+                    }
+                }}
+              ></Progress2DImageIcon>
+            </div>
+          </TooltipText>
+          }</div> : 'Not Available';
+      },
+    },
   ];
 
 

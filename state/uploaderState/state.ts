@@ -72,6 +72,8 @@ export interface UploaderState {
     isDelete: boolean,
     currentPopup? : PopupData,
     errorCount:number;
+    showRetry:string | null,
+    retryUploadFiles?:IUploadFile<RawImage>[]
 }
 
 export enum UploaderStep {
@@ -81,7 +83,10 @@ export enum UploaderStep {
     Review,
     Upload
 }
-
+ export enum UploadRange{
+    Minimum = 20,
+    Maximum = 1500,
+ }
 export enum UploaderButtonValues{
     GoBack,
     Continue,
@@ -129,5 +134,6 @@ export const initialUploaderState: UploaderState = {
     isShowPopup: false,
     isDelete: false,
     errorCount:0,
+    showRetry:null
 };
 

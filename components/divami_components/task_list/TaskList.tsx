@@ -400,7 +400,7 @@ const CustomTaskListDrawer = (props: any) => {
                     variant="outlined"
                     autoFocus={true}
                     value={searchTerm}
-                    onChange={(e) => {
+                    onChange={(e:any) => {
                       setSearchTerm(e.target.value);
                     }}
                     InputLabelProps={{ shrink: false }}
@@ -451,7 +451,7 @@ const CustomTaskListDrawer = (props: any) => {
                     <IconContainer
                       src={sort}
                       alt="Arrow"
-                      onClick={(e) => {
+                      onClick={(e:any) => {
                         setIsSortMenuOpen((prev) => !prev);
                         handleSortClick(e);
                       }}

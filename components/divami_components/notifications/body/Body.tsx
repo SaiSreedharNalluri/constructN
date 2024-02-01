@@ -9,11 +9,12 @@ import issueIcon from "../../../../public/divami_icons/issuesIcon.svg"
 import cameraIcon from "../../../../public/divami_icons/cameraIcon.svg"
 import { useRef} from "react";
 import { useRouter } from "next/router";
+import { Mixpanel } from "../../../analytics/mixpanel";
 
 const Body = ({
   notifications,
   loadMoreData,
-  updateNotifications,getNotifiCationTime,filterNotificationData,filterValue
+  updateNotifications,getNotifiCationTime,filterNotificationData,filterValue,userId,notificationCount
 }: any) => { 
   const router = useRouter(); 
   const notificationsContRef = useRef<any>(null);
@@ -243,6 +244,7 @@ const Body = ({
           key={notificationObj.id}
           onClick={() => {
             filterNotificationData(notificationObj.id);
+          Mixpanel.track( {name: notificationObj.id.toLowerCase()+ ""+"_tapped",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"notifications_actions",event_action:notificationObj.id.toLowerCase()+ ""+"_tapped",user_id:userId,notifications_count:notificationCount}) 
           }}
         >
 <div className={`${

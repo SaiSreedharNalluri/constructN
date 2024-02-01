@@ -11,7 +11,7 @@ import { useComputed, useSignals } from '@preact/signals-react/runtime';
 import { CustomToast } from '../../custom-toaster/CustomToast';
 
 
-const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLoader }: IOnboardingProps) => {
+const ProjectOnboardingForm = ({ step, action, saveState, projectId, projectDetails, showLoader }: IOnboardingProps) => {
   const onboardingProjectCoverPhoto = useSignal<File | null>(null);
   const onboardingProjectprojectLogo = useSignal<File | null>(null);
   const isNameValid = useSignal(false);
@@ -26,20 +26,24 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLo
       <ProjectNameDetails
         details={projectDetails}
         isNameValid={isNameValid}
+        saveState={saveState}
       />
       <ProjectTypeDetails
         type={projectDetails}
         isTypeValid={isTypeValid}
+        saveState={saveState}
       />
       <ProjectLatLngDetails
         latlngDetails={projectDetails}
         isLatLngValid={isLatLngValid}
+        saveState={saveState}
       />
       <ProjectAddress
         addressDetails={projectDetails}
         isAddressValid={isAddressValid}
         projectCoverPhoto={onboardingProjectCoverPhoto}
         projectLogo={onboardingProjectprojectLogo}
+        saveState={saveState}
       />
     </div>)
 
@@ -65,6 +69,10 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLo
                 projectDetails.value = result
                 if(showLoader !== undefined) showLoader.value = false
                 if(action!.peek() !== 'Save-0') step.value = 1
+                else {
+                  saveState!.value = false
+                  if (action) action.value = ''
+                }
                 projectId.value = projectDetails.peek()._id ?? ''
               })
               .catch((error) => {
@@ -83,6 +91,10 @@ const ProjectOnboardingForm = ({ step, action, projectId, projectDetails, showLo
               projectDetails.value = result
               if(showLoader !== undefined) showLoader.value = false
               if(action!.peek() !== 'Save-0') step.value = 1
+              else {
+                saveState!.value = false
+                if (action) action.value = ''
+              }
             }).catch((error) => {
               if (error.success === false) {
                 CustomToast(error.message, "error")

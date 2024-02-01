@@ -1,13 +1,16 @@
 import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import type { Dayjs } from "dayjs";
 import * as React from "react";
 import { styled } from "@mui/system";
-import { useEffect, useRef } from "react";
+import Box from "@mui/material/Box";
+import { useEffect } from "react";
 import calender from "../../../public/divami_icons/calender.svg";
 import dayjs from "dayjs";
+import Icon from "@mui/material/Icon";
 import { IconButton } from "@mui/material";
 
 const CalenderICon = (props: any) => {
@@ -102,22 +105,19 @@ const CustomCalender = (props: any) => {
     config,
     dataTestId,
   } = props;
-  const customInputRef = useRef<HTMLDivElement>(null);
+
+  const [isOpen,setIsOpen]= React.useState(false);
+  const customInputRef = React.useRef<HTMLDivElement>(null);
   const [value, setValue] = React.useState<Dayjs | null>(
     
     dayjs(data?.defaultValue) || null
   );
-  const [isOpen,setIsOpen]= React.useState(false);
   useEffect(() => {
     setValue(dayjs(data?.defaultValue));
   }, [data?.defaultValue]);
   const calenderIcon = React.forwardRef((props, ref) => (
     <CalenderICon ref={ref} />
   ));
-
-  useEffect(() => {
-    customInputRef.current?.focus();
-  }, []);
 
   return (
     <div data-testid={`custom-calender-parent-${dataTestId}`}>
@@ -132,7 +132,8 @@ const CustomCalender = (props: any) => {
           onClose={() => {setIsOpen(false);}}
           PopperProps={
             hideTextField
-              ? {anchorEl:customInputRef.current,
+              ? {
+                anchorEl:customInputRef.current,
                   sx: {
                     "& .MuiPickersDay-root:not(.Mui-disabled,.Mui-selected)": {
                       backgroundColor: "#FFF5EF",
@@ -237,12 +238,12 @@ const CustomCalender = (props: any) => {
           // PopperProps={data.styles ? data.styles : null}
           renderInput={
             hideTextField
-               ? (params) => (
-                  <div ref={customInputRef}>
-                    <TextField style={{ opacity: 0, width: 0, height: 0 }} {...params} /> 
-                    <IconButton onClick={() => {setIsOpen(!isOpen);}}><CalenderICon/></IconButton>
-                    </div>
-                )
+              ? (params) => (
+                <div ref={customInputRef}>
+                  <TextField style={{ opacity: 0, width: 0, height: 0 }} {...params} /> 
+                  <IconButton onClick={() => {setIsOpen(!isOpen);}}><CalenderICon/></IconButton>
+                  </div>
+              )
               : (params) => (
                   <CustomDatePickerInputField
                     {...params}

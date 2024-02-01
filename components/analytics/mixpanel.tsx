@@ -1,25 +1,43 @@
 import mixpanel from 'mixpanel-browser';
-mixpanel.init(`${process.env.MIX_PANEL_TOKEN}`, {debug: true}); 
+import { MIX_PANEL_TOKEN } from "../../config/config";
 
-let env_check = process.env.NODE_ENV === 'production';
+mixpanel.init(`${MIX_PANEL_TOKEN}`, {debug: true}); 
+
+// let env_check = process.env.NODE_ENV === 'production';
 
 let actions = {
   identify: (id: string) => {
-    if (env_check) mixpanel.identify(id);
+    mixpanel.identify(id);
   },
   alias: (id: string) => {
-    if (env_check) mixpanel.alias(id);
+    mixpanel.alias(id);
   },
-  track: (name: string, props?: any) => {
-    if (env_check) mixpanel.track(name, props);
+  track: (trackDetails:{name: any,project_id:any,company_id:string,screen_name:string,event_category:string,event_action:string ,user_id:string,error_message?:string,layout?:string,notifications_count?:number,sorting_type?:any,parent?:any}) => {
+    mixpanel.track(trackDetails.name, { 
+    "platform": "web",
+    "app": "rahman",
+    "environment": "qa",
+    "project_id": trackDetails.project_id,
+    "company_id": trackDetails.company_id,
+    "screen_name":trackDetails.screen_name,
+    "event_category":trackDetails.event_category,
+    "event_action": trackDetails.event_action,
+    "app_version": "10.2",
+    "error_message":trackDetails.error_message,
+    "layout_type":trackDetails.layout,
+    "notifications_count":trackDetails.notifications_count,
+    "sorting_type":trackDetails.sorting_type,
+    "user_id" : trackDetails.user_id,
+    "parent":trackDetails.parent
+  });
   },
   people: {
     set: (props: any) => {
-      if (env_check) mixpanel.people.set(props);
+      mixpanel.people.set(props);
     },
   },
   temp: () => {
-    if (env_check) console.log('MIXPANEL', mixpanel.has_opted_in_tracking())
+    console.log('MIXPANEL', mixpanel.has_opted_in_tracking())
   }
 };
 

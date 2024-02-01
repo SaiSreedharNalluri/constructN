@@ -2,6 +2,7 @@ import instance from "./axiosInstance";
 import { setCookie, getCookie,deleteCookie } from "cookies-next";
 import authHeader from "./auth-header";
 import { API } from "../config/config";
+import axios from "axios";
 export const login = (email: string, password: string) => {
   return instance
     .post(`${API.BASE_URL}/users/signin`, {
@@ -21,6 +22,24 @@ export const login = (email: string, password: string) => {
       throw error;
     });
 };
+
+export const loginProcore = (code: any) => {
+  console.log('codevdshjdkhvshjkvdns',code);
+  
+  return axios
+    .post(`${API.BASE_URL}/users/signin-procore`,{code})
+    .then((response) => {
+      console.log(response);
+      
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+      
+      throw error;
+    });
+};
+
 export const registerUser = (registerUserObj: Object) => {
   return instance
     .post(`${API.BASE_URL}/users/register`, registerUserObj)

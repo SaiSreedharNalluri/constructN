@@ -2,8 +2,8 @@ import React from 'react';
 import { Grid, OutlinedInput, FormHelperText } from '@mui/material';
 import ProjectImageUpload from './projectImageUpload';
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
-import { validateText } from '../../../../../utils/utils';
-const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCoverPhoto }: any) => {
+import { validateText, validateZipCode } from '../../../../../utils/utils';
+const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCoverPhoto, saveState }: any) => {
 
   const isValid = computed(() => (
     (addressDetails.value.address?.city !== undefined && addressDetails.value.address?.city !== '') &&
@@ -29,6 +29,7 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
         [field]: value,
       },
     };
+    if(saveState) saveState.value = true
   };
 
   const renderContent = useComputed(() => <Grid container spacing={2} className='mt-[2px]' justifyContent="space-between">
@@ -113,8 +114,9 @@ const ProjectAddress = ({ addressDetails, isAddressValid, projectLogo, projectCo
               }
             }}
           />
-          {(addressDetails.value.address?.zipcode === "") && (
-            <FormHelperText className='text-[#FF853E]'>Zipcode is required</FormHelperText>
+       {addressDetails.value.address?.zipcode !== '' && addressDetails.value.address?.zipcode !== undefined &&
+         validateZipCode(addressDetails.value.address?.zipcode) !== true && (
+            <FormHelperText className='text-[#FF853E]'>Invalid Zipcode</FormHelperText>
           )}
         </Grid>
       </Grid>

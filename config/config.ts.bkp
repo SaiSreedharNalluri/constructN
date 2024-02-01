@@ -32,7 +32,7 @@ export const API = {
 
     LOCAL_URL: 'http://localhost:3001/api/v1',
 
-    PROGRESS_2D_URL: 'https://api-progress-2d.qa-devops.constructn.ai/api'
+    PROGRESS_2D_URL: 'https://api-progress-2d.qa.constructn.ai/api'
 
 }
 
@@ -46,4 +46,17 @@ export const AWS = {
 
     CDN_ATTACHMENTS: 'https://d2sf0c7876ryty.cloudfront.net'
 
+}
+
+export const PROCORE = {
+
+    LOGIN_URL : "https://login-sandbox.procore.com",
+
+    SANDBOX_URL : 'https://sandbox.procore.com',
+
+    CLIENT_ID : '51ca7ddce0a054f6cd1317d2890a1935bda0c07aaf10847a216fa913f777f8fa',
+
+    REDIRECT_URI : 'https://app.qa.constructn.ai/login-sso-procore',
+
+    GRANT_TYPE : 'authorization_code',
 }

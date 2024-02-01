@@ -18,23 +18,99 @@ import ChangeIcon from "./changeIcon";
 import { TooltipText } from "../divami_components/side-panel/SidePanelStyles";
 import moment from 'moment-timezone';
 import CustomLoggerClass from "../divami_components/custom_logger/CustomLoggerClass";
-import { MAPBOX } from "../../config/config";
+import { PROCORE, MAPBOX, API } from "../../config/config";
+import CloseIcon from '@mui/icons-material/Close';
 import {TruncatedString} from "../../utils/utils";
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { Button } from "@mui/material";
+import instance from "../../services/axiosInstance";
+import authHeader from "../../services/auth-header";
+import procoreinstance from "../../services/procoreInstance";
+import CustomLoader from "../divami_components/custom_loader/CustomLoader";
+
+const getCompanies = ({setCompanyList}: {setCompanyList: React.Dispatch<React.SetStateAction<never[]>>}) =>{
+  instance
+    .get(`${API.BASE_URL}/users/profile?procore=true`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      procoreinstance.get(
+        `${PROCORE.SANDBOX_URL}//rest/v1.0/companies`,
+        {
+        headers: { Authorization: "Bearer " + response?.data?.result?.metadata?.procore?.accessToken}
+        }
+    )
+    .then((response)=>{
+      setCompanyList(response?.data);
+      })
+    .catch(()=>{
+      CustomToast("Failed to fetch companies","error")
+    })
+      return response.data;
+    })
+    .catch(() => {
+      CustomToast("Failed to fetch user","error")
+    });
+}
+
+const getProjects = ({ setProjectsList, companyId , setProjectsLoading}: {setProjectsList: React.Dispatch<React.SetStateAction<never[]>>; companyId: string; setProjectsLoading: React.Dispatch<React.SetStateAction<boolean>> }) =>{
+  setProjectsLoading(true);
+  instance
+    .get(`${API.BASE_URL}/users/profile?procore=true`, {
+      headers: authHeader.authHeader(),
+    })
+    .then((response) => {
+      procoreinstance.get(
+        `${PROCORE.SANDBOX_URL}//rest/v1.0/companies/${companyId}/projects`,
+        {
+        headers: { Authorization: "Bearer " + response?.data?.result?.metadata?.procore?.accessToken}
+        }
+    )
+    .then((response)=>{
+      setProjectsList(response?.data);
+      })
+    .catch(()=>{
+      CustomToast("Failed to fetch projects","error")
+    })
+      return response.data;
+    })
+    .catch(() => {
+      CustomToast("Failed to fetch user","error")
+    }).finally(()=>setProjectsLoading(false));
+}
+
 const ProjectDetails: React.FC = () => {
   const customLogger = new CustomLoggerClass();
-  let [projectData, setProjectData]:any = useState();
+  let [projectData, setProjectData] = useState<any>();
+  const [loading, setLoading] =  useState(false);
+  const [showLink, setShowLink] = useState(false);
+  const [projectsList, setProjectsList] = useState([]);
+  const [companyList, setCompanyList] = useState([]);
+  const [company, setCompany] = useState('');
+  const [project, setProject] = useState('');
+  const [providerType, setProviderType] = useState('');
+  const [projectsLoading, setProjectsLoading] =  useState(false);
   const router = useRouter();
-  useEffect(() => {
-    if (router.isReady) {
-      getProjectDetails(router.query.projectId as string)
+  const refetchProject = () => {
+    setLoading(true);
+    getProjectDetails(router.query.projectId as string)
         .then((response) => {
           if (response?.data?.success === true) {
             setProjectData(response?.data?.result);
           }
         })
-        .catch();
+        .catch().finally(()=>{setLoading(false)});
+  }
+  useEffect(() => {
+    if (router.isReady) {
+      refetchProject()
     }
   }, [router.isReady, router.query.projectId]);
+
   let [user, setUser] = useState<IUser>();
   const [openProjectEditOpen, setOpenProjectEdit] = useState(false);
   const handleEditOpen = () => {
@@ -49,10 +125,21 @@ const ProjectDetails: React.FC = () => {
     if (userObj) user = JSON.parse(userObj);
     if (user?.fullName) {
       setUser(user);
+    };
+    const userCredentials = localStorage.getItem('userCredentials');
+    const creds = JSON.parse(userCredentials || "{}");
+    setProviderType(creds?.provider);
+    if(creds?.provider === 'procore'){
+      getCompanies({ setCompanyList });
     }
   }, []);
-const latitude =projectData?.location?.coordinates[1]  != undefined ? projectData?.location?.coordinates[1] : 0;
-const longitude =projectData?.location?.coordinates[0]  != undefined ? projectData?.location?.coordinates[0] : 0;
+  useEffect(()=>{
+    if(company && providerType === 'procore'){
+      getProjects({ setProjectsList, companyId: company , setProjectsLoading});
+    }
+  },[company, providerType])
+  const latitude = projectData?.location?.coordinates[1]  != undefined ? projectData?.location?.coordinates[1] : 0;
+  const longitude = projectData?.location?.coordinates[0]  != undefined ? projectData?.location?.coordinates[0] : 0;
   const utm = projectData?.utm?.zone ? projectData?.utm?.zone : "NA";
   const handleUpdateProject = (formData: any) => {
     let projectInfo: any = {};
@@ -74,7 +161,7 @@ const longitude =projectData?.location?.coordinates[0]  != undefined ? projectDa
         formData.filter((item: any) => item.id == "longitude")[0]?.defaultValue,
         formData.filter((item: any) => item.id == "latitude")[0]?.defaultValue,
       ],
-    }; 
+    };
     //projectInfo.name = (projectInfo.name as string).substring(0,100);
     updateProjectInfo(projectInfo, router.query.projectId as string)
       .then((response) => {
@@ -120,20 +207,29 @@ const longitude =projectData?.location?.coordinates[0]  != undefined ? projectDa
         }
       });
   };
+  const procoreProjectId = projectData?.metaDetails?.procore?.projectId;
   return (
-    <div className="">
+    <div>
       {projectData ? (
         <div>
           <div className="flex justify-between px-4 py-4">
             <div>
               <h1 className="text-[#101F4C] font-normal font-sans text-lg">Project Details</h1>
             </div>
-            <div
-              className=" text-[#F1742E] cursor-pointer"
-              onClick={() => handleEditOpen()}
-            >
-              <p>Edit Details</p>
-            </div>
+            {providerType === 'procore' ? <div className="flex">
+              {procoreProjectId ? <div className="text-[#252BBE] cursor-pointer mr-4" onClick={()=>(window.open(`${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/home`,'_blank'))}>Project Id : {procoreProjectId}</div> :<div
+                className=" text-[#F1742E] cursor-pointer mr-4"
+                onClick={() =>setShowLink(true)}
+              >
+                <p>Link Project to Procore</p>
+              </div>}
+              <div
+                className=" text-[#F1742E] cursor-pointer"
+                onClick={() => handleEditOpen()}
+              >
+                <p>Edit Details</p>
+              </div>
+            </div>: null}
           </div>
           <div className=" px-4 " >
           <div className="w-full  flex border-2 border-gray-400 rounded-md">
@@ -145,7 +241,7 @@ const longitude =projectData?.location?.coordinates[0]  != undefined ? projectDa
           width={1080}
           height={1080}
           src={projectData?.coverPhoto?projectData?.coverPhoto:"https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp"}
-                />
+          />
                 <div>
                   <ChangeIcon handleImageUPload={handleImageUPload} />
                 </div>
@@ -277,6 +373,63 @@ const longitude =projectData?.location?.coordinates[0]  != undefined ? projectDa
           </div>
         </div>
       )}
+      {showLink ? <div className="absolute top-[0px] shadow-md right-0 z-10 bg-[#F3F3F3] border-b mx-0.5 border-[#F3F3F3] pb-4">
+          <div className="flex px-4 py-2 text-lg w-[30vw] justify-between border-b-[0.5px] border-[#666]">Link Project to Procore <CloseIcon className="cursor-pointer" onClick={()=>setShowLink(false)} /></div>
+            <div className="px-6 py-2 pt-6">
+              <div className="text-[#4D5154] mb-1">Select Company</div>
+            <div>
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+              <Select
+                labelId="select-company"
+                id="select-company"
+                value={company}
+                placeholder=""
+                label=""
+                onChange={(e)=>{ 
+                  setCompany(e.target.value);
+                  setProject('');
+                  setProjectsList([]);
+                }}
+              >
+                {companyList.map((company: {id: string;  name: string})=>(<MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>))}
+              </Select>
+            </FormControl>
+          </Box>
+          </div>
+          </div>
+          {company ? <>
+          <div className="px-6 py-2 pt-0">
+            <div className="text-[#4D5154] mb-1">Select Project</div>
+          <div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+                <InputLabel>{projectsLoading? "Loading...": ""}</InputLabel>
+                <Select
+                  labelId="select-project"
+                  id="select-project"
+                  value={project}
+                  disabled={projectsLoading}
+                  placeholder={projectsLoading? "Loading...": ""}
+                  label={projectsLoading? "Loading...": ""}
+                  onChange={(e)=>setProject(e.target.value)}
+                >
+                  {projectsList.map((project: { id: string; name: string })=>(<MenuItem key={project.id} value={project.id}>{project.name}</MenuItem>))}
+                  </Select>
+              </FormControl>
+            </Box>
+          </div>
+          {project? <div className="flex justify-center py-10 pb-0">
+            <Button variant="outlined" className="text-[#f1742e] border-[#f1742e] normal-case" onClick={async ()=>{
+                await updateProjectInfo({ metaDetails: { procore: {projectId: project, companyId: company} }},router.query.projectId as string);
+                refetchProject();
+                setShowLink(false);
+              }}>Link Now !!</Button>
+          </div>: null}
+        </div>
+        </>: null}
+      </div> : null}
+      {loading ? <CustomLoader />: null}
     </div>
   );
 };

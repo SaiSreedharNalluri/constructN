@@ -210,8 +210,9 @@ export default function Metrics({
 			modalmessage={<div className="ml-2">Are you want to make this Asset <span className="font-semibold text-[#F1742E]">{asset.status ==='Active' ? 'InActive': 'Active'}</span> ?</div>}
         	primaryButtonLabel={"Confirm"}
         	SecondaryButtonlabel={"Cancel"}
-        	callBackvalue={()=>{
-				onStatusToggle({ assetId, status: asset.status ==='Active'? 'InActive': 'Active', setLoading , refetchAssets });
+        	callBackvalue={async ()=>{
+				await onStatusToggle({ assetId, status: asset.status ==='Active'? 'Inactive': 'Active', setLoading , refetchAssets });
+				onChange && onChange(asset);
 			}}
         	/>: null}
 			<div className="mt-4 flex justify-between">
