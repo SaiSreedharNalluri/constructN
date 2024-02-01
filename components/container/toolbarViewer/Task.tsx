@@ -112,7 +112,7 @@ function Task({
     return{
       handleTaskInstance(tasktoolInstance:any){
         if (tasktoolInstance.type === "selectTask" && tasktoolInstance?.data?.data?.id) {
-          const selectedObj = tasksList?.find(
+          const selectedObj = initData?.currentTaskList?.find(
             (each: any) => each._id === tasktoolInstance?.data?.data?.id
           
           ); 
@@ -133,10 +133,10 @@ function Task({
       },
       handleRouterTask(handleRouterTask:any){
         if (handleRouterTask.type === "selectTask" && handleRouterTask.data) {
-          const selectedObj = tasksList?.find(
+          const selectedObj = initData?.currentTaskList?.find(
             (each: any) => each._id === handleRouterTask?.data
           
-          ); 
+          );   
           let taskMenuInstance: IToolbarAction = { data: selectedObj?.context,type:handleRouterTask.type};
           taskMenuClicked(taskMenuInstance)
           setOpenTaskDetail(true)

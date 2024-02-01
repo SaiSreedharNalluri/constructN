@@ -735,11 +735,23 @@ const Index: React.FC<IProps> = () => {
       case "setViewMode":
         switch (toolInstance.data) {
           case "Design":
-            if (initData?.structure.isExterior) {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
-            }
-            else {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
+            if(initData?.structure.designs&& initData?.structure.designs.length >= 1){
+              if(initData?.structure.designs.find((des:any)=>{
+                if(des.type==="Plan Drawings"){
+                  return des
+                }    
+              }))
+              {
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
+              }
+              else if(initData?.structure.designs.find((des:any)=>{
+                if(des.type==="BIM"){
+                  return des
+                }    
+              })){
+                
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
+              }
             }
 
             break;
@@ -1454,13 +1466,15 @@ const Index: React.FC<IProps> = () => {
 
     }
 
-  }, [router.query.iss, router.query.snap]);
+  }, [router.query.iss, router.query.snap,multiverseIsReady]);
 
   useEffect(() => {
     if (router.query.tsk != null) {
-      let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
+      let sel_tsk: ITasks | undefined = initData?.currentTaskList.find((t) => t._id === router.query.tsk)
+      console.log("sel_tsk",sel_tsk);
+      
       if (sel_tsk) {
-        handleMenuInstance.type = "selectIssue"
+        handleMenuInstance.type = "selectTask"
         handleMenuInstance.data = sel_tsk._id
         if (ref && ref.current) {
           ref.current?.RouterIssueRef(handleMenuInstance)
@@ -1469,7 +1483,7 @@ const Index: React.FC<IProps> = () => {
 
     }
 
-  }, [router.query.tsk, router.query.snap]);
+  }, [router.query.tsk, router.query.snap,multiverseIsReady]);
 
 
 
@@ -1734,7 +1748,7 @@ const Index: React.FC<IProps> = () => {
 
                 conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
                 console.log("Handshake setGenData", response.result)
-                setMViewerStatus("Connected")
+                setMViewerStatus("Connected")                       
 
               }
             })
