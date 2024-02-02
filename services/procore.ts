@@ -54,7 +54,7 @@ export const procorerefreshToken = () => {
 export const getRfiManager = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis/potential_rfi_managers`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_rfi_managers`,
       {
         headers: accesstoken(),
       }
@@ -70,7 +70,7 @@ export const getRfiManager = (projectId:number | undefined) => {
 export const getReceivedFrom = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis/potential_received_froms`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_received_froms`,
       {
         headers: accesstoken(),
       }
@@ -87,7 +87,7 @@ export const getReceivedFrom = (projectId:number | undefined) => {
 export const getResponsibleContractor = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis/potential_responsible_contractors`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_responsible_contractors`,
       {
         headers: accesstoken(),
       }
@@ -103,7 +103,7 @@ export const getResponsibleContractor = (projectId:number | undefined) => {
 export const potentialDistributionMembers = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis/potential_distribution_members`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_distribution_members`,
       {
         headers: accesstoken(),
       }
@@ -118,7 +118,7 @@ export const potentialDistributionMembers = (projectId:number | undefined) => {
 export const specSection = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.0/specification_sections?project_id=${projectId}`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/specification_sections?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -133,7 +133,7 @@ export const specSection = (projectId:number | undefined) => {
 
 export const getLocation = (projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.BASE_URL}/rest/v1.0/projects/${projectId}/locations`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/locations`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -145,7 +145,7 @@ export const getLocation = (projectId:number | undefined) => {
 };
 export const getcoastCode = (projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.BASE_URL}/rest/v1.0/cost_codes?project_id=${projectId}`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/cost_codes?project_id=${projectId}`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -158,7 +158,7 @@ export const getcoastCode = (projectId:number | undefined) => {
 export const getRfiStage = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.0/companies/${companyId}/project_stages?project_id=${projectId}`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/project_stages?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -174,7 +174,7 @@ export const getRfiStage = (projectId:number | undefined,companyId:number | unde
 export const costImpact = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis/potential_cost_impacts`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_cost_impacts`,
       {
         headers: accesstoken(),
       }
@@ -190,7 +190,7 @@ export const costImpact = (projectId:number | undefined) => {
 export const scheduleImpact = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis/potential_schedule_impacts`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_schedule_impacts`,
       {
         headers: accesstoken(),
       }
@@ -206,7 +206,7 @@ export const scheduleImpact = (projectId:number | undefined) => {
 export const createRfi = (formData: any,projectId:number | undefined) => {
   return procoreinstance
     .post(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis`,
       formData,
       {
         headers: accesstoken(),
@@ -225,7 +225,7 @@ export const createRfi = (formData: any,projectId:number | undefined) => {
 export const ListRfi = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/rfis?filters[status]=open`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis?filters[status]=open`,
 
       {
         headers: accesstoken(),
@@ -282,7 +282,7 @@ export const linkTaskRfi = (
 
 export const showRfiDetails = (id: number,projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.BASE_URL}/rest/v1.0/projects/${projectId}/rfis/${id}`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/rfis/${id}`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -297,7 +297,7 @@ export const showRfiDetails = (id: number,projectId:number | undefined) => {
 
 export const tradeList = (companyId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.BASE_URL}/rest/v1.0/companies/${companyId}/trades`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/trades`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -311,7 +311,7 @@ export const tradeList = (companyId:number | undefined) => {
 export const typesList = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.0/observations/types?project_id=${projectId}`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/types?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -327,7 +327,7 @@ export const typesList = (projectId:number | undefined) => {
 export const contributingConditionsList = (companyId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.0/companies/${companyId}/contributing_conditions`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/contributing_conditions`,
       {
         headers: accesstoken(),
       }
@@ -343,7 +343,7 @@ export const contributingConditionsList = (companyId:number | undefined) => {
 export const contributingBehaviorList = (companyId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.0/companies/${companyId}/contributing_behaviors`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/contributing_behaviors`,
       {
         headers: accesstoken(),
       }
@@ -358,7 +358,7 @@ export const contributingBehaviorList = (companyId:number | undefined) => {
 
 export const hazardList = (companyId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.BASE_URL}/rest/v1.0/companies/${companyId}/hazards`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/hazards`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -372,7 +372,7 @@ export const hazardList = (companyId:number | undefined) => {
 export const createObservation = (formData: object) => {
   return procoreinstance
     .post(
-      `${PROCORE.BASE_URL}/rest/v1.0/observations/items`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items`,
       formData,
       {
         headers: accesstoken(),
@@ -389,7 +389,7 @@ export const createObservation = (formData: object) => {
 export const listObservation = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.0/observations/items?project_id=${projectId}`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -444,7 +444,7 @@ export const linkTaskObservation = (
 
 export const showObservationDetails = (id: number,projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.BASE_URL}/rest/v1.0/observations/items/${id}?project_id=${projectId}`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items/${id}?project_id=${projectId}`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -459,7 +459,7 @@ export const showObservationDetails = (id: number,projectId:number | undefined) 
 export const createSubmittal = (formData: object,projectId:number | undefined) => {
   return procoreinstance
     .post(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/submittals`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals`,
       formData,
       {
         headers: accesstoken(),
@@ -476,7 +476,7 @@ export const createSubmittal = (formData: object,projectId:number | undefined) =
 
 export const listSubmittal = (projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/submittals`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -530,7 +530,7 @@ export const linkTaskSubmittal = (
 export const showSubmittalDetails = (id: number,projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.BASE_URL}/rest/v1.1/projects/${projectId}/submittals/${id}`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/${id}`,
       {
         headers: accesstoken(),
       }
