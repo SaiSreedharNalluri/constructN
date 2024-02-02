@@ -1133,7 +1133,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     <div id='right-container' className={'relative h-full w-1/2 z-20 border border-[#e2e3e5] rounded-lg'} >
 
-                                                        <RealityPage snapshot={realityDate === snapshotCompare?.date ? snapshotCompare: snapshotBase} id={'left'} />
+                                                        <RealityPage snapshot={realityDate === snapshotCompare?.date ? snapshotCompare: snapshotBase} id={'left'} isCompare={realityDate === snapshotCompare?.date} />
 
                                                         <div className={`flex absolute bottom-0 left-2' } text-[#4a4a4a] rounded bg-[#F1742E] hover:text-[#fff] hover:bg-[#f1742e] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} >
                                                         {`SnapshotDate: ${moment(realityDate).format("DD MMM, yyyy")}`}
