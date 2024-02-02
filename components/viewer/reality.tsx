@@ -158,7 +158,12 @@ const RealityPage: FC<any> = (props) => {
             }
         }
 
-        nearestImage['viewerId'] = undefined
+        if(nearestImage['viewerId']){
+
+            nearestImage['viewerId'] = undefined
+
+        }
+
 
         publish(`load-spherical-image-${viewerId}`, nearestImage)
 
