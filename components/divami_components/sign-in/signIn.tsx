@@ -94,39 +94,12 @@ useEffect(()=>{
             }
           })
             .catch((error: any) => {
-                // const resMessage =
-                //     (error.response &&
-                //         error.response.data &&
-                //         error.response.data.message) ||
-                //     error.message ||
-                //     error.toString();
-                // setLoginEnable(true)
-                // // CustomLogger("capture exception",`failed to login ${email}`)
-                // const customErrorMessage = `failed to login ${"vineeth@constructn.ai"}`;
-                // customLogger.logError(customErrorMessage)
-
-                // setLoginEnable(true);
-
-                // Create a custom error object with the desired message
-                // const customError = new Error(customErrorMessage);
-
-                // Capture the custom error with Sentry
-                // Sentry.captureException(customError);
-                // Sentry.configureScope(function (scope) {
-                //   scope.setLevel("warning");
-                // });
-                // Sentry.captureMessage("This is a warning message.");
-                // // Sentry.captureException(error?.response?.data?.message)
-                // CustomToast(error?.response?.data?.message, "error");
-
-                // setLoading(false);
-
-                // Mixpanel.track("login_fail", {
-                //     email: "vineeth@constructn.ai",
-                // });
-
-                // setLoading(false);
-                // setMessage(resMessage);
+              if(error.response.status===401){
+                
+                CustomToast('login via procore is failed','error')
+                setLoading(false)
+                router.push("/login")
+              }
             });
 
     }

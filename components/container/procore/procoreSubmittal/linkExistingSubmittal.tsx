@@ -10,6 +10,7 @@ import { ListRfi,linkIssueSubmittal,linkTaskSubmittal,listObservation, listSubmi
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
 import { IprocoreActions } from '../../../../models/Iprocore';
+import { useAppContext } from '../../../../state/appState/context';
 
 const LinkExistingSubmittal = (props: any) => {
   const {issue,
@@ -24,6 +25,9 @@ const LinkExistingSubmittal = (props: any) => {
   const [footerState, SetFooterState] = useState(true);
 
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
 
   const handleBack = () => {
     let closeNewRFI: IprocoreActions = {
@@ -73,7 +77,7 @@ const LinkExistingSubmittal = (props: any) => {
 
   useEffect(() => {
     setLoading(true)
-    listSubmittal()
+    listSubmittal(procoreProjectId)
     .then((response: any) => {
       setSubmittalData(response.data);
       setLoading(false);
