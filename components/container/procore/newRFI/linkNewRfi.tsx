@@ -237,7 +237,7 @@ const LinkNewRFI = (props: any) => {
             {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = 
                Object.values(values).every((value) =>{
-                if(values.subject!=="" && values.rfi_manager_id!==null && values.question.body !==""){
+                if(values.subject!=="" && values.rfi_manager_id!==null && values.received_from_login_information_id!==null && values.question.body !==""){
                    return false;
                 }else{
                   return true;
