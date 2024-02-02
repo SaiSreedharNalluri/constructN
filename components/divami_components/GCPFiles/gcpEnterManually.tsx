@@ -340,10 +340,8 @@ const GcpEnterManually: React.FC<any> = () => {
                       type={heading === "Zone" ? "text" : "number"}
                       placeholder={heading.toLowerCase()}
                       className={`mt-1 ml-2 border ${
-                        !validateInput(getItemKeyValue(item, heading),
-                          heading,
-                          index
-                        )
+                        (validateInput(getItemKeyValue(item, heading), heading, index) !== true) || 
+                        (uploaderState.duplicateInGCP && uploaderState.duplicateInGCP[index])
                           ? "border-red-500"
                           : ""
                       }`}
@@ -446,6 +444,10 @@ const GcpEnterManually: React.FC<any> = () => {
           <p style={{ fontSize: "small", fontStyle: "italic" }}>
             {uploaderState.errorCount}{" "}
             {uploaderState.errorCount === 1 ? "error" : "errors"} found
+          </p>
+          <p style={{ fontSize: "small", fontStyle: "italic" }}>
+            {uploaderState.duplicateInGCP?.filter((value) => value == true).length}{" "}
+            {uploaderState.duplicateInGCP?.filter((value) => value == true).length === 1 ? "duplicate" : "duplicates"} found
           </p>
           <button onClick={addRow}>
             <span

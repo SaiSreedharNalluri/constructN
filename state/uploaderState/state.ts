@@ -73,6 +73,7 @@ export interface UploaderState {
     isDelete: boolean,
     currentPopup? : PopupData,
     errorCount:number;
+    duplicateInGCP?: boolean[]
     showRetry:string | null,
     retryUploadFiles?:IUploadFile<RawImage>[]
 }
