@@ -1319,7 +1319,6 @@ const  handleCloseProcore=()=>{
   }
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
-  console.log('project details',appState.currentProjectData)
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   return (
