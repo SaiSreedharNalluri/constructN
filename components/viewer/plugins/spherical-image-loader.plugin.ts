@@ -52,11 +52,9 @@ export class SphericalImageLoader extends RealityBasePlugin {
 
         this._scene.background = new THREE.Color(0xffffff);
 
-        let currentImageLoaded = false;
 
         this._textureLoader.load(sphericalImage.imageName.replace('/images','/images/thumbnails'), texture => {
 
-            if(!currentImageLoaded){
 
                 this._imageDimensions = { width: texture.image.naturalWidth, height: texture.image.naturalHeight }
 
@@ -74,37 +72,25 @@ export class SphericalImageLoader extends RealityBasePlugin {
             
                 this._transformSphere(sphericalImage)
 
-            }
-        })
+                this._textureLoader.load(sphericalImage.imageName, texture => {
 
-        this._textureLoader.load(sphericalImage.imageName, texture => {
-
-            var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-
-            this._transformSphere(sphericalImage);
-
-            if(this._sphericalMesh){
-
-                this._sphericalMesh.material.dispose();
-
-            }else{
-                var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, opacity: 1, transparent: true });
-                
-                var sphereGeometry = new THREE.SphereGeometry(0.5, 128, 128);
-
-                sphereGeometry.scale(-1, 1, 1);
-
-                this._sphericalMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-
-            }
-
-            this._sphericalMesh.material = sphereMaterial;
-
-            this._sphericalMesh.material.needsUpdate = true;
-
-            currentImageLoaded = true;
+                    var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+        
+                    this._transformSphere(sphericalImage);
+        
+        
+                    this._sphericalMesh!.material.dispose();
+        
+        
+                    this._sphericalMesh!.material = sphereMaterial;
+        
+                    this._sphericalMesh!.material.needsUpdate = true;
+        
+        
+                })
 
         })
+
     }
 
     public loadSphericalImage = (sphericalImage: any, onImageLoaded: Function) => {

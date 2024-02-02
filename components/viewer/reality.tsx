@@ -38,7 +38,7 @@ const RealityPage: FC<any> = (props) => {
 
     const viewerId = props.id
 
-    let [isCompare, setIsCompare] = useState(props.isCompare ? props.isCompare : false)
+    const [isCompare, setIsCompare] = useState(props.isCompare)
 
     const _offset = useRef<number[]>()
 
@@ -70,26 +70,32 @@ const RealityPage: FC<any> = (props) => {
 
     useEffect(() => {
 
-        isCompare = props.isCompare!
 
         setIsCompare(isCompare)
 
     }, [props.isCompare])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if(props.snapshot) {
+    //     if(props.snapshot) {
 
             
-            _layers.current = props.snapshot.layers
+    //         _layers.current = props.snapshot.layers
 
-        }
+    //     }
 
-    }, [props.snapshot])
+    // }, [props.snapshot])
 
     const onRealityItemClick = async (event: Event) => {
 
         const reality = (event as CustomEvent).detail
+
+        const realityDate = (event as CustomEvent).detail.snapshotDate
+
+        const compare = realityDate === props.snapshotCompare?.date
+
+        _layers.current = compare ? props.snapshotCompare?.layers: props.snapshotBase?.layers
+
 
         const realityPosition = new THREE.Vector3(reality.position.x, reality.position.y, reality.position.z)
 
