@@ -158,7 +158,7 @@ const RealityPage: FC<any> = (props) => {
             }
         }
 
-        if(nearestImage['viewerId']){
+        if(nearestImage?.['viewerId']){
 
             nearestImage['viewerId'] = undefined
 
