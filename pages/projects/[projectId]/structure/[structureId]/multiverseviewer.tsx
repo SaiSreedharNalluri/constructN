@@ -1546,7 +1546,7 @@ const Index: React.FC<IProps> = () => {
 }
   
  const isViewTypeAvailable = (vData:IGenData,checkType:string):boolean=>{
-  
+  console.log("I am Here in Type Check");
     switch(checkType){
       case 'Plan Drawings':
         if(vData.structure.designs&& vData.structure.designs.length >= 1){
@@ -1575,11 +1575,14 @@ const Index: React.FC<IProps> = () => {
         }
         break;
       case 'pointCloud':
-        if(vData.currentSnapshotBase.reality?.length && vData.currentSnapshotBase.reality.length >=1){
+        if(vData.currentSnapshotBase?.reality?.length && vData.currentSnapshotBase.reality.length >=1){
           return true;
         }
         break
       case 'orthoPhoto':
+        console.log(vData,"Types List")
+        if(vData.currentTypesList?.findIndex((type)=>{type==='orthoPhoto'})>-1)
+          return true;
         break;
 
     }
@@ -1603,12 +1606,13 @@ const Index: React.FC<IProps> = () => {
             //   router.push(router);
             // }
             let vData:IGenData = response.result; 
+            console.log("I am Inise UseEffect")
             if(router.query.type === undefined){
               vData.currentViewType = getInitViewType(vData)
             }
             else if(router.query.type&& router.query.type !== undefined)
             {
-              if(isViewTypeAvailable(vData,router.query.type.toString()))
+              if(isViewTypeAvailable(response.result,router.query.type.toString()))
               {
                 vData.currentViewType = router.query.type.toString()
               }
@@ -1884,7 +1888,10 @@ const Index: React.FC<IProps> = () => {
 
   const receiveMessage = (event:any) => {
     if (event.origin === MULTIVERSE.ORIGIN_URL) {
-      setScreenShot(event.data)        
+      if(event.data.screenshot)
+        setScreenShot(event.data) 
+      if(event.data.clickEvent)
+        console.log("Viewer ClickEvenr rec");       
     }
   }
 

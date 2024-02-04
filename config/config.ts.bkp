@@ -61,6 +61,6 @@ export const PROCORE = {
     GRANT_TYPE : 'authorization_code',
 }
 
-export MULTIVERSE ={
+export const MULTIVERSE ={
     ORIGIN_URL : "http://localhost:3001"
 }
