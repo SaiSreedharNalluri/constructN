@@ -11,6 +11,7 @@ interface ProjectConfigContextProps {
   taskinitialPriority: any;
   taskinitialStatus: any;
   taskTagsList:any;
+  screenshot:any
 
 }
 
@@ -27,6 +28,7 @@ interface ProjectConfigContextProviderProps {
   taskinitialStatus: any;
   issueTagsList : any;
   taskTagsList : any;
+  screenshot:any
 }
 
 export const ApiDataContextProvider: React.FC<ProjectConfigContextProviderProps> = ({
@@ -39,7 +41,8 @@ export const ApiDataContextProvider: React.FC<ProjectConfigContextProviderProps>
   taskinitialPriority,
   taskinitialStatus,
   issueTagsList,
-  taskTagsList
+  taskTagsList,
+  screenshot
 }) => {
 
   return (
@@ -51,7 +54,8 @@ export const ApiDataContextProvider: React.FC<ProjectConfigContextProviderProps>
       taskinitialPriority,
       taskinitialStatus, 
       issueTagsList,
-      taskTagsList
+      taskTagsList,
+      screenshot
       }}>
       {children}
     </projectConfigContext.Provider>

@@ -68,6 +68,7 @@ import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
 import {ApiDataContextProvider} from "../../../../../state/projectConfig/projectConfigContext";
 import { useAppContext } from "../../../../../state/appState/context";
+import { MULTIVERSE } from "../../../../../config/config";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -177,6 +178,7 @@ const Index: React.FC<IProps> = () => {
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [tasList, setTasList] = useState<any>([]);
+  const [screenshot, setScreenShot] = useState<any>();
   // const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [tasksPriotityList, setTasksPriorityList] = useState<[string]>([""]);
   // const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
@@ -1880,7 +1882,18 @@ const Index: React.FC<IProps> = () => {
   }, [])
 
 
+  const receiveMessage = (event:any) => {
+    if (event.origin === MULTIVERSE.ORIGIN_URL) {
+      setScreenShot(event.data)        
+    }
+  }
 
+useEffect(()=>{
+  window.addEventListener('message', receiveMessage);
+  return () => {
+    window.removeEventListener('message', receiveMessage);
+  };
+},[])
   return (
     <ApiDataContextProvider  
     initialTypes={issueTypesList}
@@ -1892,6 +1905,7 @@ const Index: React.FC<IProps> = () => {
     taskinitialStatus={taskStatusList} 
     issueTagsList={issueTagStatus}
     taskTagsList={TaskTagStatus}
+    screenshot={screenshot}
     >
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>

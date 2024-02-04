@@ -429,7 +429,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           <FirstHeaderDiv>
             <div></div>
             {taskState?.TabOne?.screenshot && (
-              <Image
+              <img
                 src={
                   taskState?.TabOne?.screenshot
                     ? taskState?.TabOne?.screenshot
