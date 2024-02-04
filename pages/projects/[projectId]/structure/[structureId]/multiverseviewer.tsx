@@ -1546,7 +1546,7 @@ const Index: React.FC<IProps> = () => {
 }
   
  const isViewTypeAvailable = (vData:IGenData,checkType:string):boolean=>{
-  console.log("I am Here in Type Check");
+  
     switch(checkType){
       case 'Plan Drawings':
         if(vData.structure.designs&& vData.structure.designs.length >= 1){
@@ -1606,13 +1606,12 @@ const Index: React.FC<IProps> = () => {
             //   router.push(router);
             // }
             let vData:IGenData = response.result; 
-            console.log("I am Inise UseEffect")
             if(router.query.type === undefined){
               vData.currentViewType = getInitViewType(vData)
             }
             else if(router.query.type&& router.query.type !== undefined)
             {
-              if(isViewTypeAvailable(response.result,router.query.type.toString()))
+              if(isViewTypeAvailable(vData,router.query.type.toString()))
               {
                 vData.currentViewType = router.query.type.toString()
               }
