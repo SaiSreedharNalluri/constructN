@@ -396,7 +396,7 @@ function BasicTabs(props: any) {
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            <Image
+            <img
               src={
                 taskState?.TabOne?.screenshot
                   ? taskState?.TabOne?.screenshot
