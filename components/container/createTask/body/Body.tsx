@@ -69,7 +69,7 @@ const Body = ({
   formData,
   setFormData
 }: any) => {
-  const { taskinitialTypes,taskinitialPriority,taskinitialStatus,initialProjectUsersList } = useApiDataContext();
+  const { taskinitialTypes,taskinitialPriority,taskinitialStatus,initialProjectUsersList,taskTagsList } = useApiDataContext();
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
   const [taskTypes, setTaskTypes] = useState(taskinitialTypes);
@@ -79,19 +79,34 @@ const Body = ({
   const [projectUsers, setProjectUsers] = useState(initialProjectUsersList);
   const [loggedInUserId, SetLoggedInUserId] = useState(null);
   const router = useRouter();
+  const [newValue,newValues] = useState([])
+
+  useEffect(()=>{
+    const tempFormData = formConfig.map((item: any) => {
+      if (item.id === "tag-suggestions") {
+        return {
+          ...item,
+          chipString: newValue,
+        };
+      }
+      return item;
+    });
+    setFormConfig(tempFormData);
+  },[newValue])
 
   useEffect(() => {
     const tempFormData = formConfig.map((item: any) => {
       if (item.id === "tag-suggestions") {
         return {
           ...item,
-          chipSuggestions: tagsList,
+          chipSuggestions: taskTagsList,
         };
       }
       return item;
     });
     setFormConfig(tempFormData);
-  }, [tagsList]);
+  }, [taskTagsList]);
+
 
   useEffect(() => {
     if (router.isReady) {
@@ -371,6 +386,7 @@ const Body = ({
           setIsValidate={setIsValidate}
           validate={validate}
           setCanBeDisabled={setCanBeDisabled}
+          newValues={newValues}
         />
         <UploadedImagesList
           formData={formData}

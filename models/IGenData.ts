@@ -32,7 +32,7 @@ export interface IGenData {
         isTaskFiltered?:boolean,
         isIssueFiltered?:boolean,
         filteredTaskList?:ITasks[],
-        filteredIssueList?:Issue[],
-
+        filteredIssueList?:Issue[],    
+        currentViewTypeList:string[],
         currentTypesList:string[]
       }

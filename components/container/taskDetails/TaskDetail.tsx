@@ -902,7 +902,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     
     })
     setSelectedTask(taskData);
-  }, []);
+  }, [initData]);
   const DetailsObj = {
     TabOne: {
       options: [
