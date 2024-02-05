@@ -8,6 +8,7 @@ import { Map, Marker } from 'react-map-gl';
 import { useRouter } from 'next/router';
 import { getProjectTypes } from '../../services/project';
 import { AWS, MAPBOX } from '../../config/config';
+import { utmLocation } from '../../models/IRawImages';
 interface IProps {
   projectData: IProjects;
   updateProjectData: (updateInfo: object) => void;
@@ -39,7 +40,7 @@ const ProjectInfo: React.FC<IProps> = ({
     description: string;
     latitude: number;
     longitude: number;
-    utm: string;
+    utm: string | utmLocation;
   } = {
     name: projectData?.name ? projectData?.name : '',
     type: projectData?.type ? projectData?.type : '',
