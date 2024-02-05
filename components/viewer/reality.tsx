@@ -92,10 +92,9 @@ const RealityPage: FC<any> = (props) => {
 
         const realityDate = (event as CustomEvent).detail.snapshotDate
 
-        const compare = realityDate === props.snapshotCompare?.date
+        const compare = realityDate === props.snapshotBase?.date
 
-        _layers.current = compare ? props.snapshotCompare?.layers: props.snapshotBase?.layers
-
+        _layers.current = !compare ? props.snapshotCompare?.layers: props.snapshotBase?.layers
 
         const realityPosition = new THREE.Vector3(reality.position.x, reality.position.y, reality.position.z)
 
