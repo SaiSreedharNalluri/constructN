@@ -885,7 +885,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     }
 
-    const _changeStructure = (structure: any) => {
+    const _changeStructure = async (structure: any) => {
 
         setShowReality(false);
 
@@ -893,7 +893,10 @@ const Progress2DPage: React.FC<any> = () => {
 
         const queryParams = updateQueryParam(searchParamsRef.current!, 'structId', structure._id)
 
-        router.replace(`${window.location.pathname}?${queryParams}`)
+        await nextRouter.push(`${window.location.pathname}?${queryParams}`);
+
+        nextRouter.reload()
+
 
     }
 
