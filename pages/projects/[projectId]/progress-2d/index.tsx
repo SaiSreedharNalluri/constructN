@@ -513,6 +513,9 @@ const Progress2DPage: React.FC<any> = () => {
             setSnapshotBase(snapshot)
 
 
+        }else{
+            setSnapshotBase(undefined);
+
         }
 
         setSnapsLoading(false)
@@ -885,7 +888,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     }
 
-    const _changeStructure = async (structure: any) => {
+    const _changeStructure = (structure: any) => {
 
         setShowReality(false);
 
@@ -893,11 +896,7 @@ const Progress2DPage: React.FC<any> = () => {
 
         const queryParams = updateQueryParam(searchParamsRef.current!, 'structId', structure._id)
 
-        await nextRouter.push(`${window.location.pathname}?${queryParams}`);
-
-        nextRouter.reload()
-
-
+        router.replace(`${window.location.pathname}?${queryParams}`)
     }
 
     const _closeDetails = () => {
