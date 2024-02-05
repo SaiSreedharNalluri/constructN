@@ -1580,9 +1580,9 @@ const Index: React.FC<IProps> = () => {
         }
         break
       case 'orthoPhoto':
-        console.log(vData,"Types List")
-        if(vData.currentTypesList?.findIndex((type)=>{type==='orthoPhoto'})>-1)
+        if(vData.currentViewTypeList?.includes('orthoPhoto')){
           return true;
+        }
         break;
 
     }
@@ -1610,7 +1610,7 @@ const Index: React.FC<IProps> = () => {
               vData.currentViewType = getInitViewType(vData)
             }
             else if(router.query.type&& router.query.type !== undefined)
-            {
+            {              
               if(isViewTypeAvailable(vData,router.query.type.toString()))
               {
                 vData.currentViewType = router.query.type.toString()

@@ -62,7 +62,6 @@ const Body = ({
   editData,
   validate,
   setIsValidate,
-  tagsList,
   setCanBeDisabled,
   deleteTheAttachment,
   formData,
@@ -77,6 +76,7 @@ const Body = ({
   const [projectUsersList, setProjectUsers] = useState<IProjectUsers[]>(initialProjectUsersList);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
   const [issueStatusLists, setIssueStatusList] = useState<[string]>(initialStatus);
+  const [tagsList,setTagList] = useState([])
   const [newValue,newValues] = useState([])
   const router = useRouter();
   useEffect(()=>{
@@ -144,6 +144,9 @@ const Body = ({
     if (user?._id) {
       SetLoggedInUserId(user._id);
     }
+    issueTagsList?.forEach((item:any)=>{
+    setTagList(item?.tagList)
+    })
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
     if (projectUsersList.length && issuePriorities.length && issueTypes.length) {
