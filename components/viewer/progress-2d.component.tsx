@@ -144,6 +144,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _layers.current = props.snapshot.layers
 
+        }else{
+            _layers.current = []
         }
 
             if(_currentStructure.current !== newStructure) {
