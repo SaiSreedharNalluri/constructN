@@ -217,6 +217,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [selectedTab , setSelectedTab] = useState('stages') 
 
+    const [snapsLoading, setSnapsLoading] =  useState(false)
+
 
     const [clipValue, setClipValue] = useState(50);
 
@@ -389,7 +391,9 @@ const Progress2DPage: React.FC<any> = () => {
     }
 
     useEffect(() => {
-        refetch()
+        if(nextRouter.isReady){
+            refetch()
+        }
     }, [searchParams])
 
 
@@ -500,6 +504,8 @@ const Progress2DPage: React.FC<any> = () => {
 
         if (currentCategory.current) _loadAssetsForCategory(currentCategory.current)
 
+        setSnapsLoading(true);
+
         if (snapshot) {
 
             await _extractSnapshotPaths(snapshot)
@@ -509,7 +515,10 @@ const Progress2DPage: React.FC<any> = () => {
 
         }
 
+        setSnapsLoading(false)
+
     }
+
 
     const _extractCompareSnapshot = async (snapshot: any) => {
 
@@ -1090,7 +1099,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                         clipPath: `polygon(${clipValue}% 0%, 100% 0%, 100% 100%, ${clipValue}% 100%)`,
                                                         } : {} }>
 
-                                                <Progress2DComponent
+                                                {!snapsLoading ? <Progress2DComponent
 
                                                     id={'left-container'}
 
@@ -1107,12 +1116,12 @@ const Progress2DPage: React.FC<any> = () => {
                                                     assets={assets}
 
                                                     isSupportUser={isSupportUser}
-
+                                                    
                                                     _forge={_forge}
 
                                                     _dataViz={_dataViz}
 
-                                                    selectedLayers={selectedLayers} />
+                                                    selectedLayers={selectedLayers} />: null}
 
                                             </div>
 
@@ -1124,7 +1133,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     <div id='right-container' className={'relative h-full w-1/2 z-20 border border-[#e2e3e5] rounded-lg'} >
 
-                                                        <RealityPage snapshot={realityDate === snapshotCompare?.date ? snapshotCompare: snapshotBase} id={'left'} />
+                                                        <RealityPage snapshot={realityDate === snapshotCompare?.date ? snapshotCompare: snapshotBase} id={'left'} isCompare={realityDate === snapshotCompare?.date} snapshotBase={snapshotBase} snapshotCompare={snapshotCompare} />
 
                                                         <div className={`flex absolute bottom-0 left-2' } text-[#4a4a4a] rounded bg-[#F1742E] hover:text-[#fff] hover:bg-[#f1742e] bg-opacity-10 px-2 py-[6px] text-sm mr-3`} >
                                                         {`SnapshotDate: ${moment(realityDate).format("DD MMM, yyyy")}`}

@@ -229,6 +229,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
         if (extensionId === 'Autodesk.DataVisualization') {
 
+            _dataVizUtils?.current?._removeListeners();
+
             _dataVizUtils.current = new ForgeDataVizUtils(_forge.current!, _extn as Autodesk.Extensions.DataVisualization, props.compare)
 
         } else if (extensionId === 'Autodesk.Edit2D') {
