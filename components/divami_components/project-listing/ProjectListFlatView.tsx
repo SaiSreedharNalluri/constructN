@@ -258,7 +258,7 @@ export const ProjectListFlatView = ({
               </CaptureCount>
             </CapturesField>
             <CapturesField>
-              <TooltipText title="Laser Captures">
+              <TooltipText title="Laser">
                 <div>
                   <CaptureImageIcon
                     src={LaserIcon}
