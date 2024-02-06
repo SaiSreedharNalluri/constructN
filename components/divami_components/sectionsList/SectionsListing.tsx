@@ -89,6 +89,7 @@ import authHeader from "../../../services/auth-header";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import { getCookie } from "cookies-next";
 import { Mixpanel } from "../../analytics/mixpanel";
+import { isMultiverseEnabled } from "../../../utils/constants";
 // import { ISections } from "../../../models/ISections";
 
 const headers = {headers: authHeader.authHeader()}
@@ -599,10 +600,17 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
               setProcessing(true)
              }
            else if (Object.keys(rowData.snapshots?.latestSnapshot).length >= 0 && rowData.snapshots?.snapshotActiveCount>0 ) {
-              router.push({
+              if(isMultiverseEnabled){
+                router.push({
                 pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
                 query: { structureId: rowData._id,projectId:router?.query?.projectId as string },
-              });
+              });}
+              else{
+                router.push({
+                  pathname: `/projects/[projectId]/structure`,
+                  query: { structId: rowData._id,projectId:router?.query?.projectId as string },
+                })
+              }
               setCaptureAvailable(false)
               customLogger.logInfo("View Strucuture");
               setProcessing(false)
@@ -1010,13 +1018,32 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           imageSrc={info}
           isImageThere={true}
           SecondaryButtonlabel={"No"}
-          callBackvalue={isCaptureAvailable? ()=> router.push({
+          callBackvalue={isCaptureAvailable? ()=> {
+            if(isMultiverseEnabled){
+              router.push({
+              pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+              query: { structureId: id, projectId:router?.query?.projectId as string },
+              })
+            }
+            else{
+              router.push({
+                pathname: `/projects/[projectId]/structure`,
+                query: { structId: id, projectId:router?.query?.projectId as string },
+                })
+
+        }}:()=> {if(isMultiverseEnabled){
+            router.push({
             pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
             query: { structureId: id, projectId:router?.query?.projectId as string },
-          }):()=> router.push({
-            pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
-            query: { structureId: id, projectId:router?.query?.projectId as string },
-          }) }
+            })
+          }else{
+            router.push({
+              pathname: `/projects/[projectId]/structure`,
+              query: { structId: id, projectId:router?.query?.projectId as string },
+              })
+
+          }
+          } }
         />
         )
       :""}

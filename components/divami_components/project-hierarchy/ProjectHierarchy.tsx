@@ -39,6 +39,7 @@ import Chips from "../sectionsList/Chip";
 import { TooltipText } from "../side-panel/SidePanelStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { getNewChipData, removeChip } from "../../../services/sections";
+import { isMultiverseEnabled } from "../../../utils/constants";
 const ProjectHierarchy = ({
   title,
   openselectlayer,
@@ -119,10 +120,18 @@ const ProjectHierarchy = ({
       delete router.query.snap;
       
       const newQueryParamValue =  nodes._id // Specify the new value for the query parameter
-      router.push({
+      if(isMultiverseEnabled){
+        router.push({
         pathname: pathname,
         query: { ...router.query, structureId: newQueryParamValue },
-      });
+        });
+      }else{
+        router.push({
+          pathname: pathname,
+          query: { ...router.query, structId: newQueryParamValue },
+          });
+      }
+      
       
       if (
         !(
