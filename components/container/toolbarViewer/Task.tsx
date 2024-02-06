@@ -39,6 +39,7 @@ import CustomLoggerClass from "../../divami_components/custom_logger/CustomLogge
 import { MqttConnector } from "../../../utils/MqttConnector";
 import { useRouter } from "next/router";
 import filterdListIcon from "../../../public/divami_icons/FilteredList.svg"
+import { useApiDataContext } from "../../../state/projectConfig/projectConfigContext";
 
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
@@ -83,6 +84,7 @@ function Task({
 
 }: any,ref:Ref<taskToolHandle>) {
   const customLogger = new CustomLoggerClass();
+  const {screenshot} = useApiDataContext();
   const router = useRouter();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
@@ -93,7 +95,7 @@ function Task({
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [selectedTask, setSelectedTask] = useState({});
-  const [image, setImage] = useState<Blob>();
+  const [image, setImage] = useState<Blob>(screenshot?.screenshot as Blob);
   const [showImage, setShowImage] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [isLoading, setLoading] = useState(false)
@@ -106,13 +108,14 @@ function Task({
     numberOfFilters: 0,})
   const [projectUsers,setProjectUsers] = useState([])
   const [taskStatusList,setTaskStatusList] = useState([])
-  
-
+  useEffect(()=>{
+    setImage(screenshot?.screenshot as Blob)
+   },[screenshot])
   useImperativeHandle(ref, () => {
     return{
       handleTaskInstance(tasktoolInstance:any){
         if (tasktoolInstance.type === "selectTask" && tasktoolInstance?.data?.data?.id) {
-          const selectedObj = tasksList?.find(
+          const selectedObj = initData?.currentTaskList?.find(
             (each: any) => each._id === tasktoolInstance?.data?.data?.id
           
           ); 
@@ -133,10 +136,10 @@ function Task({
       },
       handleRouterTask(handleRouterTask:any){
         if (handleRouterTask.type === "selectTask" && handleRouterTask.data) {
-          const selectedObj = tasksList?.find(
+          const selectedObj = initData?.currentTaskList?.find(
             (each: any) => each._id === handleRouterTask?.data
           
-          ); 
+          );   
           let taskMenuInstance: IToolbarAction = { data: selectedObj?.context,type:handleRouterTask.type};
           taskMenuClicked(taskMenuInstance)
           setOpenTaskDetail(true)
@@ -161,15 +164,15 @@ function Task({
     setMyProject(currentProject);
     setMyStructure(currentStructure);
     setMySnapshot(currentSnapshot);
-    html2canvas(
-      document.getElementById("forgeViewer_1") ||
-      document.getElementById("potreeViewer_1") ||
-      document.body
-    ).then(function (canvas:any) {
-      canvas.toBlob((blob:any) => {
-        setImage(blob as Blob);
-      }, "image/png");
-    });
+    // html2canvas(
+    //   document.getElementById("forgeViewer_1") ||
+    //   document.getElementById("potreeViewer_1") ||
+    //   document.body
+    // ).then(function (canvas:any) {
+    //   canvas.toBlob((blob:any) => {
+    //     setImage(blob as Blob);
+    //   }, "image/png");
+    // });
   }, [currentProject, currentSnapshot, currentStructure, taskOpenDrawer]);
   const handleViewTaskList = () => {
     customLogger.logInfo("ToolBar - View Task")

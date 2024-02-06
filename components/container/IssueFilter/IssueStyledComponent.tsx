@@ -235,8 +235,8 @@ export const SearchContainer = styled(Box)({
 });
 
 export const ButtonsContainer = styled(Box)`
-  padding-left: 20px;
-  padding-right: 20px;
+  // padding-left: 20px;
+  // padding-right: 20px;
   height: 80px;
   display: flex;
   justify-content: space-between;

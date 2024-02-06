@@ -396,7 +396,7 @@ function BasicTabs(props: any) {
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            <Image
+            <img
               src={
                 taskState?.TabOne?.screenshot
                   ? taskState?.TabOne?.screenshot
@@ -902,7 +902,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     
     })
     setSelectedTask(taskData);
-  }, []);
+  }, [initData]);
   const DetailsObj = {
     TabOne: {
       options: [

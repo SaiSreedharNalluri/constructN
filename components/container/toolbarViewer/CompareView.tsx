@@ -62,6 +62,9 @@ const CompareView = ({
         setActive(initData.currentCompareMode)
         break;
       }
+      case "compareMap":{
+        setActive(initData.currentCompareMode)
+      }
     }
   }
 
@@ -142,7 +145,7 @@ const CompareView = ({
           >
             <Image
               src={
-                active === "compareReality"
+                active === "compareReality" || active ==="compareMap"
                   ? realityCompare
                   : realityCompareLight
               }

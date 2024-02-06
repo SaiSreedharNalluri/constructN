@@ -52,7 +52,7 @@ const router = useRouter();
           ) : !showFirstElement && breadcrumbsConfig.length ? (
             breadcrumbsConfig.slice(1).map((breadcrumb: any, index: number) => (
               <ToolTipText key={index} title={breadcrumb?.name?.length > 50 ? breadcrumb?.name : ""}>
-              <BreadcrumbsLabel href={`/projects/${router.query.projectId}/structure?${router.query.projectId !== breadcrumb._id ? `structId=${breadcrumb._id}` : ''}`}
+              <BreadcrumbsLabel href={`/projects/${router.query.projectId}/structure/${router.query.projectId !== breadcrumb._id ? breadcrumb._id : ''}/multiverseviewer`}
                key={index}
                 onClick={() => handleBreadCrumbClick(breadcrumb, index)}
                 id={breadcrumb.parent===null?"black-text":router.query.structId===breadcrumb._id  ?"orange-text": "default"}

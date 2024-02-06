@@ -97,7 +97,7 @@ const CloseIcon = styled(Image)({
 const RefreshIcon = styled(Image)({
   cursor: "pointer",
   width: "18px",
-  height: "15px",
+  height: "22px",
 });
 const TaskFilterCommon: React.FC<any> = ({
   onClose,
@@ -647,13 +647,14 @@ const TaskFilterCommon: React.FC<any> = ({
             <HeaderLeftSection>
               <HeaderLeftSectionText>Filters</HeaderLeftSectionText>
             </HeaderLeftSection>
-            <HeaderRightSection onClick={() => {
-                    onReset();
-                  }}>
-              <HeaderRightSectionResetIcon>
+            <HeaderRightSection>
+              <HeaderRightSectionResetIcon className="flex item-center">
                 <RefreshIcon
                   src={newRefreshIcon}
                   alt="reset"
+                  onClick={() => {
+                    onReset();
+                  }}
                 />
                 {/* <Image
                   src={ResetIcon}
@@ -662,11 +663,12 @@ const TaskFilterCommon: React.FC<any> = ({
                     onReset();
                   }}
                 /> */}
-              <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
-              </HeaderRightSectionResetIcon>
+              
+              <label className="ml-[10px] br-[10px] border-solid bordder-[#d9d9d9] pr-[15px] font-sans font-normal text-[#F1742E]">Reset</label>
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
               handleClose();
               }} /> */}
+              </HeaderRightSectionResetIcon>
              <HeaderRightSectionCloseIcon >
               <CloseIcon
                 onClick={() => {

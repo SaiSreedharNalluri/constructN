@@ -67,6 +67,8 @@ import IssueList from "../../../../../components/container/rightFloatingMenu/iss
 import { responsiveFontSizes } from "@mui/material";
 import CustomLoader from "../../../../../components/divami_components/custom_loader/CustomLoader";
 import {ApiDataContextProvider} from "../../../../../state/projectConfig/projectConfigContext";
+import { useAppContext } from "../../../../../state/appState/context";
+import { MULTIVERSE } from "../../../../../config/config";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -176,6 +178,7 @@ const Index: React.FC<IProps> = () => {
   const [issuesList, setIssueList] = useState<Issue[]>([]);
   const [tasksList, setTasksList] = useState<ITasks[]>([]);
   const [tasList, setTasList] = useState<any>([]);
+  const [screenshot, setScreenShot] = useState<any>();
   // const [issuePriorityList, setIssuePriorityList] = useState<[string]>([""]);
   const [tasksPriotityList, setTasksPriorityList] = useState<[string]>([""]);
   // const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
@@ -226,6 +229,8 @@ const Index: React.FC<IProps> = () => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
 
+  const { state: appState, appContextAction } = useAppContext();
+  
   const isObjectEmpty = (objectName: any) => {
     return (
       objectName &&
@@ -721,7 +726,10 @@ const Index: React.FC<IProps> = () => {
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
           case "compareReality":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+            if(initData&& initData.currentViewType==='orthoPhoto')
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"compareMap"}');
+            else  
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
 
         }
@@ -729,16 +737,31 @@ const Index: React.FC<IProps> = () => {
       case "setViewMode":
         switch (toolInstance.data) {
           case "Design":
-            if (initData?.structure.isExterior) {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
-            }
-            else {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
+            if(initData?.structure.designs&& initData?.structure.designs.length >= 1){
+              if(initData?.structure.designs.find((des:any)=>{
+                if(des.type==="Plan Drawings"){
+                  return des
+                }    
+              }))
+              {
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
+              }
+              else if(initData?.structure.designs.find((des:any)=>{
+                if(des.type==="BIM"){
+                  return des
+                }    
+              })){
+                
+                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
+              }
             }
 
             break;
           case "Reality":
-            conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
+            if(initData&& initData.currentViewType==='orthoPhoto')
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"compareMap"}');
+            else
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
             break;
 
         }
@@ -1445,13 +1468,15 @@ const Index: React.FC<IProps> = () => {
 
     }
 
-  }, [router.query.iss, router.query.snap]);
+  }, [router.query.iss, router.query.snap,multiverseIsReady]);
 
   useEffect(() => {
     if (router.query.tsk != null) {
-      let sel_tsk: ITasks | undefined = tasksList.find((t) => t._id === router.query.tsk)
+      let sel_tsk: ITasks | undefined = initData?.currentTaskList.find((t) => t._id === router.query.tsk)
+      console.log("sel_tsk",sel_tsk);
+      
       if (sel_tsk) {
-        handleMenuInstance.type = "selectIssue"
+        handleMenuInstance.type = "selectTask"
         handleMenuInstance.data = sel_tsk._id
         if (ref && ref.current) {
           ref.current?.RouterIssueRef(handleMenuInstance)
@@ -1460,7 +1485,7 @@ const Index: React.FC<IProps> = () => {
 
     }
 
-  }, [router.query.tsk, router.query.snap]);
+  }, [router.query.tsk, router.query.snap,multiverseIsReady]);
 
 
 
@@ -1550,11 +1575,14 @@ const Index: React.FC<IProps> = () => {
         }
         break;
       case 'pointCloud':
-        if(vData.currentSnapshotBase.reality?.length && vData.currentSnapshotBase.reality.length >=1){
+        if(vData.currentSnapshotBase?.reality?.length && vData.currentSnapshotBase.reality.length >=1){
           return true;
         }
         break
       case 'orthoPhoto':
+        if(vData.currentViewTypeList?.includes('orthoPhoto')){
+          return true;
+        }
         break;
 
     }
@@ -1582,7 +1610,7 @@ const Index: React.FC<IProps> = () => {
               vData.currentViewType = getInitViewType(vData)
             }
             else if(router.query.type&& router.query.type !== undefined)
-            {
+            {              
               if(isViewTypeAvailable(vData,router.query.type.toString()))
               {
                 vData.currentViewType = router.query.type.toString()
@@ -1608,6 +1636,8 @@ const Index: React.FC<IProps> = () => {
             vData.issueShow=true;
             vData.isIssueFiltered=false;
             vData.isTaskFiltered=false;
+            vData.projectUTM=appState.currentProjectData?.project?.utm || undefined ;
+            vData.projectLocation = appState.currentProjectData?.project?.location || undefined ;
             setInintData(vData);
             // if(initData && router.query.iss || router.query.tsk){
 
@@ -1713,6 +1743,8 @@ const Index: React.FC<IProps> = () => {
                 vData.issueShow=true;
                 vData.isIssueFiltered=false;
                 vData.isTaskFiltered=false;
+                vData.projectUTM=appState.currentProjectData?.project?.utm || undefined ;
+                vData.projectLocation = appState.currentProjectData?.project?.location || undefined ;
                 setInintData(vData);
                 setIssueFilterList(response.result.currentIssueList)
                 setIsList(response.result.currentIssueList)  
@@ -1721,7 +1753,7 @@ const Index: React.FC<IProps> = () => {
 
                 conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
                 console.log("Handshake setGenData", response.result)
-                setMViewerStatus("Connected")
+                setMViewerStatus("Connected")                       
 
               }
             })
@@ -1853,7 +1885,21 @@ const Index: React.FC<IProps> = () => {
   }, [])
 
 
+  const receiveMessage = (event:any) => {
+    if (event.origin === MULTIVERSE.ORIGIN_URL) {
+      if(event.data.screenshot)
+        setScreenShot(event.data) 
+      if(event.data.clickEvent)
+        console.log("Viewer ClickEvenr rec");       
+    }
+  }
 
+useEffect(()=>{
+  window.addEventListener('message', receiveMessage);
+  return () => {
+    window.removeEventListener('message', receiveMessage);
+  };
+},[])
   return (
     <ApiDataContextProvider  
     initialTypes={issueTypesList}
@@ -1865,6 +1911,7 @@ const Index: React.FC<IProps> = () => {
     taskinitialStatus={taskStatusList} 
     issueTagsList={issueTagStatus}
     taskTagsList={TaskTagStatus}
+    screenshot={screenshot}
     >
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>

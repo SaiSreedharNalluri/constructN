@@ -272,7 +272,7 @@ export const RealityCompareViewIcon = styled("div")((props: any) => ({
   borderTopRightRadius: "3px",
   borderBottomRightRadius: "3px",
   paddingTop: "8px",
-  background: props.active === "compareReality" ? "#F1742E" : "white",
+  background: props.active === "compareReality"|| props.active === "compareMap"  ? "#F1742E" : "white",
   cursor: "pointer",
 })) as any;
 export const CompareViewTitleDiv = styled("div")({

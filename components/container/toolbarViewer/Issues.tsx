@@ -40,6 +40,7 @@ import { CustomToast } from "../../divami_components/custom-toaster/CustomToast"
 import { getTimeInProjectTimezone } from "../../../utils/utils";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { useRouter } from "next/router";
+import { useApiDataContext } from "../../../state/projectConfig/projectConfigContext";
 
 
 
@@ -88,10 +89,11 @@ function Issues({
   
   }:any,ref:Ref<IssueToolHandle>) {
     const router = useRouter();
+  const {screenshot} = useApiDataContext();
   const customLogger = new CustomLoggerClass();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
-  const [image, setImage] = useState<Blob>();
+  const [image, setImage] = useState<Blob>(screenshot?.screenshot as Blob);
 
   const [openCreateIssue, setOpenCreateIssue] = useState(false);
   const [openIssueDetails, setOpenIssueDetails] = useState(false);
@@ -110,9 +112,12 @@ function Issues({
   })
   const [projectUser,setProjectUsers] = useState([])
   const [issueStatusList,setIssueStatusList] = useState([])
+  useEffect(()=>{
+   setImage(screenshot?.screenshot as Blob)
+  },[screenshot])
   useImperativeHandle(ref, () => {
     return{
-      handleIssueInstance(IssuetoolInstance:any){
+      handleIssueInstance(IssuetoolInstance:any){   
           if (IssuetoolInstance.type === "selectIssue" && IssuetoolInstance.data?.data?.id) {
             const selectedObj = initData?.currentIssueList?.find(
               (each: any) => each._id === IssuetoolInstance?.data?.data?.id
@@ -148,22 +153,22 @@ function Issues({
     projectUsersAndStatus(projectUsers:any,issueStatusList:any){
       setProjectUsers(projectUsers);      
       setIssueStatusList(issueStatusList);
-    }   
-    }
+    } 
+    }  
   },[router.isReady,initData]);
 
   
   useEffect(() => {
     setMyProject(currentProject);
-    html2canvas(
-      document.getElementById("forgeViewer_1") ||
-        document.getElementById("potreeViewer_1") ||
-        document.body
-    ).then(function (canvas) {
-      canvas.toBlob((blob) => {
-        setImage(blob as Blob);
-      }, "image/png");
-    });
+    // html2canvas(
+    //   document.getElementById("forgeViewer_1") ||
+    //     document.getElementById("potreeViewer_1") ||
+    //     document.body
+    // ).then(function (canvas) {
+    //   canvas.toBlob((blob) => {
+    //     setImage(blob as Blob);
+    //   }, "image/png");
+    // });
   }, [currentProject, currentSnapshot, currentStructure, issueOpenDrawer]);
 
   const closeIssueList = () => {
@@ -250,9 +255,8 @@ function Issues({
         return;
       }
       formData.append("attachments", data.attachments![i]);
-    }
+    }    
     data.screenshot = image;
-
     formData.append("screenshot", image as Blob, "imageName.png");
     delete data["screenshot"];
     delete data["attachments"];
