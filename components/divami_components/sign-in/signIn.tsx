@@ -58,17 +58,20 @@ useEffect(()=>{
                   "userCredentials",
                   JSON.stringify(userProfileObj)
                 );
-              //  Sentry.setUser({email:userProfileObj.email})
-                  //  CustomLogger("set user", userProfileObj.email,"email")
-                  customLogger.logActivity(userProfileObj.email, "email")
-                  customLogger.logInfo(`user successfully logged`);
-                  // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
-                  delete userProfileObj.unReadNotifications
-                  delete userProfileObj.metadata
-                  delete userProfileObj.verificationTimestamps
-                  delete userProfileObj.resetPasswordTimestamps
+                //  Sentry.setUser({email:userProfileObj.email})
+                //  CustomLogger("set user", userProfileObj.email,"email")
+                customLogger.logActivity(userProfileObj.email, "email")
+                customLogger.logInfo(`user successfully logged`);
+                // CustomLogger("capture message", `user successfully logged ${userProfileObj.email}`)           if(userProfileObj.unReadNotifications)
+
                 setCookie("isProjectTimeZone", true)
-                setCookie("user",userProfileObj);
+                setCookie("user", JSON.stringify({
+                    _id: userProfileObj._id,
+                    email: userProfileObj.email,
+                    token: userProfileObj.token,
+                    refreshToken: userProfileObj.refreshToken,
+                    avatar: userProfileObj.avatar || ''
+                }));
                 localStorage.setItem('uploaededData',JSON.stringify({}))
                
                 CustomToast("User signed in successfully", "success");
@@ -94,39 +97,12 @@ useEffect(()=>{
             }
           })
             .catch((error: any) => {
-                // const resMessage =
-                //     (error.response &&
-                //         error.response.data &&
-                //         error.response.data.message) ||
-                //     error.message ||
-                //     error.toString();
-                // setLoginEnable(true)
-                // // CustomLogger("capture exception",`failed to login ${email}`)
-                // const customErrorMessage = `failed to login ${"vineeth@constructn.ai"}`;
-                // customLogger.logError(customErrorMessage)
-
-                // setLoginEnable(true);
-
-                // Create a custom error object with the desired message
-                // const customError = new Error(customErrorMessage);
-
-                // Capture the custom error with Sentry
-                // Sentry.captureException(customError);
-                // Sentry.configureScope(function (scope) {
-                //   scope.setLevel("warning");
-                // });
-                // Sentry.captureMessage("This is a warning message.");
-                // // Sentry.captureException(error?.response?.data?.message)
-                // CustomToast(error?.response?.data?.message, "error");
-
-                // setLoading(false);
-
-                // Mixpanel.track("login_fail", {
-                //     email: "vineeth@constructn.ai",
-                // });
-
-                // setLoading(false);
-                // setMessage(resMessage);
+              if(error.response.status===401){
+                
+                CustomToast('login via procore is failed','error')
+                setLoading(false)
+                router.push("/login")
+              }
             });
 
     }

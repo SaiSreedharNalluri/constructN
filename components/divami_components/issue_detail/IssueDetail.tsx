@@ -133,6 +133,7 @@ import ProcoreLink from "../../container/procore/procoreLinks";
 import jsPDF from "jspdf";
 import { Key } from "@mui/icons-material";
 import ProcoreExist from "../../container/procore/procoreExist";
+import { useAppContext } from "../../../state/appState/context";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -1316,7 +1317,10 @@ const  handleCloseProcore=()=>{
   const updatedselectedIssue =(issueData:any)=>{
       setSelectedIssue(issueData)
   }
-
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   return (
     <>
     
@@ -1356,23 +1360,33 @@ const  handleCloseProcore=()=>{
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-            {providerType === 'procore' ? (    
-    <div className="p-[6px] hover:bg-[#E7E7E7] "
-    >
+            {providerType === 'procore' ? ( 
+              <div>
+              {procoreProjectId !== undefined  && procoreCompanyId !==undefined ?(
+                <div className="p-[6px] hover:bg-[#E7E7E7] ">
 
-      <ProcoreLogo
-        src={procore}
-        alt="logo"
-        style={{ cursor: selectedIssue.integration ? 'not-allowed' : 'pointer' }}
-    onClick={()=>{
-if(!selectedIssue.integration){ handleProcoreLinks()}}}
-      />
-    </div> ) : (
+                <ProcoreLogo
+                  src={procore}
+                  alt="logo"
+                  style={{ cursor: selectedIssue.integration ? 'not-allowed' : 'pointer' }}
+              onClick={()=>{
+          if(!selectedIssue.integration){ handleProcoreLinks()}}}
+                />
+              </div>
+              ):(<div>
+                <Tooltip title={'Link project to procore'}>
+                   <ProcoreLogo
+                 src={procore} 
+                 alt="logo"
+    /></Tooltip>
+              </div>)}   
+   </div> ) : (
+    <Tooltip title={'Login via Procore required'}>
     <ProcoreLogo
       src={procore} 
       alt="logo"
-      title="Login via Procore required"
     />
+    </Tooltip>
   )}
  
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">

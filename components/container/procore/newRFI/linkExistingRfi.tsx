@@ -10,6 +10,7 @@ import { ListRfi, linkIssueRfi,linkTaskRfi, } from '../../../../services/procore
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
 import { IprocoreActions } from '../../../../models/Iprocore';
+import { useAppContext } from '../../../../state/appState/context';
 
 const LinkExistingRfi = (props: any) => {
   const {issue,task,
@@ -21,7 +22,9 @@ const LinkExistingRfi = (props: any) => {
   const [footerState, SetFooterState] = useState(true);
   const [rfiData, setRfiData] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
-
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const handleBack = () => {
     let closeNewRFI: IprocoreActions = {
       action: 'newCloseObservation',
@@ -71,7 +74,7 @@ const LinkExistingRfi = (props: any) => {
 
   useEffect(() => {
     setLoading(true)
-    ListRfi()
+    ListRfi(procoreProjectId)
       .then((response: any) => {
       
         setRfiData(response.data);

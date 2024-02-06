@@ -122,11 +122,12 @@ const Header: React.FC<any> = ({
       }
 
       let projectDataInAppState = appState.projectDataList.find((projectData) => { return projectData.project._id === projectId})
-      //let projectDataInLocalStorage = projectDataList && projectDataList.find((projectData) => { return projectData.project._id === projectId})
+
+      // let projectDataInLocalStorage = projectDataList && projectDataList.find((projectData) => { return projectData.project._id === projectId})
       if(projectDataInAppState) {
         appAction.setCurrentProjectData(projectDataInAppState)
       // } else if(projectDataInLocalStorage) {
-        // appAction.appendProjectData(projectDataInLocalStorage)
+      //   appAction.appendProjectData(projectDataInLocalStorage)
       } else {
         let response = getProjectData(projectId);
         response.then((projectData) => {

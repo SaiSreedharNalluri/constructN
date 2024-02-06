@@ -12,6 +12,7 @@ export enum UploaderActionType {
     GoBack,
     Next,
     Upload,
+    Discard,
     UpdateDate,
     setIsLoading,
     setshowMessage,
@@ -34,6 +35,7 @@ export enum UploaderActionType {
     setSelectedJob,
     setCurrentUploadFiles,
     updateWorkerStatus,
+    updateJobStatus,
     removeWorker,
     refreshJobs,
     setErrorCount,
@@ -63,6 +65,10 @@ export interface next {
 
 export interface upload {
   type: UploaderActionType.Upload;
+}
+
+export interface discard {
+  type: UploaderActionType.Discard;
 }
 
 export interface setUploadCompletionState {
@@ -179,6 +185,11 @@ export interface updateWorkerStatus {
     payload: {workerFileList: IUploadFile<RawImage>[]}
 }
 
+export interface updateJobStatus {
+  type: UploaderActionType.updateJobStatus
+  payload: {job: IJobs}
+}
+
 export interface removeWoker {
     type: UploaderActionType.removeWorker
     payload: {captureId: string}
@@ -228,6 +239,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         },
         upload: () => {
           dispatch({ type: UploaderActionType.Upload });
+        },
+        discard: () => {
+          dispatch({ type: UploaderActionType.Discard });
         },
         setIsAppendingCapture: (isAppendingCapture:boolean) => {
             dispatch({ type: UploaderActionType.setIsAppendingCapture, payload:{isAppendingCapture: isAppendingCapture}});
@@ -298,6 +312,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         updateWorkerStatus:(workerFileList: IUploadFile<RawImage>[]) => {
             dispatch({type:UploaderActionType.updateWorkerStatus, payload:{ workerFileList: workerFileList}})
         },
+        updateJobStatus:(job: IJobs)=>{
+          dispatch({type:UploaderActionType.updateJobStatus, payload:{ job: job}})
+      },
         removeWorker:(captureId: string) => {
             dispatch({type:UploaderActionType.removeWorker, payload:{ captureId: captureId}})
         },
@@ -331,6 +348,7 @@ export type UploaderActions =
   | goBack
   | next
   | upload
+  | discard
   | UpdateDate
   | setIsLoading
   | setshowMessage
@@ -352,6 +370,7 @@ export type UploaderActions =
   | setSelectedJob
   | setCurrentUploadFiles
   | updateWorkerStatus
+  | updateJobStatus
   | removeWoker
   | refreshJobs
   | setErrorCount
