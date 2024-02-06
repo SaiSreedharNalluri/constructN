@@ -123,6 +123,9 @@ import procore from "../../../public/divami_icons/procore.svg";
 import Download from "../../../public/divami_icons/download.svg";
 import ProcoreLink from "../../container/procore/procoreLinks";
 import ProcoreExist from "../../container/procore/procoreExist";
+import { useAppContext } from "../../../state/appState/context";
+import LinktoProcore from "../../container/LinktoProcore";
+import { IProjects } from "../../../models/IProjects";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -372,7 +375,6 @@ function BasicTabs(props: any) {
 
             "& .MuiTabs-indicator": {
               background: "blue",
-              width: value ? "80px !important" : "47px !important",
             },
           }}
         >
@@ -381,7 +383,6 @@ function BasicTabs(props: any) {
             label="Details"
             {...a11yProps(0)}
             style={{
-              marginRight: "40px",
               paddingLeft: "0px",
               color: "#101F4C",
               fontFamily: "Open Sans",
@@ -395,7 +396,7 @@ function BasicTabs(props: any) {
             label="Procore"
             {...a11yProps(0)}
             style={{
-              marginRight: "40px",
+              marginRight: "10px",
               paddingLeft: "0px",
               color: "#101F4C",
               fontFamily: "Open Sans",
@@ -900,6 +901,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const [procorePopup,setProcorePopup]= useState<boolean>(false)
   const [procoreExist,setPropcoreExist] =useState<boolean>(false)
   const [file, setFile] = useState<File>();
+const [showLink, setShowLink] = useState(false)
+
 
   useEffect(() => {
     setSelectedTask(task);
@@ -1156,6 +1159,10 @@ const CustomTaskDetailsDrawer = (props: any) => {
       saveEditDetails(data, projectId);
     }
   };
+  const { state: appState, appContextAction} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const taskUpdate = (data: any) => {
     // const issueData = _.cloneDeep(selectedTask);
     let issueData: any = {};
@@ -1245,9 +1252,10 @@ const CustomTaskDetailsDrawer = (props: any) => {
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
+            <div className="mr-[10px]">
             {providerType === 'procore' ? (
-   <div className="p-[6px] hover:bg-[#E7E7E7] "
-   >
+              procoreProjectId !== undefined  && procoreCompanyId !==undefined ?(
+                <div className="p-[6px] hover:bg-[#E7E7E7] ">
 
      <ProcoreLogo
        src={procore}
@@ -1256,13 +1264,22 @@ const CustomTaskDetailsDrawer = (props: any) => {
    onClick={()=>{
 if(!selectedTask.integration){ handleProcoreLinks()}}}
      />
-   </div> ) : (
+   </div>):
+   (<div>
+    <Tooltip title={'Link project to procore'}>
+       <ProcoreLogo
+       onClick={()=>setShowLink(true)}
+     src={procore} 
+     alt="logo"
+/></Tooltip>
+  </div>)) : (
    <ProcoreLogo
      src={procore} 
      alt="logo"
      title="Login via Procore required"
    />
       )}
+      </div>
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1333,6 +1350,7 @@ if(!selectedTask.integration){ handleProcoreLinks()}}}
           />
         </CustomDrawer>
       )}
+      {showLink? <LinktoProcore setShowLink={setShowLink} refetchProject={(newData: IProjects)=>appContextAction.appAction.setCurrentProjectData({ project: newData , structureList: appState.currentProjectData?.structureList!, hierarchy: appState.currentProjectData?.hierarchy! })} />: null}
     </>
   );
 };
