@@ -55,10 +55,12 @@ const Issues = ({
   issueOpenDrawer,
   issuePriorityList,
   issueStatusList,
+  fetchProject=()=>{},
   issueTypesList,
   issueFilterState,
   setIssueFilterState,
   closeIssueCreate,
+  project,
   deleteTheIssue,
   openIssueDetails,
   closeIssueDetails,
@@ -428,7 +430,9 @@ const Issues = ({
             issueStatus={issueStatusList}
             projectUsers={projectUsers}
             currentProject={currentProject}
+            project={project}
             currentStructure={currentStructure}
+            fetchProject={fetchProject}
             currentSnapshot={currentSnapshot}
             contextInfo={contextInfo}
             setIssueList={setIssueList}

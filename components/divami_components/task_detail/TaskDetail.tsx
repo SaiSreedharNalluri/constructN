@@ -890,6 +890,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     getTasks,
     deleteTheAttachment,
     setTaskList,
+    project,
+    fetchProject=()=>{},
   } = props;
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
@@ -1159,8 +1161,7 @@ const [showLink, setShowLink] = useState(false)
       saveEditDetails(data, projectId);
     }
   };
-  const { state: appState, appContextAction} = useAppContext();
-  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectDetails= project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const taskUpdate = (data: any) => {
@@ -1350,7 +1351,7 @@ if(!selectedTask.integration){ handleProcoreLinks()}}}
           />
         </CustomDrawer>
       )}
-      {showLink? <LinktoProcore setShowLink={setShowLink} refetchProject={(newData: IProjects)=>appContextAction.appAction.setCurrentProjectData({ project: newData , structureList: appState.currentProjectData?.structureList!, hierarchy: appState.currentProjectData?.hierarchy! })} />: null}
+      {showLink? <LinktoProcore setShowLink={setShowLink} refetchProject={fetchProject} />: null}
     </>
   );
 };

@@ -103,7 +103,7 @@ const getCompanies = ({
 
 interface Props { 
 	setShowLink?: React.Dispatch<React.SetStateAction<boolean>>; 
-	refetchProject?: (newData: IProjects) => void 
+	refetchProject?: () => void 
 }
 
 const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Props ) => {
@@ -258,7 +258,7 @@ const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Pr
 											router.query.projectId as string
 										);
 										CustomToast("Project Linked Successfull!","success")
-										refetchProject(resp.result);
+										refetchProject();
 										setShowLink(false);
 									}}
 								>

@@ -958,8 +958,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     getIssues,
     deleteTheAttachment,
     issueLoader,
+    fetchProject=()=>{},
     setIssueLoader,
+    project,
   } = props;
+
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
@@ -1318,8 +1321,7 @@ const  handleCloseProcore=()=>{
   const updatedselectedIssue =(issueData:any)=>{
       setSelectedIssue(issueData)
   }
-  const { state: appState, appContextAction} = useAppContext();
-  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectDetails= project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   return (
@@ -1487,7 +1489,7 @@ const  handleCloseProcore=()=>{
           callBackvalue={onDeleteIssue}
         />
       )} */}
-      {showLink? <LinktoProcore setShowLink={setShowLink} refetchProject={(newData: IProjects)=>appContextAction.appAction.setCurrentProjectData({ project: newData , structureList: appState.currentProjectData?.structureList!, hierarchy: appState.currentProjectData?.hierarchy! })} />: null}
+      {showLink? <LinktoProcore setShowLink={setShowLink} refetchProject={fetchProject} />: null}
     </>
     
   );
