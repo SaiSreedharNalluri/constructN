@@ -1,17 +1,16 @@
 import styled from "@emotion/styled";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import Image from "next/image";
 
-export const FilterCommonMain = styled("div")((props: any) => ({
+export const FilterCommonMain = styled("div")({
   width: "438px",
   // height: "100%",
-  display: props.isFlex ? "flex" : "block",
+  display: "block",
   height: "calc(100vh - 60px)",
   paddingLeft: "20px",
   paddingRight: "20px",
-  flexDirection: "column",
   overflowY:"hidden"
-})) as any;
-
+});
 export const HeaderContainer = styled("div")({
   backgroundColor: "white",
   height: "51px",
@@ -47,21 +46,14 @@ export const HeaderRightSection = styled.div({
 });
 export const HeaderRightSectionResetIcon = styled.div({
   marginRight: "7px",
-  borderRadius:"10%",
+  borderRadius:"10px",
   padding:"6px",
   "&:hover": {
     cursor: "pointer",
     background:"#E7E7E7"
   },
 });
-export const HeaderRightSectionCloseIcon = styled.div({
-  borderRadius:"50%",
-  padding:"4px",
-  "&:hover": {
-    cursor: "pointer",
-    background:"#E7E7E7"
-  },
-});
+
 export const HeaderRightSectionResetText = styled.div({
   marginRight: "10px",
   borderRight: "1px solid #d9d9d9",
@@ -70,23 +62,21 @@ export const HeaderRightSectionResetText = styled.div({
   fontStyle: "normal",
   fontWeight: "400",
   color: " #F1742E",
-  cursor: "pointer",
 });
 
-export const FilterHeader = styled.div({
-  fontWeight: "500",
-  color: "#101F4C",
-  fontFamily: "Open Sans",
-  fontStyle: "normal",
-  fontSize: "16px",
-  marginTop: "20px",
+export const HeaderRightSectionCloseIcon = styled.div({
+  borderRadius:"50%",
+  padding:"4px",
+  "&:hover": {
+    cursor: "pointer",
+    background:"#E7E7E7"
+  },
 });
-
 export const HeaderRightSectionCancel = styled.div({});
 
-export const FilterCardContainer = styled.div`
-  margin-top: 20px;
-`;
+export const FilterCardContainer = styled.div({
+  marginTop: "20px",
+});
 
 export const FilterCardSecondContainer = styled.div({
   marginTop: "50px",
@@ -102,12 +92,17 @@ export const FormElementContainer = styled(Box)({
   // paddingRight: "20px",
 });
 
-export const StyledLabel = styled(Typography)`
-  font-weight: 400;
-  line-height: 20px;
-  font-size: 14px;
-  margin-bottom: 8px;
-`;
+export const StyledLabel = styled(Typography)({
+  fontWeight: "400",
+  lineHeight: "20px",
+  fontSize: "14px",
+  marginBottom: "8px",
+});
+
+// export const FilterCardTitleText = styled.div({
+//   color: " #101f4c",
+//   fontFamily:""
+// })
 
 export const FilterCardTitleText = styled.div`
   color: #101f4c;
@@ -128,6 +123,16 @@ export const FilterCardSelectAll = styled.div`
   margin-right: 20px;
   // border-bottom: 1px solid #d9d9d9;
 `;
+export const RefreshIcon = styled(Image)({
+  cursor: "pointer",
+  width: "18px",
+  height: "15px",
+});
+export const CloseIcon = styled(Image)({
+  cursor: "pointer",
+  width: "24px",
+  height: "24px",
+});
 
 export const FilterCardSelectAllSpan = styled.span`
   display: flex;
@@ -135,7 +140,6 @@ export const FilterCardSelectAllSpan = styled.span`
 
 export const FilterCardSelectAllText = styled.div`
   margin-left: 10px;
-
   color: #101f4c;
 
   font-family: "Open Sans";
@@ -176,16 +180,24 @@ export const FilterCommonHeader = styled.div`
   height: 52px;
 `;
 
+export const FilterFooter = styled.div`
+  // height: calc(100% - 50px);
+  // margin-top: 72px;
+`;
+
 export const FilterCommonBody = styled.div({
   // marginBottom: "50px",
   overflowY: "auto",
   height: "calc(100% - 130px)",
 });
 
-export const FilterText = styled.div({
-  fontSize: "16px",
-  color: "#101F4C",
-});
+// export const FilterCommonBody = styled.div`
+//   // height: calc(100% - 50px);
+//   margin-bottom: 50px;
+
+//   overflowY: "auto",
+//   height: "calc(100% - 132px)",
+// `;
 
 export const FilterCommonFooter = styled.div`
   // border: 1px solid blue;
@@ -267,7 +279,6 @@ export const DatePickerContainer = styled(Box)`
   flex-direction: column;
 `;
 
-export const FilterFooter = styled.div`
-  // height: calc(100% - 50px);
-  // margin-top: 72px;
-`;
+// export const FormElementContainer = styled(Box)({
+//   marginTop: '8px'
+// })

@@ -24,7 +24,7 @@ return(<React.Fragment>
 </div>
 {Object.keys(projectUplObj).length > 0 ? Object.keys(projectUplObj).map((projectId)=>{
 return(
-<div key={projectId} onClick={ ()=>{router.push(`/projects/${projectId}/uploader`)}} className="flex justify-between  mx-auto mt-2 bg-[#F3F4F6] hover:bg-[#E7E7E7] text-base p-[10px]">
+<div key={projectId} onClick={ ()=>{router.push(`/projects/${projectId}/uploader`),handleUploaderClose()}} className="flex justify-between  mx-auto mt-2 bg-[#F3F4F6] hover:bg-[#E7E7E7] text-base p-[10px]">
 <div className="ml-[20px]">
 {getProjectName(projectId)}
 </div>

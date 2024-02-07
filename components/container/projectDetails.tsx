@@ -216,20 +216,23 @@ const ProjectDetails: React.FC = () => {
             <div>
               <h1 className="text-[#101F4C] font-normal font-sans text-lg">Project Details</h1>
             </div>
-            {providerType === 'procore' ? <div className="flex">
+            <div className="flex">
+              {providerType === 'procore' ? <>
               {procoreProjectId ? <div className="text-[#252BBE] cursor-pointer mr-4" onClick={()=>(window.open(`${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/home`,'_blank'))}>Project Id : {procoreProjectId}</div> :<div
                 className=" text-[#F1742E] cursor-pointer mr-4"
                 onClick={() =>setShowLink(true)}
               >
                 <p>Link Project to Procore</p>
               </div>}
+              </>: null}
+              
               <div
                 className=" text-[#F1742E] cursor-pointer"
                 onClick={() => handleEditOpen()}
               >
                 <p>Edit Details</p>
               </div>
-            </div>: null}
+            </div>
           </div>
           <div className=" px-4 " >
           <div className="w-full  flex border-2 border-gray-400 rounded-md">

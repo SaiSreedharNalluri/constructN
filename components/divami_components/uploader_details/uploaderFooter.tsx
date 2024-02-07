@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, LinearProgress } from "@mui/material";
 import { useUploaderContext } from "../../../state/uploaderState/context";
-import { UploaderStep } from "../../../state/uploaderState/state";
+import { UploaderPopups, UploaderStep } from "../../../state/uploaderState/state";
 import { backbuttonStyle, nextButtonStyle } from "./uploaderStyles";
 import { calculateTotalFileSize } from "../../../utils/utils";
 import  Warning  from "../../../public/divami_icons/Warning_Icon.svg";
@@ -10,7 +10,6 @@ import PopupComponent from "../../popupComponent/PopupComponent";
 const UploaderFooter: React.FC<any> = ({ }) => {
   const { state, uploaderContextAction } = useUploaderContext();
   const { uploaderAction } = uploaderContextAction;
-  const [showPopUp, setshowPopUp] = useState(false);
   const containerStyle: React.CSSProperties = {
     display: "flex",
     justifyContent: "space-between",
@@ -43,7 +42,12 @@ const UploaderFooter: React.FC<any> = ({ }) => {
     const discardButton = (
       <Button
         variant="text"
-        onClick={() => {setshowPopUp(true)}}
+        onClick={() => {
+          uploaderAction.setIsShowPopup({
+            isShowPopup: true, 
+            popupType: UploaderPopups.discard, 
+          })
+        }}
       >
         <p className="text-[#F1742E]">Discard</p>
       </Button>
@@ -217,18 +221,6 @@ const UploaderFooter: React.FC<any> = ({ }) => {
           {renderButtons()}
         </div>
       </div>
-      <PopupComponent
-        open={showPopUp}
-        setShowPopUp={setshowPopUp}
-        modalTitle={'Alert'}
-        modalmessage={'All your progress will be lost and cannot be recovered. Are you sure you want to discard?'}
-        primaryButtonLabel={"Yes"}
-        SecondaryButtonlabel={"No"}
-        callBackvalue={() => {
-          uploaderAction.startNewUpload()
-          setshowPopUp(false);
-        }}
-      />
     </React.Fragment>)
 };
 

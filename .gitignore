@@ -46,3 +46,6 @@ newrelic_agent.log
 .env.backup
 
 /config/config.ts
+dockerfile
+config/config.ts.qa
+config/config.ts.dev

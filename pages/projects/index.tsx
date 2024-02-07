@@ -231,7 +231,8 @@ const Index: React.FC<any> = () => {
     {
       label: "View Project Summary",
       action: (id?: string) => {
-        router.push(`/projects/${id}/sections`);
+        router.push({pathname:`/projects/[projectId]/sections`,
+        query:{projectId:id}});
       },
     },
     {
@@ -244,13 +245,15 @@ const Index: React.FC<any> = () => {
     {
       label: "Project Details",
       action: (id?: string) => {
-        router.push(`/projects/${id}/settings`);
+        router.push({pathname:`/projects/[projectId]/settings`,
+        query:{projectId:id}});
       },
     },
     {
       label: "Manage Users",
       action: (id: string) => {
-        router.push(`/projects/${id}/usersList`);
+        router.push({pathname:`/projects/[projectId]/usersList`,
+        query:{projectId:id}});
       },
     },
     {
@@ -344,6 +347,7 @@ const Index: React.FC<any> = () => {
 
       get2dProgressDetails().then((res)=>(setD2Details(res.data.result))).catch(()=>{ setD2Details({})});
       
+      appAction.projectListViewLoaded();
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {

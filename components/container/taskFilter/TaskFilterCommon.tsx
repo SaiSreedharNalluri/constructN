@@ -60,11 +60,13 @@ import CustomLabel from "../../divami_components/custom-label/CustomLabel";
 import FormWrapper from "../../divami_components/form-wrapper/FormWrapper";
 import { DATE_PICKER_DATA } from "../../divami_components/create-issue/body/Constants"; 
 import CustomButton from "../../divami_components/custom-button/CustomButton";
-import TaskFilterFormWrapper from "./TaskFilterWrapper";
+import TaskFilterFormWrapper from "../../divami_components/task-filter-common/TaskFilterWrapper";
 import { IProjectUsers } from "../../../models/IProjects";
 import { getProjectUsers } from "../../../services/project";
 import CustomMiniLoader from "../../divami_components/custom_loader/CustomMiniLoader";
 import router from "next/router";
+import { IToolbarAction } from "../../../models/ITools";
+import { useApiDataContext } from "../../../state/projectConfig/projectConfigContext";
 interface IProps {
   closeOverlay?: () => void;
   visibility?: boolean;
@@ -80,6 +82,7 @@ interface IProps {
   taskStatus: any;
   taskTag:any;
   projectUsers: any;
+  toolClicked: (toolAction:IToolbarAction) => void;
 }
 
 // const Footer = () => {
@@ -94,15 +97,17 @@ const CloseIcon = styled(Image)({
 const RefreshIcon = styled(Image)({
   cursor: "pointer",
   width: "18px",
-  height: "15px",
+  height: "22px",
 });
 const TaskFilterCommon: React.FC<any> = ({
   onClose,
   closeTaskFilterOverlay,
   handleOnFilter,
   taskFilterState,
+  toolClicked
 }) => {
   // console.log("tasksListapi", tasksList);
+  const { taskinitialTypes,taskinitialPriority,taskinitialStatus,initialProjectUsersList,taskTagsList } = useApiDataContext();
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
   const [taskTypes, setTaskType] = useState<[string]>();
@@ -116,10 +121,10 @@ const TaskFilterCommon: React.FC<any> = ({
     {
       title: "Type",
       code: "taskType",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "RFI", optionStatus: "T" },
-        { optionTitle: "Transmittals", optionStatus: "T" },
+        { optionTitle: "RFI", optionStatus: "F" },
+        { optionTitle: "Transmittals", optionStatus: "f" },
         { optionTitle: "Submittals", optionStatus: "F" },
         // { optionTitle: "Commissioning", optionStatus: "T" },
         // { optionTitle: "Design", optionStatus: "F" },
@@ -128,20 +133,20 @@ const TaskFilterCommon: React.FC<any> = ({
     {
       title: "Priority",
       code: "taskPriority",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "Low", optionStatus: "T" },
-        { optionTitle: "Medium", optionStatus: "T" },
+        { optionTitle: "Low", optionStatus: "F" },
+        { optionTitle: "Medium", optionStatus: "F" },
         { optionTitle: "High", optionStatus: "F" },
       ],
     },
     {
       title: "Status",
       code: "taskStatus",
-      selectAllStatus: "T",
+      selectAllStatus: "F",
       options: [
-        { optionTitle: "In Progress", optionStatus: "T" },
-        { optionTitle: "Blocked", optionStatus: "T" },
+        { optionTitle: "In Progress", optionStatus: "F" },
+        { optionTitle: "Blocked", optionStatus: "F" },
         { optionTitle: "To-do", optionStatus: "F" },
         { optionTitle: "Completed", optionStatus: "F" },
       ],
@@ -181,39 +186,44 @@ const TaskFilterCommon: React.FC<any> = ({
     setLoader(true)
     if (router.isReady) {
       try{
-        getTasksTypes(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            setTaskType(response.result);
-          }
-        });
-        getTasksPriority(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            setTaskPriority(response.result);
-          }
-        });
-        getProjectUsers(router.query.projectId as string)
-          .then((response) => {
-            if (response.success === true) {
-              setProjectUsers(response.result);
-            }
-          })
-          .catch();
-        getTaskStatus(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            setTaskStatus(response.result);
-          }
-        });
-        getTaskTags(router.query.projectId as string).then((response) => {
-          if (response.success === true) {
-            let newArr = [...response.result[0].tagList]
-            setTagStatus(response.result[0].tagList);
+        setTaskType(taskinitialTypes)
+        setTaskPriority(taskinitialPriority)
+        setProjectUsers(initialProjectUsersList)
+        setTaskStatus(taskinitialStatus)
+        setTagStatus(taskTagsList)
+        // getTasksTypes(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     setTaskType(response.result);
+        //   }
+        // });
+        // getTasksPriority(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     setTaskPriority(response.result);
+        //   }
+        // });
+        // getProjectUsers(router.query.projectId as string)
+        //   .then((response) => {
+        //     if (response.success === true) {
+        //       setProjectUsers(response.result);
+        //     }
+        //   })
+        //   .catch();
+        // getTaskStatus(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     setTaskStatus(response.result);
+        //   }
+        // });
+        // getTaskTags(router.query.projectId as string).then((response) => {
+        //   if (response.success === true) {
+        //     let newArr = [...response.result[0].tagList]
+        //     setTagStatus(response.result[0].tagList);
            
-          }
+        //   }
           setLoader(false)
-        });
+        // });
        
       }catch(error){
-        setLoader(false)
+        // setLoader(false)
       } 
     }
   }, []);
@@ -492,6 +502,7 @@ const TaskFilterCommon: React.FC<any> = ({
   };
 
   const onFilterApply = () => {
+    console.log("on apply function");
     let data: any = {};
     data.taskType = [];
     data.taskPriority = [];
@@ -532,7 +543,8 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     data.fromDate = startDate[0].defaultValue;
     data.toDate = dueDate[0].defaultValue;
-    handleOnFilter(data);
+    let handleTaskFilter : IToolbarAction = { data: data, type: "handleTaskFilter" };
+    toolClicked(handleTaskFilter)
     handleClose();
   };
   useEffect(() => {
@@ -583,6 +595,11 @@ const TaskFilterCommon: React.FC<any> = ({
     });
     SetFilterState(temp);
   }
+  else{
+    let handleIssueCloseFilter : IToolbarAction = { data:"", type: "closeTaskOverlay" };
+    toolClicked(handleIssueCloseFilter)
+    closeTaskFilterOverlay();
+  }
   }, [optionState]);
 
   const onReset = () => {
@@ -598,6 +615,11 @@ const TaskFilterCommon: React.FC<any> = ({
     setDueData(DATE_PICKER_DATA);
     setAssignees([assignees]);
     SetFilterState(temp);
+    if(taskFilterState.numberOfFilters >=1){
+    let handleIssueCloseFilter : IToolbarAction = { data:"", type: "closeTaskOverlay" };
+    toolClicked(handleIssueCloseFilter)
+    }
+    // closeTaskFilterOverlay();
   };
 
   const formHandler = (event: any) => {
@@ -626,7 +648,7 @@ const TaskFilterCommon: React.FC<any> = ({
               <HeaderLeftSectionText>Filters</HeaderLeftSectionText>
             </HeaderLeftSection>
             <HeaderRightSection>
-              <HeaderRightSectionResetIcon>
+              <HeaderRightSectionResetIcon className="flex item-center">
                 <RefreshIcon
                   src={newRefreshIcon}
                   alt="reset"
@@ -641,11 +663,12 @@ const TaskFilterCommon: React.FC<any> = ({
                     onReset();
                   }}
                 /> */}
-              </HeaderRightSectionResetIcon>
-              <HeaderRightSectionResetText>Reset</HeaderRightSectionResetText>
+              
+              <label className="ml-[10px] br-[10px] border-solid bordder-[#d9d9d9] pr-[15px] font-sans font-normal text-[#F1742E]">Reset</label>
               {/* <Image src={closeIcon} alt="reset"   onClick={() => {
               handleClose();
               }} /> */}
+              </HeaderRightSectionResetIcon>
              <HeaderRightSectionCloseIcon >
               <CloseIcon
                 onClick={() => {

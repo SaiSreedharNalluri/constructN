@@ -14,10 +14,11 @@ export const resetUploaderState = (): UploaderState => {
 export const uploaderReducer = (state: UploaderState, action: UploaderActions): UploaderState => {
     switch (action.type) {
         case UploaderActionType.startNewUpload: 
-          
+            let {error: errorCount, duplicate: initDuplicate} = validateGCPList(getInitialGCPList(false))
             return {
                 ...state,
-                step:state.step === UploaderStep.Upload  ? UploaderStep.Details : UploaderStep.Upload,
+                // step:state.step === UploaderStep.Upload  ? UploaderStep.Details : UploaderStep.Upload,
+                step: UploaderStep.Details,
                 structure: undefined,
                 date: undefined,
                 isNextEnabled: false,
@@ -31,7 +32,8 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 filesDropped: false,
                 gcpType: GCPType.LONGLAT,
                 gcpList: getInitialGCPList(false), // default is LONGLAT
-                errorCount: validateGCPList(getInitialGCPList(false)).error,
+                errorCount: errorCount,
+                duplicateInGCP: initDuplicate,
                 isGCPInit: true,
                 skipGCP: false,
                 selectedJob: undefined,
@@ -57,13 +59,18 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 filesDropped: false,
                 isNextEnabled: isNext(state, previousStep)
             }
-        case UploaderActionType.Next: 
-        console.log("TestingUploader: in reducer next");
+        case UploaderActionType.Next:
             let nextStep = state.step + 1
             return {
                 ...state,
                 step: nextStep,
                 isNextEnabled: isNext(state, nextStep),
+            }
+        case UploaderActionType.Discard:
+            return {
+                ...state,
+                step: UploaderStep.Upload,
+                updateJobs: true
             }
         case UploaderActionType.skipGCP: 
             return {
@@ -132,13 +139,16 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 base64Code: state.gcpList.base64Code,
                 description: state.gcpList.description
             }
-            let {error: newError, length: newLength} = validateGCPList(newGCPList)
+            let {error: newError, duplicate: newDuplicate, length: newLength} = validateGCPList(newGCPList)
             return {
                 ...state,
                 gcpType: action.payload.type,
                 gcpList: newGCPList,
                 errorCount: newError,
-                isNextEnabled: newError === 0 && newLength >= 4
+                duplicateInGCP: newDuplicate,
+                isNextEnabled: newError === 0 && newLength >= 4  && (newDuplicate.reduce((prev, cur):boolean => {
+                    return prev || cur
+                }, false) !== true)
             }
         case UploaderActionType.setGCPList:
             let gcpList: IGCP = { 
@@ -147,15 +157,17 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 base64Code: state.gcpList.base64Code,
                 description: state.gcpList.description
             }
-            let {error, length} = validateGCPList(gcpList)
-            
+            let {error, duplicate, length} = validateGCPList(gcpList)
             return{
                 ...state,
                 isGCPInit: false,
                 gcpList: gcpList,
                 gcpType: action.payload.type,
                 errorCount: error,
-                isNextEnabled: error === 0 && length >= 4
+                duplicateInGCP: duplicate,
+                isNextEnabled: error === 0 && length >= 4  && (duplicate.reduce((prev, cur):boolean => {
+                    return prev || cur
+                }, false) !== true)
             }
         case UploaderActionType.setGCPBase64:
             let updatedBase64GCP: IGCP = {
@@ -222,6 +234,25 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 ...state,
                 inProgressWorkers: newWorkerStatus
             }
+        case UploaderActionType.updateJobStatus:
+            let jobToUpdate = action.payload.job
+            if (jobToUpdate.project == state.project?._id && state.step == UploaderStep.Upload) {
+                let captureJobs = state.pendingProcessJobs.concat(state.pendingUploadJobs)
+                captureJobs.forEach((job) => {
+                  if (job._id === jobToUpdate._id) {
+                    job.status = jobToUpdate.status
+                  }
+                })
+                let pendingUploadJobs: IJobs[] = captureJobs.filter((e) => (e.status === JobStatus.pendingUpload || e.status === JobStatus.uploadFailed));
+                let pendingProcessJobs: IJobs[] = captureJobs.filter((e) => e.status === JobStatus.uploaded);
+                return {
+                    ...state,
+                    pendingUploadJobs: pendingUploadJobs,
+                    pendingProcessJobs: pendingProcessJobs,
+                    selectedJob: jobToUpdate.status == JobStatus.uploadFailed ? jobToUpdate : undefined
+                }
+            }
+            return state
         case UploaderActionType.removeWorker:
             if( state.inProgressWorkers) {
                 let {[action.payload.captureId]: _, ...workersMap} = state.inProgressWorkers
@@ -250,7 +281,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 return {
                     ...state,
                     selectedJob: action.payload.job,
-                    currentUploadFiles: state.inProgressWorkers && state.inProgressWorkers[selectedCaptureId]
+                    retryUploadFiles: state.inProgressWorkers && state.inProgressWorkers[selectedCaptureId]
                 }
         case UploaderActionType.setShowRetry:
                 return {
@@ -292,33 +323,46 @@ const getCurrentPopup = (state: UploaderState, popupType: UploaderPopups, messag
         case UploaderPopups.deleteJob:
             return {
                 type: popupType,
-                modalTitle: 'Confirm Discard',
-                modalMessage: `Are you sure you want to discard ? 
+                modalTitle: 'Confirm Delete',
+                modalMessage: `Are you sure you want to Delete ? 
                 This action is irreversible, and all data will be lost.`,
                 primaryButtonLabel: 'Yes',
                 secondaryButtonlabel: 'Cancel',
             }
+        case UploaderPopups.discard:
+            return {
+                type: popupType,
+                modalTitle: 'Confirm Discard',
+                modalMessage: `All your progress will be lost and cannot be recovered. Are you sure you want to discard?`,
+                primaryButtonLabel: 'Yes',
+                secondaryButtonlabel: 'No',
+            }
     }
 }
 
-const validateGCPList = (list: IGCP): {error: number, length: number} => {
+const validateGCPList = (list: IGCP): {error: number, duplicate: boolean[], length: number} => {
     if(list.location && list.location.length > 0 ) {
         return {
-            error: list.location.reduce((errorCount, latLng): number => {
-                return errorCount += getLongLatValidationErrorCount(latLng) // && validateLongitude(latLng.coordinates[0]) && validateLatitude(latLng.coordinates[1]) && latLng.elevation? validateAltitudeOrElevation(latLng.elevation) : false
-            }, 0), 
+            ...list.location.reduce((errorCount, latLng, index, array):{error: number, duplicate: boolean[]} => {
+                let errors = getLongLatValidationErrorCount(latLng)
+                errorCount.duplicate[index] = errors == 0 ? checkDuplicateLongLat(index, array) : false
+                return {error: errorCount.error += errors , duplicate: errorCount.duplicate}
+            }, {error: 0, duplicate: Array<boolean>(list.location.length).fill(false)}), 
             length: list.location.length
         }
     } else if (list.utmLocation && list.utmLocation.length > 0) {
         return {
-            error: list.utmLocation.reduce((errorCount, utm): number => {
-                return errorCount += getUTMValidationErrorCount(utm) // && validateEasting(utm.easting) && validatingNorthing(utm.northing) && validateUTMZone(utm.zone) && utm.elevation? validateAltitudeOrElevation(utm.elevation) : false
-            }, 0),
+            ...list.utmLocation.reduce((errorCount, utm, index, array): {error: number, duplicate: boolean[]} => {
+                let errors = getUTMValidationErrorCount(utm)
+                errorCount.duplicate[index] = errors == 0 ? checkDuplicateUTM(index, array) : false
+                return {error: errorCount.error += errors , duplicate: errorCount.duplicate}
+            }, {error: 0, duplicate: Array<boolean>(list.utmLocation.length).fill(false)}),
             length: list.utmLocation.length
         }
     }
     return {
         error: 0,
+        duplicate: [],
         length: 0
     };
 }
@@ -338,6 +382,29 @@ const getLongLatValidationErrorCount = (latLng: location): number => {
     return errorCount
 }
 
+const checkDuplicateUTM = (index: number, array: utmLocation[]): boolean => {
+    for (let i = 0; i < index; i++) {
+        if ((array[i].easting === array[index].easting) &&
+        (array[i].northing === array[index].northing) && 
+        (array[i].zone === array[index].zone) &&
+        (array[i].elevation === array[index].elevation)) {
+            return true
+        }
+    }
+    return false
+}
+
+const checkDuplicateLongLat = (index: number, array: location[]): boolean => {
+    for (let i = 0; i < index; i++) {
+        if ((array[i].coordinates[0] === array[index].coordinates[0]) &&
+        (array[i].coordinates[1] === array[index].coordinates[1]) && 
+        (array[i].elevation === array[index].elevation)) {
+            return true
+        }
+    }
+    return false
+}
+
 const isNext = (state: UploaderState, step: UploaderStep): boolean => {
     switch (step) {
         case UploaderStep.Details:
@@ -345,8 +412,10 @@ const isNext = (state: UploaderState, step: UploaderStep): boolean => {
         case UploaderStep.ChooseFiles:
             return state.choosenFiles.validFiles.length >= UploadRange.Minimum;
         case UploaderStep.ChooseGCPs:
-            let {error, length} = validateGCPList(state.gcpList);
-            return error === 0 && length >= 4
+            let {error, duplicate, length} = validateGCPList(state.gcpList);
+            return error === 0 && length >= 4 && (duplicate.reduce((prev, cur):boolean => {
+                return prev || cur
+            }, false) !== true)
         case UploaderStep.Review:
             return true;
         case UploaderStep.Upload:

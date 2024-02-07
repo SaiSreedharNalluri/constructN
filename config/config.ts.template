@@ -60,3 +60,7 @@ export const PROCORE = {
     GRANT_TYPE: '${PROCORE_GRANT_TYPE}'
 
 }
+
+export const MULTIVERSE = {
+    ORIGIN_URL : "${MULTIVERSE_ORIGIN_URL}",
+}

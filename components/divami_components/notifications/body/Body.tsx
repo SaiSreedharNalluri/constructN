@@ -61,16 +61,19 @@ const Body = ({
     switch (notificationObj.title)
     {
       case 'Project Updated': 
-          router.push(`/projects/${notificationObj?.configuration?.project}/settings`);
+          //router.push(`/projects/${notificationObj?.configuration?.project}/settings`);
+          router.push({pathname:"/projects/[projectId]/settings",query:{projectId:notificationObj?.configuration?.project}})
         break;
       case 'Project User Assigned':
-          router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
+          //router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
+          router.push({pathname:"/projects/[projectId]/usersList",query:{projectId:notificationObj?.configuration?.project}})
         break; 
         case 'Project User Deassigned':
           //router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
         break; 
         case 'Project User Role Changed':
-          router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
+          //router.push(`/projects/${notificationObj?.configuration?.project}/usersList`); 
+          router.push({pathname:"/projects/[projectId]/usersList",query:{projectId:notificationObj?.configuration?.project}})
         break;    
     }
   }
@@ -78,19 +81,25 @@ const Body = ({
     switch (notificationObj.title)
     {
         case 'Issue Created':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
           break;
         case 'Issue Modified':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
+          
           break;
         case 'Issue User Assigned': 
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
           break;
         case 'Issue User Deasigned':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
           break; 
         case 'Issue Deleted':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
         break; 
       }
   }
@@ -98,19 +107,24 @@ const Body = ({
     switch (notificationObj.title)
     {
       case 'Task Created':
-        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`)
+        router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`)
         break;
       case 'Task Modified':
-        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`)
+        router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`)
         break;
         case 'Task User Assigned': 
-        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+        router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
         break;
         case 'Task User Deasigned':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`); 
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`); 
         break; 
         case 'Task Deleted':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
         break; 
       }
   }
@@ -118,10 +132,12 @@ const Body = ({
     switch (notificationObj.title)
     {
        case 'Project Struct Added':
-          router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
+        router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
           break;
         case 'Project Struct Modified': 
-        router.push(`/projects/${notificationObj?.configuration?.project}/sections`);
+        router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/sections`);
         break;
       }
   }
@@ -129,13 +145,16 @@ const Body = ({
     switch (notificationObj.title)
     {
        case 'Snapshot Added':
-          router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
+        router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
           break;
         case 'Snapshot Updated': 
-          router.push(`/projects/${notificationObj?.configuration?.project}/sections`);
+        router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/sections`);
           break;
         case 'Snapshot Disabled':
-          router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
+          router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
           break;
     }
   }
@@ -143,10 +162,12 @@ const Body = ({
     switch (notificationObj.title)
     {
       case 'Task Comment Added':
-        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+        router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
       break;
       case 'Task Comment Updated':
-        router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
+        router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
       break;
     }
   }
@@ -154,10 +175,12 @@ const Body = ({
     switch (notificationObj.title)
     {
       case 'Issue Comment Added':
-          router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+        router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
+        //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
         break; 
         case 'Issue Comment Updated':
-          router.push(`/projects/${notificationObj?.configuration?.project}structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
+          router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
+          //router.push(`/projects/${notificationObj?.configuration?.project}structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
         break; 
     }
   }

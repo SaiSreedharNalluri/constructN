@@ -141,7 +141,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           return(
             <div>
             {uploaderState.showRetry && uploaderState.selectedJob && uploaderState.selectedJob.status === JobStatus.uploadFailed && job._id === uploaderState.showRetry ?
-            (<div><AutorenewIcon color="warning" className="text-white bg-[#F1742E] rounded-full cursor-pointer"onClick={()=>{
+            (<div><AutorenewIcon color="warning" className="text-white bg-[#F1742E] rounded-full cursor-pointer"onClick={(event)=>{
+              event.stopPropagation();
             let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
             if(filesList != undefined)
             {
@@ -161,7 +162,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   }
   return (
     <React.Fragment>
-      <div className="calc-h130 bg-[#FFECE2] rounded-3xl shadow-[0px 4px 4px 0px #00000040] overflow-y-auto"
+      <div className="calc-h130 bg-[#FFECE2] rounded-3xl shadow-[0px 4px 4px 0px #00000040]"
        >
         <div className="relative top-[20px]  w-[90%] mx-auto">
                  <div style={{
@@ -175,7 +176,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
           }}>
           {isUploading?<p>Uploads In Progress</p>: <p >Pending Processing </p> }  
           </div>
-          <div className="overflow-x-hidden h-full mt-[12px]" style={{
+          <div className="overflow-x-hidden h-full mt-[12px]"  style={{
                         fontSize: "14px",
                         fontWeight: "600",
                         fontStyle: "normal",
@@ -185,7 +186,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                         color: "#101f4c",
           }}>
             {
-              data.length > 0 ?(<table className="w-full">
+              data.length > 0 ?(
+              <table className="w-full">
               <thead
                 className={`text-jusitfy sticky top-0 ${
                   isUploadedOn ? "bg-white" : "bg-[#FFECE2]"
@@ -229,7 +231,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
             </tr>
               </thead>
               <tbody
-                className="bg-grey-light flex flex-col items-center  overflow-y-auto w-full"
+                className="bg-grey-light flex flex-col items-center  w-full min-h-[20vh] max-h-[calc(60vh-72px)] overflow-y-auto"
               >
                 {data.map((job, index) => (
                   <tr
@@ -314,7 +316,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                 Ready to begin a new upload ? Click the button below to get started.</p>)
             }
             </div>
-          <div className="text-center mt-[10px]">
+          <div className="text-center mt-[10px] flex-1">
             <button
               className={`py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white ${
                 isUploadedOn && !value ? "bg-gray-400" : "bg-[#F1742E]"

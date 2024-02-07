@@ -23,13 +23,19 @@ const SelectTypesList = ({
   title,
   openselectlayer,
   onCloseHandler,
-  optionsList = {},
+  optionsList = [],
   onSelect,
   initData
 }: any) => {
+ 
+  
   const [searchTerm, setSearchTerm] = useState("");
-  const [list, setList] = useState(optionsList);
-  const [types,setTypes] = useState([])
+  // const [list, setList] = useState(optionsList);
+  const [types,setTypes] = useState<any>(undefined)
+  const [filteredItems, setFilteredItems] = useState<any>(optionsList);
+  // console.log("type bar values",types);
+ 
+  
   const mockSelectTypesData = [
     "Plan Drawings",
     "Cross Section Drawings",
@@ -57,26 +63,20 @@ const SelectTypesList = ({
   // };
 
   const onSearchChange = (event: any) => {
-    let parentList = [...optionsList];
     const searchFieldString = event.target.value.toLocaleLowerCase();
-    // console.log("searchFieldString", searchFieldString);
-    let newObj = parentList.filter((val: any) => {
-      return val.toLocaleLowerCase().includes(searchFieldString);
-    });
-    // console.log("newobjj", newObj);
-    setList([...newObj]);
+    console.log("search",searchFieldString);
+    let newObj = types?.filter((val: any) => 
+      val.toLocaleLowerCase().includes(searchFieldString)
+    );
+    setFilteredItems(newObj);
   };
-  useEffect(() => {
-    
-    if (Object.keys(optionsList)?.length) {
-      setList(Object.keys(optionsList));
-    }
-    setList(optionsList);
-  }, [optionsList]);
+  // useEffect(() => {
+  //   setTypes(initData?.currentTypesList);
+  // }, [initData?.currentTypesList]);
 
 useEffect(()=>{
   let types = initData
-  let result = types.currentViewTypeList.map((item:any,index:number)=>{
+  let result = types?.currentViewTypeList.map((item:any,index:number)=>{
     if(item === "pointCloud"){
       return "Reality";
     }
@@ -89,6 +89,7 @@ useEffect(()=>{
 }
 )
 setTypes(result)
+setFilteredItems(result)
 },[initData.currentViewTypeList])
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
@@ -126,8 +127,9 @@ setTypes(result)
           />
         </DrawerSearchBar>
         <ListStyled>
-          {list.currentViewTypeList?.length > 0 &&
-           types.map((item: any, index: number) => (
+        
+          {filteredItems?.length >0 && 
+           filteredItems?.map((item: any, index: number) => (
               <>
                 <ListItemStyled
                   className="custom-list-styled"
@@ -145,7 +147,7 @@ setTypes(result)
                 >
                   <ListItemText primary={item} />
                 </ListItemStyled>
-                {index !== list.length - 1 && <Divider></Divider>}
+                {index !== types?.length - 1 && <Divider></Divider>}
               </>
             ))}
         </ListStyled>

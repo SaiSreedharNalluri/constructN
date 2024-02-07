@@ -23,15 +23,21 @@ interface toolProps {
 export type toolBarHandle = {
   selectToolRef: (handleMenuInstance: any) => void;
   RouterIssueRef:(handleMenuInstance:any) => void;
- 
+  issueFilterState:(handleMenuInstance:any)=>void;
+  taskFilterState:(taskFilterState:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any,tasksStatusList:any)=>void;
 };
 export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
   handleRouterIssueRef: (handleMenuInstance: any) => void;
+  issueFilterState:(handleMenuInstance:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,issueStatusList:any)=>void;
 };
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
   handleRouterTask:(handleMenuInstance:any)=> void;
+  taskFilterState:(taskFilterState:any)=>void;
+  projectUsersAndStatus:(projectUsers:any,tasksStatusList:any)=>void;
 };
 
 export type designToolHandle = {
@@ -92,7 +98,20 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           taskRef.current?.handleRouterTask(handleMenuInstance)
         }
         
-      }
+      },
+      issueFilterState(issueFilterState:any){
+        
+        issueRef.current?.issueFilterState(issueFilterState)
+        
+      },
+      taskFilterState(taskFilterState:any){
+        taskRef.current?.taskFilterState(taskFilterState)
+      },
+      projectUsersAndStatus(projectUsers:any,issueStatusList:any,tasksStatusList:any){
+        issueRef.current?.projectUsersAndStatus(projectUsers,issueStatusList)
+        taskRef.current?.projectUsersAndStatus(projectUsers,tasksStatusList)
+      },
+
 
     };
   }, []);
@@ -215,6 +234,17 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
     let selectedTaskforDelete: IToolbarAction = { type: "removedTask", data: selectedTask };
     toolClicked(selectedTaskforDelete)
   }
+  const deleteTheAttachment = (id:any,type:string)=>{
+    if(type === "issue"){
+      let IssueAttachmentDelete: IToolbarAction = { type: "deleteIssueAttachment", data: id };
+      toolClicked(IssueAttachmentDelete) 
+    }
+    else if(type === "task"){
+      let TaskAttachmentDelete: IToolbarAction = { type: "deleteTaskAttachment", data: id };
+      toolClicked(TaskAttachmentDelete)
+    }
+    
+  }
   return initData ? (
     <SectionToolBar>
       <ToolbarContainer>
@@ -270,6 +300,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           highlightCreateIcon={highlightCreateIcon}
           handleOnIssueSort={handleOnIssueSort}
           issueMenuClicked={issueMenuClicked}
+          deleteTheAttachment={deleteTheAttachment}
           ref={issueRef}
           toolClicked={toolClicked}
         />
@@ -292,6 +323,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
           ref={taskRef}
           toolClicked={toolClicked}
           initData={initData}
+          deleteTheAttachment={deleteTheAttachment}
 
         />
 

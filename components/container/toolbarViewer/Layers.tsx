@@ -28,7 +28,7 @@ const LayerIcons = ({iconsList}:any)=>{
   const [myIconsList,setIconsList]= useState<ILayer[]>(iconsList);
   useEffect(()=>{setIconsList(iconsList)},[iconsList])
   return(<>
-{myIconsList.map((label: ILayer, index: number) => {
+{myIconsList?.map((label: ILayer, index: number) => {
           if (label.name === "Phone Image" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
@@ -151,7 +151,7 @@ const Layers = ({
         >
           <IconsContainer>
             {(initData&&(initData.currentLayersList.length > 0 ))? (
-              <>Layer:  <LayerIcons iconsList={initData.currentLayersList}></LayerIcons>
+              <>Layer:  <LayerIcons iconsList={myLayersList}></LayerIcons>
               </>
             ) : (
               "Select Layer"

@@ -40,6 +40,8 @@ import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
 import LinkExistingRfi from "./newRFI/linkExistingRfi";
 import LinkExistingObservation from "./procoreObservations/linkExistingObservations";
 import LinkExistingSubmittal from "./procoreSubmittal/linkExistingSubmittal";
+import { useUploaderContext } from "../../../state/uploaderState/context";
+import { useAppContext } from "../../../state/appState/context";
 
 const ProcoreLink = (props: any) => {
   const { handleCloseProcore,
@@ -51,26 +53,9 @@ const ProcoreLink = (props: any) => {
           updatedselectedIssue,
           getIssues,
           getTasks,} = props;
-  const [stateCheck, setStateCheck] = useState<boolean>(false)
+  console.log('procore pdf link page',gen)
 
-  const captureToPdf2 = async () => {
-    const element = document.getElementById("targetElementId");
-
-    if (element) {
-      try {
-        const pdf = new jsPDF();
-        pdf.html(element, {
-          callback: () => {
-            pdf.save("procore_link.pdf");
-          },
-        });
-      } catch (error) {
-        console.error("Error generating PDF:", error);
-      }
-    } else {
-      console.warn("Element not found");
-    }
-  };
+ 
   const [loading, setLoading] = useState(false)
   const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
 
@@ -90,6 +75,11 @@ const ProcoreLink = (props: any) => {
   const [scheduleImpactt, setScheduleImpact] = useState([]);
   const [costImpacts, setcostImpact] = useState([]);
  
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
+  
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -110,21 +100,21 @@ const ProcoreLink = (props: any) => {
         hazardData,
         typeData,
       ] = await Promise.all([
-        getRfiManager(),
-        getReceivedFrom(),
-        getResponsibleContractor(),
-        potentialDistributionMembers(),
-        specSection(),
-        getLocation(),
-        getcoastCode(),
-        getRfiStage(),
-        scheduleImpact(),
-        costImpact(),
-        tradeList(),
-        contributingBehaviorList(),
-        contributingConditionsList(),
-        hazardList(),
-        typesList(),
+        getRfiManager(procoreProjectId),
+        getReceivedFrom(procoreProjectId),
+        getResponsibleContractor(procoreProjectId),
+        potentialDistributionMembers(procoreProjectId),
+        specSection(procoreProjectId),
+        getLocation(procoreProjectId),
+        getcoastCode(procoreProjectId),
+        getRfiStage(procoreProjectId,procoreCompanyId),
+        scheduleImpact(procoreProjectId),
+        costImpact(procoreProjectId),
+        tradeList(procoreCompanyId),
+        contributingBehaviorList(procoreCompanyId),
+        contributingConditionsList(procoreCompanyId),
+        hazardList(procoreCompanyId),
+        typesList(procoreProjectId),
       ]);
 
       setRfiManager(rfiManagerData);
@@ -156,6 +146,7 @@ const ProcoreLink = (props: any) => {
       case "RFI":
         setSelectedComponent(
           <LinkNewRFI
+          gen={gen}
           getTasks={getTasks}
           getIssues={getIssues}
           updatedselectedIssue={updatedselectedIssue}

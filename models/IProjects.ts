@@ -10,8 +10,8 @@ export interface IProjects {
   contact?: Contact;
   address?: Address;
   // location?: number[] | null;
-  location?: location[];
-  utmLocation?:utmLocation[];
+  location?: location;
+  utm?:utmLocation;
   createdAt: string;
   updatedAt: string;
   jobsOpened?: number;
@@ -33,8 +33,12 @@ export interface MetaDetails {
   reportURL?: string
   projectIntend?:string
   projectId?:string
+  procore?:Procore
 }
-
+export interface Procore{
+  projectId?:number | undefined
+  companyId?:number |undefined
+}
 export interface Contact {
   code: string;
   number: number;
