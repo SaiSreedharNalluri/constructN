@@ -165,14 +165,13 @@ const LinkNewRFI = (props: any) => {
     createRfi(formData,procoreProjectId)
   .then((response) => {
     if (response) {
-      CustomToast("RFI Created successfully", "success");
 
       if (issue) {
     
         linkIssueRfi(issue.project, issue._id, response.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("RFI linked successfully", 'success');
+              CustomToast("RFI Created and linked successfully", "success");
               getIssues(issue.structure)
               handleCloseProcore();
             }
@@ -186,7 +185,7 @@ const LinkNewRFI = (props: any) => {
         linkTaskRfi(task.project, task._id, response.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("RFI linked successfully", 'success');
+              CustomToast("RFI Created and linked successfully", "success");
               getTasks(task.structure)
               handleCloseProcore();
             }

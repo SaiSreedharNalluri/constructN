@@ -10,6 +10,8 @@ module.exports = {
     extend: {
       display: ["group-focus"],
 
+      fontFamily: { sans : ['Open Sans'] },
+
       margin: {
         68: "272px",
         50: "28vh",
