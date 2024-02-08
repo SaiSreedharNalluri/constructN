@@ -126,7 +126,7 @@ const CustomSearch = (props: any) => {
             multiple={isMultiSelect}
             renderTags={() => null}
             renderOption={(props, option:any) => (
-              <li {...props}>
+              <li {...props}key={option.user._id}>
                 {option?.user?.avatar ? (
               <img src={option?.user?.avatar} alt={""} height={30} width={30} />
             ) : (

@@ -466,7 +466,7 @@ const Index: React.FC<IProps> = () => {
       getProjectUsers(router.query.projectId as string)
         .then((response: any) => {
           if (response.success === true) {
-            setProjectUsers(response.result);
+            setProjectUsers(response.result);           
           }
         })
         .catch();
@@ -1343,20 +1343,31 @@ const Index: React.FC<IProps> = () => {
         if (response.success === true) {
           CustomToast(response.message, "success");
           if (entity === "issue") {
-            initData?.currentIssueList.map((issueObj) => {
+            const updatedList:any = initData?.currentIssueList.map((issueObj) => {
               const index = issueObj.attachments.findIndex(
                 (obj: any) => obj._id === attachmentId
               );
               issueObj.attachments.splice(index, 1);
+              return issueObj;
             });
-            
+            if(initData){
+            const updatedInitData = { ...initData, currentIssueList: updatedList };
+            setInintData(updatedInitData);
+          }
+        
           } else {
-              initData?.currentTaskList.map((taskObj) => {
+            const updatedList:any = initData?.currentTaskList.map((taskObj) => {
               const index = taskObj.attachments.findIndex(
                 (obj: any) => obj._id === attachmentId
               );
               taskObj.attachments.splice(index, 1);
+              return taskObj;
             });
+            if(initData){
+              const updatedInitData = { ...initData, currentTaskList: updatedList };
+              setInintData(updatedInitData);
+            
+            }
           }
         }
       })

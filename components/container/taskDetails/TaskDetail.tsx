@@ -123,6 +123,7 @@ import Download from "../../../public/divami_icons/download.svg";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
 import CreateTask from "../createTask/CreateTask";
 import { IToolbarAction } from "../../../models/ITools";
+import { useApiDataContext } from "../../../state/projectConfig/projectConfigContext";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -180,7 +181,7 @@ function BasicTabs(props: any) {
     deleteTheAttachment,
     setTaskState,
   } = props;
-
+  const { taskinitialStatus , initialProjectUsersList } = useApiDataContext();
   const [value, setValue] = React.useState(0);
   const [issueTypeConfig, setIssueTypeConfig] = useState("");
   const [formState, setFormState] = useState({
@@ -210,8 +211,9 @@ function BasicTabs(props: any) {
     entity: string;
     _id: string;
 }>()
+const [delAttachment,setDelAttachment] = useState();
   useEffect(() => {
-    let temp = taskStatus?.map((task: any) => {
+    let temp = taskinitialStatus?.map((task: any) => {
       return {
         label: task,
         value: task,
@@ -233,7 +235,7 @@ function BasicTabs(props: any) {
         },
       ];
     });
-    let tempUsers = projectUsers?.map((each: any) => {
+    let tempUsers = initialProjectUsersList?.map((each: any) => {
       return {
         ...each,
         label: each.user?.fullName,
@@ -572,7 +574,7 @@ function BasicTabs(props: any) {
                 data-testid="assignee-options"
                 disablePortal
                 id="combo-box-demo"
-                options={projectUsers.map((each: any) => {
+                options={initialProjectUsersList.map((each: any) => {
                   return {
                     ...each,
                     label: each.user?.fullName,
@@ -711,6 +713,7 @@ function BasicTabs(props: any) {
                               alt={"delete icon"}
                               onClick={() => {
                                 setAttachmentPopup(true);
+                                setDelAttachment(a?._id)
                                }}
                               //className={`deleteIcon`}
                             />
@@ -720,26 +723,26 @@ function BasicTabs(props: any) {
                                 open={attachmentPopup}
                                 setShowPopUp={setAttachmentPopup}
                                 modalTitle={"Delete Attachment"}
-                                modalmessage={`Are you sure you want to delete this attachment "${a?._id} "?`}
+                                modalmessage={`Are you sure you want to delete this attachment "${delAttachment} "?`}
                                 primaryButtonLabel={"Delete"}
                                 SecondaryButtonlabel={"Cancel"}
                                 callBackvalue={() => {
                                   setAttachmentPopup(false);
-                                  deleteTheAttachment(a?._id, "task");
-                                  setTaskState((prev: any) => {
-                                    const updatedTabOne = {
-                                      ...prev.TabOne,
-                                      attachments:
-                                        prev.TabOne.attachments.filter(
-                                          (attachment: any) =>
-                                            attachment._id !== a?._id
-                                        ),
-                                    };
-                                    return {
-                                      ...prev,
-                                      TabOne: updatedTabOne,
-                                    };
-                                  });
+                                  deleteTheAttachment(delAttachment, "task");
+                                  // setTaskState((prev: any) => {
+                                  //   const updatedTabOne = {
+                                  //     ...prev.TabOne,
+                                  //     attachments:
+                                  //       prev.TabOne.attachments.filter(
+                                  //         (attachment: any) =>
+                                  //           attachment._id !== a?._id
+                                  //       ),
+                                  //   };
+                                  //   return {
+                                  //     ...prev,
+                                  //     TabOne: updatedTabOne,
+                                  //   };
+                                  // });
                                 }}
                               />
                             )}

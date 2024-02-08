@@ -325,7 +325,7 @@ function Issues({
   const openIssueListFn = () => {
     // issueMenuInstance.toolAction = "issueView";
     customLogger.logInfo("ToolBar - View Issue")
-    issueMenuClicked(issueMenuInstance);
+    // issueMenuClicked(issueMenuInstance);
      setHighlightCreateIcon(false)
     setHighlightCreateTaskIcon(false)
   };
