@@ -4,6 +4,11 @@ import { AppState } from "./state";
 
 export const appReducer = (state: AppState, action: AppActions): AppState => {
     switch (action.type) {
+        case AppActionType.projectListViewLoaded:
+            return {
+                ...state,
+                currentProjectData: undefined
+            }
         case AppActionType.appendProjectData:
             let projectData = action.payload.projectData
             if(state.projectDataList.find((e)=>{ return e.project._id === projectData.project._id})) {

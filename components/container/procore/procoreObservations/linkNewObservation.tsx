@@ -30,6 +30,18 @@ const LinkNewObservation = (props: any) => {
     getTasks
   } = props;
 
+
+  const userObj=localStorage.getItem('userCredentials')
+  const procoreAssigneeId=()=>{
+    if (userObj) {
+      const  user = JSON.parse(userObj);
+      const metaData = user.metadata.procore
+       console.log('procore id',metaData.id);
+       
+      return metaData.id
+     }
+    
+    }
   const initialValues: {
     assignee_id: number | null;
     contributing_behavior_id: number | null;
@@ -49,7 +61,7 @@ const LinkNewObservation = (props: any) => {
     attachFiles: File[];
     number: string;
   } = {
-    assignee_id: 10,
+    assignee_id: procoreAssigneeId(),
     contributing_behavior_id: null,
     contributing_condition_id: null,
     description: issue?.description || task?.description||"",

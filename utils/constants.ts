@@ -23,3 +23,5 @@ export const userNotificationData = [
   { id: 1, name: 'Unread' },
   { id: 2, name: 'All' },
 ];
+//export const viewerPagePath = "/projects/[projectId]/structure/[structureId]/multiverseviewer";
+export const isMultiverseEnabled = false;

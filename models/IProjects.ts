@@ -33,8 +33,12 @@ export interface MetaDetails {
   reportURL?: string
   projectIntend?:string
   projectId?:string
+  procore?:Procore
 }
-
+export interface Procore{
+  projectId?:number | undefined
+  companyId?:number |undefined
+}
 export interface Contact {
   code: string;
   number: number;
