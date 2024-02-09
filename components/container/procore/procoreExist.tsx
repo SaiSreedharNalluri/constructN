@@ -71,8 +71,8 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
 
   const fullDetails = [
     {label:"ID", value: details?.id},
-    {label:"Full Number", value: details?.full_number},
-    {label:"Assignee", value: details?.assignee?.name},
+    {label:"Full Number", value: details?.full_number || details?.number || "NA"},
+    {label:"Assignee", value: details?.assignee?.name || "NA"},
     {label:"Type", value: type?.toUpperCase()},
     {label:"Title", value: details?.title || details?.name},
     {label:"Status", value: type === 'submittal' ? details?.status?.name : details?.status},
