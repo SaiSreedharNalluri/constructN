@@ -5,8 +5,7 @@ import {
   CustomTaskProcoreLinks,
 } from '../../../divami_components/issue_detail/IssueDetailStyles';
 import ProcoreHeader from '../procoreHeader';
-import ProcoreFooter from '../procoreFooter';
-import { ListRfi, linkIssueRfi,linkTaskRfi, } from '../../../../services/procore';
+import { ListRfi, linkIssueRfi,linkTaskRfi, updateAttachmentsExistRfi, } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
 import { IprocoreActions } from '../../../../models/Iprocore';
@@ -16,15 +15,22 @@ const LinkExistingRfi = (props: any) => {
   const {issue,task,
     handleCloseProcore,
     getIssues,
-    getTasks,}=props as any;
+    getTasks,
+    generatedpdf,
+    weburl,
+    screenshot,
+    attachment,
+  }=props as any;
   const [loading, setLoading] = useState(false)
   const { handleInstance } = props as any;
   const [footerState, SetFooterState] = useState(true);
   const [rfiData, setRfiData] = useState<any[]>([]);
+  const [questionBody, setQuestionBody] = useState('');
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const handleBack = () => {
     let closeNewRFI: IprocoreActions = {
       action: 'newCloseObservation',
@@ -37,39 +43,58 @@ const LinkExistingRfi = (props: any) => {
     
     setSelectedItem(rfinumber);
   };
+  const existingResponse = ()=>{
+    rfiData.map((rfi:any)=>{
+      if(rfi.id===selectedItem){
+        if (rfi.questions) {
+          if (rfi.questions[0]?.body) {
+            setQuestionBody(rfi.questions[0].body);
+          }
+        }
+      }
+    })
+  }
+ useEffect(()=>{
+  existingResponse()
+ },[selectedItem])
 
   const handleLink = () => {
     
+ const formData:any=new FormData()
+    formData.append(`rfi[question][body]`,`${questionBody} <a href=\"${weburl()}\"> #${sequenceNumber}( View in ConstructN)</a>`)
+   formData.append(`rfi[question][attachments][${generatedpdf.name}]`,generatedpdf);
+   if (attachment && attachment.length > 0) {
+    for (let i = 0; i < attachment.length; i++) {
+      formData.append(`rfi[question][attachments][${attachment[i].name}]`, attachment[i]);
+    }
+  }
+   formData.append(`rfi[question][attachments][ScreenShot]`,screenshot);
+    try{
     if (issue) {
-     
-      linkIssueRfi(issue.project, issue._id, selectedItem)
+     linkIssueRfi(issue.project, issue._id, selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            CustomToast("RFI linked successfully", 'success');
             getIssues(issue.structure)
-            handleCloseProcore();
-          }
+           }
         })
-        .catch((linkError) => {
-          if (linkError) {
-            CustomToast("Linking RFI failed", 'error');
-          }
-        });
-    } else {
+        } else {
       linkTaskRfi(task.project, task._id, selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            CustomToast("RFI linked successfully", 'success');
             getTasks(task.structure)
-            handleCloseProcore();
           }
         })
-        .catch((linkError) => {
-          if (linkError) {
-            CustomToast("Linking RFI failed", 'error');
-          }
-        });
     }
+    updateAttachmentsExistRfi(procoreProjectId,selectedItem,formData).then((response)=>{
+      if(response){
+        CustomToast("RFI linked successfully", 'success');
+        handleCloseProcore();
+       }
+    })
+  }
+  catch(error){
+     CustomToast("Linking RFI failed", 'error');
+  }
   };
 
   useEffect(() => {
@@ -78,13 +103,13 @@ const LinkExistingRfi = (props: any) => {
       .then((response: any) => {
       
         setRfiData(response.data);
+       
         setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching RFI data:', error);
       });
     }, [])
-
   return (
     <>
       <CustomTaskProcoreLinks>
