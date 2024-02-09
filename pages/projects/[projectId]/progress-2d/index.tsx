@@ -447,9 +447,13 @@ const Progress2DPage: React.FC<any> = () => {
 
         let user: IUser
 
+        console.log(userObj, '======')
+
         if (userObj) {
 
             user = JSON.parse(userObj)
+
+            console.log(user, '=========')
 
             if (user?._id) setIsSupportUser(user?.isSupportUser)
 

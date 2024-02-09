@@ -50,7 +50,7 @@ export const AWS = {
 
 export const PROCORE = {
 
-    LOGIN_URL : "https://login-sandbox.procore.com",
+    LOGIN_URL : 'https://login-sandbox.procore.com',
 
     SANDBOX_URL : 'https://sandbox.procore.com',
 
@@ -61,6 +61,8 @@ export const PROCORE = {
     GRANT_TYPE : 'authorization_code',
 }
 
-export const MULTIVERSE ={
-    ORIGIN_URL : "http://localhost:3001"
+export const MULTIVERSE = {
+
+    ORIGIN_URL : 'http://localhost:3001'
+    
 }

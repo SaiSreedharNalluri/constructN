@@ -127,6 +127,7 @@ const SignInPage = () => {
                 _id: userProfileObj._id,
                 email: userProfileObj.email,
                 token: userProfileObj.token,
+                isSupportUser: userProfileObj.isSupportUser,
                 refreshToken: userProfileObj.refreshToken,
                 avatar: userProfileObj.avatar || ''
             }));

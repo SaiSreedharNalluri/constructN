@@ -62,5 +62,7 @@ export const PROCORE = {
 }
 
 export const MULTIVERSE = {
-    ORIGIN_URL : "${MULTIVERSE_ORIGIN_URL}",
+
+    ORIGIN_URL : "${MULTIVERSE_ORIGIN_URL}"
+
 }
