@@ -1100,6 +1100,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     snapshot={snapshotBase}
 
+                                                    drawing={'Plan Drawings'}
+
                                                     compare={isCompare}
 
                                                     reality={showReality}
