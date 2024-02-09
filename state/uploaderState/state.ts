@@ -35,7 +35,8 @@ export interface workerFileMap {
 
 export enum UploaderPopups {
     deleteJob,
-    completedWithError
+    completedWithError,
+    discard
 }
 
 export interface UploaderState {
@@ -72,7 +73,9 @@ export interface UploaderState {
     isDelete: boolean,
     currentPopup? : PopupData,
     errorCount:number;
-    showRetry:string | null
+    duplicateInGCP?: boolean[]
+    showRetry:string | null,
+    retryUploadFiles?:IUploadFile<RawImage>[]
 }
 
 export enum UploaderStep {

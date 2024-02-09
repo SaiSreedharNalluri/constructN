@@ -2,6 +2,7 @@ import authHeader from "./auth-header";
 import instance from "./axiosInstance";
 import { API, PROCORE } from "../config/config";
 import procoreinstance from "./procoreInstance";
+import { CustomToast } from "../components/divami_components/custom-toaster/CustomToast";
 
 
 const accesstoken = () => {
@@ -51,10 +52,10 @@ export const procorerefreshToken = () => {
     });
 };
 /**RFI API's */
-export const getRfiManager = () => {
+export const getRfiManager = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis/potential_rfi_managers`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_rfi_managers`,
       {
         headers: accesstoken(),
       }
@@ -63,14 +64,14 @@ export const getRfiManager = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get potential rfi managers!","error");
     });
 };
 
-export const getReceivedFrom = () => {
+export const getReceivedFrom = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis/potential_received_froms`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_received_froms`,
       {
         headers: accesstoken(),
       }
@@ -80,14 +81,14 @@ export const getReceivedFrom = () => {
     })
     .catch((error) => {
       console.log("error msg procore", error.response.data);
-      throw error.response.data;
+      CustomToast("Failed to get potential received froms!","error");
     });
 };
 
-export const getResponsibleContractor = () => {
+export const getResponsibleContractor = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis/potential_responsible_contractors`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_responsible_contractors`,
       {
         headers: accesstoken(),
       }
@@ -96,14 +97,14 @@ export const getResponsibleContractor = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get potential responsible contractors!","error")
     });
 };
 
-export const potentialDistributionMembers = () => {
+export const potentialDistributionMembers = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis/potential_distribution_members`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_distribution_members`,
       {
         headers: accesstoken(),
       }
@@ -112,13 +113,13 @@ export const potentialDistributionMembers = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get potential distribution members!","error")
     });
 };
-export const specSection = () => {
+export const specSection = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.0/specification_sections?project_id=235946`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/specification_sections?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -127,38 +128,38 @@ export const specSection = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get specification sections!","error")
     });
 };
 
-export const getLocation = () => {
+export const getLocation = (projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/235946/locations`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/locations`, {
       headers: accesstoken(),
     })
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get locations!","error")
     });
 };
-export const getcoastCode = () => {
+export const getcoastCode = (projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/cost_codes?project_id=235946`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/cost_codes?project_id=${projectId}`, {
       headers: accesstoken(),
     })
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get cost codes!","error")
     });
 };
-export const getRfiStage = () => {
+export const getRfiStage = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/4272096/project_stages?project_id=235946`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/project_stages?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -167,14 +168,14 @@ export const getRfiStage = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get project stages!","error")
     });
 };
 
-export const costImpact = () => {
+export const costImpact = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis/potential_cost_impacts`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_cost_impacts`,
       {
         headers: accesstoken(),
       }
@@ -183,14 +184,14 @@ export const costImpact = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get potential cost impacts!","error")
     });
 };
 
-export const scheduleImpact = () => {
+export const scheduleImpact = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis/potential_schedule_impacts`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_schedule_impacts`,
       {
         headers: accesstoken(),
       }
@@ -199,14 +200,14 @@ export const scheduleImpact = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get potential schedule impacts!","error")
     });
 };
 
-export const createRfi = (formData: any) => {
+export const createRfi = (formData: any,projectId:number | undefined) => {
   return procoreinstance
     .post(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis`,
       formData,
       {
         headers: accesstoken(),
@@ -217,16 +218,15 @@ export const createRfi = (formData: any) => {
     })
     .catch((error) => {
       console.log("errror response", error);
-      throw error.response;
+      CustomToast("Failed to create rfi!","error")
     });
 };
 
 
-export const ListRfi = () => {
+export const ListRfi = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/rfis?filters[status]=open`,
-
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis?filters[status]=open`,
       {
         headers: accesstoken(),
       }
@@ -236,7 +236,7 @@ export const ListRfi = () => {
     })
     .catch((error) => {
       console.log("errror response", error);
-      throw error.response;
+      CustomToast("Failed to get rfis!","error")
     });
 };
 
@@ -256,7 +256,7 @@ export const linkIssueRfi = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to link rfi!","error")
     });
 };
 
@@ -276,42 +276,42 @@ export const linkTaskRfi = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to link rfi!","error")
     });
 };
 
-export const showRfiDetails = (id: number) => {
+export const showRfiDetails = (id: number,projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/235946/rfis/${id}`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/rfis/${id}`, {
       headers: accesstoken(),
     })
     .then((response) => {
-      return response.data;
+      return response?.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get rfi details!","error")
     });
 };
 
 /**Observation APIs */
 
-export const tradeList = () => {
+export const tradeList = (companyId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/4272096/trades`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/trades`, {
       headers: accesstoken(),
     })
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get trades!","error")
     });
 };
 
-export const typesList = () => {
+export const typesList = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/types?project_id=235946`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/types?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -320,14 +320,14 @@ export const typesList = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get types!","error")
     });
 };
 
-export const contributingConditionsList = () => {
+export const contributingConditionsList = (companyId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/4272096/contributing_conditions`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/contributing_conditions`,
       {
         headers: accesstoken(),
       }
@@ -336,14 +336,14 @@ export const contributingConditionsList = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get contributing conditions!","error")
     });
 };
 
-export const contributingBehaviorList = () => {
+export const contributingBehaviorList = (companyId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/4272096/contributing_behaviors`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/contributing_behaviors`,
       {
         headers: accesstoken(),
       }
@@ -352,20 +352,20 @@ export const contributingBehaviorList = () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get contributing behaviors!","error")
     });
 };
 
-export const hazardList = () => {
+export const hazardList = (companyId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/4272096/hazards`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/hazards`, {
       headers: accesstoken(),
     })
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get hazards!","error")
     });
 };
 
@@ -382,14 +382,14 @@ export const createObservation = (formData: object) => {
       return response;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get observation items!","error")
     });
 };
 
-export const listObservation = () => {
+export const listObservation = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items?project_id=235946`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items?project_id=${projectId}`,
       {
         headers: accesstoken(),
       }
@@ -398,7 +398,7 @@ export const listObservation = () => {
       return response;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get observation items!","error")
     });
 };
 
@@ -418,7 +418,7 @@ export const linkIssueObservation = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to link Issue!","error")
     });
 };
 
@@ -438,28 +438,28 @@ export const linkTaskObservation = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to link task!","error")
     });
 };
 
-export const showObservationDetails = (id: number) => {
+export const showObservationDetails = (id: number,projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items/${id}?project_id=235946`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items/${id}?project_id=${projectId}`, {
       headers: accesstoken(),
     })
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get item!","error")
     });
 };
 
 /**submittal APIs */
-export const createSubmittal = (formData: object) => {
+export const createSubmittal = (formData: object,projectId:number | undefined) => {
   return procoreinstance
     .post(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/submittals`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals`,
       formData,
       {
         headers: accesstoken(),
@@ -470,13 +470,13 @@ export const createSubmittal = (formData: object) => {
     })
     .catch((error) => {
       console.log("errror response", error);
-      throw error.response;
+      CustomToast("Failed to create submittal!","error")
     });
 };
 
-export const listSubmittal = () => {
+export const listSubmittal = (projectId:number | undefined) => {
   return procoreinstance
-    .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/submittals`, {
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals`, {
       headers: accesstoken(),
     })
     .then((response) => {
@@ -484,7 +484,7 @@ export const listSubmittal = () => {
     })
     .catch((error) => {
       console.log("errror response", error);
-      throw error.response;
+      CustomToast("Failed to get submittals!","error")
     });
 };
 
@@ -504,7 +504,7 @@ export const linkIssueSubmittal = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to link submittal!","error")
     });
 };
 export const linkTaskSubmittal = (
@@ -523,14 +523,14 @@ export const linkTaskSubmittal = (
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to link task submittal!","error")
     });
 };
 
-export const showSubmittalDetails = (id: number) => {
+export const showSubmittalDetails = (id: number,projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/235946/submittals/${id}`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/${id}`,
       {
         headers: accesstoken(),
       }
@@ -539,6 +539,6 @@ export const showSubmittalDetails = (id: number) => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      CustomToast("Failed to get submittal!","error")
     });
 };

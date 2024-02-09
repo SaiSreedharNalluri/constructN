@@ -261,7 +261,7 @@ const UploaderDateDetails: React.FC<any> = () => {
 
         <div className="w-[25%] mt-[18px]">
           <h2 className="font-sans not-italic font-semibold text-sm my-[4px]">
-            Enter Capture Date for&nbsp;
+          Select Capture Date for&nbsp;
             <TooltipText title={uploaderState.structure?.name && uploaderState.structure?.name.length > 18 ? uploaderState.structure?.name : ""} placement="top">
               <span className="text-[#101F4C]">
                 <TruncatedString text={uploaderState.structure?.name} maxLength={18} suffixLength={0}></TruncatedString></span>
@@ -278,6 +278,7 @@ const UploaderDateDetails: React.FC<any> = () => {
              <DatePicker
               className="ml-2 border border-border-yellow border-solid focus:outline-yellow-500 w-22 p-1 rounded hover:border-yellow-500"
               onChange={(date) => handleDateChange(date)}
+              selected={uploaderState.date}
               disabled={!uploaderState.structure?.name}
               maxDate={maxAllowedDate}
               showPopperArrow={false}

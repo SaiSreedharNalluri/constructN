@@ -117,7 +117,7 @@ import {
   ThirdContDueDate,
 } from "./IssueDetailStyles";
 import { createComment, getCommentsList } from "../../../services/comments";
-import ActivityLog from "./ActivityLog";
+import ActivityLog from "../CommentSection/ActivityLog";
 import Chip from "@mui/material/Chip";
 import moment from "moment";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
@@ -126,6 +126,7 @@ import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
 import { IToolbarAction } from "../../../models/ITools";
+import { init } from "mixpanel-browser";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -181,7 +182,6 @@ function BasicTabs(props: any) {
     handleFooter,
     setTaskState,
   } = props;
-console.log("taskState",taskState)
   const [value, setValue] = React.useState(0);
   const [formState, setFormState] = useState({
     selectedValue: "",
@@ -429,7 +429,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           <FirstHeaderDiv>
             <div></div>
             {taskState?.TabOne?.screenshot && (
-              <Image
+              <img
                 src={
                   taskState?.TabOne?.screenshot
                     ? taskState?.TabOne?.screenshot
@@ -886,7 +886,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <ActivityLog
-          ActivityLog={taskState.TabTwo}
+         ActivityLog={taskState.TabTwo}
           comments={backendComments}
           getComments={getComments}
           setIsAdding={setIsAdding}
@@ -951,10 +951,18 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [selectedIssue, setSelectedIssue] = useState(issue);
   const[isLoading,setLoading]=useState(false);
   const router = useRouter();
+  console.log("selected Issue",selectedIssue,initData);
+  
   useEffect(() => {
-    setSelectedIssue(issue);
-    console.log("selected Issue in the issue details",selectedIssue,issue)
-  }, [issue]);
+
+    const issueData=issuesList.find((each:any)=>{
+      if(each._id === issue?._id){
+        return each
+      }
+    
+    })
+    setSelectedIssue(issueData);
+  }, [issue,initData]);
   const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
     const selectedIssueId = selectedIssue?._id;
     const updatedIssuesList = issuesList.filter(
@@ -974,7 +982,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const onDeleteIssue = (status: any) => {
     setshowPopUp(false);
-    console.log("selectedIssue",selectedIssue)
     if (deleteTheIssue) deleteTheIssue(selectedIssue, onDeleteCallback);
 
     const deleteTheAttachment = (attachmentId: string) => {
@@ -1045,29 +1052,29 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
-
+  
   useEffect(() => {
     let tempObj = {
       ...selectedIssue,
       options: selectedIssue?.options,
       priority: selectedIssue?.priority,
       capturedOn: selectedIssue?.createdAt,
-      creator: selectedIssue?.owner,
+      creator: selectedIssue?.owner.fullName,
       issueDescription: selectedIssue?.description,
       screenshot: selectedIssue?.screenshot as string,
       attachments: selectedIssue?.attachments,
       assignees: selectedIssue?.assignees?.length
-        ? `${selectedIssue?.assignees[0]}`
-        : "",
-      assigneeName: selectedIssue?.assignees?.length
-        ? selectedIssue?.assignees[0]
-        : "",
-      assignessList: selectedIssue?.assignees?.length
-        ? selectedIssue?.assignees?.map((item: any) => {
-            return { ...item, label: item };
-          })
-        : [],
-      moreText:
+      ? `${selectedIssue?.assignees[0].fullName}`
+      : "",
+    assigneeName: selectedIssue?.assignees?.length
+      ? selectedIssue?.assignees[0].fullName
+      : "",
+    assignessList: selectedIssue?.assignees?.length
+      ? selectedIssue?.assignees?.map((item: any) => {
+          return { ...item, label: item.fullName };
+        })
+      : [],
+    moreText:
         selectedIssue?.assignees?.length > 1
           ? `+${selectedIssue?.assignees?.length - 1} more`
           : "",
@@ -1090,7 +1097,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
-      console.log("data",data)
       editIssue(projectId, data, selectedIssue?._id)
         .then((response:any) => {
           if (response.success === true) {
@@ -1121,15 +1127,14 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
   const clickTaskSubmit = (formData: any) => {
     let data: any = {};
-    console.log("formData.....",formData)
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each?._id || each?.value || each;
+        return each?._id || each?.value;
       });
 
-    data.structure = initData?.structure?._id;
-    data.snapshot = initData?.currentSnapshotBase?._id;
+    data.structure = router.query.structureId;
+    data.snapshot = router.query.snap;
     data.status = formData.filter(
       (item: any) => item.id == "issueStatus"
     )[0]?.defaultValue;
@@ -1152,7 +1157,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
         (formData.length
           ? formData
               .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+              ?.chipString
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1219,8 +1224,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
     editIssue(projectId as string, issueData, selectedIssue?._id)
       .then((response:any) => {
         if (response.success === true) {
-          CustomToast("Issue updated successfully 2nd toaast","success");
-          getIssues(currentStructure._id);
+          let ChangeToolAction: IToolbarAction = { type: "editIssue", data: response?.result };
+          toolClicked(ChangeToolAction);
+          CustomToast("Issue updated successfully","success");
+          // getIssues(currentStructure._id);
         }
       })
       .catch((error:any) => {

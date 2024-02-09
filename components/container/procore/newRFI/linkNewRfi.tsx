@@ -17,6 +17,7 @@ import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
+import { useAppContext } from "../../../../state/appState/context";
 
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
@@ -61,6 +62,21 @@ const LinkNewRFI = (props: any) => {
   const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
   const onDrop = useCallback((files: File[]) => {}, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const userObj=localStorage.getItem('userCredentials')
+  const procoreAssigneeId=()=>{
+    if (userObj) {
+      const  user = JSON.parse(userObj);
+      const metaData = user.metadata.procore
+       console.log('procore id',metaData.id);
+       
+      return metaData.id
+     }
+    
+    }
+  
   const weburl=()=>{
     if(issue){
       return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
@@ -112,7 +128,7 @@ const LinkNewRFI = (props: any) => {
       value: null,
     },
     reference: '',
-    assignee_id: 10,
+    assignee_id:procoreAssigneeId(),
     draft: true,
   };
   
@@ -146,17 +162,16 @@ const LinkNewRFI = (props: any) => {
     
     formData.schedule_impact.status = scheduleImpact;
     formData.cost_impact.status = costImpact;
-    createRfi(formData)
+    createRfi(formData,procoreProjectId)
   .then((response) => {
     if (response) {
-      CustomToast("RFI Created successfully", "success");
 
       if (issue) {
     
         linkIssueRfi(issue.project, issue._id, response.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("RFI linked successfully", 'success');
+              CustomToast("RFI Created and linked successfully", "success");
               getIssues(issue.structure)
               handleCloseProcore();
             }
@@ -170,7 +185,7 @@ const LinkNewRFI = (props: any) => {
         linkTaskRfi(task.project, task._id, response.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("RFI linked successfully", 'success');
+              CustomToast("RFI Created and linked successfully", "success");
               getTasks(task.structure)
               handleCloseProcore();
             }
@@ -221,7 +236,7 @@ const LinkNewRFI = (props: any) => {
             {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = 
                Object.values(values).every((value) =>{
-                if(values.subject!=="" && values.rfi_manager_id!==null && values.question.body !==""){
+                if(values.subject!=="" && values.rfi_manager_id!==null && values.received_from_login_information_id!==null && values.question.body !==""){
                    return false;
                 }else{
                   return true;

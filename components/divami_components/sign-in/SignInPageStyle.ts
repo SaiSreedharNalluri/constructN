@@ -26,11 +26,11 @@ export const TextContainer = styled("div")`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color : "#ffffff"
-  fontFamily: Open Sans,
-  fontStyle: normal,
-  fontWeight: 400,
-  fontSize: "16px"
+  color : #ffffff;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: "16px";
 `;
 
 

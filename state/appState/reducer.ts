@@ -4,6 +4,11 @@ import { AppState } from "./state";
 
 export const appReducer = (state: AppState, action: AppActions): AppState => {
     switch (action.type) {
+        case AppActionType.projectListViewLoaded:
+            return {
+                ...state,
+                currentProjectData: undefined
+            }
         case AppActionType.appendProjectData:
             let projectData = action.payload.projectData
             if(state.projectDataList.find((e)=>{ return e.project._id === projectData.project._id})) {
@@ -30,7 +35,10 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                let jobs = state.inProgressPendingUploads.concat([action.payload.job])
                 if(inProgressUploads !=undefined && inProgressUploads != null)
                 {    
-                    localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat(jobs)))
+                    if(JSON.parse(inProgressUploads).some((obj:IJobs)=>obj._id === action.payload.job._id)!=true)
+                    {
+                    localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat([action.payload.job])))
+                    }
                     return {
                         ...state,
                         inProgressPendingUploads: jobs

@@ -51,6 +51,7 @@ const FormWrapper = (props: any) => {
     errorStylingSignup,
     onData,
     handleKeyPress,
+    newValues,
   } = props;
 
   const [userPassword, setUserPassword] = useState("");
@@ -247,7 +248,7 @@ const FormWrapper = (props: any) => {
         prev.map((item: any) => {
           if (id === item.id) {
             return {
-              ...item,
+              ...item,  
               defaultValue: e.target.value,
             };
           }
@@ -1098,6 +1099,7 @@ const FormWrapper = (props: any) => {
               data={data}
               dataTestId={"chip"}
               setFormConfig={setFormConfig}
+              newValues={newValues}
             />
           </ElementContainer>
         );

@@ -133,6 +133,9 @@ import ProcoreLink from "../../container/procore/procoreLinks";
 import jsPDF from "jspdf";
 import { Key } from "@mui/icons-material";
 import ProcoreExist from "../../container/procore/procoreExist";
+import { useAppContext } from "../../../state/appState/context";
+import LinktoProcore from "../../container/LinktoProcore";
+import { IProjects } from "../../../models/IProjects";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -412,7 +415,6 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
 
             "& .MuiTabs-indicator": {
               background: "blue",
-              width: value ? "80px !important" : "47px !important",
             },
           }}
         >
@@ -420,7 +422,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
             label="Details"
             {...a11yProps(0)}
             style={{
-              marginRight: "40px",
+              marginRight: "10px",
               paddingLeft: "0px",
               color: "#101F4C",
               fontFamily: "Open Sans",
@@ -434,7 +436,6 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
             label="Procore"
             {...a11yProps(0)}
             style={{
-              marginRight: "40px",
               paddingLeft: "0px",
               color: "#101F4C",
               fontFamily: "Open Sans",
@@ -957,8 +958,11 @@ const CustomIssueDetailsDrawer = (props: any) => {
     getIssues,
     deleteTheAttachment,
     issueLoader,
+    fetchProject=()=>{},
     setIssueLoader,
+    project,
   } = props;
+
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
@@ -966,6 +970,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const[isLoading,setLoading]=useState(false);
   const [procorePopup,setProcorePopup]= useState<boolean>(false)
   const [newRFI,setnewLinkRFI] = useState<boolean>(false);
+  const [showLink, setShowLink] = useState(false)
   const [issueDetail,setIssueDetail] = useState<boolean>(true)
   const router = useRouter();
   useEffect(() => {
@@ -1316,7 +1321,9 @@ const  handleCloseProcore=()=>{
   const updatedselectedIssue =(issueData:any)=>{
       setSelectedIssue(issueData)
   }
-
+  const procoreProjectDetails= project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   return (
     <>
     
@@ -1356,24 +1363,37 @@ const  handleCloseProcore=()=>{
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-            {providerType === 'procore' ? (    
-    <div className="p-[6px] hover:bg-[#E7E7E7] "
-    >
+              <div className="mr-[10px]">
+            {providerType === 'procore' ? ( 
+              <div>
+              {procoreProjectId !== undefined  && procoreCompanyId !==undefined ?(
+                <div className="p-[6px] hover:bg-[#E7E7E7] ">
 
-      <ProcoreLogo
-        src={procore}
-        alt="logo"
-        style={{ cursor: selectedIssue.integration ? 'not-allowed' : 'pointer' }}
-    onClick={()=>{
-if(!selectedIssue.integration){ handleProcoreLinks()}}}
-      />
-    </div> ) : (
+                <ProcoreLogo
+                  src={procore}
+                  alt="logo"
+                  style={{ cursor: selectedIssue.integration ? 'not-allowed' : 'pointer' }}
+              onClick={()=>{
+          if(!selectedIssue.integration){ handleProcoreLinks()}}}
+                />
+              </div>
+              ):(<div>
+                <Tooltip title={'Link project to procore'}>
+                   <ProcoreLogo
+                   onClick={()=>setShowLink(true)}
+                 src={procore} 
+                 alt="logo"
+    /></Tooltip>
+              </div>)}   
+   </div> ) : (
+    <Tooltip title={'Login via Procore required'}>
     <ProcoreLogo
       src={procore} 
       alt="logo"
-      title="Login via Procore required"
     />
+    </Tooltip>
   )}
+  </div>
  
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
@@ -1469,6 +1489,7 @@ if(!selectedIssue.integration){ handleProcoreLinks()}}}
           callBackvalue={onDeleteIssue}
         />
       )} */}
+      {showLink? <LinktoProcore setShowLink={setShowLink} refetchProject={fetchProject} />: null}
     </>
     
   );

@@ -1,5 +1,5 @@
 import { styled } from "@mui/system";
-import { Box } from "@mui/material";
+import { Box,Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 // import CustomLabel from '../../Common/custom-label/CustomLabel'
 // import FormWrapper from '../../Common/form-wrapper/FormWrapper'
@@ -22,11 +22,12 @@ import { ISnapshot } from "../../../../models/ISnapshot";
 import { IStructure } from "../../../../models/IStructure";
 import { IToolResponse } from "../../../../models/ITools";
 import UploadedImagesList from "../../../divami_components/uploaded-images-list/UploadedImagesList";
-
 import Moment from "moment";
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
-
+import { useApiDataContext } from "../../../../state/projectConfig/projectConfigContext";
+import userCount from "../../../../public/divami_icons/AddUserIcon.svg";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 const BodyContainer = styled(Box)({
   paddingLeft: "20px",
   paddingRight: "20px",
@@ -61,20 +62,36 @@ const Body = ({
   editData,
   validate,
   setIsValidate,
-  tagsList,
   setCanBeDisabled,
   deleteTheAttachment,
   formData,
   setFormData
 }: any) => {
+  const { initialTypes,initialPriority,initialStatus,initialProjectUsersList,issueTagsList } = useApiDataContext();
+  
   const [formState, setFormState] = useState({ selectedValue: "" });
   const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
-  const [issueTypes, setIssueTypes] = useState([]);
-  const [issuePriorities, setIssuePriorities] = useState([]);
-  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
+  const [issueTypes, setIssueTypes] = useState(initialTypes);
+  const [issuePriorities, setIssuePriorities] = useState(initialPriority);
+  const [projectUsersList, setProjectUsers] = useState<IProjectUsers[]>(initialProjectUsersList);
   const [loggedInUserId, SetLoggedInUserId] = useState("");
-  const [issueStatusList, setIssueStatusList] = useState<[string]>([""]);
+  const [issueStatusLists, setIssueStatusList] = useState<[string]>(initialStatus);
+  const [tagsList,setTagList] = useState([])
+  const [newValue,newValues] = useState([])
   const router = useRouter();
+  useEffect(()=>{
+    const tempFormData = formConfig.map((item: any) => {
+      if (item.id === "tag-suggestions") {
+        return {
+          ...item,
+          chipString: newValue,
+        };
+      }
+      return item;
+    });
+    setFormConfig(tempFormData);
+  },[newValue])
+  
   useEffect(() => {
     const tempFormData = formConfig.map((item: any) => {
       if (item.id === "tag-suggestions") {
@@ -90,34 +107,36 @@ const Body = ({
 
   useEffect(() => {
     if (router.isReady) {
-      getIssuesTypes(router.query.projectId as string).then((response: any) => {
-        if (response.success === true) {
-          setIssueTypes(response.result);
-        }
-      });
-      getIssuesPriority(router.query.projectId as string).then(
-        (response: any) => {
-          if (response.success === true) {
-            setIssuePriorities(response.result);
-          }
-        }
-      );
-      getIssuesStatus(router.query.projectId as string)
-      .then((response: any) => {
-        if (response.success === true) {
-          setIssueStatusList(response.result);
-        }
-      })
-      .catch((error: any) => {
-        CustomToast("failed to load data", "error");
-      });
-      getProjectUsers(router.query.projectId as string)
-        .then((response: any) => {
-          if (response.success === true) {
-            setProjectUsers(response.result);
-          }
-        })
-        .catch();
+      // getIssuesTypes(router.query.projectId as string).then((response: any) => {
+      //   if (response.success === true) {
+      //     setIssueTypes(response.result);
+      //   }
+      // });
+      // getIssuesPriority(router.query.projectId as string).then(
+      //   (response: any) => {
+      //     if (response.success === true) {
+      //       setIssuePriorities(response.result);
+      //     }
+      //   }
+      // );
+      // getIssuesStatus(router.query.projectId as string)
+      // .then((response: any) => {
+      //   if (response.success === true) {
+      //     setIssueStatusList(response.result);
+      //     console.log("status response",response.result);
+          
+      //   }
+      // })
+      // .catch((error: any) => {
+      //   CustomToast("failed to load data", "error");
+      // });
+      // getProjectUsers(router.query.projectId as string)
+      //   .then((response: any) => {
+      //     if (response.success === true) {
+      //       setProjectUsers(response.result);
+      //     }
+      //   })
+      //   .catch();
     }
     const userObj: any = getCookie("user");
     let user = null;
@@ -125,9 +144,12 @@ const Body = ({
     if (user?._id) {
       SetLoggedInUserId(user._id);
     }
+    issueTagsList?.forEach((item:any)=>{
+    setTagList(item?.tagList)
+    })
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
-    if (projectUsers.length && issuePriorities.length && issueTypes.length) {
+    if (projectUsersList.length && issuePriorities.length && issueTypes.length) {
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {
@@ -182,7 +204,7 @@ const Body = ({
             if (item.id === "assignedTo") {
               return {
                 ...item,
-                listOfEntries: projectUsers?.map((eachUser: any) => {
+                listOfEntries: projectUsersList?.map((eachUser: any) => {
                   return {
                     ...eachUser,
                     label: eachUser?.user?.fullName,
@@ -198,9 +220,15 @@ const Body = ({
               return {
                 ...item,
                 fields: item.fields.map((each: any) => {
-                  if (each.id == "start-date") {
+                  if (each.id == "start-date" && editData) {
                     return {
                       ...each,
+                      formLabel:<div>
+                      Start Date
+                      <Tooltip title='Expected / Actual start date of the task'>
+                      <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                      </Tooltip>
+                    </div>,
                       defaultValue: editData.startDate ?? null,
                     };
                   } else {
@@ -248,7 +276,7 @@ const Body = ({
               isReq: true,
               isflex: false,
               formLabel: "Select issue status",
-              options: issueStatusList?.map((item: any) => {
+              options: issueStatusLists?.map((item: any) => {
                 return {
                   ...item,
                   label: item,
@@ -299,7 +327,7 @@ const Body = ({
             if (item.id === "assignedTo") {
               return {
                 ...item,
-                listOfEntries: projectUsers?.map((eachUser: any) => {
+                listOfEntries: projectUsersList?.map((eachUser: any) => {
                   return {
                     ...eachUser,
                     label: eachUser?.user?.fullName,
@@ -308,18 +336,27 @@ const Body = ({
                 }),
               };
             }
-            if (item.id === "dates") {
+            if (item.id === "dates" && editData === undefined) {
               return {
                 ...item,
                 fields: item.fields.map((each: any) => {
-                  if (each.id == "start-date") {
+                  if (each.id == "start-date" && editData === undefined) {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Expected Start Date
+                        <Tooltip title='Expected start date for the assigned user on this task'>
+                        <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
+                        </Tooltip>
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
-                  } else {
+                  } else if(each.id == "due-date" && editData === undefined) {
                     return {
                       ...each,
+                      formLabel:<div>
+                        Due Date
+                      </div>,
                       defaultValue: setTheFormatedDate(new Date()),
                     };
                   }
@@ -327,12 +364,14 @@ const Body = ({
               };
             }
 
+           
+            
             return item;
           });
         });
       }
     }
-  }, [projectUsers, issuePriorities, issueTypes]);
+  }, [projectUsersList, issuePriorities, issueTypes]);
 
   useEffect(() => {
     let updatedFormData = [
@@ -365,6 +404,7 @@ const Body = ({
           validate={validate}
           setIsValidate={setIsValidate}
           setCanBeDisabled={setCanBeDisabled}
+          newValues={newValues}
         />
         <UploadedImagesList
           formData={formData}

@@ -53,7 +53,7 @@ const Typebar = ({
             onCloseHandler={() => {
               setOpenList(false);
             }}
-            optionsList={initData}
+            optionsList={initData.currentTypesList}
             onSelect={typeChange}
           />
         </SelectLayersWrapper>

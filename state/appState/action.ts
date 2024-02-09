@@ -4,12 +4,17 @@ import { ChildrenEntity, IStructure } from "../../models/IStructure";
 import { ProjectData } from "./state";
 
 export enum AppActionType {
+    projectListViewLoaded,
     appendProjectData,
     setCurrentProjectData,
     addCaptureUpload,
     updateCaptureUploadStatus,
     removeCaptureUpload,
     setIsLoading
+}
+
+export interface projectListViewLoaded {
+  type: AppActionType.projectListViewLoaded;
 }
 
 export interface appendProjectData {
@@ -45,6 +50,11 @@ export interface setIsLoading {
 export const appContextActions = (dispatch: React.Dispatch<AppActions>) => {
   return {
     appAction: {
+      projectListViewLoaded: () => {
+        dispatch({
+          type: AppActionType.projectListViewLoaded
+        });
+      },
       appendProjectData: (projectData: ProjectData) => {
         dispatch({
           type: AppActionType.appendProjectData,
@@ -82,7 +92,8 @@ export const appContextActions = (dispatch: React.Dispatch<AppActions>) => {
   };
 }
 
-export type AppActions = appendProjectData
+export type AppActions = projectListViewLoaded
+ | appendProjectData
  | setCurrentProjectData
  | addCaptureUpload
  | updateCaptureUploadStatus

@@ -3,7 +3,6 @@ import GcpEnterManually from "../GCPFiles/gcpEnterManually";
 import GcpUploadFile from "../GCPFiles/gcpUploadFile";
 import downloadFileIcon from "../../../public/divami_icons/downloadOrange.svg";
 import { useUploaderContext } from "../../../state/uploaderState/context";
-import { GCPType } from "../../../models/IGCP";
 import Image from "next/image";
 import { AWS } from "../../../config/config";
 const UploaderGCP = () => {
@@ -60,11 +59,9 @@ const UploaderGCP = () => {
 
   return (
     <React.Fragment>
-      <div className="calc-w mx-[20px]">
-         <div
-            className="mt-3  border-t border-solid border-[#F1742E] h-[1px]"
-          ></div>
-          <div className="flex flex-col items-start gap-[16px]">
+      <div className="calc-w mx-[20px] mt-3 flex border-t border-solid  border-[#F1742E] h-[1px]">
+        <div className="flex-1">
+        <div className="flex flex-col items-start gap-[16px]">
             <div>
             <p  style={{fontSize:"18px",fontWeight:"400",fontStyle:"normal",fontFamily:"Open sans",marginTop:"16px",lineHeight:"20px",color:"#000"}}>
             Choose how you want to provide Ground Control Points
@@ -101,7 +98,7 @@ const UploaderGCP = () => {
 
         </div>
         {selectedOption == "Enter Manually" ? (
-         <GcpEnterManually></GcpEnterManually>
+         <GcpEnterManually/>
         ) : (
           <div>
             <p onClick={() => {window.open(`${AWS.CDN_ATTACHMENTS}/gcpTemplate/GCP-UTM.csv`,"_blank");}}
@@ -118,30 +115,29 @@ const UploaderGCP = () => {
            
           </div>
         )}
+        </div>
+      <div className=" ml-[20px] w-[35%]">
       <div>
-          <p className="p-1  h-22px font-sans font-normal not-italic text-base line-height-150%">
+          <p style={{fontSize:"14px",fontWeight:"400",fontStyle:"normal",fontFamily:"Open sans",marginTop:"16px",lineHeight:"20px",color:"#000"}}>
             Give a brief description of your GCP and / or upload an image
             (optional)
           </p>
           <textarea
-            className="border border-gray-300 p-1"
-            style={{ width: "60%",height:"100px" }}
+            className="border border-gray-300 p-1 w-[100%] h-[100px] mt-2"
             placeholder="Enter text up to 120 characters"
             value={textareaValue}
             onChange={handleTextareaChange} 
           ></textarea>
           <div>
-            <label
-              htmlFor="fileInput"
-              style={{fontSize:"14px",fontWeight:"400",fontStyle:"normal",fontFamily:"Open sans",marginTop:"16px",lineHeight:"20px",color:"#000"}}
+            <p
+            className="text-base font-normal font-open-sans mt-4 leading-5 text-black"
             >
               Choose File
-            </label>
+            </p>
             <input
               type="text"
-              className="border border-gray-300 p-2 ml-[8px]"
+              className="border border-gray-300 p-2 ml-[8px] w-[100%] h-[40px] mt-2 mb-3"
               placeholder=".jpg or .png files only"
-              style={{ width: "300px", height: "40px" }}
               value={selectedFileName}
               readOnly
             />
@@ -166,6 +162,7 @@ const UploaderGCP = () => {
           style={{ display: "none" }}
           onChange={handleFileChange}
         />
+        </div>
       </div>
     </React.Fragment>
   );

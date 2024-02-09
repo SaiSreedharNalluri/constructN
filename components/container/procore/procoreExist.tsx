@@ -6,6 +6,7 @@ import { Button } from "@mui/material";
 import popup from "../../../public/divami_icons/popup.svg"
 import { Grid } from "react-loader-spinner";
 import styled from "@emotion/styled";
+import { useAppContext } from "../../../state/appState/context";
 interface ProcoreExistProps {
   selected: any;
 }
@@ -30,31 +31,34 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
 }) => {
   const { type, id } = selected.procore;
   const [details, setDetails] = useState<any>(null);
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
 
   const generateLink = (type: string, id: string) => {
     if(type === "observation"){
-    return `${PROCORE.SANDBOX_URL}/235946/project/${type}s/items/${id}`
+    return `${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/${type}s/items/${id}`
     }else{
-      return `${PROCORE.SANDBOX_URL}/235946/project/submittal_logs/${id}`
+      return `${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/submittal_logs/${id}`
     }
   };
 
   useEffect(() => {
     if (type === "rfi") {
-      showRfiDetails(id).then((response) => {
+      showRfiDetails(id,procoreProjectId).then((response) => {
         if (response) {
           setDetails(response);
         }
       });
     } else if (type === "observation") {
-      showObservationDetails(id).then((response)=>{
+      showObservationDetails(id,procoreProjectId).then((response)=>{
         
         if(response){
           setDetails({ ...response, link: generateLink(type, id) });
         }
       })
     }else if ( type === "submittal"){
-      showSubmittalDetails(id).then((response)=>{
+      showSubmittalDetails(id,procoreProjectId).then((response)=>{
         
         if(response){
           setDetails({ ...response, link: generateLink(type, id) });
@@ -65,34 +69,25 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
     }
   }, []);
 
+  const fullDetails = [
+    {label:"ID", value: details?.id},
+    {label:"Full Number", value: details?.full_number},
+    {label:"Assignee", value: details?.assignee?.name},
+    {label:"Type", value: type?.toUpperCase()},
+    {label:"Title", value: details?.title || details?.name},
+    {label:"Status", value: type === 'submittal' ? details?.status?.name : details?.status},
+  ]
+
   return (
     <div>
         {details && (
       <TabOneDiv>
-          <SecondBodyDiv>
+        {fullDetails.map((detail)=>(<SecondBodyDiv key={detail.label}>
             <SecondContPrior>
-              <PriorityTitle>Type</PriorityTitle>
-              <PriorityStatus>{type}</PriorityStatus>
+              <PriorityTitle>{detail.label}</PriorityTitle>
+              <PriorityStatus>{detail.value}</PriorityStatus>
             </SecondContPrior>
-          </SecondBodyDiv>
-          <SecondBodyDiv>
-            <SecondContPrior>
-              <PriorityTitle>Title</PriorityTitle>
-              <PriorityStatus>{details.title || details.name}</PriorityStatus>
-            </SecondContPrior>
-          </SecondBodyDiv>
-          <SecondBodyDiv>
-            <SecondContPrior>
-              <PriorityTitle>Status</PriorityTitle>
-              <PriorityStatus>{type === 'submittal' ? details.status.name : details.status}</PriorityStatus>
-            </SecondContPrior>
-          </SecondBodyDiv>
-          <SecondBodyDiv>
-            <SecondContPrior>
-              <PriorityTitle>ID</PriorityTitle>
-              <PriorityStatus>{details.id}</PriorityStatus>
-            </SecondContPrior>
-          </SecondBodyDiv>
+          </SecondBodyDiv>))}
           <SecondBodyDiv>
           <ProcoreSectionIcon>
           <PopupIcon

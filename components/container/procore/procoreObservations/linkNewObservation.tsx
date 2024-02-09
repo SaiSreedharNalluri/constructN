@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
+import { useAppContext } from "../../../../state/appState/context";
 
 
 const LinkNewObservation = (props: any) => {
@@ -30,6 +31,21 @@ const LinkNewObservation = (props: any) => {
     getTasks
   } = props;
 
+  const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  console.log('projectDetails',procoreProjectId)
+  const userObj=localStorage.getItem('userCredentials')
+  const procoreAssigneeId=()=>{
+    if (userObj) {
+      const  user = JSON.parse(userObj);
+      const metaData = user.metadata.procore
+       console.log('procore id',metaData.id);
+       
+      return metaData.id
+     }
+    
+    }
   const initialValues: {
     assignee_id: number | null;
     contributing_behavior_id: number | null;
@@ -49,7 +65,7 @@ const LinkNewObservation = (props: any) => {
     attachFiles: File[];
     number: string;
   } = {
-    assignee_id: 10,
+    assignee_id: procoreAssigneeId(),
     contributing_behavior_id: null,
     contributing_condition_id: null,
     description: issue?.description || task?.description||"",
@@ -111,7 +127,7 @@ const LinkNewObservation = (props: any) => {
     attachFiles: File[];
     number: string;
   }) => {
-    const project_id = 235946;
+    const project_id = procoreProjectId;
     observation.description=observation.description +`<a href=\"${weburl()}\"> View in ConstructN</a>` 
     const requestBody = {
       project_id,

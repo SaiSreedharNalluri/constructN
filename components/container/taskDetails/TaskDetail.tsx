@@ -112,7 +112,7 @@ import {
   ThirdContDueDate,
 } from "../../divami_components/task_detail/TaskDetailStyles"
 import { createComment, getCommentsList } from "../../../services/comments";
-import ActivityLog from "../../divami_components/hotspot_detail/ActivityLog";
+import ActivityLog from "../CommentSection/ActivityLog";
 import { ActivityLogContainer } from "../../divami_components/issue_detail/IssueDetailStyles";
 import moment from "moment";
 import { showImagePreview } from "../../../utils/IssueTaskUtils";
@@ -121,7 +121,7 @@ import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import { truncateString } from "../../../pages/projects";
 import Download from "../../../public/divami_icons/download.svg";
 import CustomSelect from "../../divami_components/custom-select/CustomSelect";
-import CreateTask from "../../divami_components/create-task/CreateTask";
+import CreateTask from "../createTask/CreateTask";
 import { IToolbarAction } from "../../../models/ITools";
 interface ContainerProps {
   footerState: boolean;
@@ -396,7 +396,7 @@ function BasicTabs(props: any) {
         <TabOneDiv>
           <FirstHeaderDiv>
             <div></div>
-            <Image
+            <img
               src={
                 taskState?.TabOne?.screenshot
                   ? taskState?.TabOne?.screenshot
@@ -449,7 +449,7 @@ function BasicTabs(props: any) {
               <ThirdContWatch>Created By</ThirdContWatch>
               <ThirdContWatchName style={{ color: "#101F4B" }}>
                 {" "}
-                {taskState?.TabOne?.owner}
+                {taskState?.TabOne?.owner?.fullName as string}
               </ThirdContWatchName>
             </SecondContPriorParal>
           </SecondBodyDiv>
@@ -535,20 +535,20 @@ function BasicTabs(props: any) {
                     arrow
                     title={
                       <SecondAssigneeList>
-                        {taskState?.TabOne?.assignee?.map(
+                        {taskState?.TabOne?.assignessList?.map(
                           (assignName: any, index: number) => {
                             if (index !== 0) {
                               return (
                                 <>
                                   {index !==
-                                  taskState?.TabOne?.assignees.length - 1
-                                    ? assignName +
+                                  taskState?.TabOne?.assignessList.length - 1
+                                    ? assignName.firstName +
                                       " " +
-                                      assignName +
+                                      assignName.firstName +
                                       " | "
-                                    : assignName +
+                                    : assignName.firstName +
                                       " " +
-                                      assignName}
+                                      assignName.lastName}
                                 </>
                               );
                             }
@@ -634,7 +634,7 @@ function BasicTabs(props: any) {
                       onDelete={() => {
                         const newSelectedUser = formState.selectedUser.filter(
                           (selected: any) => selected?.label !== v?.label
-                        );
+                        );             
                         setFormState({
                           ...formState,
                           selectedUser: newSelectedUser,
@@ -882,6 +882,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     initData,
     toolClicked
   } = props;
+  
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [footerState, SetFooterState] = useState(false);
   const [selectedTask, setSelectedTask] = useState(task);
@@ -890,12 +891,18 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const[isLoading,setLoading]=useState(false);
   const [file, setFile] = useState<File>();
 
+
   useEffect(() => {
-    setSelectedTask(task);
    
-
-
-  }, [task]);
+    const taskData=initData?.currentTaskList.find((each:any)=>{
+      if(each._id === task._id){
+        return each
+      }
+      
+    
+    })
+    setSelectedTask(taskData);
+  }, [initData]);
   const DetailsObj = {
     TabOne: {
       options: [
@@ -952,7 +959,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
   const [showPopUp, setshowPopUp] = useState(false);
-
   useEffect(() => {
     let tempObj = {
       ...selectedTask,
@@ -962,7 +968,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
       sequenceNumber: selectedTask?.sequenceNumber,
 
       capturedOn: selectedTask?.createdAt,
-      creator: selectedTask?.owner?.fullName,
+      creator: selectedTask.owner.fullName,
       issueDescription: selectedTask?.description,
       screenshot: selectedTask?.screenshot as string,
       attachments: selectedTask?.attachments,
@@ -991,6 +997,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
         TabOne: tempObj,
       };
     });
+
+    
   }, [selectedTask]);
 
   const deletetaskById = (taskList: Task[], selectedTask: Task) => {
@@ -1023,7 +1031,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
 
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
-      console.log("data",data);
       
       updateTask(projectId, data, selectedTask?._id)
         .then((response) => {
@@ -1031,7 +1038,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
             CustomToast("Task updated successfully","success");
             let ChangeToolAction: IToolbarAction = { type: "editTask", data: response?.result };
             toolClicked(ChangeToolAction);
-            getTasks(currentStructure._id);
+            // getTasks(currentStructure._id);
             setLoading(true);
           } else {
             CustomToast("Error updating the task","error");
@@ -1064,7 +1071,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
     const userIdList = formData
       .find((item: any) => item.id == "assignedTo")
       ?.selectedName?.map((each: any) => {
-        return each.value || each._id || each;
+        return each.value || each._id;
       });
     data.structure = initData?.structure?._id;
     data.snapshot = initData?.currentSnapshotBase?._id;
@@ -1089,7 +1096,7 @@ const CustomTaskDetailsDrawer = (props: any) => {
         (formData.length
           ? formData
               .filter((item: any) => item.id == "tag-suggestions")[0]
-              ?.chipString?.join(";")
+              ?.chipString
           : []) || []),
       (data.startDate = formData
         .filter((item: any) => item.id === "dates")[0]
@@ -1168,6 +1175,8 @@ const CustomTaskDetailsDrawer = (props: any) => {
     updateTask(projectId as string, issueData, selectedTask?._id)
       .then((response) => {
         if (response.success === true) {
+          let ChangeToolAction: IToolbarAction = { type: "editTask", data: response?.result };
+          toolClicked(ChangeToolAction);
           CustomToast("Task updated successfully","success");
           getTasks(currentStructure._id);
         } else {
