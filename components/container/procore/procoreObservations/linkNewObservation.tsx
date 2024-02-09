@@ -12,12 +12,23 @@ import { CustomToast } from "../../../divami_components/custom-toaster/CustomToa
 import { IprocoreActions } from "../../../../models/Iprocore";
 import router from "next/router";
 import { useAppContext } from "../../../../state/appState/context";
-
+import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
+import { styled } from "@mui/material/styles";
+import Image from "next/image";
+import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
+export const UploaderIcon = styled(Image)({
+  cursor: "pointer",
+  height: "40px",
+  width: "40px",
+});
 
 const LinkNewObservation = (props: any) => {
   const {
+    attachment,
+    screenshot,
     handleInstance,
-    gen,
+    generatedpdf,
+    weburl,
     rfiManager,
     potentialDistMem,
     types,
@@ -31,21 +42,18 @@ const LinkNewObservation = (props: any) => {
     getTasks
   } = props;
 
-  const { state: appState} = useAppContext();
-  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
-  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
-  console.log('projectDetails',procoreProjectId)
   const userObj=localStorage.getItem('userCredentials')
   const procoreAssigneeId=()=>{
     if (userObj) {
       const  user = JSON.parse(userObj);
-      const metaData = user.metadata.procore
-       console.log('procore id',metaData.id);
-       
+      const metaData = user.metadata.procore  
       return metaData.id
      }
     
     }
+    const { state: appState} = useAppContext();
+  const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const initialValues: {
     assignee_id: number | null;
     contributing_behavior_id: number | null;
@@ -62,7 +70,6 @@ const LinkNewObservation = (props: any) => {
     distribution_member_ids: [];
     location_id: number | null;
     name: string;
-    attachFiles: File[];
     number: string;
   } = {
     assignee_id: procoreAssigneeId(),
@@ -80,24 +87,18 @@ const LinkNewObservation = (props: any) => {
     distribution_member_ids: [],
     location_id: null,
     name: issue?.title|| task.title,
-    attachFiles: [],
     number: "",
   };
   const [footerState, setfooterState] = useState(true);
   const formikRef = useRef<FormikProps<any>>(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<[Blob]>();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const weburl=()=>{
-    if(issue){
-      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
-    }else{
-      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
-    }
-  }
+  const [loading, setLoading] = useState(false)
+  const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const onDrop = useCallback((acceptedFiles: any) => {
-    setFiles(acceptedFiles);
+      setFiles(acceptedFiles);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const onFileClick = (file: File) => {
@@ -107,8 +108,7 @@ const LinkNewObservation = (props: any) => {
   const handleExternalSubmit = () => {
     formikRef.current?.submitForm();
   };
-
-  const handleSubmit = (observation: {
+  interface observation{
     assignee_id: number | null;
     contributing_behavior_id: number | null;
     contributing_condition_id: number | null;
@@ -124,26 +124,46 @@ const LinkNewObservation = (props: any) => {
     distribution_member_ids: [];
     location_id: number | null;
     name: string;
-    attachFiles: File[];
     number: string;
-  }) => {
-    const project_id = procoreProjectId;
-    observation.description=observation.description +`<a href=\"${weburl()}\"> View in ConstructN</a>` 
-    const requestBody = {
-      project_id,
-      observation,
-    };
-    createObservation(requestBody)
+   }
+
+  const handleSubmit = (observation: observation) => {
+    setLoading(true)
+    const project_id = procoreProjectId?.toString();
+    observation.description = observation.description + `<a href="${weburl()}">#${sequenceNumber}( View in ConstructN)</a>`;
+     const formData:any =new FormData() 
+    formData.append('project_id', project_id);
+
+        if(files)  
+    for (let i = 0; i < files.length; i++) {
+      formData.append(`attachments[${files[i].name}]`, files[i] );
+    }
+    if (attachment && attachment.length > 0) {
+      for (let i = 0; i < attachment.length; i++) {
+        formData.append(`attachments[${attachment[i].name}]`, attachment[i]);
+      }
+    }
+    formData.append(`attachments[ScreenShot]`,screenshot);
+    formData.append(`attachments[${generatedpdf.name}]`, generatedpdf);
+    Object.entries(observation).forEach(([key, value]) => {  
+                  
+               if(value!==null && value!==undefined && value !=="" && !(Array.isArray(value) && value.length === 0)){
+              formData.append(`observation[${key}]`, String(value));
+               }
+                
+         });
+         console.log('checking for type',formData.get('distribution_member_ids'))
+createObservation(formData)
     .then((response) => {
       if (response) {
-        CustomToast("Observation Created successfully","success");
+
+        setLoading(false)
       }
       if (issue) {
-        // Call linkRfi API if issue is defined
-        linkIssueObservation(issue.project, issue._id, response.data.id)
+        linkIssueObservation(issue.project, issue._id, response?.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("Observation linked successfully", 'success');
+              CustomToast("Observation Created and linked successfully", 'success');
               getIssues(issue.structure)
               handleCloseProcore();
             }
@@ -154,10 +174,10 @@ const LinkNewObservation = (props: any) => {
             }
           });
       } else {
-        linkTaskObservation(task.project, task._id, response.data.id)
+        linkTaskObservation(task.project, task._id, response?.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("Observation linked successfully", 'success');
+              CustomToast("Observation Created and linked successfully", 'success');
               getTasks(task.structure)
               handleCloseProcore();
             }
@@ -193,6 +213,9 @@ const LinkNewObservation = (props: any) => {
   
   return (
     <>
+     {loading?(<div>
+        <CustomLoader></CustomLoader>
+      </div>):(<div>
       <CustomTaskProcoreLinks>
       <ProcoreHeader handleInstances={handleBack} heading={"Create New Observation"}></ProcoreHeader>
         <BodyContainer footerState={footerState}>
@@ -577,29 +600,33 @@ const LinkNewObservation = (props: any) => {
                     </Grid>
                   </Grid>
                   <Grid container className="pt-[5px] mb-[20px]">
-                    <Grid item xs={10}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        ATTACH FILES
-                      </label>
-                      <div
-                        {...getRootProps()}
-                        style={{
-                          width: "100%",
-                          border: "1px dashed #ccc",
-                          padding: "20px",
-                          textAlign: "center",
-                        }}
-                      >
-                        <input {...getInputProps()} name="attachFiles" />
-                        {isDragActive ? (
-                          <p>Drop the files here ...</p>
-                        ) : (
-                          <p>
-                            Drag & drop files here, or click to select files
-                          </p>
-                        )}
-                      </div>
-                      {files.length > 0 && (
+                  <Grid item xs={15}>
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <label
+                      htmlFor="attachments"
+                      className="text-gray-700 font-medium text-[11px] mb-1"
+                    >
+                      Attachments
+                    </label>
+                    {
+                      isDragActive ? (
+                        <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
+                      ) : (
+                        <div className="flex justify-center border border-soild border-grey-500 focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500">
+                          <UploaderIcon
+                            src={uploaderIcon}
+                            alt="upload"
+                          ></UploaderIcon>
+                        </div>
+                      )
+                      // <p>Drop the files here ...</p> :
+                      // <p>Drag 'n' drop some files here, or click to select files</p>
+                    }
+                  </div>
+                  </Grid>
+                  </Grid>
+                  {files&&files.length > 0 && (
                         <div>
                           <strong>Uploaded Files:</strong>
                           <ul>
@@ -615,8 +642,6 @@ const LinkNewObservation = (props: any) => {
                           </ul>
                         </div>
                       )}
-                    </Grid>
-                  </Grid>
                   {selectedFile && (
                     <div>
                       <strong>Selected File:</strong> {selectedFile.name}
@@ -638,10 +663,12 @@ const LinkNewObservation = (props: any) => {
 
         </BodyContainer>
         <ProcoreFooter
+        handleInstances={handleBack}
         allFieldsTrue={isAllFieldsTrue}
           handleExternalSubmit={handleExternalSubmit}
         ></ProcoreFooter>
       </CustomTaskProcoreLinks>
+      </div>)}
     </>
   );
 };
