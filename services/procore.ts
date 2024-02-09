@@ -5,7 +5,7 @@ import procoreinstance from "./procoreInstance";
 import { CustomToast } from "../components/divami_components/custom-toaster/CustomToast";
 
 
-const accesstoken = () => {
+const accesstoken = (isMultipartFormData=false) => {
   try {
     const userObj: any = localStorage.getItem("userCredentials");
     let user = null;
@@ -14,6 +14,9 @@ const accesstoken = () => {
     const procoreToken = user.metadata.procore;
 
     if (user && procoreToken.accessToken) {
+      if(isMultipartFormData){
+        return { Authorization: "Bearer " + procoreToken.accessToken,"content-type": "multipart/form-data" }
+      }
       return { Authorization: "Bearer " + procoreToken.accessToken };
     } else {
       return { Authorization: "" };
@@ -226,7 +229,7 @@ export const createRfi = (formData: any,projectId:number | undefined) => {
 export const ListRfi = (projectId:number | undefined) => {
   return procoreinstance
     .get(
-      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis?filters[status]=open`,
+      `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis`,
       {
         headers: accesstoken(),
       }
@@ -292,6 +295,19 @@ export const showRfiDetails = (id: number,projectId:number | undefined) => {
       CustomToast("Failed to get rfi details!","error")
     });
 };
+
+export const updateAttachmentsExistRfi =(projectId:number| undefined,rfiId:number | null,formData:any)=>{
+  return procoreinstance
+  .put(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/rfis/${rfiId}`,formData,{
+  headers: accesstoken(),
+   })
+   .then((response)=>{
+    return response.data
+   })
+   .catch((error)=>{
+    throw error.response.data
+   })
+}
 
 /**Observation APIs */
 
@@ -369,13 +385,14 @@ export const hazardList = (companyId:number | undefined) => {
     });
 };
 
-export const createObservation = (formData: object) => {
+export const createObservation = (formData: any) => {
+  
   return procoreinstance
     .post(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items`,
       formData,
       {
-        headers: accesstoken(),
+        headers: accesstoken(true),
       }
     )
     .then((response) => {
@@ -455,6 +472,21 @@ export const showObservationDetails = (id: number,projectId:number | undefined) 
     });
 };
 
+export const updateAttachmentsExistObservation =(observationId:number | null,formData:object)=>{
+  return procoreinstance
+  .put(`${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items/${observationId}`,formData,{
+  headers: accesstoken(),
+   })
+   .then((response)=>{
+    return response.data
+   })
+   .catch((error)=>{
+    throw error.response.data
+   })
+}
+
+
+
 /**submittal APIs */
 export const createSubmittal = (formData: object,projectId:number | undefined) => {
   return procoreinstance
@@ -462,7 +494,7 @@ export const createSubmittal = (formData: object,projectId:number | undefined) =
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals`,
       formData,
       {
-        headers: accesstoken(),
+        headers: accesstoken(true),
       }
     )
     .then((response) => {
@@ -542,3 +574,29 @@ export const showSubmittalDetails = (id: number,projectId:number | undefined) =>
       CustomToast("Failed to get submittal!","error")
     });
 };
+
+export const updateAttachmentsExistSubmittal =(projectId:number | undefined, submittalId:number | null, formData:object)=>{
+  return procoreinstance
+  .put(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/${submittalId}`,formData,{
+  headers: accesstoken(),
+   })
+   .then((response)=>{
+    return response.data
+   })
+   .catch((error)=>{
+    throw error.response.data
+   })
+}
+
+export const filesUpload =(projectId:number | undefined,formData:object)=>{
+  return procoreinstance
+  .post(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/uploads`,formData,{
+    headers:accesstoken(),
+  })
+  .then((response)=>{
+    return response.data
+  })
+  .catch((error)=>{
+    throw error.response.data
+  })
+}

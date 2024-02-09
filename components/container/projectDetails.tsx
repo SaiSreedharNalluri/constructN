@@ -32,6 +32,7 @@ import authHeader from "../../services/auth-header";
 import procoreinstance from "../../services/procoreInstance";
 import CustomLoader from "../divami_components/custom_loader/CustomLoader";
 import LinktoProcore from "./LinktoProcore";
+import { useAppContext } from "../../state/appState/context";
 
 
 const ProjectDetails: React.FC = () => {
@@ -41,6 +42,10 @@ const ProjectDetails: React.FC = () => {
   const [showLink, setShowLink] = useState(false);
   const [providerType, setProviderType] = useState('');
   const router = useRouter();
+  const { state: appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
+
+
   const refetchProject = () => {
     setLoading(true);
     getProjectDetails(router.query.projectId as string)
@@ -106,6 +111,7 @@ const ProjectDetails: React.FC = () => {
         if (response.success === true) {
           handleEditClose();
           CustomToast("Project details updated sucessfully","success");
+          appAction.setCurrentProjectData(response.result);
           setProjectData(response.result);
         }
       })
@@ -116,6 +122,7 @@ const ProjectDetails: React.FC = () => {
         }
       });
   };
+  console.log("checking",appState.currentProjectData)
   const handleImageUPload = (e: any) => {
     const formData = new FormData();
     formData.append("file", e.file);

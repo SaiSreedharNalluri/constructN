@@ -123,6 +123,7 @@ import procore from "../../../public/divami_icons/procore.svg";
 import Download from "../../../public/divami_icons/download.svg";
 import ProcoreLink from "../../container/procore/procoreLinks";
 import ProcoreExist from "../../container/procore/procoreExist";
+import jsPDF from "jspdf";
 import { useAppContext } from "../../../state/appState/context";
 import LinktoProcore from "../../container/LinktoProcore";
 import { IProjects } from "../../../models/IProjects";
@@ -901,8 +902,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const[isLoading,setLoading]=useState(false);
   const [taskDetail,setTaskDetail] = useState<boolean>(true);
   const [procorePopup,setProcorePopup]= useState<boolean>(false)
-  const [procoreExist,setPropcoreExist] =useState<boolean>(false)
-  const [file, setFile] = useState<File>();
 const [showLink, setShowLink] = useState(false)
 
 
@@ -1161,9 +1160,6 @@ const [showLink, setShowLink] = useState(false)
       saveEditDetails(data, projectId);
     }
   };
-  const procoreProjectDetails= project.metaDetails
-  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
-  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const taskUpdate = (data: any) => {
     // const issueData = _.cloneDeep(selectedTask);
     let issueData: any = {};
@@ -1212,10 +1208,120 @@ const [showLink, setShowLink] = useState(false)
 
     return truncatedText;
   };
+  const [generatedpdf,setGeneratedpdf]=useState<any>(undefined)
+  const [screenshot, setscreenshot]=useState<any>(undefined)
+  const [attachment,setAttachment]=useState<any>(undefined)
   const handleProcoreLinks = () =>{
+    handleScreenShotAndAttachment()
+    convertObjectToPdf()
     setProcorePopup(true)
      setTaskDetail(false)
    }
+const handleScreenShotAndAttachment =() =>{
+    const imageFiles:any = []; 
+  
+    const attachment = selectedTask.attachments;
+    if (attachment) {
+        attachment.forEach((attachment:any, index:any) => {
+            const attachmentUrl = attachment.url;
+  
+            fetch(attachmentUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const imageFile = new File([blob], `(#${selectedTask.sequenceNumber})Attachment_${index}.png`, { type: 'image/png' });
+                    imageFiles.push(imageFile);
+                    setAttachment(imageFiles);
+                })
+                .catch(error => {
+                    console.error('Error fetching attachment:', error);
+                });
+        });
+    }
+    const screenUrl = selectedTask.screenshot;
+  
+    fetch(screenUrl)
+        .then(response => response.blob())
+        .then(blob => {
+            const screenshotFile = new File([blob], `(#${selectedTask.sequenceNumber})ScreenShot.png`, { type: 'image/png' });
+            setscreenshot(screenshotFile);
+        })
+        .catch(error => {
+            console.error('Error fetching screenshot:', error);
+        });
+   }
+   const convertObjectToPdf = () => {
+    
+    const data: any = selectedTask;
+   
+  
+    const pdf = new jsPDF();
+  
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+  
+    const headers = ["Label", "Details"];
+  
+    const tableData = [];
+    const keyLabels:any = {
+        _id:"ID",
+        sequenceNumber:"Sequence Number",
+        title:"Title",
+        assignees: "Assignees",
+        owner: "Owner",
+        priority:"Priority",
+        status:"Status",
+        type:"Type",
+        project: "Project ID",
+        structure:"Structure ID",
+        dueDate:"Due Date",
+        startDate:"Start Date",
+        progress: "Progress",
+        tags:"Tags",
+        description:"Description",
+    };
+  
+    for (const key in data) {
+      
+        if (data.hasOwnProperty(key)) {
+            let label = key;
+            if (keyLabels[key]) {
+                label = keyLabels[key];
+            }
+            if (key === "assignees") {
+                const assigneeNames = data[key].map((assignee: any) => `${assignee.firstName} ${assignee.lastName}`).join(", ");
+                tableData.push([label, assigneeNames]);
+            } else if(key === "owner") {
+                const ownerName = `${data.owner.firstName}`;
+                tableData.push([label, ownerName]);
+            } else if (key === "startDate" || key === "dueDate") {
+                const formattedStartDate =moment(data[key]).format("DD MMM YYYY");
+                tableData.push([label, formattedStartDate]);
+            } else if(key === "progress"){
+                if(data.progress== -1){
+                    tableData.push([label,"NA"])
+                }
+            } else if(key === "context" || key === 'screenshot' || key === "attachments") {
+                tableData.pop();
+            }
+             else {
+                tableData.push([label, data[key]]);
+            }
+        }
+    }
+    const columnWidths = [70, 120];
+  
+    (pdf as any).autoTable({
+        head: [headers],
+        body: tableData,
+        startY: 20,
+        margin: { top: 20 },
+        columnStyles: { 0: { cellWidth: columnWidths[0] } },
+    });
+    const pdfFile = new File([pdf.output('blob')], `(#${selectedTask.sequenceNumber})TaskDetails.pdf`, {type: 'application/pdf'});
+    setGeneratedpdf(pdfFile);
+    //pdf.save('generated')
+    return pdf;
+  };
   
   const  handleCloseProcore=()=>{
     setProcorePopup(false)
@@ -1225,9 +1331,14 @@ const [showLink, setShowLink] = useState(false)
   let credential=null;
   if(userCredentials) credential=JSON.parse(userCredentials);
    const providerType =credential.provider;
+   const { state: appState} = useAppContext();
+   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
+
   return (
     <>
-      {procorePopup && <ProcoreLink task={selectedTask}  handleCloseProcore={handleCloseProcore} getTasks={getTasks}></ProcoreLink>}
+      {procorePopup && <ProcoreLink task={selectedTask} generatedpdf={generatedpdf}  screenshot={screenshot} attachment={attachment} handleCloseProcore={handleCloseProcore} getTasks={getTasks}></ProcoreLink>}
       {taskDetail && 
       <CustomTaskDrawerContainer>
         <HeaderContainer>

@@ -1243,9 +1243,12 @@ const CustomIssueDetailsDrawer = (props: any) => {
         }
       });
   };
-  const [gen,setGen]=useState<any>(undefined)
+  const [generatedpdf,setGeneratedpdf]=useState<any>(undefined)
+  const [screenshot, setscreenshot]=useState<any>(undefined)
+  const [attachment,setAttachment]=useState<any>(undefined)
   const handleProcoreLinks = () =>{
-    
+    handleScreenShotAndAttachment()
+    convertObjectToPdf()
     setProcorePopup(true)
     setIssueDetail(false)
   }
@@ -1253,81 +1256,125 @@ const  handleCloseProcore=()=>{
     setProcorePopup(false)
     setIssueDetail(true);
   }
-  const convertObjectToPdf = () => {
-    // Sample object data
-    const data: any = selectedIssue;
-  
-    // Create a new jsPDF instance
-    const pdf = new jsPDF();
-  
-    // Set font size and style
-    pdf.setFontSize(12);
-    pdf.setFont("helvetica", "normal");
-  
-    // Define table headers
-    const headers = ["Key", "Value"];
-  
-    // Initialize table data array
-    const tableData = [];
-  
-    // Iterate over object properties and push key-value pairs to tableData
-    for (const key in data) {
+
+ const handleScreenShotAndAttachment =() =>{
+  const imageFiles:any = []; 
+
+  const attachment = selectedIssue.attachments;
+  if (attachment) {
+      attachment.forEach((attachment:any, index:any) => {
+          const attachmentUrl = attachment.url;
+           fetch(attachmentUrl)
+              .then(response => response.blob())
+              .then(blob => {
+                  const imageFile = new File([blob], `(#${selectedIssue.sequenceNumber})Attachment_${index}.png`, { type: 'image/png' });
+                  imageFiles.push(imageFile);
+                  setAttachment(imageFiles);
+              })
+              .catch(error => {
+                  console.error('Error fetching attachment:', error);
+              });
+      });
+  }
+  const screenUrl = selectedIssue.screenshot;
+
+  fetch(screenUrl)
+      .then(response => response.blob())
+      .then(blob => {
+          const screenshotFile = new File([blob], `(#${selectedIssue.sequenceNumber})ScreenShot.png`, { type: 'image/png' });
+          setscreenshot(screenshotFile);
+      })
+      .catch(error => {
+          console.error('Error fetching screenshot:', error);
+      });
+ }
+
+const convertObjectToPdf = () => {
+    
+  const data: any = selectedIssue;
+   const pdf = new jsPDF();
+
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica", "normal");
+
+  const headers = ["Label", "Details"];
+
+  const tableData = [];
+
+  const keyLabels:any = {
+      _id:"ID",
+      sequenceNumber:"Sequence Number",
+      title:"Title",
+      assignees: "Assignees",
+      owner: "Owner",
+      priority:"Priority",
+      status:"Status",
+      type:"Type",
+      project: "Project ID",
+      structure:"Structure ID",
+      dueDate:"Due Date",
+      startDate:"Start Date",
+      progress: "Progress",
+      tags:"Tags",
+      description:"Description",
+  };
+
+  for (const key in data) {
+    
       if (data.hasOwnProperty(key)) {
-        // Check if the current property is "assignees"
-        if (key === "assignees") {
-          // Extract names from assignees array and concatenate
-          const assigneeNames = data[key].map((assignee: any) => `${assignee.firstName} ${assignee.lastName}`).join(", ");
-          tableData.push([key, assigneeNames]);
-        } else {
-          // For other properties, push key-value pairs to tableData
-          tableData.push([key, data[key]]);
-        }
-        if (key === "screenshot") {
-          
-          // Handle screenshot separately and add it as an image
-          const screenshotUrl = data[key];
-          const imgWidth = 80; // Adjust as needed
-          const imgHeight = 60; // Adjust as needed
-          pdf.addImage(screenshotUrl, "PNG", 100, 200, imgWidth, imgHeight);
-          tableData.push(["Screenshot", ""]);
-        }
+          let label = key;
+          if (keyLabels[key]) {
+              label = keyLabels[key];
+          }
+          if (key === "assignees") {
+              const assigneeNames = data[key].map((assignee: any) => `${assignee.firstName} ${assignee.lastName}`).join(", ");
+              tableData.push([label, assigneeNames]);
+          } else if(key === "owner") {
+              const ownerName = `${data.owner.firstName}`;
+              tableData.push([label, ownerName]);
+          } else if (key === "startDate" || key === "dueDate") {
+              const formattedStartDate =moment(data[key]).format("DD MMM YYYY");
+              tableData.push([label, formattedStartDate]);
+          } else if(key === "progress"){
+              if(data.progress== -1){
+                  tableData.push([label,"NA"])
+              }
+          } else if(key === "context" || key === 'screenshot' || key === "attachments") {
+              tableData.pop();
+          }
+           else {
+              tableData.push([label, data[key]]);
+          }
       }
-    }
-  
-    // Set table column widths and autoTable options
-    const columnWidths = [50, 140];
-  
-    // Add table headers and data to PDF using jspdf-autotable
-    (pdf as any).autoTable({
+  }
+  const columnWidths = [70, 120];
+
+  (pdf as any).autoTable({
       head: [headers],
       body: tableData,
       startY: 20,
       margin: { top: 20 },
       columnStyles: { 0: { cellWidth: columnWidths[0] } },
-    });
-      
-    // Save the PDF
-    
-    return pdf;
-    pdf.save("object_data.pdf");
-  };
+  });
+  const pdfFile = new File([pdf.output('blob')], `(#${selectedIssue.sequenceNumber})IssueDetails.pdf`, {type: 'application/pdf'});
+  setGeneratedpdf(pdfFile);
+  return pdf;
+};
+
+
   const userCredentials = localStorage.getItem('userCredentials');
   let credential=null;
   if(userCredentials) credential=JSON.parse(userCredentials);
    const providerType =credential.provider;
 
-   
-
-  const updatedselectedIssue =(issueData:any)=>{
-      setSelectedIssue(issueData)
-  }
-  const procoreProjectDetails= project.metaDetails
-  const procoreProjectId =procoreProjectDetails?.procore?.projectId;
-  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
+  const { state: appState} = useAppContext();
+   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
+   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   return (
     <>
     
-      {procorePopup && <ProcoreLink  issue={selectedIssue} gen={gen} handleCloseProcore={handleCloseProcore} updatedselectedIssue={updatedselectedIssue} getIssues={getIssues}></ProcoreLink>}
+      {procorePopup && <ProcoreLink  issue={selectedIssue} generatedpdf={generatedpdf} screenshot={screenshot}  attachment={attachment}handleCloseProcore={handleCloseProcore} getIssues={getIssues}></ProcoreLink>}
       {issueDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
