@@ -1860,6 +1860,11 @@ const Index: React.FC<IProps> = () => {
 
     }
 
+
+    if(message.type === "toast"){
+      CustomToast(message?.data?.message,message?.data?.code);
+    }
+
   }
 
   useEffect(()=>{
