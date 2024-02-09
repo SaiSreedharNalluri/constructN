@@ -40,22 +40,22 @@ import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
 import LinkExistingRfi from "./newRFI/linkExistingRfi";
 import LinkExistingObservation from "./procoreObservations/linkExistingObservations";
 import LinkExistingSubmittal from "./procoreSubmittal/linkExistingSubmittal";
-import { useUploaderContext } from "../../../state/uploaderState/context";
 import { useAppContext } from "../../../state/appState/context";
+import router from "next/router";
 
 const ProcoreLink = (props: any) => {
   const { handleCloseProcore,
-          gen ,
+          generatedpdf ,
           issue,
           setEnabled,
           task,
           setSelectedIssue,
           updatedselectedIssue,
           getIssues,
-          getTasks,} = props;
-  console.log('procore pdf link page',gen)
+          getTasks,
+          screenshot,
+          attachment} = props;
 
- 
   const [loading, setLoading] = useState(false)
   const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
 
@@ -79,7 +79,13 @@ const ProcoreLink = (props: any) => {
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
-  
+  const weburl=()=>{
+    if(issue){
+      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+    }else{
+      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+    }
+  }
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -146,7 +152,10 @@ const ProcoreLink = (props: any) => {
       case "RFI":
         setSelectedComponent(
           <LinkNewRFI
-          gen={gen}
+          attachment={attachment}
+          screenshot={screenshot}
+          weburl={weburl}
+          generatedpdf={generatedpdf}
           getTasks={getTasks}
           getIssues={getIssues}
           updatedselectedIssue={updatedselectedIssue}
@@ -174,6 +183,10 @@ const ProcoreLink = (props: any) => {
       case "Existing_RFI":
         setSelectedComponent(
             <LinkExistingRfi
+            attachment ={attachment}
+            screenshot={screenshot}
+            weburl={weburl}
+            generatedpdf={generatedpdf}
             getTasks={getTasks}
             getIssues={getIssues}
             issue={issue}
@@ -188,10 +201,13 @@ const ProcoreLink = (props: any) => {
       case "New_Observation":
         setSelectedComponent(
           <LinkNewObservation
+          attachment ={attachment}
+          screenshot={screenshot}
+          weburl={weburl}
           getTasks={getTasks}
           getIssues={getIssues}
           issue={issue}
-            gen={gen}
+          generatedpdf={generatedpdf}
             handleCloseProcore={handleCloseProcore}
             task={task}
             rfiManager={rfiManager}
@@ -206,6 +222,10 @@ const ProcoreLink = (props: any) => {
         break;
       case "Existing_Observation":
         setSelectedComponent(<LinkExistingObservation
+          attachment ={attachment}
+          screenshot={screenshot}
+          weburl={weburl}
+          generatedpdf={generatedpdf}
           getTasks={getTasks}
           getIssues={getIssues}
           issue={issue}
@@ -216,6 +236,10 @@ const ProcoreLink = (props: any) => {
       case "Link_new_submittal":
         setSelectedComponent(
           <NewLinkSubmittal
+          weburl={weburl}
+          attachment ={attachment}
+          screenshot={screenshot}
+          generatedpdf={generatedpdf}
           getTasks={getTasks}
           getIssues={getIssues}
           issue={issue}
@@ -232,6 +256,10 @@ const ProcoreLink = (props: any) => {
         break;
       case "Existing_Submittal":
         setSelectedComponent(<LinkExistingSubmittal
+          attachment ={attachment}
+          screenshot={screenshot}
+          weburl={weburl}
+          generatedpdf={generatedpdf}
           getTasks={getTasks}
           getIssues={getIssues}
           issue={issue}
