@@ -108,8 +108,20 @@ function Forge(props: _ViewerProps) {
 
                     (camera: any) => {
                         
-                        if(_forge.current?.navigation.getPosition().x || _forge.current?.navigation.getPosition().y || _forge.current?.navigation.getPosition().z){
-                            publish('sync-viewer',{ compare: props.compare,  position: _forge.current?.navigation.getPosition() , target: _forge.current?.navigation.getTarget()})
+                        if (_forge.current?.navigation.getPosition().x || 
+                        
+                            _forge.current?.navigation.getPosition().y || 
+                            
+                            _forge.current?.navigation.getPosition().z) {
+
+                            publish('sync-viewer', { 
+                                
+                                compare: props.compare, 
+                                
+                                position: _forge.current?.navigation.getPosition(), 
+                                
+                                target: _forge.current?.navigation.getTarget() 
+                            })
                         }
 
                         if(viewerId != 'minimap') {
@@ -151,7 +163,9 @@ function Forge(props: _ViewerProps) {
                 }
 
                 _forge.current.navigation.setWorldUpVector(
+
                     new THREE.Vector3(0, 1, 0), true, false
+
                 )
 
                 _forge.current.navigation.setReverseZoomDirection(true)
