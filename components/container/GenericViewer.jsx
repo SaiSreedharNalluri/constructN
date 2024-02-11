@@ -629,6 +629,7 @@ function GenericViewer(props) {
         case 'Drone Image':
         case 'Phone Image':
         case '360 Image':
+        case 'Laser':
         case '360 Video':
           currentContext.current = event;
           const isMinimap = viewerId.indexOf('minimap') > -1;
