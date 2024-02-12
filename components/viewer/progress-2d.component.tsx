@@ -310,7 +310,7 @@ function Progress2DComponent(props: _ViewerProps) {
         }
     }
 
-    const __drawingsList = (): string[] => Object.keys(LightBoxInstance.viewerData()['modelData']).filter(value => value !== 'BIM')
+    const __drawingsList = (): string[] => Object.keys(LightBoxInstance.viewerData()['structure']['designs']).filter(value => value !== 'BIM')
 
     return (
         <>

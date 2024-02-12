@@ -55,7 +55,9 @@ import authHeader from '../../../../services/auth-header'
 import { useRouter as Router  } from 'next/router'
 
 import PopupComponent from '../../../../components/popupComponent/PopupComponent'
+
 import EmailButton from '../../../../components/progress-2d/send-email'
+
 import { getProjectUsers } from '../../../../services/project'
 
 
@@ -447,13 +449,9 @@ const Progress2DPage: React.FC<any> = () => {
 
         let user: IUser
 
-        console.log(userObj, '======')
-
         if (userObj) {
 
             user = JSON.parse(userObj)
-
-            console.log(user, '=========')
 
             if (user?._id) setIsSupportUser(user?.isSupportUser)
 
