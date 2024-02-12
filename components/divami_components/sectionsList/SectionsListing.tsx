@@ -793,7 +793,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
                 </div>
               </TooltipText>
               <CaptureCount>
-                0
+                {rowData.capture["Laser"] || 0}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>

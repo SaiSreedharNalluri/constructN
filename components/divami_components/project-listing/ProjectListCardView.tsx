@@ -285,7 +285,7 @@ export const ProjectListCardView = ({
             <CaptureImageIcon src={LaserIcon} alt="laser icon"></CaptureImageIcon>
             <CaptureName>Laser - </CaptureName>
             <CaptureCount>
-              0
+            {each.captures?.Laser || 0}
             </CaptureCount>
           </CaptureImageContainer>
           <CaptureImageContainer opacity={d2Details[each._id] ? 1 : 0.6}>

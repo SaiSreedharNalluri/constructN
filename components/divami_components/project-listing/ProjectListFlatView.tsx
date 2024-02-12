@@ -267,7 +267,7 @@ export const ProjectListFlatView = ({
                 </div>
               </TooltipText>
               <CaptureCount>
-                0
+                {rowData.captures["Laser"] || 0}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
