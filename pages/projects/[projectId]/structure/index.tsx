@@ -270,6 +270,18 @@ const Index: React.FC<IProps> = () => {
     closeTaskCreate();
   };
 
+  const fetchProject = () => {
+    getProjectDetails(router.query.projectId as string)
+        .then((response) => {
+          setProjectUtm(response?.data?.result?.utm);
+          setActiveProjectId(router.query.projectId as string);
+          setProject(response.data.result);
+        })
+        .catch((error) => {
+          CustomToast("failed to load data","error");
+        });
+  }
+
   useEffect(() => {
     if (router.isReady && router.query?.projectId) {
       getIssuesPriority(router.query.projectId as string)
@@ -319,15 +331,7 @@ const Index: React.FC<IProps> = () => {
         .catch((error) => {
           CustomToast("failed to load data","error");
         });
-      getProjectDetails(router.query.projectId as string)
-        .then((response) => {
-          setProjectUtm(response?.data?.result?.utm);
-          setActiveProjectId(router.query.projectId as string);
-          setProject(response.data.result);
-        })
-        .catch((error) => {
-          CustomToast("failed to load data","error");
-        });
+      fetchProject();
       getStructureList(router.query.projectId as string)
         .then((response) => {
           const list = response.data.result;
@@ -1842,6 +1846,7 @@ const Index: React.FC<IProps> = () => {
               {isDesignAvailable||isRealityAvailable?
               <ToolBarMenuWrapper
                 issuesList={issuesList}
+                fetchProject={fetchProject}
                 tasksList={tasksList}
                 setTasksList={setTasksList}
                 toolClicked={toolClicked}
@@ -1888,6 +1893,7 @@ const Index: React.FC<IProps> = () => {
                 handleOnTasksSort={handleOnTasksSort}
                 issueSubmit={issueSubmit}
                 taskSubmit={taskSubmit}
+                project={project}
                 selectedType={currentViewType}
                 deleteTheAttachment={deleteTheAttachment}
                 setActiveRealityMap={setActiveRealityMap}

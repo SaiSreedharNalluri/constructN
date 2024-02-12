@@ -73,15 +73,15 @@ const CreateTask = ({
     setFormData(data);
   };
 
-  useEffect(() => {
-    getTagsList(router.query.projectId as string)
-      .then((response) => {
-        if (response.success === true) {
-          setTagList(response.result[0]?.tagList);
-        }
-      })
-      .catch((e) => console.log(e));
-  }, []);
+  // useEffect(() => {
+  //   getTagsList(router.query.projectId as string)
+  //     .then((response) => {
+  //       if (response.success === true) {
+  //         setTagList(response.result[0]?.tagList);
+  //       }
+  //     })
+  //     .catch((e) => console.log(e));
+  // }, []);
 
   return (
     <StyledDiv>

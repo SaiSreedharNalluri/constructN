@@ -69,34 +69,25 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
     }
   }, []);
 
+  const fullDetails = [
+    {label:"ID", value: details?.id},
+    {label:"Full Number", value: details?.full_number || details?.number || "NA"},
+    {label:"Assignee", value: details?.assignee?.name || "NA"},
+    {label:"Type", value: type?.toUpperCase()},
+    {label:"Title", value: details?.title || details?.name},
+    {label:"Status", value: type === 'submittal' ? details?.status?.name : details?.status},
+  ]
+
   return (
     <div>
         {details && (
       <TabOneDiv>
-          <SecondBodyDiv>
+        {fullDetails.map((detail)=>(<SecondBodyDiv key={detail.label}>
             <SecondContPrior>
-              <PriorityTitle>Type</PriorityTitle>
-              <PriorityStatus>{type}</PriorityStatus>
+              <PriorityTitle>{detail.label}</PriorityTitle>
+              <PriorityStatus>{detail.value}</PriorityStatus>
             </SecondContPrior>
-          </SecondBodyDiv>
-          <SecondBodyDiv>
-            <SecondContPrior>
-              <PriorityTitle>Title</PriorityTitle>
-              <PriorityStatus>{details.title || details.name}</PriorityStatus>
-            </SecondContPrior>
-          </SecondBodyDiv>
-          <SecondBodyDiv>
-            <SecondContPrior>
-              <PriorityTitle>Status</PriorityTitle>
-              <PriorityStatus>{type === 'submittal' ? details.status.name : details.status}</PriorityStatus>
-            </SecondContPrior>
-          </SecondBodyDiv>
-          <SecondBodyDiv>
-            <SecondContPrior>
-              <PriorityTitle>ID</PriorityTitle>
-              <PriorityStatus>{details.id}</PriorityStatus>
-            </SecondContPrior>
-          </SecondBodyDiv>
+          </SecondBodyDiv>))}
           <SecondBodyDiv>
           <ProcoreSectionIcon>
           <PopupIcon

@@ -5,6 +5,7 @@ import { IHotspot } from "./IHotspot"
 import { Issue } from "./Issue"
 import { ITasks } from "./Itask"
 import { ILayer } from "./IReality"
+import { location, utmLocation } from "./IRawImages"
 
 export interface IGenData {
 
@@ -24,13 +25,14 @@ export interface IGenData {
         selectedTask?: ITasks,
         selectedIssue?: Issue,
         selectedHotspot?: IHotspot,
-        projectUTM?:string,
+        projectUTM?:utmLocation,
+        projectLocation?:location,
         taskShow?:boolean,
         issueShow?:boolean,
         isTaskFiltered?:boolean,
         isIssueFiltered?:boolean,
         filteredTaskList?:ITasks[],
-        filteredIssueList?:Issue[],
-
+        filteredIssueList?:Issue[],    
+        currentViewTypeList:string[],
         currentTypesList:string[]
       }

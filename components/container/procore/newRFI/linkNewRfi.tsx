@@ -16,8 +16,8 @@ import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
-import router from "next/router";
 import { useAppContext } from "../../../../state/appState/context";
+import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
 
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
@@ -41,10 +41,13 @@ const LinkNewRFI = (props: any) => {
     specSection,
     issue,
     task,
-    updatedselectedIssue,
     handleCloseProcore,
     getIssues,
-    getTasks
+    getTasks,
+    generatedpdf,
+    weburl,
+    screenshot,
+    attachment
   } = props;
   const ButtonsContainer = styled(Box)({
     padding: "10px",
@@ -56,34 +59,29 @@ const LinkNewRFI = (props: any) => {
   const [footerState, SetFooterState] = useState(true);
   const [scheduleImpact, setScheduleImpact] = useState("");
   const [costImpact, setCostImpact] = useState("");
-  const [attachments, setAttachments] = useState<File[]>();
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
+  const [files, setFiles] = useState<[Blob]>();
   const formikRef = useRef<FormikProps<any>>(null);
   const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
-  const onDrop = useCallback((files: File[]) => {}, []);
+  const onDrop = useCallback((acceptedFiles: any) => {
+      setFiles(acceptedFiles);
+  }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
+  const [loading, setLoading] = useState(false)
   const userObj=localStorage.getItem('userCredentials')
   const procoreAssigneeId=()=>{
     if (userObj) {
       const  user = JSON.parse(userObj);
-      const metaData = user.metadata.procore
-       console.log('procore id',metaData.id);
-       
+      const metaData = user.metadata.procore      
       return metaData.id
      }
     
     }
-  
-  const weburl=()=>{
-    if(issue){
-      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
-    }else{
-      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
-    }
-  }
+
   const initialValues: {
     subject: string;
     rfi_manager_id: number | null;
@@ -91,7 +89,7 @@ const LinkNewRFI = (props: any) => {
     received_from_login_information_id: number | null;
     responsible_contractor_id: number | null;
     drawing_number: string;
-    question: { body: string; attachment: File[] };
+    question: { body: string; attachments: Blob[] };
     specification_section_id: number | null;
     location_id: number | null;
     project_stage_id: number | null;
@@ -113,7 +111,7 @@ const LinkNewRFI = (props: any) => {
     drawing_number: "",
     question: {
       body:issue?.description || task?.description ||" ",
-      attachment: [],
+      attachments: [],
     },
     specification_section_id: null,
     location_id: null,
@@ -137,14 +135,14 @@ const LinkNewRFI = (props: any) => {
     
   };
   
-  const handleSubmit = (formData: {
+  const handleSubmit = (rfi: {
     subject: string;
     rfi_manager_id: number | null;
     distribution_ids: [];
     received_from_login_information_id: number | null;
     responsible_contractor_id: number | null;
     drawing_number: string;
-    question: { body: string; attachment: File[] };
+    question: { body: string; attachments: Blob[]|undefined };
     specification_section_id: number | null;
     location_id: number | null;
     project_stage_id: number | null;
@@ -158,21 +156,53 @@ const LinkNewRFI = (props: any) => {
     assignee_id: number | null;
     draft: boolean;
   }) => {
-    formData.question.body= formData.question.body +`<a href=\"${weburl()}\"> View in ConstructN</a>` ;
+    setLoading(true)
+    rfi.question.body= rfi.question.body +`<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>` ;
+    rfi.schedule_impact.status = scheduleImpact;
+    rfi.cost_impact.status = costImpact;
+    const formdata:any =new FormData()
+    Object.entries(rfi).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== "" && !(Array.isArray(value) && value.length === 0)) {
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+            if (nestedKey === 'attachments') {
+              if (attachment && attachment.length > 0) {
+                for (let i = 0; i < attachment.length; i++) {
+                  formdata.append(`rfi[${key}][${nestedKey}][${attachment[i].name}]`, attachment[i]);
+                }
+              }
+              formdata.append(`rfi[${key}][${nestedKey}][${screenshot.name}]`, screenshot)
+              formdata.append(`rfi[${key}][${nestedKey}][${generatedpdf.name}]`, generatedpdf)
+              if (files && files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                  formdata.append(`rfi[${key}][${nestedKey}][${files[i].name}]`, files[i]);
+                }
+              }
+            } else {
+              if (nestedValue !== null && nestedValue !== undefined && nestedValue !== "") {
+                formdata.append(`rfi[${key}][${nestedKey}]`, String(nestedValue));
+              }
+            }
+          });
+        } else {
+          formdata.append(`rfi[${key}]`, String(value));
+        }
+      }
+    });
     
-    formData.schedule_impact.status = scheduleImpact;
-    formData.cost_impact.status = costImpact;
-    createRfi(formData,procoreProjectId)
+
+    createRfi(formdata,procoreProjectId)
   .then((response) => {
     if (response) {
-      CustomToast("RFI Created successfully", "success");
+
+      setLoading(false)
 
       if (issue) {
     
         linkIssueRfi(issue.project, issue._id, response.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("RFI linked successfully", 'success');
+              CustomToast("RFI Created and linked successfully", "success");
               getIssues(issue.structure)
               handleCloseProcore();
             }
@@ -186,7 +216,7 @@ const LinkNewRFI = (props: any) => {
         linkTaskRfi(task.project, task._id, response.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("RFI linked successfully", 'success');
+              CustomToast("RFI Created and linked successfully", "success");
               getTasks(task.structure)
               handleCloseProcore();
             }
@@ -225,6 +255,9 @@ const LinkNewRFI = (props: any) => {
   };
   return (
     <>
+    {loading?(<div>
+        <CustomLoader></CustomLoader>
+      </div>):(<div>
       <CustomTaskProcoreLinks>
       <ProcoreHeader handleInstances={handleBack} heading={"Create New RFI"}></ProcoreHeader>
         <BodyContainer footerState={footerState}>
@@ -559,7 +592,7 @@ const LinkNewRFI = (props: any) => {
                           );
                         }}
                       ></TextField>{errors.question && touched.question && (
-                        <div className="text-border-yellow  w-[182px]">{errors.question.body}</div>
+                    <div className="text-border-yellow  w-[182px]">{errors.question.body}</div>
                       )}
                     </div>
                   </div>
@@ -586,6 +619,21 @@ const LinkNewRFI = (props: any) => {
                       // <p>Drag 'n' drop some files here, or click to select files</p>
                     }
                   </div>
+                  {files&&files.length > 0 && (
+                        <div>
+                          <strong>Uploaded Files:</strong>
+                          <ul>
+                            {files.map((file: any, index: number) => (
+                              <li
+                                key={index}
+                                style={{ cursor: "pointer" }}
+                              >
+                                {file.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                 </div>
               </Form>
               )
@@ -594,10 +642,12 @@ const LinkNewRFI = (props: any) => {
           </Formik>
         </BodyContainer>
         <ProcoreFooter
+        handleInstances={handleBack}
           handleExternalSubmit={handleExternalSubmit}
           allFieldsTrue={isAllFieldsTrue}
         ></ProcoreFooter>
       </CustomTaskProcoreLinks>
+      </div>)}
     </>
   );
 };

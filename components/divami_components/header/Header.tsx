@@ -114,14 +114,15 @@ const Header: React.FC<any> = ({
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       let projectId = router?.query?.projectId as string
-      // var projectDataListString = localStorage.getItem(ProjectLocalStorageKey.ProjectDataListKey)
-      // var projectDataList: ProjectData[] | undefined = projectDataListString ? JSON.parse(projectDataListString) as ProjectData[] : undefined
+      //var projectDataListString = localStorage.getItem(ProjectLocalStorageKey.ProjectDataListKey)
+      //var projectDataList: ProjectData[] | undefined = projectDataListString ? JSON.parse(projectDataListString) as ProjectData[] : undefined
       if(appState.currentProjectData && appState.currentProjectData.project._id === projectId) {
         //no need to update
         return
       }
 
       let projectDataInAppState = appState.projectDataList.find((projectData) => { return projectData.project._id === projectId})
+
       // let projectDataInLocalStorage = projectDataList && projectDataList.find((projectData) => { return projectData.project._id === projectId})
       if(projectDataInAppState) {
         appAction.setCurrentProjectData(projectDataInAppState)

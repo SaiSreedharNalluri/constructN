@@ -33,7 +33,7 @@ import {
   getTaskStatus,
   getTasksTypes,
 } from "../../../services/task";
-import TaskFilterCommon from "../../divami_components/task-filter-common/TaskFilterCommon";
+import TaskFilterCommon from "../taskFilter/TaskFilterCommon"
 
 import CustomTaskDetailsDrawer from "../taskDetails/TaskDetail";
 import {
@@ -84,7 +84,7 @@ import {
   AssigneeList,
   Watcher,
   TopButton,
-} from "../../divami_components/task_list/TaskListStyles";
+} from "./TaskListStyles";
 
 import {
   Box,
@@ -101,14 +101,7 @@ import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg"
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import { IToolbarAction, ITools } from "../../../models/ITools";
 import { downloadMenuOptions} from "../../divami_components/issue-listing/Constants";
-import { DownloadTable } from "../toolbarViewer/DownloadTable";
-import { MenuOptionLabel } from "../../divami_components/issue-listing/IssueListStyles";
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
-import filterElip from "../../../public/divami_icons/filterElip.svg";
-import progressHour from "../../../public/divami_icons/progressHour.svg";
-import todoIcon from "../../../public/divami_icons/todoIcon.svg";
-import blockedFrame from "../../../public/divami_icons/blockedFrame.svg";
-import CompletedIconTask from "../../../public/divami_icons/CompletedIconTask.svg";
 import smallDivider from "../../../public/divami_icons/smallDivider.svg";
 import Task from "../../../public/divami_icons/Task.svg";
 import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";

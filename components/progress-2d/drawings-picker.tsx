@@ -1,8 +1,6 @@
 import { SelectChangeEvent, Box, Checkbox, ListItemText, MenuItem, OutlinedInput, Select, Typography, Radio } from '@mui/material'
 
-import React, { FC, useEffect, useState } from 'react'
-
-import { IAssetCategory } from '../../models/IAssetCategory'
+import React, { FC } from 'react'
 
 const ITEM_HEIGHT = 48
 
@@ -26,27 +24,27 @@ const MenuProps = {
 
 export interface IProps {
 
-    categories: IAssetCategory[]
+    drawings: string[]
 
-    selected: IAssetCategory | undefined
+    selected: string | undefined
 
-    onSelect: (category: IAssetCategory | undefined) => void
+    onSelect: (drawing: string | undefined) => void
 
 }
 
-const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
+const DrawingsPicker: FC<IProps> = ({drawings, selected, onSelect}) => {
 
   const handleChange = (event: SelectChangeEvent<typeof selected>) => {
 
     const { target: { value } } = event
 
-    onSelect(categories.find((category: IAssetCategory) => category._id === value))
+    onSelect(drawings.find((drawing: string) => drawing === value))
 
   }
 
   return (
 
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', border: '1px solid #e2e3e5', borderRadius: '6px', padding: '0' }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', padding: '0' }}>
 
       <Select size='small' sx={{
 
@@ -74,9 +72,9 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
           <OutlinedInput size='small' className='min-w-[200px]'
 
-            startAdornment={<Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-sm mr-3'>
+            startAdornment={<Typography fontFamily='Open Sans' className='text-[#4a4a4a] rounded bg-[#F1742E] bg-opacity-10 px-2 py-[6px] text-[0.8rem] mr-3'>
                 
-                Category: 
+                Drawing: 
                 
             </Typography>} />
 
@@ -86,7 +84,7 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', fontFamily: 'Open Sans', gap: 0.5 }}>
 
-            <div className='text-black text-sm mt-[2px]'>{ (selected as IAssetCategory).name }</div>
+            <div className='text-black text-[0.8rem] mt-[2px]'>{ selected }</div>
 
           </Box>
 
@@ -94,7 +92,7 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
         MenuProps={MenuProps}>
 
-        {categories.map((category: IAssetCategory) => (
+        {drawings.map((drawing: string) => (
 
           <MenuItem sx={{
 
@@ -104,11 +102,11 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
 
             }
 
-          }} color='warning' className='h-8' key={category._id} value={category._id}>
+          }} color='warning' className='h-8' key={drawing} value={drawing}>
 
-            <Radio color='warning' size='small' checked={selected && selected._id === category._id} />
+            <Radio color='warning' size='small' checked={selected === drawing} />
 
-            <ListItemText sx={{fontFamily: 'Open Sans'}} color='warning' secondary={category.name} />
+            <ListItemText sx={{fontFamily: 'Open Sans'}} color='warning' secondary={drawing} />
 
           </MenuItem>
 
@@ -121,4 +119,4 @@ const AssetCategoryPicker: FC<IProps> = ({categories, selected, onSelect}) => {
   )
 }
 
-export default AssetCategoryPicker
+export default DrawingsPicker

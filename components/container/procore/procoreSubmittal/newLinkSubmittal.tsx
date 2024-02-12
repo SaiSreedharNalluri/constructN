@@ -10,9 +10,16 @@ import * as Yup from 'yup';
 import { statusData } from "../../../../utils/Procoreconstants";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
 import { IprocoreActions } from "../../../../models/Iprocore";
-import router from "next/router";
 import { useAppContext } from "../../../../state/appState/context";
-
+import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
+import { styled } from "@mui/material/styles";
+import Image from "next/image";
+import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
+export const UploaderIcon = styled(Image)({
+  cursor: "pointer",
+  height: "40px",
+  width: "40px",
+});
 const NewLinkSubmittal = (props: any) => {
   const {
     handleInstance,
@@ -26,15 +33,21 @@ const NewLinkSubmittal = (props: any) => {
     handleCloseProcore,
      getIssues,
      getTasks,
+     generatedpdf,
+     screenshot,
+     attachment,
+     weburl,
   } = props as any;
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [footerState, setfooterState] = useState(true);
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<[Blob]>();
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
+  const [loading, setLoading] = useState(false)
   const formikRef = useRef<FormikProps<any>>(null);
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber;
   const initialValues: {
     title: string;
     specification_section_id: number | null;
@@ -56,6 +69,8 @@ const NewLinkSubmittal = (props: any) => {
     required_on_site_date: string;
     private: boolean;
     description: string;
+    attachments:Blob[]
+   
   } = {
     title: issue?.title || task.title,
     specification_section_id: null,
@@ -76,19 +91,13 @@ const NewLinkSubmittal = (props: any) => {
     lead_time: null,
     required_on_site_date: "",
     private: false,
+    attachments:[],
     description: issue?.description || task?.description || "",
   };
   const onDrop = useCallback((acceptedFiles: any) => {
     setFiles(acceptedFiles);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  const weburl=()=>{
-    if(issue){
-      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
-    }else{
-      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
-    }
-  }
   const handleExternalSubmit = () => {
     if (formikRef.current) {
       formikRef.current.submitForm();
@@ -115,19 +124,37 @@ const NewLinkSubmittal = (props: any) => {
     required_on_site_date: string;
     private: boolean;
     description: string;
+    attachments:Blob[]
   }) => {
-    formData.description= formData.description + `<a href=\"${weburl()}\"> View in ConstructN</a>`
-    createSubmittal(formData,procoreProjectId)
+    setLoading(true)
+
+    formData.description= formData.description + `<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>`
+    const formdata:any = new FormData()
+    Object.entries(formData).forEach(([key, value]) => {  
+      if(key === "attachments"){
+        if(files)  
+        for (let i = 0; i < files.length; i++) {
+          formdata.append(`submittal[attachments][${files[i].name}]`, files[i] );
+        }
+        formdata.append(`submittal[attachments][${generatedpdf.name}]`, generatedpdf)
+      }
+      if(value!==null && value!==undefined && value !=="" && !(Array.isArray(value) && value.length === 0)){
+         formdata.append(`submittal[${key}]`, String(value));
+      }
+       
+});
+    createSubmittal(formdata,procoreProjectId)
     .then((response) => {
       if (response) {
-        CustomToast("Submittal Created successfully","success");
+        setLoading(false)
+       
       }
       if (issue) {
         
-        linkIssueSubmittal(issue.project, issue._id, response.data.id)
+        linkIssueSubmittal(issue.project, issue._id, response?.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("Submittal linked successfully", 'success');
+              CustomToast("Submittal Created and linked successfully", 'success');
               getIssues(issue.structure)
               handleCloseProcore();
             }
@@ -138,10 +165,10 @@ const NewLinkSubmittal = (props: any) => {
             }
           });
       } else {
-        linkTaskSubmittal(task.project, task._id, response.data.id)
+        linkTaskSubmittal(task.project, task._id, response?.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
-              CustomToast("Submittal linked successfully", 'success');
+              CustomToast("Submittal Created and linked successfully", 'success');
               getTasks(task.structure)
               handleCloseProcore();
             }
@@ -173,6 +200,9 @@ const NewLinkSubmittal = (props: any) => {
   });
   return (
     <>
+     {loading?(<div>
+        <CustomLoader></CustomLoader>
+      </div>):(<div>
       <CustomTaskProcoreLinks>
         <ProcoreHeader handleInstances={handleBack} heading={"Create New Submittal"}></ProcoreHeader>
         <BodyContainer footerState={footerState}>
@@ -587,30 +617,49 @@ const NewLinkSubmittal = (props: any) => {
                     </Grid>
                   </Grid>
                   <Grid container className="pt-[5px] mb-[20px]">
-                    <Grid item xs={10}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        ATTACH FILES
-                      </label>
-                      <div
-                        {...getRootProps()}
-                        style={{
-                          width: "100%",
-                          border: "1px dashed #ccc",
-                          padding: "20px",
-                          textAlign: "center",
-                        }}
-                      >
-                        <input {...getInputProps()} name="attachFiles" />
-                        {isDragActive ? (
-                          <p>Drop the files here ...</p>
-                        ) : (
-                          <p>
-                            Drag & drop files here, or click to select files
-                          </p>
-                        )}
-                      </div>
-                    </Grid>
+                  <Grid item xs={15}>
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()}
+                    type="file"
+                    name="attachments" />
+                    <label
+                      htmlFor="attachments"
+                      className="text-gray-700 font-medium text-[11px] mb-1"
+                    >
+                      Attachments
+                    </label>
+                    {
+                      isDragActive ? (
+                        <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
+                      ) : (
+                        <div className="flex justify-center border border-soild border-grey-500 focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500">
+                          <UploaderIcon
+                            src={uploaderIcon}
+                            alt="upload"
+                          ></UploaderIcon>
+                        </div>
+                      )
+                      // <p>Drop the files here ...</p> :
+                      // <p>Drag 'n' drop some files here, or click to select files</p>
+                    }
+                  </div>
                   </Grid>
+                  </Grid>
+                  {files&&files.length > 0 && (
+                        <div>
+                          <strong>Uploaded Files:</strong>
+                          <ul>
+                            {files.map((file: any, index: number) => (
+                              <li
+                                key={index}
+                                style={{ cursor: "pointer" }}
+                              >
+                                {file.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                 </div>
               </Form>
        )
@@ -619,10 +668,12 @@ const NewLinkSubmittal = (props: any) => {
           </Formik>
         </BodyContainer>
         <ProcoreFooter
+        handleInstances={handleBack}
            allFieldsTrue={isAllFieldsTrue}
           handleExternalSubmit={handleExternalSubmit}
         ></ProcoreFooter>
       </CustomTaskProcoreLinks>
+      </div>)}
     </>
   );
 };

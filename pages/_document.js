@@ -16,7 +16,7 @@ export default function Document() {
       <Head>
         <link
           rel="stylesheet"
-          href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css"
+          href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.93/style.min.css"
           type="text/css"
         />
         <link
@@ -57,7 +57,7 @@ export default function Document() {
           strategy="beforeInteractive"
         />
         <Script
-          src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"
+          src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.93/viewer3D.min.js"
           onReady={onScriptLoad}
           id="forgeDev"
           strategy="beforeInteractive"
