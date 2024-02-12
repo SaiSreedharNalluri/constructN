@@ -52,25 +52,45 @@ export class SphericalImageLoader extends RealityBasePlugin {
 
         this._scene.background = new THREE.Color(0xffffff);
 
-        this._textureLoader.load(sphericalImage.imageName, texture => {
 
-            this._imageDimensions = { width: texture.image.naturalWidth, height: texture.image.naturalHeight }
+        this._textureLoader.load(sphericalImage.imageName.replace('/images','/images/thumbnails'), texture => {
 
-            var sphereGeometry = new THREE.SphereGeometry(0.5, 128, 128)
 
-            var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, opacity: 1, transparent: true })
+                this._imageDimensions = { width: texture.image.naturalWidth, height: texture.image.naturalHeight }
 
-            sphereGeometry.scale(-1, 1, 1)
+                var sphereGeometry = new THREE.SphereGeometry(0.5, 128, 128)
 
-            this._sphericalMesh = new THREE.Mesh(sphereGeometry, sphereMaterial)
+                var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, opacity: 1, transparent: true })
 
-            this._sphericalMesh.rotation.y = Math.PI / 2
+                sphereGeometry.scale(-1, 1, 1)
 
-            this._scene.add(this._sphericalMesh)
+                this._sphericalMesh = new THREE.Mesh(sphereGeometry, sphereMaterial)
+
+                this._sphericalMesh.rotation.y = Math.PI / 2
+
+                this._scene.add(this._sphericalMesh)
             
-            this._transformSphere(sphericalImage)
+                this._transformSphere(sphericalImage)
+
+                this._textureLoader.load(sphericalImage.imageName, texture => {
+
+                    var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+        
+                    this._transformSphere(sphericalImage);
+        
+        
+                    this._sphericalMesh!.material.dispose();
+        
+        
+                    this._sphericalMesh!.material = sphereMaterial;
+        
+                    this._sphericalMesh!.material.needsUpdate = true;
+        
+        
+                })
 
         })
+
     }
 
     public loadSphericalImage = (sphericalImage: any, onImageLoaded: Function) => {
@@ -85,7 +105,36 @@ export class SphericalImageLoader extends RealityBasePlugin {
 
             }
 
+            let currentImageLoaded = false;
+
             this._scene.children[0].visible = false;
+
+            this._textureLoader.load(sphericalImage.imageName.replace('/images','/images/thumbnails'), texture => {
+
+                if(!currentImageLoaded){
+
+                    this._imageDimensions = { width: texture.image.naturalWidth, height: texture.image.naturalHeight }
+
+                    var sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
+    
+                    if (this._sphericalMesh) {
+    
+                        this._transformSphere(sphericalImage)
+    
+                        onImageLoaded()
+    
+                        this._sphericalMesh.material.dispose()
+    
+                        this._sphericalMesh.material = sphereMaterial
+                        
+                        this._scene.children[0].visible = true;
+    
+                        this._sphericalMesh.material.needsUpdate = true
+    
+                    }
+
+                }
+            })
 
             this._textureLoader.load(sphericalImage.imageName, texture => {
 
@@ -105,7 +154,9 @@ export class SphericalImageLoader extends RealityBasePlugin {
                     
                     this._scene.children[0].visible = true;
 
-                    this._sphericalMesh.material.needsUpdate = true
+                    this._sphericalMesh.material.needsUpdate = true;
+
+                    currentImageLoaded = true;
 
                 }
             })

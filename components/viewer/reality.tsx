@@ -38,7 +38,7 @@ const RealityPage: FC<any> = (props) => {
 
     const viewerId = props.id
 
-    let [isCompare, setIsCompare] = useState(props.isCompare ? props.isCompare : false)
+    const [isCompare, setIsCompare] = useState(props.isCompare)
 
     const _offset = useRef<number[]>()
 
@@ -70,33 +70,44 @@ const RealityPage: FC<any> = (props) => {
 
     useEffect(() => {
 
-        isCompare = props.isCompare!
 
         setIsCompare(isCompare)
 
     }, [props.isCompare])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if(props.snapshot) {
+    //     if(props.snapshot) {
 
-            _generateTmData()
             
-            _layers.current = props.snapshot.layers
+    //         _layers.current = props.snapshot.layers
 
-        }
+    //     }
 
-    }, [props.snapshot])
+    // }, [props.snapshot])
 
-    const onRealityItemClick = (event: Event) => {
+    const onRealityItemClick = async (event: Event) => {
 
         const reality = (event as CustomEvent).detail
+
+        const realityDate = (event as CustomEvent).detail.snapshotDate
+
+        const compare = realityDate === props.snapshotBase?.date
+
+        _layers.current = !compare ? props.snapshotCompare?.layers: props.snapshotBase?.layers
 
         const realityPosition = new THREE.Vector3(reality.position.x, reality.position.y, reality.position.z)
 
         let nearestImage: any
 
         let nearest: number = Number.MAX_VALUE
+
+
+        if(!_sphericalImageLoader.current){
+            await _generateTmData();
+            _initializePlugins();
+        }
+
 
         if(_layers.current && _layers.current[reality.type]) {
 
@@ -152,7 +163,12 @@ const RealityPage: FC<any> = (props) => {
             }
         }
 
-        nearestImage['viewerId'] = undefined
+        if(nearestImage?.['viewerId']){
+
+            nearestImage['viewerId'] = undefined
+
+        }
+
 
         publish(`load-spherical-image-${viewerId}`, nearestImage)
 
@@ -221,6 +237,7 @@ const RealityPage: FC<any> = (props) => {
         }
     }
 
+
     const onInit = async (scene: MutableRefObject<THREE.Scene>, camera: MutableRefObject<THREE.PerspectiveCamera>, renderer: MutableRefObject<THREE.WebGLRenderer>) => {
 
         _scene.current = scene.current
@@ -231,7 +248,10 @@ const RealityPage: FC<any> = (props) => {
 
         await _generateTmData()
 
-        _initializePlugins()
+
+        if(!_sphericalImageLoader.current){
+            _initializePlugins()
+        }
 
         const suffix = isCompare ? 'Compare' : ''
 
