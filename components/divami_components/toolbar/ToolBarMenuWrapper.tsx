@@ -50,6 +50,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   toolClicked,
   viewLayers,
   viewMode,
+  fetchProject,
   viewTypes,
   issuesList,
   tasksList,
@@ -70,6 +71,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
   deleteTheTask,
   issuePriorityList,
   issueStatusList,
+  project,
   issueTypesList,
   taskFilterState,
   issueFilterState,
@@ -405,6 +407,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           closeIssueCreate={closeIssueCreate}
           deleteTheIssue={deleteTheIssue}
           openIssueDetails={openIssueDetails}
+          project={project}
           closeIssueDetails={closeIssueDetails}
           setIssueList={setIssueList}
           getIssues={getIssues}
@@ -413,6 +416,7 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           deleteTheAttachment={deleteTheAttachment}
           projectUsers={projectUsers}
           issueLoader={issueLoader}
+          fetchProject={fetchProject}
           setIssueLoader={setIssueLoader}
           setShowIssueMarkups={setShowIssueMarkups}
           showIssueMarkups={showIssueMarkups}
@@ -435,6 +439,8 @@ const ToolBarMenuWrapper: React.FC<any> = ({
           taskOpenDrawer={openCreateTask}
           deleteTheTask={deleteTheTask}
           taskFilterState={taskFilterState}
+          project={project}
+          fetchProject={fetchProject}
           closeTaskCreate={closeTaskCreate}
           openTaskDetails={openTaskDetails}
           closeTaskDetails={closeTaskDetails}

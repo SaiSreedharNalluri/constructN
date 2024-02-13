@@ -195,7 +195,7 @@ export class Uploader {
 
       // await instance.post("/uploads/finalizeMultipartUpload", videoFinalizationMultiPartInput)
       try{
-        const response = await instance.put(`${API.BASE_URL.replace('v1', 'v2')}/projects/${this.projectId}/designs/${this.designId}/file-uploaded`, videoFinalizationMultiPartInput, this.headers)
+        const response = await instance.put(`${API.BASE_URL.replace('v1', 'v2')}/projects/${this.projectId}/designs/${this.designId}/file-uploaded?processNow=true`, videoFinalizationMultiPartInput, this.headers)
         if(response.data.success) this.onCompleteFn()
       } catch(error: any) {
         this.onError(error)

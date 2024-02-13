@@ -25,6 +25,7 @@ import {
   UserMonogram,
   UsersInfo,
 } from "./ProjectListingStyles";
+import LaserIcon from "../../../public/icons/LaserIcon.svg";
 import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import captureLidarIcon from "../../../public/divami_icons/captureLidarIcon.svg";
 import phoneImage from "../../../public/divami_icons/phoneImage.svg";
@@ -254,6 +255,19 @@ export const ProjectListFlatView = ({
                 {rowData.captures && rowData.captures["Drone Image"]
                   ? rowData.captures["Drone Image"]
                   : " -"}
+              </CaptureCount>
+            </CapturesField>
+            <CapturesField>
+              <TooltipText title="Laser">
+                <div>
+                  <CaptureImageIcon
+                    src={LaserIcon}
+                    alt={""}
+                  ></CaptureImageIcon>
+                </div>
+              </TooltipText>
+              <CaptureCount>
+                {rowData.captures["Laser"] || 0}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>

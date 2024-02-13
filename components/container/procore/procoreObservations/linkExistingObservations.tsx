@@ -6,7 +6,7 @@ import {
 } from '../../../divami_components/issue_detail/IssueDetailStyles';
 import ProcoreHeader from '../procoreHeader';
 import ProcoreFooter from '../procoreFooter';
-import { ListRfi, linkIssueObservation, linkTaskObservation, listObservation } from '../../../../services/procore';
+import { ListRfi, linkIssueObservation, linkTaskObservation, listObservation, updateAttachmentsExistObservation } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
 import { IprocoreActions } from '../../../../models/Iprocore';
@@ -17,7 +17,11 @@ const LinkExistingObservation = (props: any) => {
     task,
     handleCloseProcore,
     getIssues,
-    getTasks,}=props as any;
+    getTasks,
+    generatedpdf,
+    weburl,
+    screenshot,
+  attachment}=props as any;
   const [loading, setLoading] = useState(false)
   const { handleInstance } = props as any;
   const [footerState, SetFooterState] = useState(true);
@@ -26,6 +30,7 @@ const LinkExistingObservation = (props: any) => {
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const handleBack = () => {
     let closeNewRFI: IprocoreActions = {
       action: 'newCloseObservation',
@@ -39,37 +44,54 @@ const LinkExistingObservation = (props: any) => {
   };
 
   const handleLink = () => {
-  
+    const selectedObservation:any = observationData.find((item:any) => item.id === selectedItem);
+    const observationObject = {
+      name: selectedObservation.name,
+      type: selectedObservation.type.id
+    };
+    const project_id = procoreProjectId?.toString();
+    const formData:any =new FormData()
+    Object.entries(observationObject).forEach(([key,value])=>{
+      formData.append(`observation[${key}]`,String(value))
+    })
+    formData.append('project_id', project_id);
+    formData.append(`observation[description]`,`${selectedObservation.description_rich_text}<a href="${weburl()}"> #${sequenceNumber}( View in ConstructN)</a>`)
+    if (attachment && attachment.length > 0) {
+      for (let i = 0; i < attachment.length; i++) {
+        formData.append(`attachments[${attachment[i].name}]`, attachment[i]);
+      }
+    }
+    formData.append(`attachments[${generatedpdf.name}]`, generatedpdf );
+    formData.append(`attachments[screenShot]`,screenshot)
+    try{
     if (issue) {
      
       linkIssueObservation(issue.project, issue._id,selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            CustomToast("Observation linked successfully", 'success');
+
             getIssues(issue.structure)
-            handleCloseProcore();
           }
         })
-        .catch((linkError) => {
-          if (linkError) {
-            CustomToast("Linking observation failed", 'error');
-          }
-        });
     } else {
       linkTaskObservation(task.project, task._id, selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            CustomToast("Observation linked successfully", 'success');
             getTasks(task.structure)
-            handleCloseProcore();
           }
         })
-        .catch((linkError) => {
-          if (linkError) {
-            CustomToast("Linking Observation failed", 'error');
-          }
-        });
     }
+    updateAttachmentsExistObservation(selectedItem,formData)
+    .then((response)=>{
+      if(response){
+            CustomToast("Observation linked successfully", 'success');
+         handleCloseProcore();
+      }
+    })
+  }
+  catch(error){
+    CustomToast("Linking Observation failed", 'error');
+ }
   };
 
   useEffect(() => {
@@ -82,7 +104,7 @@ const LinkExistingObservation = (props: any) => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error fetching RFI data:', error);
+        console.error('Error fetching Observation data:', error);
       });
      
     }, [])
@@ -105,7 +127,7 @@ const LinkExistingObservation = (props: any) => {
                  onChange={() => handleRadioChange(item.id)}
                />
                <label htmlFor={`rfiRadio${item.id}`}>
-                 {`${item.name} (${item.number})`}
+                 {`${item.name} (#${item.number})`}
                </label>
              </div>
               ))}

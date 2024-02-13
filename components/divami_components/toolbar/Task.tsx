@@ -53,6 +53,7 @@ const Task = ({
   taskLayer,
   taskMenuClicked,
   deleteTheTask,
+  fetchProject=()=>{},
   taskFilterState,
   setTaskFilterState,
   closeTaskCreate,
@@ -71,6 +72,7 @@ const Task = ({
   setHighlightCreateTaskIcon,
   highlightCreateTaskIcon,
   isReality,
+  project
   
 }: any) => {
   const customLogger = new CustomLoggerClass();
@@ -448,6 +450,8 @@ const Task = ({
             deleteTheAttachment={deleteTheAttachment}
             getTasks={getTasks}
             taskPriority={taskPriorityList}
+            project={project}
+            fetchProject={fetchProject}
             taskStatus={taskStatusList}
           />
         </Drawer>

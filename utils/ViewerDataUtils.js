@@ -8,7 +8,7 @@ import { getCookie } from "cookies-next";
 export const getPointCloudReality = (snapshot) => {
     return snapshot.reality.find((reality) => {
         console.log("Generic Viewer Inside find reality function:");
-        if (reality.mode === "360 Video" || reality.mode === "Drone Image") {
+        if (reality.mode === "360 Video" || reality.mode === "Drone Image" || reality.mode === "Laser") {
         console.log("Generic Viewer found reality: ", reality)
         return reality
         }
@@ -116,6 +116,7 @@ export const getPointClouds = async(structure, realityMap) => {
     let pointCloudMap = {};
     for (const mode in realityMap) {
         switch (mode) {
+            case "Lasers":
             case "360 Video":
                 let videoWalkPointClouds = [];
                 for (let reality of realityMap[mode].realities) {
@@ -169,6 +170,7 @@ export const getRealityLayers = async (structure, realityMap) => {
     for (const mode in realityMap) {
         console.log("Inside reality Map for: ", mode);
         switch (mode) {
+        case "Laser":
         case "360 Video":
             console.log("Inside get Reality layers: In 360 mode: ")
             let position360Video = {};
@@ -215,6 +217,7 @@ export const getRealityLayersPath = async (structure, realityMap) => {
     let realityPositionMap = {}
     for (const mode in realityMap) {
         switch (mode) {
+        case "Laser":
         case "360 Video":
             let position360VideoPath = [];
             for (let reality of realityMap[mode].realities) {
@@ -291,7 +294,7 @@ export const getRealityMap = async (snapshot) => {
     let map ={};
     for(let i = 0; i < snapshot?.reality?.length; i++) {
         let reality = snapshot?.reality[i]
-        if (reality.mode === "360 Video" || reality.mode === "Drone Image") {
+        if (reality.mode === "360 Video" || reality.mode === "Drone Image" || reality.mode === "Laser") {
             let isV2 = await realityFileExists(getRealityPointCloudPathV2(getRealityPath(snapshot.project, snapshot.structure, snapshot._id, reality._id))) ? true : false;
             reality.isV2 = isV2;
         }
@@ -315,7 +318,7 @@ export const getRealityLayersList =  (snapshot) => {
     let map ={};
     for(let i = 0; i < snapshot?.reality?.length; i++) {
         let reality = snapshot?.reality[i]
-        if (reality.mode === "360 Video" || reality.mode === "Drone Image") {
+        if (reality.mode === "360 Video" || reality.mode === "Drone Image" || reality.mode === "Laser") {
             let isV2 =  realityFileExists(getRealityPointCloudPathV2(getRealityPath(snapshot.project, snapshot.structure, snapshot._id, reality._id))) ? true : false;
             reality.isV2 = isV2;
         }
