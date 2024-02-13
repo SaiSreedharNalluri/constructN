@@ -547,7 +547,7 @@ export const PotreeViewerUtils = () => {
             _eventHandler(_viewerId, getContext(event.detail.image));
         }
         prevImage = { reality: _currentReality, image: event.detail.image };
-        publish("show-pointcloud", { view: false, disable: false });
+        publish("show-pointcloud", { view: false, disable: false , pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
     }   
 
     const onImageUnLoad = (event) => {
@@ -1432,10 +1432,10 @@ export const PotreeViewerUtils = () => {
         _viewer.setEDLEnabled(cond);
         if (cond) {
             if(_currentMode !== "Drone Image") _viewer.setEDLOpacity(0);
-            publish("show-pointcloud", { view: false, disable: false });
+            publish("show-pointcloud", { view: false, disable: false, pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)})
         } else {
             _viewer.setEDLOpacity(1);
-            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage });
+            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage , pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
         }
     }
 
@@ -1686,13 +1686,13 @@ export const PotreeViewerUtils = () => {
         }
     }
 
-    const goToImage = (reality, image, cameraWithOffset) => {
+    const goToImage = (reality, img, cameraWithOffset) => {
         // console.log("Inside potree utils, going to image: ", imageName);
         switch (reality.type) {
             case "Drone Image":
             case "Phone Image":
                 _viewer.scene.orientedImages[reality.index].images.forEach( image => {
-                    if (image.id == image.imageName) {
+                    if (image.id == img.imageName) {
                         loadImage(reality, image)
                     }
                 });
@@ -1700,23 +1700,23 @@ export const PotreeViewerUtils = () => {
             case "360 Video":
             case "360 Image":
                 _viewer.scene.images360[reality.index].images.forEach(image => {
-                    if (image.file.split('/').pop() == image.imageName) {
+                    if (image.file.split('/').pop() == img.imageName) {
                         loadImage(reality, image, cameraWithOffset);
                     }
                 });
                 break;
             case "Laser":
                 let position = new THREE.Vector3().fromArray([
-                    image.imagePosition.x, 
-                    image.imagePosition.y, 
-                    image.imagePosition.z
+                    img.imagePosition.x, 
+                    img.imagePosition.y, 
+                    img.imagePosition.z
                 ])
                 let target = new THREE.Vector3().fromArray([
-                    image.imagePosition.x, 
-                    image.imagePosition.y, 
-                    image.imagePosition.z
+                    img.imagePosition.x, 
+                    img.imagePosition.y, 
+                    img.imagePosition.z
                 ])
-                console.log("TestingLaser: case laser in goToImage ", reality, image);
+                console.log("TestingLaser: case laser in goToImage ", reality, img);
                 _viewer.scene.view.setView(position, target)
                 _currentMode = "3d"
                 _currentReality = reality
