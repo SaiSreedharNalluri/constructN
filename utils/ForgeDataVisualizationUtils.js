@@ -254,6 +254,9 @@ export class ForgeDataVisualization {
                 highlightUrl = "/icons/360VideoWalkInViewer.svg";
             break;
             case "Laser":
+                iconUrl = '/icons/LaserIconForge.png';
+                highlightUrl = '/icons/LaserIconForge.png';
+            break;
             case '360 Image':
                 iconUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';
                 highlightUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';

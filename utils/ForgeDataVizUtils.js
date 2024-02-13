@@ -684,7 +684,7 @@ export class ForgeDataVizUtils {
 
             case 'Laser': return {
 
-                icon: '/customicons/360ImageWithoutBorderAndShadow.svg',
+                icon: '/icons/LaserIconForge.png',
 
                 size: 24,
 
