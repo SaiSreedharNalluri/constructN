@@ -59,7 +59,9 @@ import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../services/sections";
 import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
 import { useAppContext } from "../../../../state/appState/context";
-import Custom404 from "../../../404";
+import { Button, Menu, MenuItem } from "@mui/material";
+import html2canvas from "html2canvas";
+import DownloadImageReport from "../../../../components/divami_components/download_image_report/downloadImageReport";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -1663,7 +1665,21 @@ const Index: React.FC<IProps> = () => {
   //   )
     
   // }
-
+  const download360Image = () =>{
+    CustomToast('The downloading of the image has started.it will take some time to complete...','success')
+    html2canvas(document.getElementById("potreeViewer_1") || document.body).then(function(canvas) {
+      canvas.toBlob(function(blob) {
+          var link = document.createElement("a");
+          link.download = `img_${snapshot?.date}.png`;
+          link.href = URL.createObjectURL(blob as Blob);
+          link.hidden = true; 
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+      }, "image/png");
+    });
+}
   return (
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
@@ -1985,6 +2001,14 @@ const Index: React.FC<IProps> = () => {
                 deleteTheAttachment={deleteTheAttachment}
               ></IssueList>  */}
               {/* </div> */}
+            </div>
+              <div>
+        {
+        currentViewMode === 'Reality' &&
+          <div className="absolute top-[11rem] right-[1rem]">
+            <DownloadImageReport download360Image={download360Image}/>
+          </div>
+          }
             </div>
             {/* )} */}
           </div>
