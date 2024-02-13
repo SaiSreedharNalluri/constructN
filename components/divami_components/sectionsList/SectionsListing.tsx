@@ -47,6 +47,9 @@ import info from "../../../public/divami_icons/infoIcon.svg"
 
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
+import LaserIcon from "../../../public/icons/LaserIcon.svg";
+
+
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { getStructureHierarchy } from "../../../services/structure";
@@ -784,6 +787,21 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
                 {rowData.capture && rowData.capture["Drone Image"]
                   ? rowData.capture["Drone Image"]
                   : "-"}
+              </CaptureCount>
+            </CapturesField>
+            <CapturesField>
+              <TooltipText title="Laser">
+                <div>
+                  <CaptureImageIcon
+                    src={LaserIcon}
+                    alt={""}
+                    // width={13}
+                    // height={13}
+                  ></CaptureImageIcon>
+                </div>
+              </TooltipText>
+              <CaptureCount>
+                {rowData.capture["Laser"] || 0}
               </CaptureCount>
             </CapturesField>
           </CapturesFieldContainer>
