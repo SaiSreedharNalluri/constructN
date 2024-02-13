@@ -52,8 +52,11 @@ export class ForgeEdit2DUtils {
 
     loadAssets(assets: IAsset[]) {
 
-        if((this._edit2DLayer as { context?: object })?.context){
+        if((this._edit2DLayer as { context?: object })?.context) {
+
             this._edit2DLayer?.clear();
+
+            const globalPoints: any = {}
 
             assets.forEach(asset => {
 
@@ -61,9 +64,17 @@ export class ForgeEdit2DUtils {
     
                 if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
     
-                else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
+                else if(asset.shape == 'Polyline') {
+
+                    globalPoints[asset._id] = this._createPolyline(asset._id, asset.points, color)
+
+                }
     
             })
+
+            // console.log(globalPoints)
+            
+            // this.TextFile(globalPoints)
         }
 
     }
@@ -93,6 +104,16 @@ export class ForgeEdit2DUtils {
 
         const _2dPoints = localPoints.map(point => { return {x: point.x, y: point.y} })
 
+        const globalPoints: any = []
+
+        _2dPoints.forEach(poi => {
+            
+            const global = this._toGlobalPosition(new THREE.Vector2(poi.x, poi.y))
+
+            globalPoints.push(global)
+
+        })
+
         var poly = new Autodesk.Edit2D.Polyline(_2dPoints, new Autodesk.Edit2D.Style({
 
             lineColor: color, lineWidth: 6
@@ -104,7 +125,18 @@ export class ForgeEdit2DUtils {
         (poly as any).shapeType = "Polyline";
 
         this._edit2DLayer.addShape(poly)
+
+        return globalPoints
     }
+
+    TextFile = (data: any) => {
+        const element = document.createElement("a");
+        const textFile = new Blob([JSON.stringify(data)], {type: 'text/plain'}); //pass data from localStorage API to blob
+        element.href = URL.createObjectURL(textFile);
+        element.download = "assets.json";
+        document.body.appendChild(element); 
+        element.click();
+      }
 
     _onMoveVertex(event: any) {
 
@@ -218,6 +250,16 @@ export class ForgeEdit2DUtils {
 
         let _position = this._applyTMInverse(new THREE.Vector3(x, y), this._tm)
 
+        let temp = this._applyTM(new THREE.Vector3(_position.x, _position.y, _position.z), (new THREE.Matrix4() as any).fromArray(
+            [0.305196970701, -0.000110509827, 0.000000000000, 392145.281250000000,
+            0.000110509827, 0.305196970701, 0.000000000000, 3114581.250000000000,
+            0.000000000000, 0.000000000000, 0.305197000504, 0.000000000000,
+            0.000000000000, 0.000000000000, 0.000000000000, 1.000000000000]))
+
+        _position = new THREE.Vector4(temp.x, temp.y, temp.z) 
+
+        console.log(_position)
+
         return this._applyOffset(_position, this._offset)
     }
 
@@ -255,11 +297,11 @@ export class ForgeEdit2DUtils {
 
     _applyTM = (position: THREE.Vector3, tm: THREE.Matrix4) => {
 
-        const a = new THREE.Vector3(position.x, position.y, position.z)
+        const a = new THREE.Vector4(position.x, position.y, position.z, 1)
 
         a.applyMatrix4(tm)
 
-        return a
+        return new THREE.Vector3(a.x, a.y, a.z)
     }
 
     private _progress2dTool = (event: any) => {

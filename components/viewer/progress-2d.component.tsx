@@ -331,7 +331,7 @@ function Progress2DComponent(props: _ViewerProps) {
         if(_currentStructure.current === 'STR940183') {
             mOffset = [1.2, -0.85, 0]
         } else if(_currentStructure.current === 'STR886181') {
-            mOffset = [0.31, -0.225, 0]
+            mOffset = [-8.12, -5.53, 0]
         } else if(_currentStructure.current === 'STR967653') {
             mOffset = [1.375, -0.7, 0]
         } else if(_currentStructure.current === 'STR719122') {
