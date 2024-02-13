@@ -71,12 +71,7 @@ export class ForgeEdit2DUtils {
                 }
     
             })
-
-            // console.log(globalPoints)
-            
-            // this.TextFile(globalPoints)
         }
-
     }
 
     _createPolygon(assetId: string, points: IAssetPoint[], color: string) {
@@ -104,15 +99,7 @@ export class ForgeEdit2DUtils {
 
         const _2dPoints = localPoints.map(point => { return {x: point.x, y: point.y} })
 
-        const globalPoints: any = []
-
-        _2dPoints.forEach(poi => {
-            
-            const global = this._toGlobalPosition(new THREE.Vector2(poi.x, poi.y))
-
-            globalPoints.push(global)
-
-        })
+        console.log(_2dPoints)
 
         var poly = new Autodesk.Edit2D.Polyline(_2dPoints, new Autodesk.Edit2D.Style({
 
@@ -125,18 +112,7 @@ export class ForgeEdit2DUtils {
         (poly as any).shapeType = "Polyline";
 
         this._edit2DLayer.addShape(poly)
-
-        return globalPoints
     }
-
-    TextFile = (data: any) => {
-        const element = document.createElement("a");
-        const textFile = new Blob([JSON.stringify(data)], {type: 'text/plain'}); //pass data from localStorage API to blob
-        element.href = URL.createObjectURL(textFile);
-        element.download = "assets.json";
-        document.body.appendChild(element); 
-        element.click();
-      }
 
     _onMoveVertex(event: any) {
 
@@ -250,15 +226,13 @@ export class ForgeEdit2DUtils {
 
         let _position = this._applyTMInverse(new THREE.Vector3(x, y), this._tm)
 
-        let temp = this._applyTM(new THREE.Vector3(_position.x, _position.y, _position.z), (new THREE.Matrix4() as any).fromArray(
-            [0.305196970701, -0.000110509827, 0.000000000000, 392145.281250000000,
-            0.000110509827, 0.305196970701, 0.000000000000, 3114581.250000000000,
-            0.000000000000, 0.000000000000, 0.305197000504, 0.000000000000,
-            0.000000000000, 0.000000000000, 0.000000000000, 1.000000000000]))
+        // let temp = this._applyTM(new THREE.Vector3(_position.x, _position.y, _position.z), (new THREE.Matrix4() as any).fromArray(
+        //     [ 0.305049419403, -0.000012310410, 0.000000000000, 391788.218750000000,
+        //         0.000012310410, 0.305049419403, 0.000000000000, 3115298.000000000000,
+        //         0.000000000000, 0.000000000000, 0.305049419403, 0.000000000000,
+        //         0.000000000000, 0.000000000000, 0.000000000000, 1.000000000000]))
 
-        _position = new THREE.Vector4(temp.x, temp.y, temp.z) 
-
-        console.log(_position)
+        // _position = new THREE.Vector4(temp.x, temp.y, temp.z) 
 
         return this._applyOffset(_position, this._offset)
     }
