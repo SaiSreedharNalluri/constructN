@@ -16,14 +16,32 @@ import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
+import { IToolbarAction } from "../../../../models/ITools";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
   width: "40px",
 });
-
-const LinkNewObservation = (props: any) => {
-  const {
+interface IProps{
+  attachment :any;
+  screenshot:any
+  handleInstance:any
+  generatedpdf:any
+  weburl:any
+  rfiManager:any
+  potentialDistMem:any
+  types:any
+  hazard:any
+  contributingBehavior:any
+  contributingCondition:any
+  issue:any
+  task:any
+  handleCloseProcore:any
+  getIssues?:(s:string)=>{} | undefined;
+  getTasks?:(s:string)=>{} | undefined;
+  toolClicked?: (toolAction: IToolbarAction) => void;
+}
+const LinkNewObservation : React.FC<IProps> = ({
     attachment,
     screenshot,
     handleInstance,
@@ -39,8 +57,9 @@ const LinkNewObservation = (props: any) => {
     task,
     handleCloseProcore,
     getIssues,
-    getTasks
-  } = props;
+    getTasks,
+    toolClicked
+  }) => {
 
   const userObj=localStorage.getItem('userCredentials')
   const procoreAssigneeId=()=>{
@@ -164,7 +183,9 @@ createObservation(formData)
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("Observation Created and linked successfully", 'success');
-              getIssues(issue.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
+              getIssues && getIssues(issue.structure)
               handleCloseProcore();
             }
           })
@@ -178,7 +199,9 @@ createObservation(formData)
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("Observation Created and linked successfully", 'success');
-              getTasks(task.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
+              getTasks && getTasks(task.structure)
               handleCloseProcore();
             }
           })

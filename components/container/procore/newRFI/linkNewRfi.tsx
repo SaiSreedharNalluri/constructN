@@ -18,6 +18,7 @@ import { CustomToast } from "../../../divami_components/custom-toaster/CustomToa
 import { IprocoreActions } from "../../../../models/Iprocore";
 import { useAppContext } from "../../../../state/appState/context";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
+import { IToolbarAction } from "../../../../models/ITools";
 
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
@@ -27,8 +28,29 @@ export const UploaderIcon = styled(Image)({
 export type formAction={
       submitform :()=>void
 }
-const LinkNewRFI = (props: any) => {
-  const {
+interface IProps {
+  handleInstance:any
+  rfiManager:any
+  receivedForm:any
+  responsibleContractor:any
+  potentialDistMem:any
+  coastCodee:any
+  rfistage:any
+  scheduleImpactt:any
+  costImpacts:any
+  specSection:any
+  issue:any
+  task:any
+  handleCloseProcore:any
+  getIssues?:(s:string)=>{} | undefined;
+  getTasks?:(s:string)=>{} | undefined;
+  generatedpdf:any
+  weburl:any
+  screenshot:any
+  attachment:any
+  toolClicked?: (toolAction: IToolbarAction) => void;
+}
+const LinkNewRFI : React.FC<IProps> = ({
     handleInstance,
     rfiManager,
     receivedForm,
@@ -47,8 +69,9 @@ const LinkNewRFI = (props: any) => {
     generatedpdf,
     weburl,
     screenshot,
-    attachment
-  } = props;
+    attachment,
+    toolClicked
+  }) => {
   const ButtonsContainer = styled(Box)({
     padding: "10px",
     paddingTop: "20px",
@@ -203,8 +226,12 @@ const LinkNewRFI = (props: any) => {
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("RFI Created and linked successfully", "success");
-              getIssues(issue.structure)
+              getIssues && getIssues(issue.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
               handleCloseProcore();
+             
+              
             }
           })
           .catch((linkError) => {
@@ -217,7 +244,9 @@ const LinkNewRFI = (props: any) => {
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("RFI Created and linked successfully", "success");
-              getTasks(task.structure)
+              getTasks && getTasks(task.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
               handleCloseProcore();
             }
           })

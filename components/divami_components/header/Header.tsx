@@ -28,7 +28,7 @@ import {
   HeaderSupportImageContainer,
   HeaderUploaderImageContainer,
 } from "./HeaderStyles";
-import { ITools } from "../../../models/ITools";
+import { IToolbarAction, ITools } from "../../../models/ITools";
 import CustomBreadcrumbs from "../custom-breadcrumbs/CustomBreadcrumbs";
 import headerLogSeparator from "../../..//public/divami_icons/headerLogSeparator.svg";
 import { styled } from "@mui/system";
@@ -63,6 +63,7 @@ import UploaderProjects from "../uploader_details/uploaderProjects";
 import { ProjectCounts } from "../../../models/IUtils";
 import { IJobs } from "../../../models/IJobs";
 import { Mixpanel } from "../../analytics/mixpanel";
+import { isMultiverseEnabled } from "../../../utils/constants";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -282,19 +283,33 @@ const Header: React.FC<any> = ({
   const rightMenuClickHandler = (e: any) => {
     setRighttNav(!rightNav);
     if (e.currentTarget.id === "Design" && isDesignAvailable) {
-      toolInstance.toolName = "viewMode";
-      toolInstance.toolAction = "Design";
+      if(isMultiverseEnabled === true){
+      let DesignInstance: IToolbarAction = { data: "Design",type:"setViewMode"};
+      toolClicked(DesignInstance);
+      }
+      else if(isMultiverseEnabled === false){
+        toolInstance.toolName = "viewMode";
+        toolInstance.toolAction = "Design";
+        toolClicked(toolInstance);
+      }
       setIsDesignSelected(true);
       customLogger.logInfo("Design Toggle")
       // customLogger.logActivity(eMail,"email")
     } else if (e.currentTarget.id === "Reality" && isRealityAvailable) {
-      toolInstance.toolName = "viewMode";
-      toolInstance.toolAction = "Reality";
+      if(isMultiverseEnabled === true){
+        let DesignInstance: IToolbarAction = { data: "Reality",type:"setViewMode"};
+        toolClicked(DesignInstance);
+      }
+      else if(isMultiverseEnabled === false){
+        toolInstance.toolName = "viewMode";
+        toolInstance.toolAction = "Reality";
+        toolClicked(toolInstance);
+      }
       setIsDesignSelected(false);
       customLogger.logInfo("Reality Toggle")
       // customLogger.logActivity(eMail,"email")
     }
-    toolClicked(toolInstance);
+   
   };
   const [filterValue, setFilterValue] = useState("All");
   const [showPopUp, setshowPopUp] = useState(false);

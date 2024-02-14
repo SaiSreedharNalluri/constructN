@@ -31,4 +31,9 @@ export interface Issue {
   context?: IContext;
   _id: string;
   __v: 0;
+  integration?: procore;
+}
+export interface procore{
+  id : string;
+  type : string;
 }
