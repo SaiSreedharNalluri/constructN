@@ -68,7 +68,7 @@ export interface IAsset {
 
     properties: any
 
-    metrics?: { [key: string]: string | number | { metric: string}}
+    metrics?: { [key: string]: string | number | { metric: string} | { metric: { metric: string }} }
 
     compare?: boolean
 
