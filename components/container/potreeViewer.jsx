@@ -83,6 +83,7 @@ function PotreeViewer(props) {
     },[])
 
     const getButton = () => {
+      if(showPointCloud?.pointCloudVisible) return;
       if(props.isCompare && showPointCloud?.view && showPointCloud.disable){
         return (<Tooltip title='Please Select Image'>
         <div>

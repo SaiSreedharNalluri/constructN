@@ -4,6 +4,7 @@ import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
 import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
 import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import LaserIcon from "../../../public/icons/LaserIcon.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import { ClickAwayListener } from "@mui/material";
@@ -51,6 +52,12 @@ const LayerIcons = ({iconsList}:any)=>{
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
                 <CameraIcon src={DroneImage} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label.name === "Laser") {
+            return (
+              <LayerSecondSectionCamImg key={label.name + index}>
+                <CameraIcon src={LaserIcon} alt="Laser" />
               </LayerSecondSectionCamImg>
             );
           }
