@@ -167,7 +167,7 @@ function Progress2DStage(
     const [edit , setEdit]= useState(false)
 
     const totalValueMetrics = assets.reduce((newVal, oldVal)=>{
-        return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
+        return newVal + ((Number((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
     },0)
 
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
@@ -175,11 +175,11 @@ function Progress2DStage(
     const [assetValue , totalAssetValue]= useState<string |  number>((stage.totalMeasurement || totalValueMetrics).toFixed(1))
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
-        return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
+        return newVal + (Number(((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
     },0)
 
     const totalCompletedCompareMetrics = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
-        return newVal + (Number((oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric || 0))
+        return newVal + (Number(((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
     },0)
 
     const getProgress = (): number | number[] => {
