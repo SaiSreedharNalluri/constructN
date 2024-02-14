@@ -10,7 +10,7 @@ import { CustomToast } from "../../../../../components/divami_components/custom-
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
 import MapLoading from "../../../../../components/container/mapLoading";
-import Header from "../../../../../components/container/MultiverseHeader/Header";
+import Header from "../../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../../components/divami_components/side-panel/SidePanel";
 import ToolBarMenuWrapper from "../../../../../components/container/toolbarViewer/ToolBarMenuWrapper";
 import { IDesignMap } from "../../../../../models/IDesign";
@@ -891,12 +891,53 @@ const Index: React.FC<IProps> = () => {
       case "closeTaskDrawer":
         delete router.query.tsk
         router.push(router)
+      case "fetchProject" : 
+          fetchProject()
+          break;
+      case "RecProcoreIssue":
+        const foundIndex = initData?.currentIssueList.findIndex((issueObj: Issue) => {
+          return issueObj._id === (toolInstance?.data as { result?: Issue })?.result?._id;
+      }); 
+      if (initData && foundIndex && foundIndex !== -1) {
+        const result = (toolInstance?.data as { result?: Issue })?.result;
+        if (result !== undefined) {
+          const updatedList = [...initData.currentIssueList];  
+          updatedList[foundIndex] = result;  
+          setInintData({ ...initData, currentIssueList: updatedList });
+        }
+      }
+        break;
+        case "RecProcoreTask":
+        const foundIndexValue = initData?.currentTaskList.findIndex((taskObj: ITasks) => {
+          return taskObj._id === (toolInstance?.data as { result?: ITasks })?.result?._id;
+      }); 
+      if (initData && foundIndexValue && foundIndexValue !== -1) {
+        const result = (toolInstance?.data as { result?: ITasks })?.result;
+        if (result !== undefined) {
+          const updatedList = [...initData.currentTaskList];  
+          updatedList[foundIndexValue] = result;  
+          setInintData({ ...initData, currentTaskList: updatedList });
+        }
+      }
+        break;
 
       default:
         break;
     }
   };
 
+  const fetchProject = () => {  
+    getProjectDetails(router.query.projectId as string)
+        .then((response) => {
+          setProjectUtm(response?.data?.result?.utm);
+          setActiveProjectId(router.query.projectId as string);
+          setProject(response.data.result);
+          // appAction.setCurrentProjectData(response.data.result)
+        })
+        .catch((error) => {
+          CustomToast("failed to load data","error");
+        });
+  }
 
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)

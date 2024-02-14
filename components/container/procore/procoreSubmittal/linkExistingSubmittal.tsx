@@ -13,18 +13,35 @@ import { IprocoreActions } from '../../../../models/Iprocore';
 import { useAppContext } from '../../../../state/appState/context';
 import router from 'next/router';
 import axios from 'axios';
-
-const LinkExistingSubmittal = (props: any) => {
-  const {issue,
+import { IToolbarAction } from '../../../../models/ITools';
+interface IProps{
+  issue:any
+  task:any
+  handleCloseProcore:any
+  getIssues?:(s:string)=>{} | undefined;
+  getTasks?:(s:string)=>{} | undefined;
+  generatedpdf:any
+  weburl:any
+  toolClicked?: (toolAction: IToolbarAction) => void;
+  screenshot:any
+  handleInstance:any
+  attachment:any
+}
+const LinkExistingSubmittal : React.FC<IProps> = ({
+    issue,
     task,
     handleCloseProcore,
     getIssues,
     getTasks
     ,generatedpdf,
     weburl,
-    screenshot}=props as any;
+    toolClicked,
+    screenshot,
+    handleInstance,
+    attachment
+  }) => {
   const [loading, setLoading] = useState(false)
-  const { handleInstance,} = props as any;
+  // const { handleInstance,} = props as any;
   
   const [submittalData,setSubmittalData] = useState<any[]>([]);
   const [footerState, SetFooterState] = useState(true);
@@ -129,14 +146,18 @@ const signature =response.fields['x-amz-signature'];
       linkIssueSubmittal(issue.project, issue._id,selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            getIssues(issue.structure)
+            let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
+            toolClicked && toolClicked(IntegrationObj)
+            getIssues && getIssues(issue.structure)
           }
         })
     } else {
       linkTaskSubmittal(task.project, task._id, selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            getTasks(task.structure)
+            let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
+            toolClicked && toolClicked(IntegrationObj)
+            getTasks && getTasks(task.structure)
           }
         })
        

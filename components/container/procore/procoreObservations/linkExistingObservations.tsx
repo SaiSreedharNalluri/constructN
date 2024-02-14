@@ -11,9 +11,22 @@ import CustomLoader from '../../../divami_components/custom_loader/CustomLoader'
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
 import { IprocoreActions } from '../../../../models/Iprocore';
 import { useAppContext } from '../../../../state/appState/context';
-
-const LinkExistingObservation = (props: any) => {
-  const {issue,
+import { IToolbarAction } from '../../../../models/ITools';
+interface IProps{
+  issue :any
+    task:any
+    handleCloseProcore:any
+    getIssues?:(s:string)=>{} | undefined;
+    getTasks?:(s:string)=>{} | undefined;
+    generatedpdf:any
+    weburl:any
+    screenshot:any
+    toolClicked?: (toolAction: IToolbarAction) => void;
+  attachment:any
+  handleInstance:any
+}
+const LinkExistingObservation: React.FC<IProps> = ({
+  issue,
     task,
     handleCloseProcore,
     getIssues,
@@ -21,9 +34,12 @@ const LinkExistingObservation = (props: any) => {
     generatedpdf,
     weburl,
     screenshot,
-  attachment}=props as any;
+    toolClicked,
+  attachment,
+  handleInstance
+}) => {
   const [loading, setLoading] = useState(false)
-  const { handleInstance } = props as any;
+  // const { handleInstance } = props as any;
   const [footerState, SetFooterState] = useState(true);
   const [observationData, setObservationData] = useState<any>({});
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
@@ -69,15 +85,19 @@ const LinkExistingObservation = (props: any) => {
       linkIssueObservation(issue.project, issue._id,selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-
-            getIssues(issue.structure)
+            let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
+            toolClicked && toolClicked(IntegrationObj)
+            getIssues && getIssues(issue.structure) 
           }
         })
     } else {
       linkTaskObservation(task.project, task._id, selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            getTasks(task.structure)
+            let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
+            toolClicked && toolClicked(IntegrationObj)
+            getTasks && getTasks(task.structure)
+            
           }
         })
     }
