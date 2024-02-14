@@ -446,7 +446,6 @@ export const MinimapUtils = () => {
   }
    const _toLocalPosition = (position) => {
       let _position = applyTMInverse(position,_tm)
-      _position = applyOffset(_position, _globalOffset)
       return _position
   }
   const showTag = (tag, show) => {
