@@ -289,6 +289,9 @@ function Progress2DComponent(props: _ViewerProps) {
     const _getTm = () => {
 
         let mTm = _tm.current
+        if(_currentStructure.current === 'STR528819') {
+            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.12)
+        }
 
         return mTm!
     }
@@ -300,6 +303,8 @@ function Progress2DComponent(props: _ViewerProps) {
             mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
+        } else if(_currentStructure.current === 'STR528819') {
+            // mOffset = [0.68, -0.59, 0]
         }
 
         return mOffset!
