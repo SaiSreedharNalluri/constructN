@@ -3,9 +3,10 @@ import React from "react"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 interface IProps
 {
-    download360Image:() => void
+    download360Image:() => void,
+    downloadPdfReport:()=> void
 }
-const DownloadImageReport:React.FC<IProps> =({download360Image}) =>{
+const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport}) =>{
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -40,7 +41,10 @@ const DownloadImageReport:React.FC<IProps> =({download360Image}) =>{
                 download360Image()
                 handleMenuClose()
                 }}>360 Image</MenuItem>
-              <MenuItem onClick={handleMenuClose}>PDF Report </MenuItem>
+              <MenuItem onClick={()=>{
+                downloadPdfReport()
+                handleMenuClose()
+                }}>PDF Report </MenuItem>
             </Menu>
           </div>
     </React.Fragment>)

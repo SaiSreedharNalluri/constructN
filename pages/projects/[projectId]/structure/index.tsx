@@ -1680,6 +1680,9 @@ const Index: React.FC<IProps> = () => {
       }, "image/png");
     });
 }
+const downloadPdfReport = () => {
+  window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ364905/structures/STR693023/designs/DSG708047/sample.pdf`, '_blank');
+}
   return (
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
@@ -2006,7 +2009,7 @@ const Index: React.FC<IProps> = () => {
         {
         currentViewMode === 'Reality' &&
           <div className="absolute top-[11rem] right-[1rem]">
-            <DownloadImageReport download360Image={download360Image}/>
+            <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
           </div>
           }
             </div>
