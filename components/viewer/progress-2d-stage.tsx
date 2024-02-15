@@ -40,12 +40,12 @@ const markAsComplete = async (details: { category?: string, date?: Date, stage?:
 
 }
 
-const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number }, setLoading: Function, totalMeasurement: number) => {
+const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number }, setLoading: Function, totalMeasurement: number, structId: string, metrics: {[key: string]: number}) => {
 	try {
         setLoading(true);
-		await instance.put(`${API.PROGRESS_2D_URL}/asset-categories/${categoryId}/update-stage`, {totalMeasurement: totalMeasurement}, {
+		await instance.put(`${API.PROGRESS_2D_URL}/asset-categories/${categoryId}/update-stage`, { stage: data?.stage, metrics: { ...(metrics || {}), [structId]: totalMeasurement } }, {
             headers: authHeader.authHeader(),
-            params: data
+            params: { stage: data?.stage }
         });
         CustomToast('Successfully updated!','success');
 	} catch (error) {
@@ -172,7 +172,7 @@ function Progress2DStage(
 
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
 
-    const [assetValue , totalAssetValue]= useState<string |  number>((stage.totalMeasurement || totalValueMetrics).toFixed(1))
+    const [assetValue , totalAssetValue]= useState<string |  number>((stage.metrics?.[structId] || totalValueMetrics).toFixed(1))
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
         return newVal + (Number(((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
@@ -193,8 +193,8 @@ function Progress2DStage(
         else return [compareProgress, baseProgress]
     }
 
-    const editCallback = async () =>{
-        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: +assetValue }, setLoading, +assetValue);
+    const editCallback = async () => {
+        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: +assetValue }, setLoading, +assetValue, structId, stage.metrics!);
         refetchCategories && refetchCategories();
         setEdit(false);
     }
@@ -291,11 +291,11 @@ function Progress2DStage(
 
 
             </div>
-            {((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics )) < 1) ? <div className='flex mt-2'>
+            {((totalCompletedMetrics / (stage.metrics?.[structId] || totalValueMetrics )) < 1) ? <div className='flex mt-2'>
                     <Typography fontFamily='Open Sans' onClick={(e)=> setCompleted({checked: true, details: stage})} className='text-[12px] text-[#0000FF] underline cursor-pointer'>Mark as Complete</Typography>
             </div> :null}
 
-            {completed?.checked && ((totalCompletedMetrics / (stage.totalMeasurement || totalValueMetrics)) < 1) && (
+            {completed?.checked && ((totalCompletedMetrics / (stage.metrics?.[structId] || totalValueMetrics)) < 1) && (
                     <PopupComponent
                         open={completed?.checked}
                         setShowPopUp={setCompleted}
