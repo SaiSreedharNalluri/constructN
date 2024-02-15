@@ -69,6 +69,8 @@ import CustomLoader from "../../../../../components/divami_components/custom_loa
 import {ApiDataContextProvider} from "../../../../../state/projectConfig/projectConfigContext";
 import { useAppContext } from "../../../../../state/appState/context";
 import { MULTIVERSE } from "../../../../../config/config";
+import DownloadImageReport from "../../../../../components/divami_components/download_image_report/downloadImageReport";
+import html2canvas from "html2canvas";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -1957,6 +1959,24 @@ useEffect(()=>{
     window.removeEventListener('message', receiveMessage);
   };
 },[])
+const download360Image = () =>{
+  CustomToast('The downloading of the image has started.it will take some time to complete...','success')
+  html2canvas(document.getElementById("potreeViewer_1") || document.body).then(function(canvas) {
+    canvas.toBlob(function(blob) {
+        var link = document.createElement("a");
+        link.download = `img_${snapshot?.date}.png`;
+        link.href = URL.createObjectURL(blob as Blob);
+        link.hidden = true; 
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    }, "image/png");
+  });
+}
+const downloadPdfReport = () => {
+window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ364905/structures/STR693023/designs/DSG708047/sample.pdf`, '_blank');
+}
   return (
     <ApiDataContextProvider  
     initialTypes={issueTypesList}
@@ -2105,7 +2125,14 @@ useEffect(()=>{
                 
                 : <></>}
             </div></div></div>
-
+        <div>
+        {
+        currentViewMode === 'Reality' &&
+          <div className="absolute top-[11rem] right-[1rem]">
+            <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
+          </div>
+          }
+        </div>
         <div>
         {initData && 
         <Suspense fallback={<CustomLoader />}>
