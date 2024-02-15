@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { IAsset, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
 
 import { publish, subscribe, unsubscribe } from '../services/light-box-service'
+
 import { Vector2 } from 'three'
 
 export class ForgeEdit2DUtils {
@@ -98,8 +99,6 @@ export class ForgeEdit2DUtils {
         const localPoints = points.map(point => this._toLocalPosition({x: point.x, y: point.y}))
 
         const _2dPoints = localPoints.map(point => { return {x: point.x, y: point.y} })
-
-        console.log(_2dPoints)
 
         var poly = new Autodesk.Edit2D.Polyline(_2dPoints, new Autodesk.Edit2D.Style({
 

@@ -183,6 +183,8 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const __reloadDrawing = () => {
 
+        console.log(LightBoxInstance.viewerData(), LightBoxInstance.getViewTypes(), _currentDrawing.current)
+
         if (LightBoxInstance.getViewTypes().indexOf(_currentDrawing.current) > -1) {
 
             setModelsData(LightBoxInstance.viewerData()['modelData']?.[_currentDrawing.current])
@@ -314,8 +316,8 @@ function Progress2DComponent(props: _ViewerProps) {
     const _getTm = () => {
 
         let mTm = _tm.current
-        if(_currentStructure.current === 'STR967653') {
-            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        if(_currentStructure.current === 'STR528819') {
+            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.12)
         }
 
         return mTm!
@@ -328,6 +330,8 @@ function Progress2DComponent(props: _ViewerProps) {
             mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
+        } else if(_currentStructure.current === 'STR528819') {
+            // mOffset = [0.68, -0.59, 0]
         }
 
         return mOffset!

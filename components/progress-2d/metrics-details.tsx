@@ -14,7 +14,7 @@ import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 
 interface Stage extends IAssetStage {
 	id?: string;
-	metric?: number | string | { metric: string | number};
+	metric?: number | string | { metric: string | number} | { metric: { metric: string | number; } };
 }
 
 interface SetProgressProps {
@@ -63,11 +63,8 @@ const onSave = async ({
 	stageValues.forEach((stage) => {
 		const stageID = stage._id;
 
-		if (stageID && (stage.metric as { metric: string; })?.metric) {
-			metricValues[stageID] = { metric: (stage.metric as { metric: string; })?.metric, uom: stage.uom };
-		}
 
-		if(stageID && stage.metric && !(stage.metric as { metric: string; })?.metric){
+		if(stageID && (stage.metric || stage.metric === 0 )){
 			metricValues[stageID] = { metric: stage.metric, uom: stage.uom };
 		}
 	});
@@ -110,14 +107,14 @@ export default function Metrics({
 }: {
 	stages: Stage[];
 	assetId: string;
-	metrics: { [key: string]: string | number | { metric: string | number } };
+	metrics: { [key: string]: string | number | { metric: string } | { metric: { metric: number | string }} };
 	refetchAssets: () => void,
 	asset: IAsset,
 	onChange?: (asset: IAsset) => void,
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
-		metric: metrics[stage._id],
+		metric: ((metrics[stage._id] as { metric: { metric: string } })?.metric?.metric ?? (metrics[stage._id] as { metric: string; })?.metric) ?? metrics[stage._id],
 	}));
 
 	const [stageValues, setStageValues] = useState<Stage[]>([
@@ -131,7 +128,7 @@ export default function Metrics({
 	let activeDisabled = false;
 
 	formatStageData.forEach((stage)=>{
-		if(!(stage.metric as { metric: string })?.metric && +(stage.metric as { metric: number })?.metric !== 0){
+		if(!(stage.metric) && +(stage.metric) !== 0){
 			activeDisabled = true;
 			return;
 		}
@@ -175,7 +172,7 @@ export default function Metrics({
 									>
 										{" "}
 										<Input
-											value={(row.metric as { metric: string; })?.metric || row.metric}
+											value={row.metric}
 											size="small"
 											type="number"
 											disabled={loading}

@@ -92,7 +92,8 @@ class LightBox {
                     modelData[Key] = Value as any[]
                 }
 
-                if(this._viewerData['snapshotBase']?.realities){
+                if(this._viewerData['snapshotBase']?.realities) {
+                    
                     for(const [Key, Value] of Object.entries(this._viewerData['snapshotBase'].realities)) {
 
                         modelData[Key] = Value as any[]
