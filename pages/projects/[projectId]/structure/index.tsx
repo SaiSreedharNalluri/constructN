@@ -62,6 +62,8 @@ import { useAppContext } from "../../../../state/appState/context";
 import { Button, Menu, MenuItem } from "@mui/material";
 import html2canvas from "html2canvas";
 import DownloadImageReport from "../../../../components/divami_components/download_image_report/downloadImageReport";
+import GenerateReport from "../../../../components/divami_components/download_image_report/generateReport";
+import { PDFDownloadLink, pdf, render } from "@react-pdf/renderer";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -1680,9 +1682,24 @@ const Index: React.FC<IProps> = () => {
       }, "image/png");
     });
 }
-const downloadPdfReport = () => {
-  window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ364905/structures/STR693023/designs/DSG708047/sample.pdf`, '_blank');
-}
+    const downloadPdfReport = async () => {
+      // const reportString = <GenerateReport />;
+      // const asPdf = pdf([] as any); 
+      // asPdf.updateContainer(reportString);
+      // const blob = await asPdf.toBlob();
+      
+      const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} />).toBlob());
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fee_acceptance.pdf';
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+
   return (
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
