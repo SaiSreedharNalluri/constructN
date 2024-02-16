@@ -221,7 +221,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [snapsLoading, setSnapsLoading] =  useState(false)
 
-    const _currentDrawing = useRef<string>('Plan Drawings')
+    const _currentDrawing = useRef<string>('')
 
     const [selectedDrawing, setSelectedDrawing] = useState<string>(_currentDrawing.current)
 
@@ -229,7 +229,6 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [projectUsers, setProjectUsers] =  useState<[] | { name: string; role: string; user: { _id: string }; }[] | []>([]);
 
-    const [viewerDataLoaded, setViewerDataLoaded] = useState(false)
 
 
     const structId = searchParams.get('structId')
@@ -277,6 +276,7 @@ const Progress2DPage: React.FC<any> = () => {
         
         fetchAssetCategories(projId!).then((response) => {
             if (response.data.result) {
+                
                 const catSelected = response.data.result.find((cate: {_id: string})=>(cate._id === (selectedCategory ? selectedCategory :response.data.result[1])._id))
                 
                 setAssetCategories(response.data.result);
@@ -342,7 +342,6 @@ const Progress2DPage: React.FC<any> = () => {
 
             _assetMap.current = {}
 
-            setViewerDataLoaded(true);
 
             fetchViewerData(projId!, structId!).then(async data => {
 
@@ -397,7 +396,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 await _extractCompareSnapshot(compareSnapshot)
 
-            }).catch(e => setShowProgress(false)).finally(()=>(setViewerDataLoaded(true)))
+            }).catch(e => setShowProgress(false))
 
         }
     }
@@ -1116,7 +1115,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                         clipPath: `polygon(${clipValue}% 0%, 100% 0%, 100% 100%, ${clipValue}% 100%)`,
                                                         } : {} }>
 
-                                                {!snapsLoading && viewerDataLoaded ? <Progress2DComponent
+                                                {!snapsLoading && selectedDrawing ? <Progress2DComponent
 
                                                     id={'left-container'}
 

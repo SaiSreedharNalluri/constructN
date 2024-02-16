@@ -197,6 +197,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const __reloadDrawing = () => {
 
+
         if (LightBoxInstance.getViewTypes().indexOf(_currentDrawing.current) > -1) {
 
             setModelsData(LightBoxInstance.viewerData()['modelData']?.[_currentDrawing.current])
