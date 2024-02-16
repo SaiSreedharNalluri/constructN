@@ -340,10 +340,12 @@ export const getDesignMap = (designs) => {
 
     };
     designs.forEach((design, i, array) => {
-        if (map[design.type]) {
-        map[design.type].push(design);
-        } else {
-        map[design.type] = [design]
+        if(design.type === 'BIM' || design.type === 'Plan Drawings') {
+            if (map[design.type]) {
+                map[design.type].push(design);
+            } else {
+                map[design.type] = [design]
+            }
         }
     });
 

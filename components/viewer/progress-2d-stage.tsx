@@ -205,7 +205,7 @@ function Progress2DStage(
 
         if(typeof(progress) === 'number') return `${(progress as number).toFixed(1)}`
 
-        else return `${(((progress as number[])[1] - (progress as number[])[0] >= 0) ? (progress as number[])[1] - (progress as number[])[0]: -1*((progress as number[])[1] - (progress as number[])[0])).toFixed(1)}`
+        else return `∆ ${(((progress as number[])[1] - (progress as number[])[0] >= 0) ? (progress as number[])[1] - (progress as number[])[0]: -1*((progress as number[])[1] - (progress as number[])[0])).toFixed(1)}`
     }
 
     const onVisibilityChange = (event: any) => {
@@ -256,7 +256,7 @@ function Progress2DStage(
 
                 <RangeLinearProgress 
                 
-                    className='w-full mt-4' valueLabelDisplay='on'
+                    className='w-full mt-4' valueLabelDisplay='auto'
                     
                     valueLabelFormat={value => _progressLabelFormatter(value)} value={getProgress()} />
                 
