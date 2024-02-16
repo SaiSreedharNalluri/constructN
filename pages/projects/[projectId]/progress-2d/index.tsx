@@ -229,6 +229,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [projectUsers, setProjectUsers] =  useState<[] | { name: string; role: string; user: { _id: string }; }[] | []>([]);
 
+    const [viewerDataLoaded, setViewerDataLoaded] = useState(false)
+
 
     const structId = searchParams.get('structId')
 
@@ -393,7 +395,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                 await _extractCompareSnapshot(compareSnapshot)
 
-            }).catch(e => setShowProgress(false))
+            }).catch(e => setShowProgress(false)).finally(()=>(setViewerDataLoaded(true)))
 
         }
     }
@@ -1112,7 +1114,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                         clipPath: `polygon(${clipValue}% 0%, 100% 0%, 100% 100%, ${clipValue}% 100%)`,
                                                         } : {} }>
 
-                                                {!snapsLoading ? <Progress2DComponent
+                                                {!snapsLoading && viewerDataLoaded ? <Progress2DComponent
 
                                                     id={'left-container'}
 

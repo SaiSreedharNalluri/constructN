@@ -62,9 +62,7 @@ function Forge(props: _ViewerProps) {
 
         _models.current = props.models
 
-        if(props.models?.length){
-            loadModels(props.models, props.onModelLoaded) 
-        }
+        loadModels(props.models, props.onModelLoaded)
         
     
     }, [props.models])
