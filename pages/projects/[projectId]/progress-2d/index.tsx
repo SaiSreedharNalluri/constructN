@@ -55,7 +55,9 @@ import authHeader from '../../../../services/auth-header'
 import { useRouter as Router  } from 'next/router'
 
 import PopupComponent from '../../../../components/popupComponent/PopupComponent'
+
 import EmailButton from '../../../../components/progress-2d/send-email'
+
 import { getProjectUsers } from '../../../../services/project'
 
 
@@ -219,6 +221,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [snapsLoading, setSnapsLoading] =  useState(false)
 
+    const _currentDrawing = useRef<string>('Plan Drawings')
+
+    const [selectedDrawing, setSelectedDrawing] = useState<string>(_currentDrawing.current)
 
     const [clipValue, setClipValue] = useState(50);
 
@@ -739,6 +744,9 @@ const Progress2DPage: React.FC<any> = () => {
 
         setSelectedCategory(category)
 
+        _currentDrawing.current = (category && category.drawing) ?? 'Plan Drawings'
+
+        setSelectedDrawing(_currentDrawing.current)
 
         if (category !== undefined) {
 
@@ -1111,6 +1119,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     snapshot={snapshotBase}
 
+                                                    drawing={selectedDrawing}
+
                                                     compare={isCompare}
 
                                                     reality={showReality}
@@ -1175,6 +1185,8 @@ const Progress2DPage: React.FC<any> = () => {
                                                 category={selectedCategory}
 
                                                 snapshot={snapshotCompare}
+
+                                                drawing={selectedDrawing}
 
                                                 compare={isCompare}
 

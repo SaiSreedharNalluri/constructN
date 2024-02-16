@@ -10,6 +10,12 @@ export interface IAssetCategory {
 
     shape: 'Polgon' | 'Line' | 'Circle' | 'Point'
 
+    height: number
+  
+    width: number
+
+    drawing?: string
+
     description?: string
 
     properties: any
@@ -23,11 +29,17 @@ export interface IAssetStage {
     name: string
 
     sequence: number
-
+  
     color: string
-
+  
     uom: string
-
+  
+    measurement: string
+  
+    metrics: any
+  
+    predecessors: number[]
+  
     description?: string
 
     totalMeasurement?: number
@@ -111,6 +123,12 @@ export const NOT_STARTED_STAGE: IAssetStage = {
     color: '#000080', 
     
     _id: 'NOT_STARTED', 
+
+    measurement: 'Count',
+
+    metrics: {},
+
+    predecessors: [],
     
     uom: 'NA' 
 

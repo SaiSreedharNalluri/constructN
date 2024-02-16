@@ -15,14 +15,18 @@ import { IAsset, IAssetCategory } from '../../models/IAssetCategory'
 import ClickTypesPicker from './segment-class-filters'
 
 import { Paper } from '@mui/material'
-import dayjs from 'dayjs'
+
 import moment from 'moment'
+
+import DrawingsPicker from '../progress-2d/drawings-picker'
 
 interface _ViewerProps {
 
     id: string,
 
     viewType: string,
+
+    drawing?: string,
 
     snapshot: any
 
@@ -73,6 +77,10 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const _currentStructure = useRef<string>()
 
+    const _currentDrawing = useRef<string>(props.drawing ?? 'Plan Drawings')
+
+    const [selectedDrawing, setSelectedDrawing] = useState<string>(props.drawing ?? _currentDrawing.current)
+
     const newStructure = LightBoxInstance.viewerData().structure?._id
 
 
@@ -88,10 +96,7 @@ function Progress2DComponent(props: _ViewerProps) {
 
             _changeBackground(_forge.current!)
 
-            if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
-
-                setModelsData(LightBoxInstance.viewerData()['modelData']?.['Plan Drawings'])
-            }
+            __reloadDrawing()
 
         }
     }
@@ -126,6 +131,20 @@ function Progress2DComponent(props: _ViewerProps) {
 
     }, [])
 
+    useEffect(() => {
+
+        if(props.drawing !== undefined) {
+
+            _currentDrawing.current = props.drawing
+
+            setSelectedDrawing(_currentDrawing.current)
+
+            __reloadDrawing()
+        
+        }
+
+    }, [props.drawing])
+
     useEffect(() => { setViewType(props.viewType) }, [props.viewType])
 
     useEffect(() => { _resize() }, [props.reality])
@@ -148,21 +167,17 @@ function Progress2DComponent(props: _ViewerProps) {
             _layers.current = []
         }
 
-            if(_currentStructure.current !== newStructure) {
+        if (_currentStructure.current !== newStructure) {
 
-                if (LightBoxInstance.getViewTypes().indexOf('Plan Drawings') > -1) {
+            __reloadDrawing()
 
-                    setModelsData(LightBoxInstance.viewerData()['modelData']?.['Plan Drawings'])
-                    
-                }
-    
-                _currentStructure.current = newStructure
-    
-            } else {
+            _currentStructure.current = newStructure
 
-                if (_model.current && props.snapshot) loadLayers(props.snapshot.layers)
+        } else {
 
-            }
+            if (_model.current && props.snapshot) loadLayers(props.snapshot.layers)
+
+        }
 
     }, [props.snapshot, newStructure])
 
@@ -179,6 +194,16 @@ function Progress2DComponent(props: _ViewerProps) {
         }
 
     }, [props.selectedLayers])
+
+    const __reloadDrawing = () => {
+
+        if (LightBoxInstance.getViewTypes().indexOf(_currentDrawing.current) > -1) {
+
+            setModelsData(LightBoxInstance.viewerData()['modelData']?.[_currentDrawing.current])
+            
+        }
+
+    }
 
 
     const onModelLoaded = (model: Autodesk.Viewing.Model, tm: THREE.Matrix4, offset: number[]) => {
@@ -273,6 +298,19 @@ function Progress2DComponent(props: _ViewerProps) {
 
     }
 
+    const _onDrawingSelected = (drawing: string | undefined) => {
+
+        if(drawing !== undefined) {
+
+            _currentDrawing.current = drawing
+
+            setSelectedDrawing(drawing)
+
+            __reloadDrawing()
+
+        }
+    }
+
     const _resize = () => {
 
         if (_forge && _forge.current) {
@@ -286,11 +324,19 @@ function Progress2DComponent(props: _ViewerProps) {
         }
     }
 
+    const __drawingsList = (): string[] => Object.keys(LightBoxInstance.viewerData()['structure']['designs']).filter(value => value !== 'BIM')
     const _getTm = () => {
 
         let mTm = _tm.current
-        if(_currentStructure.current === 'STR528819') {
-            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.12)
+        if(_currentStructure.current === 'STR940183') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR967653') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR886181') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.015)
+        } else if (_currentStructure.current === 'STR823522') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.118)
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
         }
 
         return mTm!
@@ -299,12 +345,18 @@ function Progress2DComponent(props: _ViewerProps) {
     const _getOffset = () => {
 
         let mOffset = _offset.current
-        if(_currentStructure.current === 'STR719122') {
+        if(_currentStructure.current === 'STR940183') {
+            mOffset = [1.2, -0.85, 0]
+        } else if(_currentStructure.current === 'STR886181') {
+            mOffset = [0.31, -0.225, 0]
+        } else if(_currentStructure.current === 'STR967653') {
+            mOffset = [1.375, -0.7, 0]
+        } else if(_currentStructure.current === 'STR719122') {
             mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
-        } else if(_currentStructure.current === 'STR528819') {
-            // mOffset = [0.68, -0.59, 0]
+        } else if(_currentStructure.current === 'STR823522') {
+            mOffset = [0.5, -0.875, 0]
         }
 
         return mOffset!
@@ -348,6 +400,17 @@ function Progress2DComponent(props: _ViewerProps) {
                 compare={props.right}
 
                 onExtnLoaded={onExtnLoaded} />
+
+            {!props.compare ? <div className='flex absolute right-6 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
+
+                { props.category && <Paper className='ml-3' elevation={1}>
+
+                    <DrawingsPicker selected={selectedDrawing} drawings={__drawingsList()} onSelect={_onDrawingSelected} />
+
+                </Paper> }
+
+            </div>: null}
+            
 
             {!props.compare ? <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
