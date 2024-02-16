@@ -155,7 +155,7 @@ function Progress2DStage(
         setLoading: Dispatch<SetStateAction<boolean>>
 
     }) {
-    
+
     const numberFormatter = new Intl.NumberFormat('en-US',{ maximumFractionDigits: 1 });
 
     const userObj: any = getCookie('user')

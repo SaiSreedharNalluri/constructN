@@ -276,11 +276,11 @@ const Progress2DPage: React.FC<any> = () => {
         fetchAssetCategories(projId!).then((response) => {
             if (response.data.result) {
                 const catSelected = response.data.result.find((cate: {_id: string})=>(cate._id === (selectedCategory ? selectedCategory :response.data.result[1])._id))
+                
+                setAssetCategories(response.data.result);
                 if(catSelected){
                     _onCategorySelected(catSelected);
                 }
-                setAssetCategories(response.data.result);
-                _loadAssetsForCategory(catSelected);
             }
             setShowProgress(false);
         })
