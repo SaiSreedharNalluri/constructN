@@ -66,7 +66,7 @@ const DrawingsPicker: FC<IProps> = ({drawings, selected, onSelect}) => {
 
         }
 
-      }} value={selected ? selected : '' || ''} onChange={handleChange}
+      }} value={drawings.find((drawing: string) => drawing === selected) ? selected : 'Plan Drawings'} onChange={handleChange}
 
         input={
 

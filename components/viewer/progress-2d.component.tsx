@@ -201,6 +201,9 @@ function Progress2DComponent(props: _ViewerProps) {
 
             setModelsData(LightBoxInstance.viewerData()['modelData']?.[_currentDrawing.current])
             
+        }else{
+
+            setModelsData(LightBoxInstance.viewerData()['modelData']?.['Plan Drawings'])
         }
 
     }
