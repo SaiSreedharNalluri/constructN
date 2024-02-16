@@ -36,13 +36,11 @@ export interface IAssetStage {
   
     measurement: string
   
-    metrics: any
-  
     predecessors: number[]
   
     description?: string
 
-    metrics?: { [key:string]: number}
+    metrics?: { [key:string]: number }
 
 }
 
