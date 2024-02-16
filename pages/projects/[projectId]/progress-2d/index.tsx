@@ -342,6 +342,8 @@ const Progress2DPage: React.FC<any> = () => {
 
             _assetMap.current = {}
 
+            setViewerDataLoaded(true);
+
             fetchViewerData(projId!, structId!).then(async data => {
 
                 setShowProgress(false)
