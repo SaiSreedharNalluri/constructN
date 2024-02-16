@@ -221,6 +221,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [snapsLoading, setSnapsLoading] =  useState(false)
 
+    const _currentDrawing = useRef<string>('Plan Drawings')
+
+    const [selectedDrawing, setSelectedDrawing] = useState<string>(_currentDrawing.current)
 
     const [clipValue, setClipValue] = useState(50);
 
@@ -273,6 +276,9 @@ const Progress2DPage: React.FC<any> = () => {
         fetchAssetCategories(projId!).then((response) => {
             if (response.data.result) {
                 const catSelected = response.data.result.find((cate: {_id: string})=>(cate._id === (selectedCategory ? selectedCategory :response.data.result[1])._id))
+                if(catSelected){
+                    _onCategorySelected(catSelected);
+                }
                 setAssetCategories(response.data.result);
                 _loadAssetsForCategory(catSelected);
             }
@@ -741,6 +747,9 @@ const Progress2DPage: React.FC<any> = () => {
 
         setSelectedCategory(category)
 
+        _currentDrawing.current = (category && category.drawing) ?? 'Plan Drawings'
+
+        setSelectedDrawing(_currentDrawing.current)
 
         if (category !== undefined) {
 
@@ -1113,7 +1122,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                     snapshot={snapshotBase}
 
-                                                    drawing={'Plan Drawings'}
+                                                    drawing={selectedDrawing}
 
                                                     compare={isCompare}
 
@@ -1179,6 +1188,8 @@ const Progress2DPage: React.FC<any> = () => {
                                                 category={selectedCategory}
 
                                                 snapshot={snapshotCompare}
+
+                                                drawing={selectedDrawing}
 
                                                 compare={isCompare}
 

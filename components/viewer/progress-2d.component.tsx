@@ -131,6 +131,20 @@ function Progress2DComponent(props: _ViewerProps) {
 
     }, [])
 
+    useEffect(() => {
+
+        if(props.drawing !== undefined) {
+
+            _currentDrawing.current = props.drawing
+
+            setSelectedDrawing(_currentDrawing.current)
+
+            __reloadDrawing()
+        
+        }
+
+    }, [props.drawing])
+
     useEffect(() => { setViewType(props.viewType) }, [props.viewType])
 
     useEffect(() => { _resize() }, [props.reality])
@@ -182,8 +196,6 @@ function Progress2DComponent(props: _ViewerProps) {
     }, [props.selectedLayers])
 
     const __reloadDrawing = () => {
-
-        console.log(LightBoxInstance.viewerData(), LightBoxInstance.getViewTypes(), _currentDrawing.current)
 
         if (LightBoxInstance.getViewTypes().indexOf(_currentDrawing.current) > -1) {
 
@@ -316,8 +328,15 @@ function Progress2DComponent(props: _ViewerProps) {
     const _getTm = () => {
 
         let mTm = _tm.current
-        if(_currentStructure.current === 'STR528819') {
-            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.12)
+        if(_currentStructure.current === 'STR940183') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR967653') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR886181') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.015)
+        } else if (_currentStructure.current === 'STR823522') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.118)
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
         }
 
         return mTm!
@@ -326,12 +345,18 @@ function Progress2DComponent(props: _ViewerProps) {
     const _getOffset = () => {
 
         let mOffset = _offset.current
-        if(_currentStructure.current === 'STR719122') {
+        if(_currentStructure.current === 'STR940183') {
+            mOffset = [1.2, -0.85, 0]
+        } else if(_currentStructure.current === 'STR886181') {
+            mOffset = [0.31, -0.225, 0]
+        } else if(_currentStructure.current === 'STR967653') {
+            mOffset = [1.375, -0.7, 0]
+        } else if(_currentStructure.current === 'STR719122') {
             mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
-        } else if(_currentStructure.current === 'STR528819') {
-            // mOffset = [0.68, -0.59, 0]
+        } else if(_currentStructure.current === 'STR823522') {
+            mOffset = [0.5, -0.875, 0]
         }
 
         return mOffset!
