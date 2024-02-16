@@ -922,7 +922,10 @@ const Index: React.FC<IProps> = () => {
         }
       }
         break;
-
+      case 'getViewerScreenshot':
+        CustomToast('The downloading of the image has started.it will take some time to complete...','success')  
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getViewerScreenshot", "data": ""}`);
+      break
       default:
         break;
     }
@@ -1960,20 +1963,9 @@ useEffect(()=>{
   };
 },[])
 const download360Image = () =>{
-  CustomToast('The downloading of the image has started.it will take some time to complete...','success')
-  html2canvas(document.getElementById("potreeViewer_1") || document.body).then(function(canvas) {
-    canvas.toBlob(function(blob) {
-        var link = document.createElement("a");
-        link.download = `img_${snapshot?.date}.png`;
-        link.href = URL.createObjectURL(blob as Blob);
-        link.hidden = true; 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-    }, "image/png");
-  });
-}
+  let typeChangeToolAction: IToolbarAction = { type: "getViewerScreenshot", data: "" };
+  toolClicked(typeChangeToolAction)
+  }
 const downloadPdfReport = () => {
 window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ364905/structures/STR693023/designs/DSG708047/sample.pdf`, '_blank');
 }
