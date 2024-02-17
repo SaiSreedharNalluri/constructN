@@ -61,8 +61,9 @@ function Forge(props: _ViewerProps) {
     useEffect(() => { 
 
         _models.current = props.models
+
+        loadModels(props.models, props.onModelLoaded)
         
-        loadModels(props.models, props.onModelLoaded) 
     
     }, [props.models])
 
