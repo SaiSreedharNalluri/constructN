@@ -15,13 +15,31 @@ import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
+import { IToolbarAction } from "../../../../models/ITools";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
   width: "40px",
 });
-const NewLinkSubmittal = (props: any) => {
-  const {
+interface IProps{
+  handleInstance :any
+  rfiManager:any
+  receivedForm:any
+  responsibleContractor:any
+  potentialDistMem:any
+  coastCodee:any
+  issue:any
+  task:any
+  handleCloseProcore:any
+  getIssues?:(s:string)=>{} | undefined;
+  getTasks?:(s:string)=>{} | undefined;
+   generatedpdf:any
+   screenshot:any
+   attachment:any
+   weburl:any
+   toolClicked?: (toolAction: IToolbarAction) => void;
+}
+const NewLinkSubmittal  : React.FC<IProps> = ({
     handleInstance,
     rfiManager,
     receivedForm,
@@ -37,7 +55,8 @@ const NewLinkSubmittal = (props: any) => {
      screenshot,
      attachment,
      weburl,
-  } = props as any;
+     toolClicked,
+    }) => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [footerState, setfooterState] = useState(true);
   const [files, setFiles] = useState<[Blob]>();
@@ -155,7 +174,9 @@ const NewLinkSubmittal = (props: any) => {
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("Submittal Created and linked successfully", 'success');
-              getIssues(issue.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
+              getIssues && getIssues(issue.structure)
               handleCloseProcore();
             }
           })
@@ -169,7 +190,9 @@ const NewLinkSubmittal = (props: any) => {
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("Submittal Created and linked successfully", 'success');
-              getTasks(task.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
+              getTasks && getTasks(task.structure)
               handleCloseProcore();
             }
           })

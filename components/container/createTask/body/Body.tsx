@@ -147,7 +147,7 @@ const Body = ({
   }, [router.isReady, router.query.projectId]);
 
   useEffect(() => {
-    if (projectUsers.length && taskPriorities.length && taskTypes.length) {
+    if (projectUsers?.length && taskPriorities.length && taskTypes.length) {
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {

@@ -49,3 +49,4 @@ newrelic_agent.log
 dockerfile
 config/config.ts.qa
 config/config.ts.dev
+config/config.ts.prod

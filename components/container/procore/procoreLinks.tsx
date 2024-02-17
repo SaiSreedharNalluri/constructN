@@ -54,7 +54,7 @@ const ProcoreLink = (props: any) => {
           getIssues,
           getTasks,
           screenshot,
-          attachment} = props;
+          attachment,toolClicked} = props;
 
   const [loading, setLoading] = useState(false)
   const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
@@ -158,8 +158,6 @@ const ProcoreLink = (props: any) => {
           generatedpdf={generatedpdf}
           getTasks={getTasks}
           getIssues={getIssues}
-          updatedselectedIssue={updatedselectedIssue}
-          setEnabled={setEnabled}
             issue={issue}
             task={task}
             handleInstance={handleInstanceClick}
@@ -171,9 +169,9 @@ const ProcoreLink = (props: any) => {
             rfistage={rfistage}
             scheduleImpactt={scheduleImpactt}
             costImpacts={costImpacts}
-            specSectionn={specSectionn}
+            specSection={specSectionn}
             handleCloseProcore={handleCloseProcore}
-            setSelectedIssue={setSelectedIssue}
+            toolClicked={toolClicked}
           />
         );
         break;
@@ -192,7 +190,8 @@ const ProcoreLink = (props: any) => {
             issue={issue}
             handleCloseProcore={handleCloseProcore}
             task={task}
-            handleInstance={handleInstanceClick}></LinkExistingRfi>
+            handleInstance={handleInstanceClick}
+            toolClicked={toolClicked}></LinkExistingRfi>
         )
         break;
       case "newCloseObservation":
@@ -217,6 +216,7 @@ const ProcoreLink = (props: any) => {
             hazard={hazard}
             contributingCondition={contributingCondition}
             contributingBehavior={contributingBehavior}
+            toolClicked={toolClicked}
           ></LinkNewObservation>
         );
         break;
@@ -231,7 +231,8 @@ const ProcoreLink = (props: any) => {
           issue={issue}
           handleCloseProcore={handleCloseProcore}
           task={task}
-            handleInstance={handleInstanceClick}></LinkExistingObservation>)
+            handleInstance={handleInstanceClick}
+            toolClicked={toolClicked}></LinkExistingObservation>)
             break;
       case "Link_new_submittal":
         setSelectedComponent(
@@ -251,6 +252,7 @@ const ProcoreLink = (props: any) => {
             potentialDistMem={potentialDistMem}
             coastCodee={coastCodee}
             handleInstance={handleInstanceClick}
+            toolClicked={toolClicked}
           ></NewLinkSubmittal>
         );
         break;
@@ -266,6 +268,7 @@ const ProcoreLink = (props: any) => {
           handleCloseProcore={handleCloseProcore}
           task={task}
           handleInstance={handleInstanceClick}
+          toolClicked={toolClicked}
           ></LinkExistingSubmittal>)
         break;
        default:

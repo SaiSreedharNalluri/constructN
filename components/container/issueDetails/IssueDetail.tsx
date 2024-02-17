@@ -126,7 +126,15 @@ import { setTheFormatedDate } from "../../../utils/ViewerDataUtils";
 import Download from "../../../public/divami_icons/download.svg";
 import { truncateString } from "../../../pages/projects";
 import { IToolbarAction } from "../../../models/ITools";
-import { init } from "mixpanel-browser";
+import { useApiDataContext } from "../../../state/projectConfig/projectConfigContext";
+import ProcoreExist from "../procore/procoreExist";
+import jsPDF from "jspdf";
+import { useAppContext } from "../../../state/appState/context";
+import ProcoreLink from "../procore/procoreLinks";
+import { ProcoreLogo } from "../../divami_components/issue_detail/IssueDetailStyles";
+import procore from "../../../public/divami_icons/procore.svg";
+import LinktoProcore from "../../container/LinktoProcore";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -171,17 +179,18 @@ function a11yProps(index: number) {
 
 function BasicTabs(props: any) {
   const {
-    taskState,
-    formHandler,
-    taskType,
-    taskPriority,
-    taskStatus,
-    projectUsers,
-    issueUpdate,
-    deleteTheAttachment,
-    handleFooter,
-    setTaskState,
+      taskState,
+      formHandler,
+      taskType,
+      taskPriority,
+      taskStatus,
+      projectUsers,
+      issueUpdate,
+      deleteTheAttachment,
+      handleFooter,
+      setTaskState,
   } = props;
+  const { initialStatus , initialProjectUsersList } = useApiDataContext();
   const [value, setValue] = React.useState(0);
   const [formState, setFormState] = useState({
     selectedValue: "",
@@ -211,8 +220,9 @@ function BasicTabs(props: any) {
     _id: string;
 }>()
 const [attachmentPopup, setAttachmentPopup] = useState(false);
+const [delAttachment,setDelAttachment] = useState();
   useEffect(() => {
-    let temp = taskStatus?.map((task: any) => {
+    let temp = initialStatus?.map((task: any) => {
       return {
         label: task,
         value: task,
@@ -234,7 +244,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
         },
       ];
     });
-    let tempUsers = projectUsers?.map((each: any) => {
+    let tempUsers = initialProjectUsersList?.map((each: any) => {
       return {
         ...each,
         label: each?.user?.fullName,
@@ -292,7 +302,6 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
     getCommentsList(router.query.projectId as string, entityId)
       .then((response) => {
         if (response.success === true) {
-          
           setBackendComments(response.result);
           if(isAdding)
           {
@@ -324,7 +333,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
-      }).then((response:any) => {
+      }).then((response) => {
         if (response.success === true) {
           setIsAdding(true)
           getComments(entityId);
@@ -405,7 +414,6 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
 
             "& .MuiTabs-indicator": {
               background: "blue",
-              width: value ? "80px !important" : "47px !important",
             },
           }}
         >
@@ -413,7 +421,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
             label="Details"
             {...a11yProps(0)}
             style={{
-              marginRight: "40px",
+              marginRight: "10px",
               paddingLeft: "0px",
               color: "#101F4C",
               fontFamily: "Open Sans",
@@ -422,6 +430,20 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
               fontWeight: "400",
             }}
           />
+          {taskState.TabOne.integration&&(
+           <Tab
+            label="Procore"
+            {...a11yProps(0)}
+            style={{
+              paddingLeft: "0px",
+              color: "#101F4C",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+          />
+          )}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -608,7 +630,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                 disablePortal
                 id="combo-box-demo"
                 disableClearable
-                options={projectUsers.map((each: any) => {
+                options={initialProjectUsersList.map((each: any) => {
                   return {
                     ...each,
                     label: each.user?.fullName,
@@ -749,32 +771,34 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                               alt={"delete icon"}
                               onClick={() => {
                                 setAttachmentPopup(true);
+                                setDelAttachment(a?._id)
                                }}
                         /> {attachmentPopup && (
                               <PopupComponent
                                 open={attachmentPopup}
                                 setShowPopUp={setAttachmentPopup}
                                 modalTitle={"Delete Attachment"}
-                                modalmessage={`Are you sure you want to delete this attachment "${a?._id} "?`}
+                                modalmessage={`Are you sure you want to delete this attachment "${delAttachment} "?`}
                                 primaryButtonLabel={"Delete"}
                                 SecondaryButtonlabel={"Cancel"}
                                 callBackvalue={() => {
                                   setAttachmentPopup(false);
                                   deleteTheAttachment(a?._id, "issue");
-                                  setTaskState((prev: any) => {
-                                    const updatedTabOne = {
-                                      ...prev.TabOne,
-                                      attachments:
-                                        prev.TabOne.attachments.filter(
-                                          (attachment: any) =>
-                                            attachment._id !== a?._id
-                                        ),
-                                    };
-                                    return {
-                                      ...prev,
-                                      TabOne: updatedTabOne,
-                                    };
-                                  });
+                                  setDelAttachment(undefined)
+                                  // setTaskState((prev: any) => {
+                                  //   const updatedTabOne = {
+                                  //     ...prev.TabOne,
+                                  //     attachments:
+                                  //       prev.TabOne.attachments.filter(
+                                  //         (attachment: any) =>
+                                  //           attachment._id !== a?._id
+                                  //       ),
+                                  //   };
+                                  //   return {
+                                  //     ...prev,
+                                  //     TabOne: updatedTabOne,
+                                  //   };
+                                  // });
                                 }}
                               />
                             )}
@@ -848,7 +872,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
                       variant="standard"
                       placeholder="Add Comment"
                       value={comments}
-                      onChange={(e:any) => {
+                      onChange={(e) => {
                         setComments(e.target.value);
                       }}
                       data-testid="issue-comment-input"
@@ -884,13 +908,8 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
           )}
         </TabOneDiv>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <ActivityLog
-         ActivityLog={taskState.TabTwo}
-          comments={backendComments}
-          getComments={getComments}
-          setIsAdding={setIsAdding}
-        />
+      <CustomTabPanel value={value} index={1}>        
+        <ProcoreExist selected={taskState.TabOne.integration}></ProcoreExist>
       </CustomTabPanel>
       {/* <>
         <AddCommentContainerSecond>
@@ -924,45 +943,49 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
 
 const CustomIssueDetailsDrawer = (props: any) => {
   const {
-
-    onClose,
-    issue,
-    issuesList,
-    issueType,
-    issuePriority,
-    issueStatus,
-    projectUsers,
-    currentProject,
-    currentSnapshot,
-    currentStructure,
-    contextInfo,
-    deleteTheIssue,
-    setIssueList,
-    getIssues,
-    deleteTheAttachment,
-    issueLoader,
-    setIssueLoader,
-    initData,
-    toolClicked
-  } = props;
+      onClose,
+      issue,
+      issuesList,
+      issueType,
+      issuePriority,
+      issueStatus,
+      projectUsers,
+      currentProject,
+      currentSnapshot,
+      currentStructure,
+      contextInfo,
+      deleteTheIssue,
+      setIssueList,
+      getIssues,
+      deleteTheAttachment,
+      issueLoader,
+      setIssueLoader,
+      project,
+      initData,
+      toolClicked
+    } = props;
+  const { state: appState} = useAppContext();
   const [openCreateTask, setOpenCreateTask] = useState(false);
   const [showPopUp, setshowPopUp] = useState(false);
   const [footerState, SetFooterState] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(issue);
   const[isLoading,setLoading]=useState(false);
+  const [procorePopup,setProcorePopup]= useState<boolean>(false)
+  const [newRFI,setnewLinkRFI] = useState<boolean>(false);
+  const [showLink, setShowLink] = useState(false)
+  const [issueDetail,setIssueDetail] = useState<boolean>(true)
   const router = useRouter();
-  console.log("selected Issue",selectedIssue,initData);
-  
+
   useEffect(() => {
 
-    const issueData=issuesList.find((each:any)=>{
-      if(each._id === issue?._id){
-        return each
-      }
-    
-    })
-    setSelectedIssue(issueData);
-  }, [issue,initData]);
+      const issueData=issuesList.find((each:any)=>{
+        if(each._id === issue?._id){
+          return each
+        }
+      
+      })
+      setSelectedIssue(issueData);
+    }, [issue,initData]);
   const deleteIssueById = (issuesList: Issue[], selectedIssue: Issue) => {
     const selectedIssueId = selectedIssue?._id;
     const updatedIssuesList = issuesList.filter(
@@ -970,7 +993,6 @@ const CustomIssueDetailsDrawer = (props: any) => {
     );
     return updatedIssuesList;
   };
-  
   const onDeleteCallback = () => {
     onClose();
     if (setIssueList) {
@@ -1052,29 +1074,28 @@ const CustomIssueDetailsDrawer = (props: any) => {
   };
 
   const [taskState, setTaskState] = useState<any>(DetailsObj);
-  
   useEffect(() => {
     let tempObj = {
       ...selectedIssue,
       options: selectedIssue?.options,
       priority: selectedIssue?.priority,
       capturedOn: selectedIssue?.createdAt,
-      creator: selectedIssue?.owner.fullName,
+      creator: selectedIssue?.owner?.fullName,
       issueDescription: selectedIssue?.description,
       screenshot: selectedIssue?.screenshot as string,
       attachments: selectedIssue?.attachments,
       assignees: selectedIssue?.assignees?.length
-      ? `${selectedIssue?.assignees[0].fullName}`
-      : "",
-    assigneeName: selectedIssue?.assignees?.length
-      ? selectedIssue?.assignees[0].fullName
-      : "",
-    assignessList: selectedIssue?.assignees?.length
-      ? selectedIssue?.assignees?.map((item: any) => {
-          return { ...item, label: item.fullName };
-        })
-      : [],
-    moreText:
+        ? `${selectedIssue?.assignees[0].fullName}`
+        : "",
+      assigneeName: selectedIssue?.assignees?.length
+        ? selectedIssue?.assignees[0].fullName
+        : "",
+      assignessList: selectedIssue?.assignees?.length
+        ? selectedIssue?.assignees?.map((item: any) => {
+            return { ...item, label: item.fullName };
+          })
+        : [],
+      moreText:
         selectedIssue?.assignees?.length > 1
           ? `+${selectedIssue?.assignees?.length - 1} more`
           : "",
@@ -1083,6 +1104,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
       tags: selectedIssue?.tags,
       status: selectedIssue?.status,
       title: selectedIssue?.title,
+      procore:selectedIssue?.integration,
     };
     setTaskState((prev: any) => {
       return {
@@ -1098,31 +1120,26 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const saveEditDetails = async (data: any, projectId: string) => {
     if (data.title && data.type && data.priority) {
       editIssue(projectId, data, selectedIssue?._id)
-        .then((response:any) => {
+        .then((response) => {
           if (response.success === true) {
             let ChangeToolAction: IToolbarAction = { type: "editIssue", data: response?.result };
             toolClicked(ChangeToolAction);
             CustomToast("Issue updated successfully","success");
-            
-            // getIssues(initData?.structure?._id);
+            // getIssues(currentStructure._id);
             setLoading(true)
-           
           } else {
             CustomToast("Error updating the Issue","error");
           }
           setLoading(false)
           setOpenCreateTask(false);
         })
-        .catch((error:any) => {
-          console.log("failed to update Isssue")
+        .catch((error) => {
           if (error.success === false) {
-           
             CustomToast(error?.message,"error");
           }
           setLoading(false)
           setOpenCreateTask(false);
         });
-        
     }
   };
   const clickTaskSubmit = (formData: any) => {
@@ -1197,13 +1214,13 @@ const CustomIssueDetailsDrawer = (props: any) => {
       });
     if (filesArr?.length) {
       createAttachment(issue._id, fileformdata)
-        .then((response:any) => {
+        .then((response) => {
           if (!response.success) {
             CustomToast("Error uploading attachments","error");
           }
           saveEditDetails(data, projectId);
         })
-        .catch((error:any) => {
+        .catch((error) => {
           if (error.success === false) {
             setLoading(false)
             CustomToast(error?.message, "error", 3000);
@@ -1222,7 +1239,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
     data.selectedProgress ? (issueData.status = data.selectedProgress) : null;
     const projectId = router.query.projectId;
     editIssue(projectId as string, issueData, selectedIssue?._id)
-      .then((response:any) => {
+      .then((response) => {
         if (response.success === true) {
           let ChangeToolAction: IToolbarAction = { type: "editIssue", data: response?.result };
           toolClicked(ChangeToolAction);
@@ -1230,16 +1247,147 @@ const CustomIssueDetailsDrawer = (props: any) => {
           // getIssues(currentStructure._id);
         }
       })
-      .catch((error:any) => {
+      .catch((error) => {
         if (error.success === false) {
-          console.log("another issue Error")
           CustomToast(error?.message,"error");
         }
       });
   };
+  const [generatedpdf,setGeneratedpdf]=useState<any>(undefined)
+  const [screenshot, setscreenshot]=useState<any>(undefined)
+  const [attachment,setAttachment]=useState<any>(undefined)
+  const handleProcoreLinks = () =>{
+    handleScreenShotAndAttachment()
+    convertObjectToPdf()
+    setProcorePopup(true)
+    setIssueDetail(false)
+  }
+const  handleCloseProcore=()=>{
+    setProcorePopup(false)
+    setIssueDetail(true);
+  }
 
+ const handleScreenShotAndAttachment =() =>{
+  const imageFiles:any = []; 
+
+  const attachment = selectedIssue.attachments;
+  if (attachment) {
+      attachment.forEach((attachment:any, index:any) => {
+          const attachmentUrl = attachment.url;
+           fetch(attachmentUrl)
+              .then(response => response.blob())
+              .then(blob => {
+                  const imageFile = new File([blob], `(#${selectedIssue.sequenceNumber})Attachment_${index}.png`, { type: 'image/png' });
+                  imageFiles.push(imageFile);
+                  setAttachment(imageFiles);
+              })
+              .catch(error => {
+                  console.error('Error fetching attachment:', error);
+              });
+      });
+  }
+  const screenUrl = selectedIssue.screenshot;
+
+  fetch(screenUrl)
+      .then(response => response.blob())
+      .then(blob => {
+          const screenshotFile = new File([blob], `(#${selectedIssue.sequenceNumber})ScreenShot.png`, { type: 'image/png' });
+          setscreenshot(screenshotFile);
+      })
+      .catch(error => {
+          console.error('Error fetching screenshot:', error);
+      });
+ }
+
+const convertObjectToPdf = () => {
+    
+  const data: any = selectedIssue;
+   const pdf = new jsPDF();
+
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica", "normal");
+
+  const headers = ["Label", "Details"];
+
+  const tableData = [];
+
+  const keyLabels:any = {
+      _id:"ID",
+      sequenceNumber:"Sequence Number",
+      title:"Title",
+      assignees: "Assignees",
+      owner: "Owner",
+      priority:"Priority",
+      status:"Status",
+      type:"Type",
+      project: "Project ID",
+      structure:"Structure ID",
+      dueDate:"Due Date",
+      startDate:"Start Date",
+      progress: "Progress",
+      tags:"Tags",
+      description:"Description",
+  };
+
+  for (const key in data) {
+    
+      if (data.hasOwnProperty(key)) {
+          let label = key;
+          if (keyLabels[key]) {
+              label = keyLabels[key];
+          }
+          if (key === "assignees") {
+              const assigneeNames = data[key].map((assignee: any) => `${assignee.firstName} ${assignee.lastName}`).join(", ");
+              tableData.push([label, assigneeNames]);
+          } else if(key === "owner") {
+              const ownerName = `${data.owner.firstName}`;
+              tableData.push([label, ownerName]);
+          } else if (key === "startDate" || key === "dueDate") {
+              const formattedStartDate =moment(data[key]).format("DD MMM YYYY");
+              tableData.push([label, formattedStartDate]);
+          } else if(key === "progress"){
+              if(data.progress== -1){
+                  tableData.push([label,"NA"])
+              }
+          } else if(key === "context" || key === 'screenshot' || key === "attachments") {
+              tableData.pop();
+          }
+           else {
+              tableData.push([label, data[key]]);
+          }
+      }
+  }
+  const columnWidths = [70, 120];
+
+  (pdf as any).autoTable({
+      head: [headers],
+      body: tableData,
+      startY: 20,
+      margin: { top: 20 },
+      columnStyles: { 0: { cellWidth: columnWidths[0] } },
+  });
+  const pdfFile = new File([pdf.output('blob')], `(#${selectedIssue.sequenceNumber})IssueDetails.pdf`, {type: 'application/pdf'});
+  setGeneratedpdf(pdfFile);
+  return pdf;
+};
+
+
+  const userCredentials = localStorage.getItem('userCredentials');
+  let credential=null;
+  if(userCredentials) credential=JSON.parse(userCredentials);
+   const providerType =credential.provider;
+
+  
+   const procoreProjectDetails=appState.currentProjectData?.project?.metaDetails
+   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
+   console.log("Appstate",appState);
+   
   return (
     <>
+    
+      {procorePopup && <ProcoreLink  issue={selectedIssue} generatedpdf={generatedpdf} screenshot={screenshot}  attachment={attachment}handleCloseProcore={handleCloseProcore} getIssues={getIssues} toolClicked={toolClicked}></ProcoreLink>}
+      {issueDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>
           <TitleContainer>
@@ -1253,8 +1401,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
                   alt={"close icon"}
                   data-testid="back-arrow"
                 />
+                
               </div>
-
+     
               <DarkToolTip
                 title={
                   <SecondAssigneeList>
@@ -1273,6 +1422,38 @@ const CustomIssueDetailsDrawer = (props: any) => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
+              <div className="mr-[10px]">
+            {providerType === 'procore' ? ( 
+              <div>
+              {appState.currentProjectData?.project?.metaDetails?.procore?.projectId !== undefined ?(
+                <div className="p-[6px] hover:bg-[#E7E7E7] ">
+
+                <ProcoreLogo
+                  src={procore}
+                  alt="logo"
+                  style={{ cursor: selectedIssue?.integration ? 'not-allowed' : 'pointer' }}
+              onClick={()=>{
+          if(!selectedIssue.integration){ handleProcoreLinks()}}}
+                />
+              </div>
+              ):(<div>
+                <Tooltip title={'Link project to procore'}>
+                   <ProcoreLogo
+                   onClick={()=>setShowLink(true)}
+                 src={procore} 
+                 alt="logo"
+    /></Tooltip>
+              </div>)}   
+   </div> ) : (
+    <Tooltip title={'Login via Procore required'}>
+    <ProcoreLogo
+      src={procore} 
+      alt="logo"
+    />
+    </Tooltip>
+  )}
+  </div>
+ 
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
@@ -1302,7 +1483,7 @@ const CustomIssueDetailsDrawer = (props: any) => {
           </div>
         ) : (
           <>
-            <BodyContainer footerState={footerState} id="issueDetailsWindow">
+            <BodyContainer footerState={footerState} id="issueDetailsWindow">          
               <BasicTabs
                 taskType={issueType}
                 taskPriority={issuePriority}
@@ -1316,8 +1497,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
               />
             </BodyContainer>
           </>
-        )}
-      </CustomTaskDrawerContainer>
+        )}      
+      </CustomTaskDrawerContainer>   
+}
 
       {openCreateTask && (
         <CustomDrawer open variant="temporary">
@@ -1362,7 +1544,10 @@ const CustomIssueDetailsDrawer = (props: any) => {
           callBackvalue={onDeleteIssue}
         />
       )} */}
-    </>
+      {showLink? <LinktoProcore setShowLink={setShowLink} refetchProject={()=>{ 
+              let ProjectFetchAction: IToolbarAction = { type: "fetchProject", data: "" }; 
+              toolClicked(ProjectFetchAction);}} />: null}
+    </> 
   );
 };
 
