@@ -118,7 +118,10 @@ function PotreeViewer(props) {
     return (
       <React.Fragment>
         <div className="relative w-full h-full z-5">
+        <div id="potree_render_area">
           <div id={viewerId} className="relative w-full h-full z-6"></div>
+        </div>
+        <div id="potree_sidebar_container"></div>
 
           <div
             id={containerId}
@@ -133,14 +136,14 @@ function PotreeViewer(props) {
 			        <i title='minimise' id="fp_minimise_1" data='{"id": "viewer_1", "type": "fp_fullscreen"}' className="material-icons absolute top-1 right-1 hidden" >fullscreen_exit</i> */}
             <canvas id={canvasId}></canvas>
           </div>
-          <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
+          <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans'] z-10`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
           {getButton()}
           </div>
         {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
               <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
           </div>: null}
           {!isCompareViewer ? (
-            <div>
+            <div className='absolute z-10 right-0 bottom-0'>
               {/* <CameraButtons></CameraButtons> */}
               <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} viewerId={viewerId} />
             </div>

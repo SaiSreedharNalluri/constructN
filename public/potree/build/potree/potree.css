@@ -527,7 +527,9 @@ body{
 	user-select: 			text;
 }
 
-
+.flex_dis{
+	display: flex;
+}
 
 .divider {
 	display: 		block;
