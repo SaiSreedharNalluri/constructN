@@ -1951,7 +1951,7 @@ const Index: React.FC<IProps> = () => {
     console.log("event in multiverse",event);
     
     if (event.origin === MULTIVERSE.ORIGIN_URL) {
-      if(event.data.type === "createIssue" || event.data.type === "createTask" && event.data.screenshot)
+      if(event.data.type === "createScreenshot" && event.data.screenshot)
         setScreenShot(event.data)
       if(event.data.type === "getViewerScreenshot")
       {
