@@ -112,7 +112,7 @@ export const getUserProfile = async () => {
       return response.data;
     })
     .catch((error) => {
-      throw error.response.data;
+      throw error;
     });
 };
 

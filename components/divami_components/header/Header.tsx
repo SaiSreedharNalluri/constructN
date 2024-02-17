@@ -112,6 +112,19 @@ const Header: React.FC<any> = ({
   const open = Boolean(anchorEl);
   let WorkerManager = WebWorkerManager.getInstance()
   const workerExists = Object.keys(WorkerManager.getWorker()).length > 0;
+  // getUserProfile().then((response) => {
+  //   if (response?.success === true) {
+  //     setNotificationCount(response?.result?.unReadNotifications)
+  //   }
+  //   else{
+  //     userLogOut();
+  //   }
+  // }).catch((error) => {
+  //   if (error.response?.status === 401) {
+  //     // CustomToast("Permisson Denied, Contact Admin", "error");
+  //     // router.push("/projects?reason=AccessDenied");
+  //   }
+  // });
   useEffect(() => {
     if (router.isReady && router?.query?.projectId) {
       let projectId = router?.query?.projectId as string
@@ -201,6 +214,9 @@ const Header: React.FC<any> = ({
       if (response?.success === true) {
         setNotificationCount(response?.result?.unReadNotifications)
       }
+      else{
+        userLogOut();
+      }
     })
   }, [router.isReady]);
   useEffect(() => {
@@ -248,7 +264,7 @@ const Header: React.FC<any> = ({
     localStorage.removeItem('uploaededData')
     localStorage.removeItem('InProgressPendingUploads')
     // router.push("/login");
-    router.push("/login");
+    router.push("/login?logOut=successful");
   };
 
   const goToProjectsList = (event:React.MouseEvent) => {
