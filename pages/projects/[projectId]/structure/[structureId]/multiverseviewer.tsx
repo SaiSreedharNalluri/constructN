@@ -1948,11 +1948,22 @@ const Index: React.FC<IProps> = () => {
 
 
   const receiveMessage = (event:any) => {
+    console.log("event in multiverse",event);
+    
     if (event.origin === MULTIVERSE.ORIGIN_URL) {
-      if(event.data.screenshot)
-        setScreenShot(event.data) 
-      if(event.data.clickEvent)
-        console.log("Viewer ClickEvenr rec");       
+      if(event.data.type === "createIssue" || event.data.type === "createTask" && event.data.screenshot)
+        setScreenShot(event.data)
+      if(event.data.type === "getViewerScreenshot")
+      {
+        var link = document.createElement("a");
+        link.download = `img_${snapshot?.date}.png`;
+        link.href = URL.createObjectURL(event.data.screenshot as Blob);
+        link.hidden = true; 
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      }       
     }
   }
 
