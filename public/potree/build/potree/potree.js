@@ -79490,11 +79490,11 @@ ENDSEC
 					$('#menu_measurements').next().slideDown();
 					let measurement = this.measuringTool.startInsertion({
 						showDistances: false,
-						showAngles: true,
 						showArea: false,
-						closed: true,
-						maxMarkers: 3,
-						name: 'Angle'});
+						closed: false,
+						showAngles: true,
+						name: 'Angle'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79516,7 +79516,8 @@ ENDSEC
 						showArea: false,
 						closed: true,
 						maxMarkers: 1,
-						name: 'Point'});
+						name: 'Point'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79535,7 +79536,8 @@ ENDSEC
 						showDistances: true,
 						showArea: false,
 						closed: false,
-						name: 'Distance'});
+						name: 'Distance'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79556,7 +79558,8 @@ ENDSEC
 						showArea: false,
 						closed: false,
 						maxMarkers: 2,
-						name: 'Height'});
+						name: 'Height'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79620,9 +79623,11 @@ ENDSEC
 					$('#menu_measurements').next().slideDown();
 					let measurement = this.measuringTool.startInsertion({
 						showDistances: true,
+						showHeight: false,
 						showArea: true,
 						closed: true,
-						name: 'Area'});
+						name: 'Area'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -89437,118 +89442,120 @@ ENDSEC
 			}
 
 			let viewer = this;
-			// let sidebarContainer = $('#potree_sidebar_container');
-			// sidebarContainer.load(new URL(Potree.scriptPath + '/sidebar.html').href, () => {
-			// 	sidebarContainer.css('width', '300px');
-			// 	sidebarContainer.css('height', '100%');
+			let sidebarContainer = $('#potree_sidebar_container');
+			sidebarContainer.load(new URL(Potree.scriptPath + '/sidebar.html').href, () => {
+				sidebarContainer.css('width', '300px');
+				sidebarContainer.css('height', '100%');
 
-			// 	let imgMenuToggle = document.createElement('img');
-			// 	imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
-			// 	imgMenuToggle.onclick = this.toggleSidebar;
-			// 	imgMenuToggle.classList.add('potree_menu_toggle');
+				let imgMenuToggle = document.createElement('img');
+				imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+				imgMenuToggle.onclick = this.toggleSidebar;
+				imgMenuToggle.classList.add('potree_menu_toggle');
+				imgMenuToggle.setAttribute("id","menu_toggle_icon");
 
-			// 	let imgMapToggle = document.createElement('img');
-			// 	imgMapToggle.src = new URL(Potree.resourcePath + '/icons/map_icon.png').href;
-			// 	imgMapToggle.style.display = 'none';
-			// 	imgMapToggle.onclick = e => { this.toggleMap(); };
-			// 	imgMapToggle.id = 'potree_map_toggle';
+				// let imgMapToggle = document.createElement('img');
+				// imgMapToggle.src = new URL(Potree.resourcePath + '/icons/map_icon.png').href;
+				// imgMapToggle.style.display = 'none';
+				// imgMapToggle.onclick = e => { this.toggleMap(); };
+				// imgMapToggle.id = 'potree_map_toggle';
 
 				
+				let elButtons = $("#potree_quick_buttons").get(0);
+				if(!$("#menu_toggle_icon").get(0)){
+					elButtons.append(imgMenuToggle);
+				}
+				// elButtons.append(imgMapToggle);
+				// viewer.renderArea.insertBefore(imgMapToggle, viewer.renderArea.children[0]);
+				// viewer.renderArea.insertBefore(imgMenuToggle, viewer.renderArea.children[0]);
+				// VRButton.createButton(this.renderer).then(vrButton => {
 
-			// 	let elButtons = $("#potree_quick_buttons").get(0);
 
-			// 	elButtons.append(imgMenuToggle);
-			// 	elButtons.append(imgMapToggle);
+				// 	if(vrButton == null){
+				// 		console.log("VR not supported or active.");
 
+				// 		return;
+				// 	}
 
-			// 	VRButton.createButton(this.renderer).then(vrButton => {
+				// 	this.renderer.xr.enabled = true;
 
-			// 		if(vrButton == null){
-			// 			console.log("VR not supported or active.");
+				// 	let element = vrButton.element;
 
-			// 			return;
-			// 		}
+				// 	element.style.position = "";
+				// 	element.style.bottom = "";
+				// 	element.style.left = "";
+				// 	element.style.margin = "4px";
+				// 	element.style.fontSize = "100%";
+				// 	element.style.width = "2.5em";
+				// 	element.style.height = "2.5em";
+				// 	element.style.padding = "0";
+				// 	element.style.textShadow = "black 2px 2px 2px";
+				// 	element.style.display = "block";
 
-			// 		this.renderer.xr.enabled = true;
+				// 	elButtons.append(element);
 
-			// 		let element = vrButton.element;
+				// 	vrButton.onStart(() => {
+				// 		this.dispatchEvent({type: "vr_start"});
+				// 	});
 
-			// 		element.style.position = "";
-			// 		element.style.bottom = "";
-			// 		element.style.left = "";
-			// 		element.style.margin = "4px";
-			// 		element.style.fontSize = "100%";
-			// 		element.style.width = "2.5em";
-			// 		element.style.height = "2.5em";
-			// 		element.style.padding = "0";
-			// 		element.style.textShadow = "black 2px 2px 2px";
-			// 		element.style.display = "block";
+				// 	vrButton.onEnd(() => {
+				// 		this.dispatchEvent({type: "vr_end"});
+				// 	});
+				// });
 
-			// 		elButtons.append(element);
+				this.mapView = new MapView(this);
+				this.mapView.init();
 
-			// 		vrButton.onStart(() => {
-			// 			this.dispatchEvent({type: "vr_start"});
-			// 		});
+				i18n.init({
+					lng: 'en',
+					resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
+					preload: ['en', 'fr', 'de', 'jp', 'se', 'es'],
+					getAsync: true,
+					debug: false
+				}, function (t) {
+					// Start translation once everything is loaded
+					$('body').i18n();
+				});
 
-			// 		vrButton.onEnd(() => {
-			// 			this.dispatchEvent({type: "vr_end"});
-			// 		});
-			// 	});
+				$(() => {
+					//initSidebar(this);
+					let sidebar = new Sidebar(this);
+					sidebar.init();
 
-			// 	this.mapView = new MapView(this);
-			// 	this.mapView.init();
+					this.sidebar = sidebar;
 
-			// 	i18n.init({
-			// 		lng: 'en',
-			// 		resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
-			// 		preload: ['en', 'fr', 'de', 'jp', 'se', 'es'],
-			// 		getAsync: true,
-			// 		debug: false
-			// 	}, function (t) {
-			// 		// Start translation once everything is loaded
-			// 		$('body').i18n();
-			// 	});
+					//if (callback) {
+					//	$(callback);
+					//}
 
-			// 	$(() => {
-			// 		//initSidebar(this);
-			// 		let sidebar = new Sidebar(this);
-			// 		sidebar.init();
+					let elProfile = $('<div>').load(new URL(Potree.scriptPath + '/profile.html').href, () => {
+						$(document.body).append(elProfile.children());
+						this.profileWindow = new ProfileWindow(this);
+						this.profileWindowController = new ProfileWindowController(this);
 
-			// 		this.sidebar = sidebar;
+						$('#profile_window').draggable({
+							handle: $('#profile_titlebar'),
+							containment: $(document.body)
+						});
+						$('#profile_window').resizable({
+							containment: $(document.body),
+							handles: 'n, e, s, w'
+						});
 
-			// 		//if (callback) {
-			// 		//	$(callback);
-			// 		//}
-
-			// 		let elProfile = $('<div>').load(new URL(Potree.scriptPath + '/profile.html').href, () => {
-			// 			$(document.body).append(elProfile.children());
-			// 			this.profileWindow = new ProfileWindow(this);
-			// 			this.profileWindowController = new ProfileWindowController(this);
-
-			// 			$('#profile_window').draggable({
-			// 				handle: $('#profile_titlebar'),
-			// 				containment: $(document.body)
-			// 			});
-			// 			$('#profile_window').resizable({
-			// 				containment: $(document.body),
-			// 				handles: 'n, e, s, w'
-			// 			});
-
-			// 			$(() => {
+						$(() => {
 							this.guiLoaded = true;
 							for(let task of this.guiLoadTasks){
 								task();
 							}
 
-			// 			});
-			// 		});
+						});
+					});
 
 					
 
-			// 	});
+				});
 
 				
-			// });
+			});
 
 			return this.promiseGuiLoaded();
 		}

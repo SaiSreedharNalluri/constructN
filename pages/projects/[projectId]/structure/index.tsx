@@ -1837,7 +1837,7 @@ const Index: React.FC<IProps> = () => {
             <div
               ref={rightOverlayRef}
               id="bg-color"
-              className={`fixed drop-shadow toolbarWidth  ${"visible"} `}
+              className={`fixed drop-shadow toolbarWidth  ${"visible"} mt-[20px]`}
             >
               {isDesignAvailable||isRealityAvailable?
               <ToolBarMenuWrapper

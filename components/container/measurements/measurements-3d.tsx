@@ -580,7 +580,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
           }
         }} >
 
-        <div className='pl-4 text-[12px] flex-1 items-center text-gray-600 cursor-pointer'>{show ? 'Hide' : 'Show'} Measurements</div>
+        <div className='pl-4 text-[12px] flex-1 items-center text-gray-600 cursor-pointer min-w-[140px]'>{show ? 'Hide' : 'Show'} Measurements</div>
 
         <IconButton size="small" className='w-3 h-4 text-l mx-2' aria-label="delete">
 
