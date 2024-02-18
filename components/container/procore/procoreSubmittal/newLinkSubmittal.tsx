@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {CustomTaskProcoreLinks,BodyContainer} from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
 import {  Checkbox, Grid, TextField } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-import { createSubmittal, linkIssueSubmittal, linkTaskSubmittal } from "../../../../services/procore";
+import { createSubmittal, filesUpload, linkIssueSubmittal, linkTaskSubmittal, projectFile } from "../../../../services/procore";
 import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
@@ -15,6 +15,8 @@ import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
+import axios from "axios";
+import { FirstPageOutlined } from "@mui/icons-material";
 import { IToolbarAction } from "../../../../models/ITools";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
@@ -59,7 +61,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
     }) => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [footerState, setfooterState] = useState(true);
-  const [files, setFiles] = useState<[Blob]>();
+  const [files, setFiles] = useState< File[]>();
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const [loading, setLoading] = useState(false)
   const formikRef = useRef<FormikProps<any>>(null);
@@ -113,8 +115,27 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
     attachments:[],
     description: issue?.description || task?.description || "",
   };
-  const onDrop = useCallback((acceptedFiles: any) => {
-    setFiles(acceptedFiles);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFiles(prevFiles => {
+      if (!prevFiles) {
+        prevFiles = [];
+      }
+  
+      const updatedFiles = [
+        ...prevFiles,
+        ...acceptedFiles.map(file => {
+          const fileNameParts = file.name.split('.');
+          const extension = fileNameParts.pop();
+          const originalFileName = fileNameParts.join('.');
+          const renamedFileName = `(#${issue?.sequenceNumber || task?.sequenceNumber})${originalFileName}.${extension}`;
+          
+          return new File([file], renamedFileName, {
+            type: file.type
+          });
+        })
+      ];
+      return updatedFiles;
+    });
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const handleExternalSubmit = () => {
@@ -122,7 +143,89 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
       formikRef.current.submitForm();
     }
   };
-  const handleSubmit = (formData: {
+
+
+  const fileUploads = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const filesToUpload = [generatedpdf, screenshot, ...(attachment || []),...(files || [])];
+            const uploadResponses = [];
+    
+            for (const file of filesToUpload) {
+                const filename = file?.name;
+                const contentType = file?.type;
+    
+                const formattedData = {
+                    "response_filename": filename,
+                    "response_content_type": contentType,
+                };
+    
+                if (generatedpdf && screenshot) {
+                    const response = await filesUpload(procoreProjectId, formattedData);
+                    uploadResponses.push(response);
+                }
+            }
+    
+            const prostoreFileIds:number[] = [];
+    
+            for (const response of uploadResponses) {
+                if (response) {
+                    const id = response.uuid;
+                    const index = uploadResponses.indexOf(response);
+                    const filename = filesToUpload[index]?.name;
+                    const url = response.url;
+                    const key = response.fields['key'];
+                    const contentType = response.fields['Content-Type'];
+                    const contentDisposition = response.fields['Content-Disposition'];
+                    const policy = response.fields['policy'];
+                    const credential = response.fields['x-amz-credential'];
+                    const algorithm = response.fields['x-amz-algorithm'];
+                    const date = response.fields['x-amz-date'];
+                    const signature = response.fields['x-amz-signature'];
+    
+                    const formData = new FormData();
+    
+                    formData.append(`key`, key);
+                    formData.append(`Content-Type`, contentType);
+                    formData.append(`Content-Disposition`, contentDisposition);
+                    formData.append(`policy`, policy);
+                    formData.append(`x-amz-credential`, credential);
+                    formData.append(`x-amz-algorithm`, algorithm);
+                    formData.append(`x-amz-date`, date);
+                    formData.append(`x-amz-signature`, signature);
+                    formData.append(`file`, filesToUpload[index]);
+    
+                    const uploadResponse = await axios.post(url, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    const formdata = new FormData();
+                    formdata.append(`file[upload_uuid]`, id);
+                    formdata.append(`file[name]`, filename);
+    
+                    const projectFileResponse = await projectFile(procoreProjectId, formdata);
+                    if (projectFileResponse) {
+                        const fileVersions = projectFileResponse.file_versions;
+    
+                        if (fileVersions && fileVersions.length > 0) {
+                            const prostoreFileId = fileVersions[0].prostore_file.id;
+                            prostoreFileIds.push(prostoreFileId);
+                        } else {
+                            console.log('No file versions found in the response.');
+                        }
+                    }
+                }
+            }
+    
+            resolve(prostoreFileIds);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+  const handleSubmit = async (formData: {
     title: string;
     specification_section_id: number | null;
     number: string;
@@ -145,23 +248,25 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
     description: string;
     attachments:Blob[]
   }) => {
-    setLoading(true)
-
+ 
+try{
+  setLoading(true)
+  const prostoreFileIds:any =await fileUploads();
     formData.description= formData.description + `<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>`
-    const formdata:any = new FormData()
+    const formdata = new FormData()
     Object.entries(formData).forEach(([key, value]) => {  
-      if(key === "attachments"){
-        if(files)  
-        for (let i = 0; i < files.length; i++) {
-          formdata.append(`submittal[attachments][${files[i].name}]`, files[i] );
-        }
-        formdata.append(`submittal[attachments][${generatedpdf.name}]`, generatedpdf)
-      }
       if(value!==null && value!==undefined && value !=="" && !(Array.isArray(value) && value.length === 0)){
          formdata.append(`submittal[${key}]`, String(value));
       }
+
        
 });
+
+if (prostoreFileIds && prostoreFileIds.length > 0) {
+  for (let i = 0; i < prostoreFileIds.length; i++) {
+      formdata.append(`submittal[prostore_file_ids][]`, prostoreFileIds[i]);
+  }
+}
     createSubmittal(formdata,procoreProjectId)
     .then((response) => {
       if (response) {
@@ -208,6 +313,10 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
         CustomToast("Submittal creation failed","error");
       }
     });
+  }catch (error) {
+    CustomToast("Linking Submittal failed", 'error');
+}
+setLoading(false)
   };
   const handleBack = () => {
     let closeNewRFI: IprocoreActions = {
@@ -466,7 +575,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                         placeholder="date"
                         name="submit_by"
                         step="1"
-                        onChange={(e: any) => {
+                        onChange={(e) => {
                           setFieldValue("submit_by", e.target.value);
                         }}
                       />
@@ -481,7 +590,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                         placeholder="date"
                         name="received_date"
                         step="1"
-                        onChange={(e: any) => {
+                        onChange={(e) => {
                           setFieldValue("received_date", e.target.value);
                         }}
                       />
@@ -503,7 +612,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                         placeholder="date"
                         name="issue_date"
                         step="1"
-                        onChange={(e: any) => {
+                        onChange={(e) => {
                           setFieldValue("issue_date", e.target.value);
                         }}
                       />
@@ -564,9 +673,9 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                         }}
                       >
                         <option value="">Select a person</option>
-                        {potentialDistMem.map((option: any) => (
-                          <option key={option.id} value={option.id as number}>
-                            {option.name}
+                        {potentialDistMem.map((option:any) => (
+                          <option key={option?.id} value={option?.id as number}>
+                            {option?.name}
                           </option>
                         ))}
                       </Field>
@@ -586,7 +695,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                       <Field
                         className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
                         name="lead_time"
-                        type="text"
+                        type="number"
                         placeHolder="enter Time(days)"
                       ></Field>
                     </Grid>
@@ -600,7 +709,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                         placeholder="date"
                         name="required_on_site_date"
                         step="1"
-                        onChange={(e: any) => {
+                        onChange={(e) => {
                           setFieldValue("required_on_site_date", e.target.value);
                         }}
                       />
@@ -632,7 +741,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                         value={values.description}
                         id="outlined-multiline-flexible"
                         multiline
-                        onChange={(e: any) => {
+                        onChange={(e) => {
                           setFieldValue("description", e.target.value);
                         }}
                         maxRows={4}
@@ -672,7 +781,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
                         <div>
                           <strong>Uploaded Files:</strong>
                           <ul>
-                            {files.map((file: any, index: number) => (
+                            {files.map((file: File, index: number) => (
                               <li
                                 key={index}
                                 style={{ cursor: "pointer" }}
@@ -702,3 +811,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
 };
 
 export default NewLinkSubmittal;
+
+
+
+
