@@ -600,3 +600,17 @@ export const filesUpload =(projectId:number | undefined,formData:object)=>{
     throw error.response.data
   })
 }
+
+
+export const projectFile =(projectId:number|undefined,formData:object)=>{
+  return procoreinstance
+  .post(`${PROCORE.SANDBOX_URL}/rest/v1.0/files?project_id=${projectId}`,formData,{
+        headers:accesstoken(),
+  })
+  .then((response)=>{
+    return response.data
+  })
+  .catch((error)=>{
+    throw error.response.data
+  })
+}

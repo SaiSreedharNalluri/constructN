@@ -221,6 +221,13 @@ function BasicTabs(props: any) {
 }>()
 const [attachmentPopup, setAttachmentPopup] = useState(false);
 const [delAttachment,setDelAttachment] = useState();
+
+const userCredentials = localStorage.getItem('userCredentials');
+let credential=null;
+if(userCredentials) 
+  credential=JSON.parse(userCredentials);
+const providerType=credential.provider;
+
   useEffect(() => {
     let temp = initialStatus?.map((task: any) => {
       return {
@@ -430,7 +437,7 @@ const [delAttachment,setDelAttachment] = useState();
               fontWeight: "400",
             }}
           />
-          {taskState.TabOne.integration&&(
+          {taskState.TabOne.integration && providerType ==='procore' &&(
            <Tab
             label="Procore"
             {...a11yProps(0)}
