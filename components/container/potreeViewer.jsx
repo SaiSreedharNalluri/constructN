@@ -56,6 +56,14 @@ function PotreeViewer(props) {
      },[viewerCount]);
 
      useEffect(()=>{
+      const ele = document.getElementById('potree_quick_buttons')
+      if(!isSupportUser){
+        ele.style.width ="0px";
+        ele.style.height ="0px";
+      }
+     },[isSupportUser])
+
+     useEffect(()=>{
       let clearTimer;
       let clearHidden;
       if(showPointCloud.view){
@@ -123,7 +131,7 @@ function PotreeViewer(props) {
         <div id="potree_render_area">
           <div id={viewerId} className="relative w-full h-full z-6"></div>
         </div>
-        {isSupportUser ? <div id="potree_sidebar_container"></div> : null}
+        <div id="potree_sidebar_container"></div>
 
           <div
             id={containerId}
