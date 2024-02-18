@@ -79490,11 +79490,11 @@ ENDSEC
 					$('#menu_measurements').next().slideDown();
 					let measurement = this.measuringTool.startInsertion({
 						showDistances: false,
-						showAngles: true,
 						showArea: false,
-						closed: true,
-						maxMarkers: 3,
-						name: 'Angle'});
+						closed: false,
+						showAngles: true,
+						name: 'Angle'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79516,7 +79516,8 @@ ENDSEC
 						showArea: false,
 						closed: true,
 						maxMarkers: 1,
-						name: 'Point'});
+						name: 'Point'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79535,7 +79536,8 @@ ENDSEC
 						showDistances: true,
 						showArea: false,
 						closed: false,
-						name: 'Distance'});
+						name: 'Distance'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79556,7 +79558,8 @@ ENDSEC
 						showArea: false,
 						closed: false,
 						maxMarkers: 2,
-						name: 'Height'});
+						name: 'Height'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79620,9 +79623,11 @@ ENDSEC
 					$('#menu_measurements').next().slideDown();
 					let measurement = this.measuringTool.startInsertion({
 						showDistances: true,
+						showHeight: false,
 						showArea: true,
 						closed: true,
-						name: 'Area'});
+						name: 'Area'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
