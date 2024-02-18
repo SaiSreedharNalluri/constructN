@@ -22,7 +22,9 @@ function PotreeViewer(props) {
     const [showPointCloud, setShowPointCloud] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
     const [showHidden, setShowHidden] = useState(false);
-    const isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
+    const useObj = getCookie("user");
+    const user = JSON.parse(useObj|| "{}");
+    const isSupportUser = user?.isSupportUser;
     const viewerId = `potreeViewer_${viewerCount}`;
     const containerId = `fpContainer_${viewerCount}`;
     const canvasId = `floormap_${viewerCount}`
@@ -121,7 +123,7 @@ function PotreeViewer(props) {
         <div id="potree_render_area">
           <div id={viewerId} className="relative w-full h-full z-6"></div>
         </div>
-        <div id="potree_sidebar_container"></div>
+        {isSupportUser ? <div id="potree_sidebar_container"></div> : null}
 
           <div
             id={containerId}
