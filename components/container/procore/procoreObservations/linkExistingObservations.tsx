@@ -117,10 +117,19 @@ const LinkExistingObservation: React.FC<IProps> = ({
   useEffect(() => {
     setLoading(true)
     listObservation(procoreProjectId)
-      .then((response: any) => {
+      .then((response) => {
       
+      //   const sortedObservations = response.data.sort((a: any, b: any) => {
+      //     const dateA: Date = new Date(a.updated_at);
+      //     const dateB: Date = new Date(b.updated_at);
+      //     return dateB.getTime() - dateA.getTime();
+      // });
+
+      const sortedObservations =response?.data.sort((a:any,b:any)=>{
+        return b.number - a.number
+      })
         
-        setObservationData(response.data);
+        setObservationData(sortedObservations);
         setLoading(false);
       })
       .catch((error) => {

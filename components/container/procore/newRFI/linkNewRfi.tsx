@@ -4,7 +4,7 @@ import {
 } from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { Box, Button, TextField } from "@mui/material";
-import { useMemo, useRef, useState } from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
@@ -81,7 +81,11 @@ const LinkNewRFI : React.FC<IProps> = ({
   });
   const [footerState, SetFooterState] = useState(true);
   const [scheduleImpact, setScheduleImpact] = useState("");
+  const [scheduleImpactValue,setScheduleImpactValue]=useState<number | null>(0)
   const [costImpact, setCostImpact] = useState("");
+  const [costImpactValue, setCostImpactValue]=useState<number | null>(0)
+  const [showInput, setShowInput] = useState(false);
+  const [showValueInput, setshowValueInput] = useState(false);
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const [files, setFiles] = useState<[Blob]>();
   const formikRef = useRef<FormikProps<any>>(null);
@@ -152,7 +156,31 @@ const LinkNewRFI : React.FC<IProps> = ({
     assignee_id:procoreAssigneeId(),
     draft: true,
   };
-  
+  const handleCostImpactChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+    setCostImpact(selectedValue);
+    setShowInput(selectedValue === 'yes_known');
+  };
+
+  const handleScheduleImpactChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+    setScheduleImpact(selectedValue);
+    setshowValueInput(selectedValue === 'yes_known');
+  };
+
+  const handleCostImpactValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue: string = e.target.value;
+    const parsedValue: number = parseFloat(inputValue); 
+    setCostImpactValue(parsedValue); 
+  };
+
+  const handleScheduleImpactValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue: string = e.target.value;
+    const parsedValue: number = parseFloat(inputValue); 
+    setScheduleImpactValue(parsedValue); 
+  };
+
+
   const handleExternalSubmit = () => {
       formikRef.current?.submitForm();
     
@@ -183,6 +211,8 @@ const LinkNewRFI : React.FC<IProps> = ({
     rfi.question.body= rfi.question.body +`<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>` ;
     rfi.schedule_impact.status = scheduleImpact;
     rfi.cost_impact.status = costImpact;
+    rfi.cost_impact.value = costImpactValue;
+    rfi.schedule_impact.value = scheduleImpactValue;
     const formdata:any =new FormData()
     Object.entries(rfi).forEach(([key, value]) => {
       if (value !== null && value !== undefined && value !== "" && !(Array.isArray(value) && value.length === 0)) {
@@ -207,7 +237,10 @@ const LinkNewRFI : React.FC<IProps> = ({
               }
             }
           });
-        } else {
+        } else if(key==='distribution_ids'){
+                formdata.append(`rfi[${key}][]`,String(value))
+        }
+        else {
           formdata.append(`rfi[${key}]`, String(value));
         }
       }
@@ -217,9 +250,6 @@ const LinkNewRFI : React.FC<IProps> = ({
     createRfi(formdata,procoreProjectId)
   .then((response) => {
     if (response) {
-
-      setLoading(false)
-
       if (issue) {
     
         linkIssueRfi(issue.project, issue._id, response.data.id)
@@ -256,6 +286,9 @@ const LinkNewRFI : React.FC<IProps> = ({
             }
           });
       }
+    }else{
+      setLoading(false);
+      CustomToast("RFI creation failed", "error");
     }
   })
   .catch((error) => {
@@ -265,16 +298,28 @@ const LinkNewRFI : React.FC<IProps> = ({
   });
   }
   const validationSchema = Yup.object().shape({
-    subject: Yup.string().transform(removeSpaces) .required('Subject is required'),
-    rfi_manager_id: Yup.number().nullable().required('select Rif manager'),
-    received_from_login_information_id  : Yup.number().nullable().required('select Received From'),
+    subject: Yup.string().transform(removeSpaces).required('Subject is required'),
+    rfi_manager_id: Yup.number().nullable().required('Select RFI manager'),
+    received_from_login_information_id: Yup.number().nullable().required('Select Received From'),
     question: Yup.object().shape({
       body: Yup.string().trim().required('Question is required'),
       attachment: Yup.array(),
     }),
-   
-   
+    'cost_impact.value': Yup.number().when('cost_impact.status', {
+      is: 'yes_known', 
+      then: Yup.number().required('Cost Impact Value is required'),
+      otherwise: Yup.number() 
+    }),
+    'schedule_impact.value': Yup.number().when('schedule_impact.status', {
+      is: 'yes_known', 
+      then: Yup.number().required('Schedule Impact value Value is required'),
+      otherwise: Yup.number() 
+    })
   });
+  
+   
+   
+  
   const handleBack = () => {
     let closeNewRFI: IprocoreActions = {
       action: "closeNewRFI",
@@ -299,7 +344,12 @@ const LinkNewRFI : React.FC<IProps> = ({
             {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = 
                Object.values(values).every((value) =>{
-                if(values.subject!=="" && values.rfi_manager_id!==null && values.received_from_login_information_id!==null && values.question.body !==""){
+                if(values.subject!=="" && 
+                values.rfi_manager_id!==null
+                 && values.received_from_login_information_id!==null &&
+                  values.question.body !=="" && 
+                  (values.cost_impact.status !== "yes_known" || (values.cost_impact.status === "yes_known" && values.cost_impact.value !== undefined && values.cost_impact.value !== null)) &&
+                  (values.schedule_impact.status !== "yes_known" || (values.schedule_impact.status === "yes_known" && values.schedule_impact.value !== undefined && values.schedule_impact.value !== null))){
                    return false;
                 }else{
                   return true;
@@ -525,9 +575,7 @@ const LinkNewRFI : React.FC<IProps> = ({
                           name="schedule_impact"
                           as="select"
                           value={scheduleImpact}
-                          onChange={(e: any) => {
-                            setScheduleImpact(e.target.value);
-                          }}
+                          onChange={handleScheduleImpactChange}
                         >
                           <option value="">Select a Impact schedule</option>
                           {scheduleImpactt.map((option: any) => (
@@ -536,8 +584,25 @@ const LinkNewRFI : React.FC<IProps> = ({
                             </option>
                           ))}
                         </Field>
-                      </div>
+                      </div>                      
                     </div>
+                    {showValueInput && (
+        <div className="mt-1">
+        <label className="text-gray-700 font-medium text-[11px] mb-1">
+         SCHEDULE IMPACT VALUE
+        </label>
+                      <Field
+                        type='number'
+                        className="border border-border-grey border-solid  focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"
+                        name="schedule_impact.value"
+                        value={scheduleImpactValue}
+                        placeholder="Enter Schedule Impact value"
+                        onChange={handleScheduleImpactValueChange}
+                      ></Field>{errors.schedule_impact?.value && touched.schedule_impact?.value && (
+                        <div className="text-border-yellow  w-[182px]">{errors.schedule_impact.value}</div>
+                      )}
+        </div>
+      )}
                   </div>
                   <div className="mt-1">
                     <label className="text-gray-700 font-medium text-[11px] mb-1">
@@ -571,12 +636,10 @@ const LinkNewRFI : React.FC<IProps> = ({
                     <div className="border-grey">
                       <Field
                         className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
-                        name="cost_impact"
+                        name="cost_impact.status"
                         as="select"
                         value={costImpact}
-                        onChange={(e: any) => {
-                          setCostImpact(e.target.value);
-                        }}
+                        onChange={handleCostImpactChange}
                       >
                         <option value="">Select a cost Impact</option>
                         {costImpacts.map((option: any) => (
@@ -586,6 +649,24 @@ const LinkNewRFI : React.FC<IProps> = ({
                         ))}
                       </Field>
                     </div>
+                    {showInput && (
+        <div className="mt-1">
+        <label className="text-gray-700 font-medium text-[11px] mb-1">
+          COST IMPACT VALUE
+        </label>
+                      <Field
+                        type='number'
+                        className="border border-border-grey border-solid  focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"
+                        name="cost_impact.value"
+                        value={costImpactValue}
+                        placeholder="Enter Cost impact value"
+                        onChange={handleCostImpactValueChange}
+                      ></Field>
+                      {errors.cost_impact?.value && touched.cost_impact?.value && (
+                        <div className="text-border-yellow  w-[182px]">{errors.cost_impact.value}</div>
+                      )}
+        </div>
+      )}
                   </div>
                   <div>
                     <label className=" text-gray-700 font-medium text-[11px] mb-1">
@@ -620,7 +701,7 @@ const LinkNewRFI : React.FC<IProps> = ({
                             e.target.value
                           );
                         }}
-                      ></TextField>{errors.question && touched.question && (
+                      ></TextField>{errors.question?.body && touched.question?.body && (
                     <div className="text-border-yellow  w-[182px]">{errors.question.body}</div>
                       )}
                     </div>
