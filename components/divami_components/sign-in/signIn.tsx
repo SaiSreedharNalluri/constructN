@@ -26,7 +26,6 @@ import CustomLoader from "../custom_loader/CustomLoader";
 import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
-import { RotatingLines } from 'react-loader-spinner'
 const SignIn = () => {
     const customLogger = new CustomLoggerClass();
     const router = useRouter();
