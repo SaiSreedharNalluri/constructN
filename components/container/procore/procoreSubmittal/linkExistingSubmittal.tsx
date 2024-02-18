@@ -6,7 +6,7 @@ import {
 } from '../../../divami_components/issue_detail/IssueDetailStyles';
 import ProcoreHeader from '../procoreHeader';
 import ProcoreFooter from '../procoreFooter';
-import { filesUpload,linkIssueSubmittal,linkTaskSubmittal, listSubmittal,  showSubmittalDetails, updateAttachmentsExistSubmittal } from '../../../../services/procore';
+import { filesUpload,linkIssueSubmittal,linkTaskSubmittal, listSubmittal, projectFile, showSubmittalDetails, updateAttachmentsExistSubmittal } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
 import { IprocoreActions } from '../../../../models/Iprocore';
@@ -46,7 +46,7 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
   const [submittalData,setSubmittalData] = useState<any[]>([]);
   const [footerState, SetFooterState] = useState(true);
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
-  const [genPDF,setGenPDF] = useState(generatedpdf)
+
 
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
@@ -65,116 +65,139 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
 
   const handleRadioChange = (rfinumber: number) => {
     setSelectedItem(rfinumber);
-    showSubmittalDetails(rfinumber,procoreProjectId).then((response:any)=>{
+    showSubmittalDetails(rfinumber,procoreProjectId).then((response)=>{
       if(response){
-        setOldDescription(response.rich_text_description)
+        setOldDescription(response?.rich_text_description)
       }
     })
   };
-  const [uuid,setUuid] =useState<number[]>([]);
-  useEffect (()=>{
-    const responseFilename = generatedpdf.name;
-    const responseContentType = generatedpdf.type;
+  const fileUploads = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const filesToUpload = [generatedpdf, screenshot, ...(attachment || [])];
+            const uploadResponses = [];
     
-    const formattedResult = {
-        "response_filename": responseFilename,
-        "response_content_type": responseContentType,
-    };
+            for (const file of filesToUpload) {
+                const filename = file?.name;
+                const contentType = file?.type;
+    
+                const formattedData = {
+                    "response_filename": filename,
+                    "response_content_type": contentType,
+                };
+    
+                if (generatedpdf && screenshot) {
+                    const response = await filesUpload(procoreProjectId, formattedData);
+                    uploadResponses.push(response);
+                }
+            }
+    
+            const prostoreFileIds:number[] = [];
+    
+            for (const response of uploadResponses) {
+                if (response) {
+                    const id = response.uuid;
+                    const index = uploadResponses.indexOf(response);
+                    const filename = filesToUpload[index]?.name;
+                    const url = response.url;
+                    const key = response.fields['key'];
+                    const contentType = response.fields['Content-Type'];
+                    const contentDisposition = response.fields['Content-Disposition'];
+                    const policy = response.fields['policy'];
+                    const credential = response.fields['x-amz-credential'];
+                    const algorithm = response.fields['x-amz-algorithm'];
+                    const date = response.fields['x-amz-date'];
+                    const signature = response.fields['x-amz-signature'];
+    
+                    const formData = new FormData();
+    
+                    formData.append(`key`, key);
+                    formData.append(`Content-Type`, contentType);
+                    formData.append(`Content-Disposition`, contentDisposition);
+                    formData.append(`policy`, policy);
+                    formData.append(`x-amz-credential`, credential);
+                    formData.append(`x-amz-algorithm`, algorithm);
+                    formData.append(`x-amz-date`, date);
+                    formData.append(`x-amz-signature`, signature);
+                    formData.append(`file`, filesToUpload[index]);
+    
+                    const uploadResponse = await axios.post(url, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+    
+                    const formdata = new FormData();
+                    formdata.append(`file[upload_uuid]`, id);
+                    formdata.append(`file[name]`, filename);
+    
+                    const projectFileResponse = await projectFile(procoreProjectId, formdata);
+                    if (projectFileResponse) {
+                        const fileVersions = projectFileResponse.file_versions;
+    
+                        if (fileVersions && fileVersions.length > 0) {
+                            const prostoreFileId = fileVersions[0].prostore_file.id;
+                            prostoreFileIds.push(prostoreFileId);
+                        } else {
+                            console.log('No file versions found in the response.');
+                        }
+                    }
+                }
+            }
+    
+            resolve(prostoreFileIds); 
+        } catch (error) {
+            reject(error); 
+        }
+    });
+};
 
-     filesUpload(procoreProjectId,formattedResult)
-     .then((response:any)=>{
-       if(response){
-         const id=response.uuid;
-          const url =response.url;
-         const key = response.fields['key'];
-const contentType = response.fields['Content-Type'];
-const contentDisposition = response.fields['Content-Disposition'];
-const policy = response.fields['policy'];
-const credential = response.fields['x-amz-credential'];
-const algorithm =response.fields['x-amz-algorithm'];
-const date =response.fields['x-amz-date'];
-const signature =response.fields['x-amz-signature'];
-     const formData=new FormData()
+
+const handleLink = async () => {
+  try {
+    setLoading(true)
+      const prostoreFileIds:any = await fileUploads();
+
+      const formData= new FormData()
+      const selectedSubmittal= submittalData.find((item: any) => item.id === selectedItem);
+      const submittalNumber = selectedSubmittal.number;
   
-     formData.append(`key`,key);
-     formData.append(`Content-Type`,contentType);
-     formData.append(`Content-Disposition`,contentDisposition);
-     formData.append(`policy`,policy)
-     formData.append(`x-amz-credential`,credential)
-     formData.append(`x-amz-algorithm`,algorithm)
-     formData.append(`x-amz-date`,date)
-     formData.append(`x-amz-signature`,signature);
-     formData.append(`file`,generatedpdf)
-
-      
-     axios.post(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-      .then(response => {
-
-      })
-      .catch(error => {
-        console.error('There was a problem with your Axios request:', error);
-      });
-
-         
-          setUuid(prevUuid => [...prevUuid, response.uuid]);
-
-
-
-       }
-     })
-
-  },[])
-
-  const handleLink = () => {
-    
-     const formData:any = new FormData()
-    const selectedSubmittal:any = submittalData.find((item:any)=> item.id === selectedItem);
-    const submittalNumber = selectedSubmittal.number;
-    
-    formData.append(`submittal[number]`,submittalNumber)
-    formData.append(`submittal[description]`,`${oldDescription}<a href="${weburl()}"> (${sequenceNumber} View in ConstructN)</a>`)
-   // formData.append(`submittal[attachments][${generatedpdf.name}]`, generatedpdf)
-    formData.append(`submittal[prostore_file_ids]`,uuid as number[])
-
-    try{
-    if (issue) {
-
-      linkIssueSubmittal(issue.project, issue._id,selectedItem)
-        .then((linkResponse) => {
+      if (prostoreFileIds && prostoreFileIds.length > 0) {
+          for (let i = 0; i < prostoreFileIds.length; i++) {
+              formData.append(`submittal[prostore_file_ids][]`, prostoreFileIds[i]);
+          }
+      }
+  
+      formData.append(`submittal[number]`, submittalNumber)
+      formData.append(`submittal[description]`, `${oldDescription}<a href="${weburl()}"> (${sequenceNumber} View in ConstructN)</a>`)
+  
+      if (issue) {
+          const linkResponse = await linkIssueSubmittal(issue.project, issue._id, selectedItem);
           if (linkResponse) {
             let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
             toolClicked && toolClicked(IntegrationObj)
             getIssues && getIssues(issue.structure)
           }
-        })
-    } else {
-      linkTaskSubmittal(task.project, task._id, selectedItem)
-        .then((linkResponse) => {
+      } else {
+          const linkResponse = await linkTaskSubmittal(task.project, task._id, selectedItem);
           if (linkResponse) {
             let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
             toolClicked && toolClicked(IntegrationObj)
             getTasks && getTasks(task.structure)
           }
-        })
-       
-    }
-    updateAttachmentsExistSubmittal(procoreProjectId,selectedItem,formData)
-    .then((response)=>{
-        if(response){
-          
-          CustomToast("submittal linked successfully",'success');
+      }
+  
+      const response = await updateAttachmentsExistSubmittal(procoreProjectId, selectedItem, formData);
+      if (response) {
+          CustomToast("submittal linked successfully", 'success');
           handleCloseProcore();
-        }
-    })
+      }
+  } catch (error) {
+      CustomToast("Linking Submittal failed", 'error');
   }
-    catch(error){
-        CustomToast("Linking Submittal failed",'error');
-    }
-  };
+  setLoading(false)
+};
+
 
 
   useEffect(() => {

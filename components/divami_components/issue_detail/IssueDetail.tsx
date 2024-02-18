@@ -215,6 +215,7 @@ function BasicTabs(props: any) {
   const[isAdding,setIsAdding]=useState(false)
   const router = useRouter();
   const [showPreview,setShowPreview]=useState(false)
+  const [providerType, setProviderType] = useState("")
   const[attachment,setAttachment]=useState<{
     name: string;
     url: string;
@@ -222,6 +223,14 @@ function BasicTabs(props: any) {
     _id: string;
 }>()
 const [attachmentPopup, setAttachmentPopup] = useState(false);
+
+const userCredentials = localStorage.getItem('userCredentials');
+let credential=null;
+if(userCredentials) {
+  credential=JSON.parse(userCredentials);
+setProviderType(credential.provider)
+}
+ 
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -431,7 +440,7 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
               fontWeight: "400",
             }}
           />
-          {taskState.TabOne.integration&&(
+          {taskState.TabOne.integration && providerType==='procore' &&(
            <Tab
             label="Procore"
             {...a11yProps(0)}
@@ -1413,7 +1422,7 @@ const convertObjectToPdf = () => {
               <div className="mr-[10px]">
             {providerType === 'procore' ? ( 
               <div>
-              {procoreProjectId !== undefined  && procoreCompanyId !==undefined ?(
+              {appState.currentProjectData?.project.metaDetails?.procore?.projectId !== undefined ? (
                 <div className="p-[6px] hover:bg-[#E7E7E7] ">
 
                 <ProcoreLogo

@@ -149,7 +149,7 @@ const LinkNewObservation : React.FC<IProps> = ({
   const handleSubmit = (observation: observation) => {
     setLoading(true)
     const project_id = procoreProjectId?.toString();
-    observation.description = observation.description + `<a href="${weburl()}">#${sequenceNumber}( View in ConstructN)</a>`;
+    observation.description = observation.description + `<a href=\"${weburl()}\" target="_blank">#${sequenceNumber}( View in ConstructN)</a>`;
      const formData:any =new FormData() 
     formData.append('project_id', project_id);
 
@@ -162,7 +162,7 @@ const LinkNewObservation : React.FC<IProps> = ({
         formData.append(`attachments[${attachment[i].name}]`, attachment[i]);
       }
     }
-    formData.append(`attachments[ScreenShot]`,screenshot);
+    formData.append(`attachments[${screenshot.name}]`,screenshot);
     formData.append(`attachments[${generatedpdf.name}]`, generatedpdf);
     Object.entries(observation).forEach(([key, value]) => {  
                   
@@ -171,13 +171,10 @@ const LinkNewObservation : React.FC<IProps> = ({
                }
                 
          });
-         console.log('checking for type',formData.get('distribution_member_ids'))
 createObservation(formData)
     .then((response) => {
-      if (response) {
-
-        setLoading(false)
-      }
+      if (response) {       
+      
       if (issue) {
         linkIssueObservation(issue.project, issue._id, response?.data.id)
           .then((linkResponse) => {
@@ -211,9 +208,15 @@ createObservation(formData)
             }
           });
       }
-    })
+  }else{
+    setLoading(false)
+    CustomToast("Observation creation failed","error");
+  }
+})
+
     .catch((error) => {
       if (error) {
+        setLoading(false)
         CustomToast("Observation creation failed","error");
       }
     });
