@@ -209,6 +209,8 @@ export class ForgeDataVizUtils {
 
                         case '360 Image':
 
+                        case 'Laser':
+
                         case '360 Video':
 
                             images = Object.keys(reality['position'])
@@ -237,6 +239,8 @@ export class ForgeDataVizUtils {
                                 switch (type) {
 
                                     case '360 Image':
+
+                                    case 'Laser':
 
                                     case '360 Video':
 
@@ -678,6 +682,15 @@ export class ForgeDataVizUtils {
                 offset: 1100
             }
 
+            case 'Laser': return {
+
+                icon: '/icons/LaserIconForge.png',
+
+                size: 24,
+
+                offset: 5000
+            }
+
             case 'Phone Image': return {
 
                 icon: '/customicons/PhoneImageIconWoBorder.svg',
@@ -719,19 +732,24 @@ export class ForgeDataVizUtils {
     }
 
     _toLocalPosition = (position) => {
-
+        // console.log("TestingLaser: toLocalPosition ", this._tm, this._offset)
         let _position = applyTMInverse(position, this._tm)
-
-        _position = applyOffset(_position, this._offset)
-
+        // console.log("TestingLaser: toLocalPosition ", position, _position)
+        // _position = applyOffset(_position, this._offset)
+        // console.log("TestingLaser: toLocalPosition ", position, _position)
         return _position
     }
 
     _toGlobalPosition = (position) => {
+        // console.log("TestingLaser: toGlobalPosition ", this._tm, this._offset)
 
-        let _position = applyTM(position, this._tm)
+        let _position = applyTM(position, this._tm) // removeOffset(position, this._offset)
 
-        _position = removeOffset(_position, this._offset)
+        // console.log("TestingLaser: toGlobalPosition ", structuredClone(position), _position)
+
+        // _position = removeOffset(_position, this._offset) //  applyTM(_position, this._tm)
+
+        // console.log("TestingLaser: toGlobalPosition ", position, _position)
 
         return _position
     }

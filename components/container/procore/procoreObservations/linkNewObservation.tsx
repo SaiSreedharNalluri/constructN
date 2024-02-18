@@ -16,14 +16,32 @@ import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
+import { IToolbarAction } from "../../../../models/ITools";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
   width: "40px",
 });
-
-const LinkNewObservation = (props: any) => {
-  const {
+interface IProps{
+  attachment :any;
+  screenshot:any
+  handleInstance:any
+  generatedpdf:any
+  weburl:any
+  rfiManager:any
+  potentialDistMem:any
+  types:any
+  hazard:any
+  contributingBehavior:any
+  contributingCondition:any
+  issue:any
+  task:any
+  handleCloseProcore:any
+  getIssues?:(s:string)=>{} | undefined;
+  getTasks?:(s:string)=>{} | undefined;
+  toolClicked?: (toolAction: IToolbarAction) => void;
+}
+const LinkNewObservation : React.FC<IProps> = ({
     attachment,
     screenshot,
     handleInstance,
@@ -39,8 +57,9 @@ const LinkNewObservation = (props: any) => {
     task,
     handleCloseProcore,
     getIssues,
-    getTasks
-  } = props;
+    getTasks,
+    toolClicked
+  }) => {
 
   const userObj=localStorage.getItem('userCredentials')
   const procoreAssigneeId=()=>{
@@ -130,7 +149,7 @@ const LinkNewObservation = (props: any) => {
   const handleSubmit = (observation: observation) => {
     setLoading(true)
     const project_id = procoreProjectId?.toString();
-    observation.description = observation.description + `<a href="${weburl()}">#${sequenceNumber}( View in ConstructN)</a>`;
+    observation.description = observation.description + `<a href=\"${weburl()}\" target="_blank">#${sequenceNumber}( View in ConstructN)</a>`;
      const formData:any =new FormData() 
     formData.append('project_id', project_id);
 
@@ -143,7 +162,7 @@ const LinkNewObservation = (props: any) => {
         formData.append(`attachments[${attachment[i].name}]`, attachment[i]);
       }
     }
-    formData.append(`attachments[ScreenShot]`,screenshot);
+    formData.append(`attachments[${screenshot.name}]`,screenshot);
     formData.append(`attachments[${generatedpdf.name}]`, generatedpdf);
     Object.entries(observation).forEach(([key, value]) => {  
                   
@@ -152,19 +171,18 @@ const LinkNewObservation = (props: any) => {
                }
                 
          });
-         console.log('checking for type',formData.get('distribution_member_ids'))
 createObservation(formData)
     .then((response) => {
-      if (response) {
-
-        setLoading(false)
-      }
+      if (response) {       
+      
       if (issue) {
         linkIssueObservation(issue.project, issue._id, response?.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("Observation Created and linked successfully", 'success');
-              getIssues(issue.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
+              getIssues && getIssues(issue.structure)
               handleCloseProcore();
             }
           })
@@ -178,7 +196,9 @@ createObservation(formData)
           .then((linkResponse) => {
             if (linkResponse) {
               CustomToast("Observation Created and linked successfully", 'success');
-              getTasks(task.structure)
+              let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
+              toolClicked && toolClicked(IntegrationObj)
+              getTasks && getTasks(task.structure)
               handleCloseProcore();
             }
           })
@@ -188,9 +208,15 @@ createObservation(formData)
             }
           });
       }
-    })
+  }else{
+    setLoading(false)
+    CustomToast("Observation creation failed","error");
+  }
+})
+
     .catch((error) => {
       if (error) {
+        setLoading(false)
         CustomToast("Observation creation failed","error");
       }
     });

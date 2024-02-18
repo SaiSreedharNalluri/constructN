@@ -119,11 +119,11 @@ export class MqttConnector{
     if (userObj) user = JSON.parse(userObj);
     if(hash!== undefined)
     {
-      topicString= user._id + "/" + hash + "/fromMultiverse"
+      topicString= user?._id + "/" + hash + "/fromMultiverse"
     }
     else
     {
-    topicString= user._id + "/" + this.topicHash + "/fromMultiverse"
+    topicString= user?._id + "/" + this.topicHash + "/fromMultiverse"
     }
     
     return topicString;

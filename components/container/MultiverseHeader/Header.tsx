@@ -85,6 +85,7 @@ import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../../divami_components/uploader_details/uploaderProjects";
 import { IJobs } from "../../../models/IJobs";
 import { ProjectCounts } from "../../../models/IUtils";
+import { isMultiverseEnabled } from "../../../utils/constants";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",

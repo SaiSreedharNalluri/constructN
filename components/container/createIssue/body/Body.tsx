@@ -149,7 +149,7 @@ const Body = ({
     })
   }, [router.isReady, router.query.projectId]);
   useEffect(() => {
-    if (projectUsersList.length && issuePriorities.length && issueTypes.length) {
+    if (projectUsersList?.length && issuePriorities.length && issueTypes.length) {
       if (editData) {
         setFormConfig((prev: any) => {
           let newFormConfig = prev.map((item: any) => {

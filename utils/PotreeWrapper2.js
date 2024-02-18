@@ -27,6 +27,7 @@ export const PotreeViewerUtils = () => {
         "360 Image": true,
         "Phone Image": true,
         "Drone Image": true,
+        "Laser": true,
 
     };
     let _pointCloudPath = {};
@@ -237,7 +238,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const loadFirstImageOnLayersLoadCompletion = () => {
-        console.log("Inside Potree loadFirstImage On layers load complete: ", _realityLayers);
+        console.log("TestingLaser: Inside Potree loadFirstImage On layers load complete: ", _realityLayers);
         for (const reality in _realityLayers) {
             if (_realityLayers[reality].loaded == false) {
                 return false;
@@ -249,9 +250,11 @@ export const PotreeViewerUtils = () => {
     const loadData = async () => {
         removeData();
         let pointClouds = [];
-        let isLoadFloormap = false;
+        _realityLayers = {};
+        // let isLoadFloormap = false;
         for (const realityType in _realityPositionMap) {
             switch (realityType) {
+                case "Laser":
                 case "360 Video":
                     for(let pointCloudData of _realityPositionMap[realityType]) {
                         // loadPointCloud(pointCloudData);
@@ -263,12 +266,25 @@ export const PotreeViewerUtils = () => {
                         }
 
                         if(pointCloudData.offset && pointCloudData.offset.length > 0) {
-                            _globalOffset = pointCloudData.offset;
+                            // _globalOffset = pointCloudData.offset;
+                            _globalOffset = [420578.5135, 3726041.1975, 100]
                         }
 
                         pointClouds.push(pointCloudData);
+                        _realityLayers[pointCloudData.id] ={
+                            id: pointCloudData.id,
+                            type: realityType,
+                            index: undefined,
+                            sceneIndex: undefined,
+                            loaded: false,
+                            pointCloudData: pointCloudData,
+                            pointCloud: undefined,
+                            imagesPath: pointCloudData.imagesPath,
+                            imagesPositionPath: pointCloudData.positionPath,
+                            imagesPosition: pointCloudData.position
+                        };
                     }
-                    isLoadFloormap = true;
+                    // isLoadFloormap = true;
                     break;
                 case "Drone Image":
                     for(let pointCloudData of _realityPositionMap[realityType]) {
@@ -284,11 +300,37 @@ export const PotreeViewerUtils = () => {
                             _globalOffset = pointCloudData.offset;
                         }
                         pointClouds.push(pointCloudData);
+                        _realityLayers[pointCloudData.id] ={
+                            id: pointCloudData.id,
+                            type: realityType,
+                            index: undefined,
+                            sceneIndex: undefined,
+                            loaded: false,
+                            pointCloudData: pointCloudData,
+                            pointCloud: undefined,
+                            imagesPath: pointCloudData.imagesPath,
+                            imagesPositionPath: pointCloudData.positionPath,
+                            imagesPosition: pointCloudData.position
+                        };
                     }
                     break;
                 case "360 Image":
                 case "Phone Image":
-                    isLoadFloormap = true;
+                    for(let pointCloudData of _realityPositionMap[realityType]) {
+                        _realityLayers[pointCloudData.id] ={
+                            id: pointCloudData.id,
+                            type: realityType,
+                            index: undefined,
+                            sceneIndex: undefined,
+                            loaded: false,
+                            pointCloudData: pointCloudData,
+                            pointCloud: undefined,
+                            imagesPath: pointCloudData.imagesPath,
+                            imagesPositionPath: pointCloudData.positionPath,
+                            imagesPosition: pointCloudData.position
+                        };
+                    }
+                    // isLoadFloormap = true;
                     break;
             }
         }
@@ -349,12 +391,16 @@ export const PotreeViewerUtils = () => {
                 pointcloud.position.set(assetPosition.x - _globalOffset[0], assetPosition.y - _globalOffset[1], assetPosition.z - _globalOffset[2]);
             // }
             scene.addPointCloud(pointcloud);
+            _realityLayers[realityId].pointCloud = pointcloud;
+            pointcloud._visible = false;
+
             _viewer.fitToScreen();
             pointCloudLoaded = true;
             // console.log('Point Cloud Loaded');
         }
         
         _currentMode = "3d";
+        // pointCloudView(false);
         _isPointCloudLoaded = pointCloudLoaded;
         if (pointCloudDataArray.length == 0 || loadLayersOnDataLoadCompletion()) {
             loadLayers();
@@ -364,24 +410,34 @@ export const PotreeViewerUtils = () => {
     }
 
     const loadLayers = () => {
-        console.log("Inside Potree load layers: ", _realityPositionMap);
-        _realityLayers = {};
+        console.log("Inside Potree load layers: ", _realityPositionMap, _realityLayers);
 
         for (const realityType in _realityPositionMap) {
             switch (realityType) {
+                case "Laser":
+                    for(let pathObject of _realityPositionMap[realityType]) {
+
+                        // Actual implementation to support Laser
+                        // loadSphericalImages(new THREE.Matrix4(), _globalOffset, pathObject.id, pathObject.positionPath, pathObject.imagesPath);
+                        // ---
+
+                        // Temporary Fix for Laser Implementation
+                        _realityLayers[pathObject.id].loaded = true;
+                        if (loadFirstImageOnLayersLoadCompletion() && _imageLoadedOnce == false) {
+                            if (_context && _context.type !== "2d") {
+                                updateContext(_context, false);
+                            } else {
+                                loadFirstImage();
+                            }
+                            
+                        }
+                        // ----
+                    }
+                    break;
                 case "360 Video":
                 case "360 Image":
                     // pointCloudView(true);
                     for(let pathObject of _realityPositionMap[realityType]) {
-                        _realityLayers[pathObject.id] = {
-                            id: pathObject.id,
-                            type: realityType,
-                            index: undefined,
-                            sceneIndex: undefined,
-                            loaded: false,
-                            imagesPath: pathObject.positionPath,
-                            position: pathObject.position
-                        }
                         loadSphericalImages(new THREE.Matrix4(), _globalOffset, pathObject.id, pathObject.positionPath, pathObject.imagesPath);
                         
                     }
@@ -390,15 +446,6 @@ export const PotreeViewerUtils = () => {
                 case "Phone Image":
                     // pointCloudView(true);
                     for(let pathObject of _realityPositionMap[realityType]) {
-                        _realityLayers[pathObject.id] ={
-                            id: pathObject.id,
-                            type: realityType,
-                            index: undefined,
-                            sceneIndex: undefined,
-                            loaded: false,
-                            imagesPath: pathObject.positionPath,
-                            position: pathObject.position
-                        };
                         loadDroneImages(new THREE.Matrix4(), _globalOffset, pathObject.id, pathObject.positionPath, pathObject.imagesPath);
                         // break;
                     }
@@ -408,15 +455,6 @@ export const PotreeViewerUtils = () => {
                 case "Drone Image":
                     // pointCloudView(true);
                     for(let pathObject of _realityPositionMap[realityType]) {
-                        _realityLayers[pathObject.id] ={
-                            id: pathObject.id,
-                            type: realityType,
-                            index: undefined,
-                            sceneIndex: undefined,
-                            loaded: false,
-                            imagesPath: pathObject.positionPath,
-                            position: pathObject.position
-                        };
                         loadDroneImages(pathObject.tm, _globalOffset, pathObject.id, pathObject.positionPath, pathObject.imagesPath);
                     }
                     // this.currentMode = 'Drone Image'
@@ -509,7 +547,7 @@ export const PotreeViewerUtils = () => {
             _eventHandler(_viewerId, getContext(event.detail.image));
         }
         prevImage = { reality: _currentReality, image: event.detail.image };
-        publish("show-pointcloud", { view: false, disable: false });
+        publish("show-pointcloud", { view: false, disable: false , pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
     }   
 
     const onImageUnLoad = (event) => {
@@ -520,11 +558,12 @@ export const PotreeViewerUtils = () => {
         // pointCloudView(false);
         _currentImageName = null;
     
-        if (_currentMode == "Drone Image") {
-            // _viewer.fitToScreen();
-            pointCloudView(false);
-        }
+        // if (_currentMode == "Drone Image") {
+        //     // _viewer.fitToScreen();
+        //     pointCloudView(false);
+        // }
         _currentMode = "3d"
+        pointCloudView(false);
     }
 
     const onPanoLoad = (event) => {
@@ -549,7 +588,8 @@ export const PotreeViewerUtils = () => {
         console.log('potree panoImagesUnLoad ', event);
         _viewer.renderArea.removeEventListener('mousewheel', onZoomHandler);
         _currentImageName = null;
-        // pointCloudView(false);
+        _currentMode = "3d"
+        pointCloudView(false);
 
         // this.viewer.fitToScreen();
         // this.pointCloudView(false);
@@ -625,6 +665,10 @@ export const PotreeViewerUtils = () => {
 
         try {
             switch(reality.type) {
+                case "Laser":
+                    _imageLoadedOnce = true;
+                    _currentMode = "3d";
+                    break;
                 case "360 Video":
                 case "360 Image":
                     _imageLoadedOnce = true;
@@ -675,14 +719,14 @@ export const PotreeViewerUtils = () => {
         } 
         
         _currentMode = "3d";
-        _currentReality = null;
+        // _currentReality = null;
         
     }
 
     const loadAllImages = () => {
-        _viewer.scene.pointclouds.forEach((pointCloud)=>{
-            pointCloud._visible = false;
-        });
+        // _viewer.scene.pointclouds.forEach((pointCloud)=>{
+        //     pointCloud._visible = false;
+        // });
         _viewer.orbitControls.removeEventListener('mousewheel', scrollListner);
         handleContext(prevContext);
     }
@@ -1375,14 +1419,23 @@ export const PotreeViewerUtils = () => {
         return sprite;
     }
 
-    const pointCloudView = (cond) => {
+    const pointCloudView = (cond1 = false) => {
+
+        for (const reality in _realityLayers) {
+            if (_realityLayers[reality].pointCloud !== undefined) {
+                _realityLayers[reality].pointCloud._visible = _currentReality.id === reality ? true : false
+            }
+        }
+
+
+        let cond = _currentMode === "3d" ? false : true
         _viewer.setEDLEnabled(cond);
         if (cond) {
             if(_currentMode !== "Drone Image") _viewer.setEDLOpacity(0);
-            publish("show-pointcloud", { view: false, disable: false });
+            publish("show-pointcloud", { view: false, disable: false, pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)})
         } else {
             _viewer.setEDLOpacity(1);
-            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage });
+            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage , pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
         }
     }
 
@@ -1449,7 +1502,7 @@ export const PotreeViewerUtils = () => {
             }
 
             context = {
-                id: _currentMode !== "3d" ? _currentReality.id : new Date().getTime(),
+                id: _currentReality !== undefined ? _currentReality.id : new Date().getTime(),
                 type: _currentMode,
                 cameraObject: camObject,
             }
@@ -1557,6 +1610,7 @@ export const PotreeViewerUtils = () => {
         let nearestImage = null;
         let nearestImageDist = 10000; 
         let nearestReality;
+        let laserReality;
         for (const realityKey in _realityLayers ) {
             let reality = _realityLayers[realityKey];
             switch (reality.type) {
@@ -1584,11 +1638,26 @@ export const PotreeViewerUtils = () => {
                         }
                     });
                     break;
+                case "Laser":
+                    let box = new THREE.Box3();
+                    box.copy(reality.pointCloud.pcoGeometry.tightBoundingBox).applyMatrix4(reality.pointCloud.matrixWorld);
+                    let boundingBox = reality.pointCloud.boundingBox
+                    console.log("TestingLaser: case laser in goToNearestImageInAllRealities ", boundingBox, box, position, box.containsPoint(position));
+                    if (box.containsPoint(position) === true) {
+                        laserReality = reality;
+                    }
+                    break;
             }
         }
 
         if(nearestImage) {
             loadImage(nearestReality, nearestImage, cameraWithOffset);
+        } else if (laserReality !== undefined){
+            console.log("TestingLaser: laserReality goToNearestImageInAllRealities ", laserReality, position);
+            _viewer.scene.view.setView(position, position)
+            _currentMode = "3d"
+            _currentReality = laserReality
+            pointCloudView();
         }
     }
 
@@ -1617,13 +1686,13 @@ export const PotreeViewerUtils = () => {
         }
     }
 
-    const goToImage = (reality, imageName, cameraWithOffset) => {
+    const goToImage = (reality, img, cameraWithOffset) => {
         // console.log("Inside potree utils, going to image: ", imageName);
         switch (reality.type) {
             case "Drone Image":
             case "Phone Image":
                 _viewer.scene.orientedImages[reality.index].images.forEach( image => {
-                    if (image.id == imageName) {
+                    if (image.id == img.imageName) {
                         loadImage(reality, image)
                     }
                 });
@@ -1631,10 +1700,27 @@ export const PotreeViewerUtils = () => {
             case "360 Video":
             case "360 Image":
                 _viewer.scene.images360[reality.index].images.forEach(image => {
-                    if (image.file.split('/').pop() == imageName) {
+                    if (image.file.split('/').pop() == img.imageName) {
                         loadImage(reality, image, cameraWithOffset);
                     }
                 });
+                break;
+            case "Laser":
+                let position = new THREE.Vector3().fromArray([
+                    img.imagePosition.x, 
+                    img.imagePosition.y, 
+                    img.imagePosition.z
+                ])
+                let target = new THREE.Vector3().fromArray([
+                    img.imagePosition.x, 
+                    img.imagePosition.y, 
+                    img.imagePosition.z
+                ])
+                console.log("TestingLaser: case laser in goToImage ", reality, img);
+                _viewer.scene.view.setView(position, target)
+                _currentMode = "3d"
+                _currentReality = reality
+                pointCloudView();
                 break;
         }
     }
@@ -1654,17 +1740,18 @@ export const PotreeViewerUtils = () => {
 
     const handleContext = (context) => {
         let reality = _realityLayers[context.id];
-
+        console.log("TestingLaser: handleContext ", reality, context, _globalOffset);
         switch (context.type) {
             case "3d":
                 goToContext(context);
                 break;
+            case "Laser":
             case "360 Video":
             case "360 Image":
             case "Phone Image":
             case "Drone Image":
                 if (reality) {
-                    goToImage(reality, context.image.imageName, context.cameraObject);
+                    goToImage(reality, context.image, context.cameraObject);
                 } else {
                     goToContext(context);
                 }
@@ -1689,6 +1776,7 @@ export const PotreeViewerUtils = () => {
     }
 
     const updateContext = (context, sendContext) => {
+        console.log("TestingLaser: ", context, sendContext);
         _sendContext = sendContext;
         if (context) {
             _context = getContextLocalFromGlobal(context);
@@ -1721,7 +1809,7 @@ export const PotreeViewerUtils = () => {
 
     const updateViewerState = (viewerState) => {
          // console.log("Inside update viewer state: ", this.viewerId, viewerState);
-         let offset = _globalOffset
+         let offset =  _currentReality !== undefined ? _currentReality.pointCloudData.offset : _globalOffset
          if (_currentMode === "3d") {
             // console.log("Inside set viewer state for 3D: ", this.viewerId)
             

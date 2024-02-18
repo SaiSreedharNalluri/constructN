@@ -46,6 +46,8 @@ import LidarWalk from "../../../public/divami_icons/LidarWalk.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
 import DroneImageNew from "../../../public/divami_icons/DroneImageNew.svg";
 
+import LaserIcon from "../../../public/icons/LaserIcon.svg";
+
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 import ReactCardFlip from "react-card-flip";
 import cardMenu from "../../../public/divami_icons/cardMenu.svg";
@@ -277,6 +279,13 @@ export const ProjectListCardView = ({
               {each.captureDroneCount?.length > 1
                 ? each.captureDroneCount
                 : `0${each.captureDroneCount}`}
+            </CaptureCount>
+          </CaptureImageContainer>
+          <CaptureImageContainer>
+            <CaptureImageIcon src={LaserIcon} alt="laser icon"></CaptureImageIcon>
+            <CaptureName>Laser - </CaptureName>
+            <CaptureCount>
+            {each.captures?.Laser || 0}
             </CaptureCount>
           </CaptureImageContainer>
           <CaptureImageContainer opacity={d2Details[each._id] ? 1 : 0.6}>

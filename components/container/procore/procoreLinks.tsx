@@ -21,6 +21,7 @@ import {
   contributingBehaviorList,
   contributingConditionsList,
   costImpact,
+  filesUpload,
   getcoastCode,
   getLocation,
   getReceivedFrom,
@@ -42,6 +43,8 @@ import LinkExistingObservation from "./procoreObservations/linkExistingObservati
 import LinkExistingSubmittal from "./procoreSubmittal/linkExistingSubmittal";
 import { useAppContext } from "../../../state/appState/context";
 import router from "next/router";
+import axios from "axios";
+import { screen } from "@testing-library/react";
 
 const ProcoreLink = (props: any) => {
   const { handleCloseProcore,
@@ -54,8 +57,11 @@ const ProcoreLink = (props: any) => {
           getIssues,
           getTasks,
           screenshot,
-          attachment} = props;
+          attachment,toolClicked} = props;
 
+
+
+  console.log('checking screen',screenshot)
   const [loading, setLoading] = useState(false)
   const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
 
@@ -121,6 +127,10 @@ const ProcoreLink = (props: any) => {
         contributingConditionsList(procoreCompanyId),
         hazardList(procoreCompanyId),
         typesList(procoreProjectId),
+
+
+
+        
       ]);
 
       setRfiManager(rfiManagerData);
@@ -143,10 +153,77 @@ const ProcoreLink = (props: any) => {
       console.error("Error fetching data:", error);
     }
   };
+  const [uploadedFileIds, setUploadedFileIds] = useState([]);
+  const [fileUuidNameMap, setFileUuidNameMap] = useState({});
+  // const fileuploadFunction =(files:any)=>{
+  //   const filesToUpload =[generatedpdf,screenshot,...(attachment || []),...(files || [])];
+    
+  //   const uploadPromises =filesToUpload.map((file:any)=>{
+
+  //     const filename =file?.name;
+  //     const contentType =file?.type;
+
+  //     const formattedData = {
+  //       "response_filename": filename,
+  //       "response_content_type": contentType,
+  //   };
+  //   if(generatedpdf && screenshot){
+  //   return filesUpload(procoreProjectId, formattedData);}
+  //   });
+
+  //   Promise.all(uploadPromises).then(uploadResponses =>{
+  //     const ids:any = [];
+  //     const uuidNameMap:any = {};
+  //     uploadResponses.forEach((response, index) => {
+  //       if (response) {
+  //           const id = response.uuid;
+  //           const filename = filesToUpload[index]?.name;
+  //           uuidNameMap[id] = filename;
+  //           ids.push(id);
+  //           const url = response.url;
+  //           const key = response.fields['key'];
+  //           const contentType = response.fields['Content-Type'];
+  //           const contentDisposition = response.fields['Content-Disposition'];
+  //           const policy = response.fields['policy'];
+  //           const credential = response.fields['x-amz-credential'];
+  //           const algorithm = response.fields['x-amz-algorithm'];
+  //           const date = response.fields['x-amz-date'];
+  //           const signature = response.fields['x-amz-signature'];
+
+  //           const formData = new FormData();
+
+  //           formData.append(`key`, key);
+  //           formData.append(`Content-Type`, contentType);
+  //           formData.append(`Content-Disposition`, contentDisposition);
+  //           formData.append(`policy`, policy);
+  //           formData.append(`x-amz-credential`, credential);
+  //           formData.append(`x-amz-algorithm`, algorithm);
+  //           formData.append(`x-amz-date`, date);
+  //           formData.append(`x-amz-signature`, signature);
+  //           formData.append(`file`, filesToUpload[index]);
+
+
+  //           axios.post(url,formData,{
+  //             headers:{
+  //               'Content-Type':'multipart/form-data',
+  //             },
+  //           })
+  //           .then(response=>{
+  //             console.log('dharani api response',response);
+             
+
+  //           })
+  //       }})
+  //       setUploadedFileIds(ids); 
+  //       setFileUuidNameMap(uuidNameMap);
+      
+  //   })
+  // }
   useEffect(() => {
     fetchData();
-  }, []);
-
+    //fileuploadFunction('');
+  }, [generatedpdf,screenshot]);
+console.log('before testing its',fileUuidNameMap)
   const handleInstanceClick = (componentType: any) => {
     switch (componentType) {
       case "RFI":
@@ -158,8 +235,6 @@ const ProcoreLink = (props: any) => {
           generatedpdf={generatedpdf}
           getTasks={getTasks}
           getIssues={getIssues}
-          updatedselectedIssue={updatedselectedIssue}
-          setEnabled={setEnabled}
             issue={issue}
             task={task}
             handleInstance={handleInstanceClick}
@@ -171,9 +246,9 @@ const ProcoreLink = (props: any) => {
             rfistage={rfistage}
             scheduleImpactt={scheduleImpactt}
             costImpacts={costImpacts}
-            specSectionn={specSectionn}
+            specSection={specSectionn}
             handleCloseProcore={handleCloseProcore}
-            setSelectedIssue={setSelectedIssue}
+            toolClicked={toolClicked}
           />
         );
         break;
@@ -192,7 +267,8 @@ const ProcoreLink = (props: any) => {
             issue={issue}
             handleCloseProcore={handleCloseProcore}
             task={task}
-            handleInstance={handleInstanceClick}></LinkExistingRfi>
+            handleInstance={handleInstanceClick}
+            toolClicked={toolClicked}></LinkExistingRfi>
         )
         break;
       case "newCloseObservation":
@@ -217,6 +293,7 @@ const ProcoreLink = (props: any) => {
             hazard={hazard}
             contributingCondition={contributingCondition}
             contributingBehavior={contributingBehavior}
+            toolClicked={toolClicked}
           ></LinkNewObservation>
         );
         break;
@@ -231,7 +308,8 @@ const ProcoreLink = (props: any) => {
           issue={issue}
           handleCloseProcore={handleCloseProcore}
           task={task}
-            handleInstance={handleInstanceClick}></LinkExistingObservation>)
+            handleInstance={handleInstanceClick}
+            toolClicked={toolClicked}></LinkExistingObservation>)
             break;
       case "Link_new_submittal":
         setSelectedComponent(
@@ -251,6 +329,7 @@ const ProcoreLink = (props: any) => {
             potentialDistMem={potentialDistMem}
             coastCodee={coastCodee}
             handleInstance={handleInstanceClick}
+            toolClicked={toolClicked}
           ></NewLinkSubmittal>
         );
         break;
@@ -266,6 +345,7 @@ const ProcoreLink = (props: any) => {
           handleCloseProcore={handleCloseProcore}
           task={task}
           handleInstance={handleInstanceClick}
+          toolClicked={toolClicked}
           ></LinkExistingSubmittal>)
         break;
        default:

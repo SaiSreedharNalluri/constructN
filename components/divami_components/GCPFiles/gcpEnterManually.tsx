@@ -6,6 +6,7 @@ import { GCPType, IGCP } from "../../../models/IGCP";
 import { location, utmLocation } from "../../../models/IRawImages";
 import Delete from "../../../public/divami_icons/delete.svg";
 import Image from "next/image";
+import { Button } from "@mui/material";
 
 const GcpEnterManually: React.FC<any> = () => {
   const { state: uploaderState, uploaderContextAction } = useUploaderContext();
@@ -408,7 +409,7 @@ const GcpEnterManually: React.FC<any> = () => {
           </label>
         </div>
       </div>
-      <div style={{ marginTop: "8px" }}>
+      <div className="mt-2 w-fit">
         <div
           style={{
             maxHeight: "150px",
@@ -432,34 +433,34 @@ const GcpEnterManually: React.FC<any> = () => {
         </div>
 
         <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "33.3%",
-          }}
-        >
-          <p style={{ fontSize: "small", fontStyle: "italic" }}>
+        className="flex justify-between items-center ">
+          <div>
+          <p style={{ fontSize: "small", fontStyle: "italic",color:"#F1742E" }}>
             At least 4 GCPs needed
           </p>
-          <p style={{ fontSize: "small", fontStyle: "italic" }}>
+          {uploaderState.errorCount >0?  <p style={{ fontSize: "small", fontStyle: "italic" ,color:"red"}}>
             {uploaderState.errorCount}{" "}
             {uploaderState.errorCount === 1 ? "error" : "errors"} found
-          </p>
-          <p style={{ fontSize: "small", fontStyle: "italic" }}>
-            {uploaderState.duplicateInGCP?.filter((value) => value == true).length}{" "}
-            {uploaderState.duplicateInGCP?.filter((value) => value == true).length === 1 ? "duplicate" : "duplicates"} found
-          </p>
-          <button onClick={addRow}>
+          </p>:""}
+          
+          {uploaderState.duplicateInGCP?.includes(true) && (
+      <p style={{ fontSize: "small", fontStyle: "italic", color: "red" }}>
+        {uploaderState.duplicateInGCP.filter((value) => value === true).length}{" "}
+        {uploaderState.duplicateInGCP.filter((value) => value === true).length === 1 ? "duplicate" : "duplicates"} found
+      </p>
+    )}
+          </div>
+          <Button onClick={addRow}>
             <span
               className="plus-symbol"
-              style={{ margin: "0 0 0 170px", color: "#F1742E" }}
+              style={{ color: "#F1742E",textTransform: "none" }}
             >
               + Add
             </span>
-          </button>
-        </div>
-        <hr className="mt-[10px]" />
+          </Button>
+        </div>    
       </div>
+      <hr className="mt-[10px] " />
     </div>
   );
 };

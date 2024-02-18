@@ -3,6 +3,7 @@ import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 import PhoneImageNewCapture from "../../../public/divami_icons/PhoneImageNewCapture.svg";
 import CaptureVideoWalk from "../../../public/divami_icons/CaptureVideoWalk.svg";
 import DroneImageNew from "../../../public/divami_icons/DroneImageNew.svg";
+import LaserIcon from "../../../public/icons/LaserIcon.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import SelectLayer from "../select-layers/SelectLayer";
@@ -49,6 +50,12 @@ const LayerIcons = ({iconsList}:any)=>{
             return (
               <LayerSecondSectionCamImg key={label + index}>
                 <CameraIcon src={DroneImageNew} alt="Arrow" />
+              </LayerSecondSectionCamImg>
+            );
+          } else if (label === "Laser") {
+            return (
+              <LayerSecondSectionCamImg key={label + index}>
+                <CameraIcon src={LaserIcon} alt="Laser" />
               </LayerSecondSectionCamImg>
             );
           }

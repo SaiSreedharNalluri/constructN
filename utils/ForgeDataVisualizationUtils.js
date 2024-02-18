@@ -33,6 +33,7 @@ export class ForgeDataVisualization {
             "360 Image": true,
             "Phone Image": true,
             "Drone Image": true,
+            "Laser": true,
 
         };
         this.tagMap = {};
@@ -161,6 +162,7 @@ export class ForgeDataVisualization {
             this.viewableDataMap[viewableType] = {};
             switch (viewableType) {
                 case "360 Image":
+                case "Laser":
                 case "360 Video":
                     for(const reality of visualizationData[viewableType]) {
                         for (const positionData in reality.position) {
@@ -251,6 +253,10 @@ export class ForgeDataVisualization {
                 iconUrl = "/icons/360VideoWalkInViewer.svg";
                 highlightUrl = "/icons/360VideoWalkInViewer.svg";
             break;
+            case "Laser":
+                iconUrl = '/icons/LaserIconForge.png';
+                highlightUrl = '/icons/LaserIconForge.png';
+            break;
             case '360 Image':
                 iconUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';
                 highlightUrl = '/customicons/360ImageWithoutBorderAndShadow.svg';
@@ -283,6 +289,7 @@ export class ForgeDataVisualization {
     getViewableData(type) {
         const viewableData = new this.dataVizCore.ViewableData();
         switch (type) {
+            case "Laser":
             case '360 Image':
                 viewableData.spriteSize = 48;
                 break;
@@ -474,7 +481,7 @@ export class ForgeDataVisualization {
         let _position;
         if(this.is2D) {
             _position = applyTMInverse(position, tm);
-            _position = applyOffset(_position, offset);
+            // _position = applyOffset(_position, offset);
         } else {
             _position = applyOffset(position, offset);
         }
@@ -485,7 +492,7 @@ export class ForgeDataVisualization {
         let _position;
         if(this.is2D) {
             _position = applyTM(position, tm);
-            _position = removeOffset(_position, offset);
+            // _position = removeOffset(_position, offset);
         } else {
             _position = removeOffset(position, offset);
         }

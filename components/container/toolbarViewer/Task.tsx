@@ -108,6 +108,10 @@ function Task({
     numberOfFilters: 0,})
   const [projectUsers,setProjectUsers] = useState([])
   const [taskStatusList,setTaskStatusList] = useState([])
+  const [taskList,setTaskList] = useState(initData?.currentTaskList);
+  useEffect(()=>{
+    setTaskList(initData.currentTaskList)
+  },[initData])
   useEffect(()=>{
     setImage(screenshot?.screenshot as Blob)
    },[screenshot])
@@ -119,7 +123,7 @@ function Task({
             (each: any) => each._id === tasktoolInstance?.data?.data?.id
           
           ); 
-          let taskMenuInstance: IToolbarAction = { data: selectedObj.context,type:tasktoolInstance.type};
+          let taskMenuInstance: IToolbarAction = { data: selectedObj?.context,type:tasktoolInstance.type};
           taskMenuClicked(taskMenuInstance)
           setOpenTaskDetail(true)
           setSelectedTask(selectedObj);
@@ -158,7 +162,7 @@ function Task({
         setTaskStatusList(tasksStatusList)
       }
       
-    }},[])
+    }},[router.isReady,initData])
 
   useEffect(() => {
     setMyProject(currentProject);

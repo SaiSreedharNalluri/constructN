@@ -54,7 +54,8 @@ export interface IToolbarAction {
   "viewIssueList" | "createIssue" | "createSuccessIssue" | "createFailIssue" | "selectIssue" | "showIssue" | "hideIssue" | "removedIssue" | 'setFilteredIssueList' | 'handleIssueFilter' | 'closeFilterOverlay' |
   "handleTaskFilter" | "closeTaskOverlay" | "viewTaskList" | "createTask" | "createSuccessTask" | "createFailTask" | "selectTask" | "showTask" | "hideTask" | "removedTask" | 'setFilteredTaskList' |
   "viewHotspotList" | "createHotspot" | "createSuccessHotspot" | "createFailHotspot" | "selectHotspot" | "showHotspot" | "hideHotspot" | "removedHotspot" |
-  "setFullScreenMode" | "closeIssueDrawer" | "closeTaskDrawer" | "editIssue" | "editTask" | "sortIssue" | "sortTask" | "deleteIssueAttachment" | "deleteTaskAttachment"
+  "setFullScreenMode" | "closeIssueDrawer" | "closeTaskDrawer" | "editIssue" | "editTask" | "sortIssue" | "sortTask" | "deleteIssueAttachment" | "deleteTaskAttachment" | "fetchProject" |
+  'getViewerScreenshot' | 'getMiniMapScreenshot' | 'RecProcoreIssue' | 'RecProcoreTask'
 
   ,
   
