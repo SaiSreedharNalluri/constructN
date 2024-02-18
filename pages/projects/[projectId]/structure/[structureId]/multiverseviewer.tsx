@@ -143,6 +143,8 @@ export type toolBarHandle = {
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
 const Index: React.FC<IProps> = () => {
+  const { state: appState, appContextAction } = useAppContext();
+  const { appAction } = appContextAction;
   const customLogger = new CustomLoggerClass();
   const ref = React.useRef<toolBarHandle>(null);
   const router = useRouter();
@@ -231,7 +233,6 @@ const Index: React.FC<IProps> = () => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
 
-  const { state: appState, appContextAction } = useAppContext();
   
   const isObjectEmpty = (objectName: any) => {
     return (
@@ -937,7 +938,11 @@ const Index: React.FC<IProps> = () => {
           setProjectUtm(response?.data?.result?.utm);
           setActiveProjectId(router.query.projectId as string);
           setProject(response.data.result);
-          // appAction.setCurrentProjectData(response.data.result)
+          const currentProjectData = appState.currentProjectData;
+          if (currentProjectData) {
+            currentProjectData.project = response.data.result;
+            appAction.setCurrentProjectData(currentProjectData);
+          } 
         })
         .catch((error) => {
           CustomToast("failed to load data","error");
