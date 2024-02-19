@@ -50,6 +50,7 @@ const FormBody = ({
   signUpMsg,
   errorStylingSignup,
   onData,
+  isValidationReq 
 }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -187,6 +188,7 @@ const FormBody = ({
         signUpMsg={signUpMsg}
         errorStylingSignup={true}
         onData={handleChildData}
+        isValidationReq ={isValidationReq}
       />
     </>
   );

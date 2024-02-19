@@ -143,6 +143,7 @@ const ResetPassword = () => {
               setCanBeDisabled={setCanBeDisabled}
               loginField={true}
               onData={handleChildData}
+              isValidationReq={true}
             />
             {checkPassword(childData) ? (
               <PasswordPopupContainer>

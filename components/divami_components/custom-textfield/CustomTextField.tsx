@@ -150,6 +150,9 @@ export const CustomTextField = (props: any) => {
     InputProps,
     maxValue,
     errorPriority,
+    errorMessage,
+    signUpMsg,
+    isValidationReq
   } = props;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -282,6 +285,9 @@ export const CustomTextField = (props: any) => {
             : {}
         }
       />
+      {id === "password" && isValidationReq === true && errorMessage && (
+        <p className="text-red-500">{errorMessage}</p>
+      )}
       {isError && showErrorMsg ? (
         <ErrorShowcase>
           <HeaderImageLogo src={Blocked} alt="blocked" />
