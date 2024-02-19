@@ -529,6 +529,7 @@ body{
 
 .flex_dis{
 	display: flex;
+	flex-wrap: wrap;
 }
 
 .divider {
