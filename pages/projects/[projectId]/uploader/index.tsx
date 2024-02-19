@@ -358,17 +358,18 @@ const Index: React.FC<IProps> = () => {
       return getCaptureIdFromModelOrString(job.captures[0]) === captureId
     })
     if(job) {
-      updateUploadCompletionStatus(getProjectIdFromModelOrString(job.project), job._id, captureId)
+      updateUploadCompletionStatus(job, captureId)
     } else {
       console.log("TestingUploader handlWorkerCompletionStatus no job in appState: ")
     }
   }
 
-  const updateUploadCompletionStatus = (projectId: string, jobId: string, captureId: string) => {
+  const updateUploadCompletionStatus = (job: IJobs, captureId: string) => {
+    let projectId = getProjectIdFromModelOrString(job.project)
     let jobProject = appState.projectDataList.find((projectData) => {
       return projectData.project._id === projectId
     })
-    updateJobStatus(projectId, jobId, JobStatus.uploaded).then((response)=>{
+    updateJobStatus(projectId, job._id, JobStatus.uploaded).then((response)=>{
       uploaderAction.setIsLoading(false)
       if(response.data.success===true) {
         let job = response.data.result
@@ -384,7 +385,8 @@ const Index: React.FC<IProps> = () => {
     }).catch((axiosError: AxiosError<IBaseResponse<IJobs>>)=>{
       uploaderAction.setIsLoading(false)
       if(axiosError && axiosError.response?.status === 422) {
-        let job = axiosError.response.data.result
+        // let job = axiosError.response.data.result
+        job.status = JobStatus.uploadFailed
         appAction.removeCaptureUpload(job)
         uploaderAction.updateJobStatus(job)
         if (jobProject) {
