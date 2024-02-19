@@ -52,6 +52,7 @@ const FormWrapper = (props: any) => {
     onData,
     handleKeyPress,
     newValues,
+    isValidationReq  = false,
   } = props;
 
   const [userPassword, setUserPassword] = useState("");
@@ -1090,7 +1091,7 @@ const FormWrapper = (props: any) => {
               width={data.width || ""}
               config={data}
               errorMessage={errorMessage}
-              signUpMsg={signUpMsg}
+              isValidationReq={isValidationReq}
             />
           </ElementContainer>
         );
