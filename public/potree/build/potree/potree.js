@@ -89442,65 +89442,23 @@ ENDSEC
 			}
 
 			let viewer = this;
-			let sidebarContainer = $('#potree_sidebar_container');
-			sidebarContainer.load(new URL(Potree.scriptPath + '/sidebar.html').href, () => {
-				sidebarContainer.css('width', '300px');
-				sidebarContainer.css('height', '100%');
+			if($('#potree_sidebar_container').get(0)){
+				let sidebarContainer = $('#potree_sidebar_container');
+				sidebarContainer.load(new URL(Potree.scriptPath + '/sidebar.html').href, () => {
+					sidebarContainer.css('width', '300px');
+					sidebarContainer.css('height', '100%');
+	
+					let imgMenuToggle = document.createElement('img');
+					imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+					imgMenuToggle.onclick = this.toggleSidebar;
+					imgMenuToggle.classList.add('potree_menu_toggle');
+					imgMenuToggle.setAttribute("id","menu_toggle_icon");
 
-				let imgMenuToggle = document.createElement('img');
-				imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
-				imgMenuToggle.onclick = this.toggleSidebar;
-				imgMenuToggle.classList.add('potree_menu_toggle');
-				imgMenuToggle.setAttribute("id","menu_toggle_icon");
+					let elButtons = $("#potree_quick_buttons").get(0);
+					if(!$("#menu_toggle_icon").get(0)){
+						elButtons.append(imgMenuToggle);
+					}
 
-				// let imgMapToggle = document.createElement('img');
-				// imgMapToggle.src = new URL(Potree.resourcePath + '/icons/map_icon.png').href;
-				// imgMapToggle.style.display = 'none';
-				// imgMapToggle.onclick = e => { this.toggleMap(); };
-				// imgMapToggle.id = 'potree_map_toggle';
-
-				
-				let elButtons = $("#potree_quick_buttons").get(0);
-				if(!$("#menu_toggle_icon").get(0)){
-					elButtons.append(imgMenuToggle);
-				}
-				// elButtons.append(imgMapToggle);
-				// viewer.renderArea.insertBefore(imgMapToggle, viewer.renderArea.children[0]);
-				// viewer.renderArea.insertBefore(imgMenuToggle, viewer.renderArea.children[0]);
-				// VRButton.createButton(this.renderer).then(vrButton => {
-
-
-				// 	if(vrButton == null){
-				// 		console.log("VR not supported or active.");
-
-				// 		return;
-				// 	}
-
-				// 	this.renderer.xr.enabled = true;
-
-				// 	let element = vrButton.element;
-
-				// 	element.style.position = "";
-				// 	element.style.bottom = "";
-				// 	element.style.left = "";
-				// 	element.style.margin = "4px";
-				// 	element.style.fontSize = "100%";
-				// 	element.style.width = "2.5em";
-				// 	element.style.height = "2.5em";
-				// 	element.style.padding = "0";
-				// 	element.style.textShadow = "black 2px 2px 2px";
-				// 	element.style.display = "block";
-
-				// 	elButtons.append(element);
-
-				// 	vrButton.onStart(() => {
-				// 		this.dispatchEvent({type: "vr_start"});
-				// 	});
-
-				// 	vrButton.onEnd(() => {
-				// 		this.dispatchEvent({type: "vr_end"});
-				// 	});
-				// });
 
 				this.mapView = new MapView(this);
 				this.mapView.init();
@@ -89540,14 +89498,6 @@ ENDSEC
 							containment: $(document.body),
 							handles: 'n, e, s, w'
 						});
-
-						$(() => {
-							this.guiLoaded = true;
-							for(let task of this.guiLoadTasks){
-								task();
-							}
-
-						});
 					});
 
 					
@@ -89556,6 +89506,11 @@ ENDSEC
 
 				
 			});
+		}
+			this.guiLoaded = true;
+			for(let task of this.guiLoadTasks){
+				task();
+			}
 
 			return this.promiseGuiLoaded();
 		}

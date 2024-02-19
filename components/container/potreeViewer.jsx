@@ -60,6 +60,9 @@ function PotreeViewer(props) {
       if(!isSupportUser){
         ele.style.width ="0px";
         ele.style.height ="0px";
+      }else{
+        ele.style.width ="";
+        ele.style.height ="";
       }
      },[isSupportUser])
 
@@ -131,7 +134,7 @@ function PotreeViewer(props) {
         <div id="potree_render_area">
           <div id={viewerId} className="relative w-full h-full z-6"></div>
         </div>
-        <div id="potree_sidebar_container"></div>
+       {isSupportUser ? <div id="potree_sidebar_container"></div>: null}
 
           <div
             id={containerId}
@@ -150,7 +153,7 @@ function PotreeViewer(props) {
           {getButton()}
           </div>
         {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
-              <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
+              <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-[80px] p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
           </div>: null}
           {!isCompareViewer ? (
             <div className='absolute z-10 right-0 bottom-0'>
