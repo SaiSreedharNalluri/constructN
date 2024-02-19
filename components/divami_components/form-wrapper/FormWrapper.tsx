@@ -72,6 +72,7 @@ const FormWrapper = (props: any) => {
   const [showMessage, setShowMessage] = useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [errorMessage,setErrorMessage] = useState<string>("")
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -258,12 +259,71 @@ const FormWrapper = (props: any) => {
     }
   };
 
-  // callback function passed from the parent
+
   const sendDataToParent = (e: any) => {
-    if (onData) {
-      onData(e.target.value);
+    const password = e.target.value;
+    const errorMessage = validatePassword(password);
+    if (errorMessage) {
+      setErrorMessage(errorMessage);
+    } else {
+      setErrorMessage(""); 
+      if (onData) {
+        onData(password);
+      }
     }
   };
+
+  function hasUpperCase(str: string): boolean {
+    return /[A-Z]/.test(str);
+  }
+  
+  function hasLowerCase(str: string): boolean {
+    return /[a-z]/.test(str);
+  }
+  
+  function hasNumber(str: string): boolean {
+    return /\d/.test(str);
+  }
+
+  function hasSpecialCharacters(str: string): boolean {
+    return /[!@#$%^&*]/.test(str);
+  }
+
+  function calculateEmptySpace(string:string) {
+    if(string.length === 0) return false;
+    return string.trim() !== string;
+  }
+  
+  const validatePassword = (password: string): string | null => {
+    if (password.length === 0) {
+      return "Password is required";
+    }
+    
+    if (password.length < 8 || password.length > 14) {
+      return "Password must be between 8 and 14 characters";
+    }
+  
+    if (!hasUpperCase(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+  
+    if (!hasLowerCase(password)) {
+      return "Password must contain at least one lowercase letter";
+    }
+  
+    if (!hasNumber(password)) {
+      return "Password must contain at least one number";
+    }
+  
+    if (!hasSpecialCharacters(password)) {
+      return "Password must contain at least one special character";
+    }
+  
+    if (calculateEmptySpace(password)) {
+      return "Password cannot contain leading or trailing spaces";
+    }
+  
+    return null; };
 
   const handleDateChange = (
     e: any,
@@ -1029,6 +1089,8 @@ const FormWrapper = (props: any) => {
               showErrorMsg={data?.showErrorMsg}
               width={data.width || ""}
               config={data}
+              errorMessage={errorMessage}
+              signUpMsg={signUpMsg}
             />
           </ElementContainer>
         );
