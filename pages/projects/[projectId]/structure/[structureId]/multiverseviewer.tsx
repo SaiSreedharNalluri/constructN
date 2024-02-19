@@ -15,7 +15,7 @@ import SidePanelMenu from "../../../../../components/divami_components/side-pane
 import ToolBarMenuWrapper from "../../../../../components/container/toolbarViewer/ToolBarMenuWrapper";
 import { IDesignMap } from "../../../../../models/IDesign";
 import { IProjects } from "../../../../../models/IProjects";
-import { IActiveRealityMap } from "../../../../../models/IReality";
+import { IActiveRealityMap, ILayer } from "../../../../../models/IReality";
 import { ISnapshot } from "../../../../../models/ISnapshot";
 import { Issue } from "../../../../../models/Issue";
 import { ChildrenEntity, IStructure } from "../../../../../models/IStructure";
@@ -57,7 +57,7 @@ import { IUser } from "../../../../../models/IUser";
 import {
   useSearchParams,
 } from 'react-router-dom';
-import { setTheFormatedDate } from "../../../../../utils/ViewerDataUtils";
+import { getRealityLayersList, setTheFormatedDate } from "../../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../../services/sections";
 import CustomLoggerClass from "../../../../../components/divami_components/custom_logger/CustomLoggerClass";
 import { getGenViewerData } from "../../../../../services/genviewer";
@@ -1694,6 +1694,7 @@ const Index: React.FC<IProps> = () => {
               if(urlSnap)
                 vData.currentSnapshotBase=urlSnap;
             }
+            vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
             vData.taskShow=true;
             vData.issueShow=true;
             vData.isIssueFiltered=false;
@@ -1801,6 +1802,7 @@ const Index: React.FC<IProps> = () => {
               }
              
             }
+                vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
                 vData.taskShow=true;
                 vData.issueShow=true;
                 vData.isIssueFiltered=false;
