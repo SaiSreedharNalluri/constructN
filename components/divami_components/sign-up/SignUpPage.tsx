@@ -271,6 +271,7 @@ const SignUpPage = () => {
               signUpMsg={signUpMsg}
               errorStylingSignup={true}
               onData={handleChildData}
+              isValidationReq={true}
             />
             {checkPassword(childData) ? (
               <PasswordPopupContainer>

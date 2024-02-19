@@ -23,6 +23,7 @@ const FormBody = ({
   setCanBeDisabled,
   loginField,
   onData,
+  isValidationReq
 }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -74,6 +75,7 @@ const FormBody = ({
         setCanBeDisabled={setCanBeDisabled}
         loginField={true}
         onData={handleChildData}
+        isValidationReq={isValidationReq}
       />
     </>
   );
