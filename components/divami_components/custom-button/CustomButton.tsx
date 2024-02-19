@@ -156,6 +156,7 @@ const createMixpanelEventData = (label:string, isButton:string, projectId:string
           }}
           loginField={loginField}
           ref={ref}
+          disabled={disabledButton}
         >
           {label}
         </ContainedButton>

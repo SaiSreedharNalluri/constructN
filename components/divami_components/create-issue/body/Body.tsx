@@ -342,6 +342,14 @@ const Body = ({
     // if (count === 0) {
     //   setCanBeDisabled(true);
     // }
+    const desIndex = formConfig.findIndex((item:any) => {
+      return item.id === "description" && item.defaultValue.trim() === "";
+    });
+    
+    if (desIndex !== -1) {
+      formConfig[desIndex].defaultValue = formConfig[desIndex].defaultValue?.trim();
+    }
+   
   }, [formConfig]);
 
   return (

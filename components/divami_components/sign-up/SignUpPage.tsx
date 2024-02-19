@@ -22,6 +22,7 @@ import {
   PasswordPopupContainer,
   TermsAndConditionDiv,
   SpanDiv,
+  SignUpSubHeader,
 } from "./SignUpPageStyles";
 import Illustration from "../../../public/divami_icons/Illustration.svg";
 import Logo from "../../../public/divami_icons/Logo.svg";
@@ -252,7 +253,8 @@ const SignUpPage = () => {
       <Overlay></Overlay>
       <FormDiv>
         <FormContainerSign>
-          <SignInHeader>Sign Up</SignInHeader>
+          <SignInHeader>Create your Account</SignInHeader>
+          <SignUpSubHeader>Enter the fields below to get started</SignUpSubHeader>
           {/* {showError ? (
             <ErrorSectonDiv>All fields are required*</ErrorSectonDiv>
           ) : (
