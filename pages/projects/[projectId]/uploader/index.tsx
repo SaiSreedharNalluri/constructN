@@ -82,9 +82,11 @@ const Index: React.FC<IProps> = () => {
         allWorkers[key].onmessage = onMessageFromWorker;
       }
     }
-    if (appState.currentProjectData) {
+    if (appState.currentProjectData !== undefined) {
       uploaderAction.setProject(appState.currentProjectData.project);
       refreshJobs(appState.currentProjectData.project._id)
+    } else {
+      uploaderAction.setIsLoading(true)
     }
 
     return () => {
