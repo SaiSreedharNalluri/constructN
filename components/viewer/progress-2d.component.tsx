@@ -332,13 +332,7 @@ function Progress2DComponent(props: _ViewerProps) {
     const _getTm = () => {
 
         let mTm = _tm.current
-        if(_currentStructure.current === 'STR940183') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
-        } else if(_currentStructure.current === 'STR967653') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
-        } else if(_currentStructure.current === 'STR886181') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.015)
-        } else if (_currentStructure.current === 'STR823522') {
+        if (_currentStructure.current === 'STR823522') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.118)
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
         }
@@ -349,13 +343,7 @@ function Progress2DComponent(props: _ViewerProps) {
     const _getOffset = () => {
 
         let mOffset = _offset.current
-        if(_currentStructure.current === 'STR940183') {
-            mOffset = [1.2, -0.85, 0]
-        } else if(_currentStructure.current === 'STR886181') {
-            mOffset = [0.31, -0.225, 0]
-        } else if(_currentStructure.current === 'STR967653') {
-            mOffset = [1.375, -0.7, 0]
-        } else if(_currentStructure.current === 'STR719122') {
+        if(_currentStructure.current === 'STR719122') {
             mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
