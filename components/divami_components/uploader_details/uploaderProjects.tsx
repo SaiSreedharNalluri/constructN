@@ -4,18 +4,20 @@ import { ProjectCounts, customHeaderState } from "../../../models/IUtils"
 import { useRouter } from "next/router"
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useAppContext } from "../../../state/appState/context"
 interface IProps{
     handleUploaderClose:()=>void
     projectUplObj:ProjectCounts
 }
 const UploaderProjects:React.FC<IProps> = ({handleUploaderClose,projectUplObj})=>{
 const router = useRouter();
+const { state: appState, appContextAction } = useAppContext();
+const { appAction } = appContextAction;
 const getProjectName = (projectId:string)=>{
-  let projectsList = localStorage.getItem('projectDataList')
+  let projectsList = appState.projectDataList
   if(projectsList != null)
   {
-    let projectsInfo = JSON.parse(projectsList)
-    return projectsInfo.find((obj:any)=> obj.project._id === projectId)?.project?.name
+    return projectsList.find((obj:any)=> obj.project._id === projectId)?.project?.name
   }
 }
 return(<React.Fragment>
