@@ -86,6 +86,21 @@ const Layers = ({
     item3: true,
   });
   const customLogger = new CustomLoggerClass();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+   
+    if(anchorEl === null ) {
+      console.log("eventClick",event);
+      setAnchorEl(event.currentTarget);
+    }
+    else {
+      // setAnchorEl(null);
+    }
+  };
+  const handleClose = (e:any) => {
+    setAnchorEl(null);
+  };
   useEffect(() => {
     // let newLayersArr = [];
     // if (myLayersList != undefined) {
@@ -151,7 +166,7 @@ const Layers = ({
         setOpenList(false);
       }}
     >
-      <ContainerDiv>
+      <ContainerDiv onClick={handleClick}>
         <LayersWrapper
           onClick={()=>{customLogger.logInfo("ToolBar - Change Layer Filter");onListClick();}}
           // style={{ border: "2px solid blue" }}
@@ -181,6 +196,10 @@ const Layers = ({
             // setActiveRealityMap={setActiveRealityMap}
             // layersUpdated={layersUpdated}
             initData={initData}
+            anchorEl={anchorEl}
+            open={open}
+            handleClick={handleClick}
+            handleClose={handleClose}
           />
         </SelectLayersWrapper>
       </ContainerDiv>

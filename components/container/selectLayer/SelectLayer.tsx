@@ -12,6 +12,7 @@ import {
   HeaderLabelContainer,
   SearchContainer,
   SelectLayerContainer,
+  StyledMenu,
   StyledTreeItem,
   StyledTreeView,
   TreeItemLabelContainer,
@@ -39,6 +40,10 @@ const SelectLayer = ({
   onSelect,
   initData,
   layersUpdated,
+  anchorEl,
+  open,
+  handleClick,
+  handleClose,
 }: any) => {
   const [treeViewData, setTreeViewData] = useState(
     getTreeViewDataForLayers(optionsList)
@@ -211,12 +216,19 @@ const SelectLayer = ({
   };
 
   return (
-    <SelectLayerContainer openselectlayer={openselectlayer}>
+    <StyledMenu
+    id="demo-customized-menu"
+    anchorEl={anchorEl}
+    open={open}
+    onClose={handleClose}
+  >
+    {/* <MenuItem onClick={handleClick}> */}
+    <SelectLayerContainer openselectlayer={anchorEl}>
       <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon
           src={closeIcon}
-          onClick={onCloseHandler}
+          onClick={handleClose}
           alt={"close Icon"}
         />
       </HeaderLabelContainer>
@@ -250,6 +262,8 @@ const SelectLayer = ({
         </StyledTreeView>
       </TreeViewContainer>
     </SelectLayerContainer>
+    {/* </MenuItem> */}
+      </StyledMenu>
   );
 };
 
