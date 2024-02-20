@@ -792,8 +792,8 @@ function GenericViewer(props) {
         if (mapboxUtils.current == undefined) {
           mapboxUtils.current = MapboxViewerUtils();
           const options = {
-            utm: project.utm,
-            location: project.location
+            utm: project.utm && project.utm.zone ? project.utm.zone : project.utm,
+            location: project.location && project.location.coordinates ? project.location.coordinates : project.location
           }
           if(currentContext.current) options['context'] = currentContext.current.cameraObject
           mapboxUtils.current.initializeViewer(viewerId, viewerEventHandler, options);
@@ -826,7 +826,7 @@ function GenericViewer(props) {
       case 'Mapbox':
         if (mapboxCompareUtils.current == undefined) {
           mapboxCompareUtils.current = MapboxViewerUtils();
-          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: project.utm}, mapboxUtils.current.getMap());
+          mapboxCompareUtils.current.initializeViewer(viewerId, viewerEventHandler, {utm: project.utm && project.utm.zone ? project.utm.zone : project.utm}, mapboxUtils.current.getMap());
           mapboxCompareUtils.current.setType(viewType);
         }
         break;
