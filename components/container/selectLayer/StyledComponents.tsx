@@ -1,5 +1,5 @@
 import { TreeItem, TreeView } from "@mui/x-tree-view";
-import { Typography } from "@mui/material";
+import { Menu, MenuProps, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import Image from "next/image";
 import type { SelectLayerContainerProps } from "./Type";
@@ -90,12 +90,28 @@ export const StyledTreeView = styled(TreeView)({
   },
 });
 
+export const StyledMenu = styled((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'right',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  
+
+}));
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openselectlayer ? "" : "none",
   // width: "250px",
-  // width: "237px",
+  width: "236px",
   boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
-
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",

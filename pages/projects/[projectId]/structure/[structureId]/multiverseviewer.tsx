@@ -762,7 +762,7 @@ const Index: React.FC<IProps> = () => {
             break;
           case "Reality":
             if(initData&& initData.currentViewType==='orthoPhoto')
-              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"compareMap"}');
+              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"orthoPhoto"}');
             else
               conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
             break;

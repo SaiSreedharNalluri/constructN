@@ -1,4 +1,4 @@
-import { TextField, Box, ListItem, List } from "@mui/material";
+import { TextField, Box, ListItem, List, MenuProps, Menu, alpha } from "@mui/material";
 import { styled } from "@mui/system";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -13,12 +13,41 @@ export const CustomSearchField = styled(TextField)({
     height: "40px",
     paddingLeft: "16px",
     paddingRight: "8px",
-    width: "209px",
+    width: "195px",
   },
   "& .MuiOutlinedInput-input::placeholder": {
     color: "#36415D",
   },
 });
+
+export const StyledMenu = styled((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'right',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  
+
+}));
+export const SelectTypeContainer = styled(Box)((props: any) => ({
+  display: props.openselectlayer ? "" : "none",
+  // width: "250px",
+  width: "250px",
+  boxShadow: "5px 4px 8px rgba(200, 200, 200, 0.1)",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+})) as any;
 
 export const DrawerHeader = styled("div")({
   display: "flex",

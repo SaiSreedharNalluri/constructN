@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import {
@@ -26,14 +26,32 @@ const Typebar = ({
   initData
 }: any) => {
   const customLogger = new CustomLoggerClass();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    if(anchorEl === null ) {
+      setAnchorEl(event.currentTarget);
+    }
+    else {
+      // setAnchorEl(null);
+    }
+  };
+
+  useEffect(()=>{
+    setAnchorEl(null);
+  },[initData])
+  
+  const handleClose = (e:any) => {
+    setAnchorEl(null);
+  };
   return (
     <ClickAwayListener
       onClickAway={() => {
         setOpenList(false);
       }}
     >
-      <ContainerDiv>
-        <TypeParentCont onClick={() => { customLogger.logInfo("ToolBar - Change View Type"); onListClick() }}>
+      <ContainerDiv onClick={handleClick}>
+        <TypeParentCont onClick={() => { customLogger.logInfo("ToolBar - Change View Type"); onListClick();}}>
           {/* <TypesTitle>
             {selectedValue ? "Type: " + selectedValue : "Select Type"}
           </TypesTitle> */}
@@ -55,6 +73,10 @@ const Typebar = ({
             }}
             optionsList={initData.currentTypesList}
             onSelect={typeChange}
+            anchorEl={anchorEl}
+            open={open}
+            handleClick={handleClick}
+            handleClose={handleClose}
           />
         </SelectLayersWrapper>
       </ContainerDiv>
