@@ -270,11 +270,7 @@ const Header: React.FC<any> = ({
   const goToProjectsList = (event:React.MouseEvent) => {
     event.stopPropagation()
     event.preventDefault()
-    if (
-      (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
-      workerExists ||
-      [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
-    ) {
+    if (uploaderState.step !== UploaderStep.Upload) {
      setIsShowPopUp(true)
      return
     }
