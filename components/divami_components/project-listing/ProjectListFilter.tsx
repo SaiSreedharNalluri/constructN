@@ -44,6 +44,33 @@ const ProjectListFilter: React.FC<any> = ({
 }) => {
   const [formState, setFormState] = useState<any>({});
   const [formConfig, setFormConfig] = useState<any>(projectConfig);
+  const [isDisabled,setisDisabled] = useState<boolean>(false);
+  const [errorMessage,setErrorMessage] = useState("")
+  useEffect(()=>{
+const numberOfMembersField = formConfig.find((each: any) => each.id === "numberOfMembersField");
+  if (numberOfMembersField) {
+    const numberOfMembersValueField = numberOfMembersField.fields
+      .find((each: any) => each.id === "numberOfMembersValue");
+    if (numberOfMembersValueField) {
+      const defaultValue = numberOfMembersValueField.defaultValue || "";
+      if (!/^[0-9]+$/.test(defaultValue) && defaultValue !== "") {
+        console.log("1st if");
+        
+        setisDisabled(true)
+        setErrorMessage("Only numbers accepted");
+      }
+      else if(numberOfMembersValueField.defaultValue.length === 0){
+        setisDisabled(false)
+        setErrorMessage("");
+      }
+      else{
+        setisDisabled(false)
+        setErrorMessage("");
+      }
+    }
+  }
+  },[formConfig])
+  
   const handleClose = () => {
     onClose(true);
   };
@@ -187,6 +214,7 @@ const ProjectListFilter: React.FC<any> = ({
           formState={formState}
           setFormState={setFormState}
         />
+        <p className="text-red-500 text-right mr-10">{errorMessage}</p>       
       </FilterCommonBody>
 
       <FilterFooter>
@@ -200,6 +228,7 @@ const ProjectListFilter: React.FC<any> = ({
             type="contained"
             formHandler={formHandler}
             label="Apply"
+            disabledButton={isDisabled}
           />
         </ButtonsContainer>
       </FilterFooter>

@@ -70,8 +70,16 @@ export const FormContainerSign = styled("div")({
 export const SignInHeader = styled("div")({
   fontFamily: "Open Sans",
   fontStyle: "normal",
-  fontWeight: "400",
+  fontWeight: "600",
   fontSize: "22px",
+  color: "#36415D",
+});
+
+export const SignUpSubHeader = styled("div")({
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "11px",
   color: "#36415D",
 });
 

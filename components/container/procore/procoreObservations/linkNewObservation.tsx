@@ -113,16 +113,12 @@ const LinkNewObservation : React.FC<IProps> = ({
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const [files, setFiles] = useState<[Blob]>();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false)
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const onDrop = useCallback((acceptedFiles: any) => {
       setFiles(acceptedFiles);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  const onFileClick = (file: File) => {
-    setSelectedFile(file);
-  };
  
   const handleExternalSubmit = () => {
     formikRef.current?.submitForm();
@@ -660,7 +656,6 @@ createObservation(formData)
                               <li
                                 key={index}
                                 style={{ cursor: "pointer" }}
-                                onClick={() => onFileClick(file)}
                               >
                                 {file.name}
                               </li>
@@ -668,18 +663,6 @@ createObservation(formData)
                           </ul>
                         </div>
                       )}
-                  {selectedFile && (
-                    <div>
-                      <strong>Selected File:</strong> {selectedFile.name}
-                      {selectedFile.type.startsWith("image/") && (
-                        <img
-                          src={URL.createObjectURL(selectedFile)}
-                          alt="Selected File"
-                          className="mt-2 max-w-full"
-                        />
-                      )}
-                    </div>
-                  )}
                 </div>
               </Form>
               )
