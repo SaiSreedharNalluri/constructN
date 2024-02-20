@@ -17,6 +17,7 @@ import {
   LayersWrapper,
   SelectLayersWrapper,
   ContainerDiv,
+  TypeArrowIconDiv,
 } from "./ToolBarStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { ILayer } from "../../../models/IReality";
@@ -180,7 +181,9 @@ const Layers = ({
             )}
           </IconsContainer>
           <LayerSecondSectionCamImg>
+            <TypeArrowIconDiv>
             <DownIcon src={downArrowIcon} alt="Arrow" />
+            </TypeArrowIconDiv>
           </LayerSecondSectionCamImg>
         </LayersWrapper>
         <SelectLayersWrapper typeOfWindow={"layer"} style={{ width: "238px" }}>
