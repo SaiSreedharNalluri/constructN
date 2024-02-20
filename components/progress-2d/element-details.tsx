@@ -1,4 +1,4 @@
-import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography , Button} from '@mui/material'
+import { IconButton, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography , Button, Input} from '@mui/material'
 
 import { useEffect, useState } from 'react'
 
@@ -15,7 +15,15 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import moment from 'moment'
 
 import { toast } from 'react-toastify'
+import Metrics from './metrics-details'
+import EmailButton from './send-email'
+import { LightBoxInstance } from '../../services/light-box-service'
+import { useParams } from 'next/navigation'
 
+interface Stage extends IAssetStage {
+	id?: string;
+	metric?: number | string | { metric: string | number} | { metric: { metric: string | number; } };
+}
 
 const ElementDetails: React.FC<{
 
@@ -28,14 +36,49 @@ const ElementDetails: React.FC<{
     values?: { [key: string]: string },
 
     onSave?: ()=> void,
-    
-}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {} }) => {
 
-    const { description: actualDecription = '', progress = {}, name: actualName } = asset || {}
+    stages?: Stage[],
+
+    metrics: { [key: string]: string | number | { metric: string } | { metric: { metric: number | string }} },
+
+    metricsChange?: (asset: IAsset) => void,
+
+    refetchAssets: () => void,
+
+    actualCategoryName: string,
+    
+}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {}, stages =[] , metrics , metricsChange, refetchAssets , actualCategoryName }) => {
+
+    const params = useParams();
+
+    const { description: actualDecription = '', progress = {}, name: actualName, _id: assetId } = asset || {}
 
     const { stage: actualStage } = progress  as IAssetProgress || {}
 
-    const { name , description, stage} = values || {}
+    const { name , description, stage } = values || {}
+
+    const fields = [
+        {
+            label:"Area",
+            name: "area",
+            show: true
+        },
+        {
+            label:"Volume",
+            name: "volume",
+            show: true
+        },
+        {
+            label:"Height",
+            name: "height",
+            show: true
+        },
+        {
+            label:"Width",
+            name: "width",
+            show: true
+        }
+    ]
 
     return (
         <>
@@ -69,7 +112,6 @@ const ElementDetails: React.FC<{
                         </Typography>
 
                     </div>
-
                     <div className='mt-4 flex justify-end'>
                     <Button 
                     size='small'  
@@ -80,7 +122,24 @@ const ElementDetails: React.FC<{
                         Save
                     </Button>
                     </div>
-
+                    <div className='mt-4 ml-1 flex flex-wrap'>
+                        {fields.map((field, index)=>(<div className='flex items-baseline basis-1/2 justify-between mt-2' key={field.label}>
+                            <div className={index%2 ? "ml-2":'ml-0'}>{field.label}</div>
+                            <div className='flex items-baseline'>
+                                <OutlinedInput size="small" sx={{ width:"64px" }} name={field.name} className='mr-1'/>
+                                <div className='text-[12px]'>ft</div>
+                            </div>
+                        </div>))}
+                    </div>
+                    <Metrics stages ={stages}
+                    assetId = {assetId}
+                    metrics = {metrics}
+                    refetchAssets ={refetchAssets}
+                    asset={asset}
+                    onChange={metricsChange} />
+                    <div className='my-2'>
+                        <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
+                    </div>
                 </div>
             }
         </>

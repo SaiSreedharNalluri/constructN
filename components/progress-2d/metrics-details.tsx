@@ -14,6 +14,7 @@ import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 
 interface Stage extends IAssetStage {
 	id?: string;
+	factor?: number;
 	metric?: number | string | { metric: string | number} | { metric: { metric: string | number; } };
 }
 
@@ -143,7 +144,7 @@ export default function Metrics({
 					</div>
 				))
 			) : (
-				<TableContainer style={{ maxHeight: 324 }}>
+				<TableContainer>
 					<Table aria-label="table" stickyHeader>
 						<TableHead>
 							<TableRow>
@@ -154,6 +155,7 @@ export default function Metrics({
 									Value
 								</TableCell>
 								<TableCell className="w-1/6">Units</TableCell>
+								<TableCell className=" w-1/4">Factor</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -170,9 +172,20 @@ export default function Metrics({
 										align="right"
 										className="w-1/3 p-0"
 									>
-										{" "}
+										{row.metric as string || ""}
+									</TableCell>
+									<TableCell
+										align="center"
+										className="w-1/6 p-0"
+									>
+										{row.uom}
+									</TableCell>
+									<TableCell
+										align="center"
+										className="w-1/6 p-0"
+									>
 										<Input
-											value={row.metric}
+											value={row.factor}
 											size="small"
 											type="number"
 											disabled={loading}
@@ -182,17 +195,11 @@ export default function Metrics({
 													val: +val.target.value < 0 ? +val.target.value * -1: val.target.value,
 													stageValues,
 													setStageValues,
-													key: 'metric'
+													key: 'factor'
 												});
 											}
 											}
 										/>
-									</TableCell>
-									<TableCell
-										align="center"
-										className="w-1/6 p-0"
-									>
-										{row.uom}
 									</TableCell>
 								</TableRow>
 							))}

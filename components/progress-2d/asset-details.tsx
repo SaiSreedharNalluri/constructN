@@ -14,7 +14,6 @@ import { toast } from 'react-toastify'
 
 import { API } from '../../config/config'
 
-import Metrics from './metrics-details'
 import authHeader from '../../services/auth-header'
 import EmailButton from './send-email'
 import { useParams } from 'next/navigation'
@@ -233,7 +232,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                 {loading && _renderAssetDetailsShimmer()}
 
                 {
-                    asset && !loading && <div className='flex flex-col h-full bg-white'>
+                    asset && !loading && <div className='flex flex-col h-full bg-white overflow-auto'>
 
                         <Tabs
 
@@ -252,21 +251,18 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                                 value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14}
 
                                     variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
-                            {supportUser && <Tab
-                                    value='metrics' label={<Typography fontFamily='Open Sans' fontSize={14}
-                                    variant='caption'>Metrics</Typography>} onClick={() => setSelectedTab('metrics')} />}
 
                         </Tabs>
 
-                        {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} values={values} supportUser={supportUser} onDeleteStage={_onDeleteStage} onSave={onSave}/> </div>}
+                        {selectedTab === 'asset-details' && <div className='px-4 overflow-auto'><ElementDetails asset={asset} onChange={_onChange} values={values} supportUser={supportUser} onDeleteStage={_onDeleteStage} onSave={onSave}
+                            stages={stages}
+                            metrics={metrics}
+                            metricsChange={onChange}
+                            refetchAssets={refetchAssets}
+                            actualCategoryName={actualCategoryName}
+                            /> </div>}
 
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
-
-                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} asset={asset} onChange={onChange} /></div>}
-
-                        {(selectedTab !== 'asset-timeline' && supportUser) ? <div className='absolute bottom-3 right-4'>
-                            <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
-                        </div>: null}
 
                     </div>
                 }
