@@ -365,6 +365,7 @@ const ProjectHierarchy = ({
             },
           }}
           id={"search"}
+          type="search"
           variant="outlined"
           autoComplete="off"
           placeholder={"Search"}
