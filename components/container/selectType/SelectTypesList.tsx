@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { Divider, InputAdornment, ListItemText } from "@mui/material";
+import { Divider, InputAdornment, ListItemText, Menu, MenuList,styled } from "@mui/material";
 import { SetStateAction, useEffect, useState } from "react";
 import { SelectLayerContainer } from "../selectLayer/StyledComponents";
 import { SelectLayerProps } from "../selectLayer/Type";
@@ -13,11 +13,13 @@ import {
   DrawerSearchBar,
   ListItemStyled,
   ListStyled,
+  SelectTypeContainer,
 } from "./StyledComponents";
 import { CloseIcon } from "../selectLayer/StyledComponents";
 import Image from "next/image";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
 import { IGenData } from "../../../models/IGenData";
+import { StyledMenu } from "./StyledComponents";
 
 const SelectTypesList = ({
   title,
@@ -25,7 +27,11 @@ const SelectTypesList = ({
   onCloseHandler,
   optionsList = [],
   onSelect,
-  initData
+  initData,
+  anchorEl,
+  open,
+  handleClick,
+  handleClose
 }: any) => {
  
   
@@ -94,20 +100,28 @@ setFilteredItems(result)
   // const filteredItems = optionsList.filter((item:any) =>
   //   item.toLowerCase().includes(searchTerm.toLowerCase())
   // );
-
+  
   return (
-    <SelectLayerContainer openselectlayer={openselectlayer}>
-      <DrawerBox>
-        <DrawerHeader>
+      <StyledMenu
+        id="demo-customized-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+
+        {/* <MenuItem onClick={handleClick}> */}
+        <SelectTypeContainer openselectlayer={anchorEl}>
+        <DrawerBox>
+<DrawerHeader>
           <DrawerHeaderTitle>{title} </DrawerHeaderTitle>
-          {/* <CloseIconStyled onClick={onCloseHandler} /> */}
           <CloseIcon
             src={closeIcon}
-            onClick={onCloseHandler}
+            onClick={handleClose}
             alt={"close Icon"}
           />
-        </DrawerHeader>
-        <DrawerSearchBar>
+          </DrawerHeader>
+
+<DrawerSearchBar>
           <CustomSearchField
             placeholder="Search"
             variant="outlined"
@@ -151,8 +165,11 @@ setFilteredItems(result)
               </>
             ))}
         </ListStyled>
-      </DrawerBox>
-    </SelectLayerContainer>
+    
+        </DrawerBox>
+        </SelectTypeContainer>
+        {/* </MenuItem> */}
+        </StyledMenu>
   );
 };
 
