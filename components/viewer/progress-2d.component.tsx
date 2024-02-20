@@ -336,8 +336,8 @@ function Progress2DComponent(props: _ViewerProps) {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
         } else if(_currentStructure.current === 'STR967653') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
-        } else if(_currentStructure.current === 'STR886181') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR886181-DEP') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.07)
         } else if (_currentStructure.current === 'STR823522') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.118)
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
@@ -351,8 +351,8 @@ function Progress2DComponent(props: _ViewerProps) {
         let mOffset = _offset.current
         if(_currentStructure.current === 'STR940183') {
             mOffset = [1.2, -0.85, 0]
-        } else if(_currentStructure.current === 'STR886181') {
-            mOffset = [1.14, -0.76, 0]
+        } else if(_currentStructure.current === 'STR886181-DEP') {
+            mOffset = [0.75, -1.75, 0]
         } else if(_currentStructure.current === 'STR967653') {
             mOffset = [1.375, -0.7, 0]
         } else if(_currentStructure.current === 'STR719122') {
