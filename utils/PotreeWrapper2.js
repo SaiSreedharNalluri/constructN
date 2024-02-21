@@ -987,49 +987,65 @@ export const PotreeViewerUtils = () => {
     }
 
     const loadMeasurements =(points = [])=>{
-        clearAllMeasurements();
-        _viewer.setLengthUnit('ft');
-        points.forEach((point)=>{
-            let measure = new Potree.Measure();
-            if(point.type ==='Distance'){
-                measure.closed = false;
-            }
-            if(point.type ==='Angle'){
-                measure.closed = true;
-                measure.showAngles = true;
-                measure.showDistances = false;
-            }
-            if(point.type ==='Point'){
-                measure.showDistances = false;
-                measure.showCoordinates = true;
-                measure.maxMarkers = 1;
-            }
-            if(point.type ==='Height'){
-                measure.closed = false;
-                measure.showDistances = false;
-                measure.showHeight = true;
-            }
-            if(point.type ==='Area'){
-                measure.closed = true;
-                measure.showArea = true;
-                measure.showHeight = false;
-            }
-            measure.name = point.name;
-            measure.mtype = point.type;
-            measure._id = point._id;
-            measure.context = point.context;
-            point.data.forEach((position)=>{
-                measure.addMarker(new THREE.Vector3(position.x, position.y, position.z));
+        if(_isPointCloudLoaded){
+            clearAllMeasurements();
+            const cameraObj = _viewer?.scene?.view?.position;
+            const filteredPoints = points.filter((pt)=>{
+                let isInside = false;
+                pt.data.forEach((sglp)=>{
+                    const distance  = cameraObj.distanceTo(new THREE.Vector3(sglp.x, sglp.y, sglp.z));
+                    console.log(distance,'distancedistance')
+                    if(distance > 5.4){
+                        isInside = false;
+                        return;
+                    }
+                    isInside = true
+                })
+                return(isInside);
             });
-            _viewer?.scene?.addMeasurement(measure);
-        });
-        _viewer?.scene?.measurements.forEach((measurement)=>{
-            measurement?.spheres?.forEach((sphere) => {
-                if(!sphere.hasEventListener("drop", (eve)=>{measurementMoved(eve, measurement)})){
-                    sphere.addEventListener("drop", (eve)=>{measurementMoved(eve, measurement)});
+            _viewer.setLengthUnit('ft');
+            filteredPoints.forEach((point)=>{
+                let measure = new Potree.Measure();
+                if(point.type ==='Distance'){
+                    measure.closed = false;
                 }
+                if(point.type ==='Angle'){
+                    measure.closed = true;
+                    measure.showAngles = true;
+                    measure.showDistances = false;
+                }
+                if(point.type ==='Point'){
+                    measure.showDistances = false;
+                    measure.showCoordinates = true;
+                    measure.maxMarkers = 1;
+                }
+                if(point.type ==='Height'){
+                    measure.closed = false;
+                    measure.showDistances = false;
+                    measure.showHeight = true;
+                }
+                if(point.type ==='Area'){
+                    measure.closed = true;
+                    measure.showArea = true;
+                    measure.showHeight = false;
+                }
+                measure.name = point.name;
+                measure.mtype = point.type;
+                measure._id = point._id;
+                measure.context = point.context;
+                point.data.forEach((position)=>{
+                    measure.addMarker(new THREE.Vector3(position.x, position.y, position.z));
+                });
+                _viewer?.scene?.addMeasurement(measure);
             });
-        })
+            _viewer?.scene?.measurements.forEach((measurement)=>{
+                measurement?.spheres?.forEach((sphere) => {
+                    if(!sphere.hasEventListener("drop", (eve)=>{measurementMoved(eve, measurement)})){
+                        sphere.addEventListener("drop", (eve)=>{measurementMoved(eve, measurement)});
+                    }
+                });
+            })
+        }
         
     }
 
