@@ -134,11 +134,11 @@ const FilterCommon: React.FC<IProps> = ({
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
-  const [taskType, setTaskType] = useState<string[]>([]);
-  const [taskPriority, setTaskPriority] = useState<string[]>([]);
-  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>([]);
-  const [taskStatus, setTaskStatus] = useState<string[]>([]);
-  const [tagStatus, setTagStatus] = useState<string[]>([]);
+  const [taskType, setTaskType] = useState<string[]>(initialTypes);
+  const [taskPriority, setTaskPriority] = useState<string[]>(initialPriority);
+  const [projectUsers, setProjectUsers] = useState<IProjectUsers[]>(initialProjectUsersList);
+  const [taskStatus, setTaskStatus] = useState<string[]>(initialStatus);
+  const [tagStatus, setTagStatus] = useState<string[]>(issueTagsList);
   const assignees = {
     id: "assignes",
     type: "search",
@@ -450,7 +450,7 @@ const FilterCommon: React.FC<IProps> = ({
         defaultValue: issueFilterState?.filterData.fromDate,
       },
     ]);
-  }, [taskType, taskStatus, tagStatus, projectUsers, taskPriority]);
+  }, [taskType, taskStatus, tagStatus, projectUsers, taskPriority,FilterState[0].options]);
 
   // Select All Handling
   const handleAllSelection = (item: any, index: number) => {

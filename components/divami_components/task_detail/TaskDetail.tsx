@@ -214,6 +214,12 @@ function BasicTabs(props: any) {
     entity: string;
     _id: string;
 }>()
+
+const userCredentials = localStorage.getItem('userCredentials');
+let credential=null;
+if(userCredentials) credential=JSON.parse(userCredentials);
+ const providerType =credential.provider;
+
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
       return {
@@ -392,7 +398,7 @@ function BasicTabs(props: any) {
               fontWeight: "400",
             }}
           />
-          {taskState.TabOne.integration&&(
+          {taskState.TabOne.integration && providerType==='procore' && (
            <Tab
             label="Procore"
             {...a11yProps(0)}
@@ -1365,33 +1371,36 @@ const handleScreenShotAndAttachment =() =>{
             </LeftTitleCont>
             <RightTitleCont>
             <div className="mr-[10px]">
-            {providerType === 'procore' ? (
-              procoreProjectId !== undefined  && procoreCompanyId !==undefined ?(
+            {providerType === 'procore' ? ( 
+              <div>
+              {appState.currentProjectData?.project.metaDetails?.procore?.projectId !== undefined ? (
                 <div className="p-[6px] hover:bg-[#E7E7E7] ">
 
-     <ProcoreLogo
-       src={procore}
-       alt="logo"
-       style={{ cursor: selectedTask.integration ? 'not-allowed' : 'pointer' }}
-   onClick={()=>{
-if(!selectedTask.integration){ handleProcoreLinks()}}}
-     />
-   </div>):
-   (<div>
-    <Tooltip title={'Link project to procore'}>
-       <ProcoreLogo
-       onClick={()=>setShowLink(true)}
-     src={procore} 
-     alt="logo"
-/></Tooltip>
-  </div>)) : (
-   <ProcoreLogo
-     src={procore} 
-     alt="logo"
-     title="Login via Procore required"
-   />
-      )}
-      </div>
+                <ProcoreLogo
+                  src={procore}
+                  alt="logo"
+                  style={{ cursor: selectedTask.integration ? 'not-allowed' : 'pointer' }}
+              onClick={()=>{
+          if(!selectedTask.integration){ handleProcoreLinks()}}}
+                />
+              </div>
+              ):(<div>
+                <Tooltip title={'Link project to procore'}>
+                   <ProcoreLogo
+                   onClick={()=>setShowLink(true)}
+                 src={procore} 
+                 alt="logo"
+    /></Tooltip>
+              </div>)}   
+   </div> ) : (
+    <Tooltip title={'Login via Procore required'}>
+    <ProcoreLogo
+      src={procore} 
+      alt="logo"
+    />
+    </Tooltip>
+  )}
+  </div>
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}

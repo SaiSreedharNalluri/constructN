@@ -10,12 +10,12 @@ import { CustomToast } from "../../../../../components/divami_components/custom-
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
 import MapLoading from "../../../../../components/container/mapLoading";
-import Header from "../../../../../components/divami_components/header/Header";
+import Header from "../../../../../components/container/MultiverseHeader/Header";
 import SidePanelMenu from "../../../../../components/divami_components/side-panel/SidePanel";
 import ToolBarMenuWrapper from "../../../../../components/container/toolbarViewer/ToolBarMenuWrapper";
 import { IDesignMap } from "../../../../../models/IDesign";
 import { IProjects } from "../../../../../models/IProjects";
-import { IActiveRealityMap, ILayer } from "../../../../../models/IReality";
+import { IActiveRealityMap } from "../../../../../models/IReality";
 import { ISnapshot } from "../../../../../models/ISnapshot";
 import { Issue } from "../../../../../models/Issue";
 import { ChildrenEntity, IStructure } from "../../../../../models/IStructure";
@@ -57,7 +57,7 @@ import { IUser } from "../../../../../models/IUser";
 import {
   useSearchParams,
 } from 'react-router-dom';
-import { getRealityLayersList, setTheFormatedDate } from "../../../../../utils/ViewerDataUtils";
+import { setTheFormatedDate } from "../../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../../services/sections";
 import CustomLoggerClass from "../../../../../components/divami_components/custom_logger/CustomLoggerClass";
 import { getGenViewerData } from "../../../../../services/genviewer";
@@ -69,10 +69,8 @@ import CustomLoader from "../../../../../components/divami_components/custom_loa
 import {ApiDataContextProvider} from "../../../../../state/projectConfig/projectConfigContext";
 import { useAppContext } from "../../../../../state/appState/context";
 import { MULTIVERSE } from "../../../../../config/config";
-import DownloadImageReport from "../../../../../components/divami_components/download_image_report/downloadImageReport";
-import html2canvas from "html2canvas";
 interface IProps { }
-const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
+const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe2')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
   border: "1px solid #C4C4C4",
@@ -143,8 +141,6 @@ export type toolBarHandle = {
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
 const Index: React.FC<IProps> = () => {
-  const { state: appState, appContextAction } = useAppContext();
-  const { appAction } = appContextAction;
   const customLogger = new CustomLoggerClass();
   const ref = React.useRef<toolBarHandle>(null);
   const router = useRouter();
@@ -233,7 +229,7 @@ const Index: React.FC<IProps> = () => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
 
-  
+  const { state: appState, appContextAction } = useAppContext();
   const isObjectEmpty = (objectName: any) => {
     return (
       objectName &&
@@ -692,6 +688,7 @@ const Index: React.FC<IProps> = () => {
   };
 
   const toolClicked = (toolInstance: IToolbarAction) => {
+    const Win = (document.getElementById("IframeId") as HTMLIFrameElement)?.contentWindow;
     console.log("toolInstrance", toolInstance)
     // let newLayers = _.cloneDeep(currentViewLayers);
     switch (toolInstance.type) {
@@ -700,16 +697,20 @@ const Index: React.FC<IProps> = () => {
         router.push(router);
         switch (toolInstance.data) {
           case "Plan Drawings":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
+            Win?.postMessage(`{"type": "setViewType", "data": "Plan Drawings"}`, 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
             break;
           case "BIM":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
+            Win?.postMessage(`{"type": "setViewType", "data": "BIM"}`, 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
             break;
           case "pointCloud":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
+            Win?.postMessage(`{"type": "setViewType", "data": "pointCloud"}`, 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
             break;
           case "orthoPhoto":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "orthoPhoto"}`);
+            Win?.postMessage(`{"type": "setViewType", "data": "orthophoto"}`, 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "orthoPhoto"}`);
             break;
         }
         break;
@@ -723,16 +724,20 @@ const Index: React.FC<IProps> = () => {
 
         switch (toolInstance.data) {
           case "noCompare":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+            Win?.postMessage('{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}', 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
           case "compareDesign":
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+            Win?.postMessage('{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}', 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
           case "compareReality":
             if(initData&& initData.currentViewType==='orthoPhoto')
-              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"compareMap"}');
+            Win?.postMessage('{"type":"' + toolInstance.type + '","data":"compareMap"}', 'http://localhost:3001');
+            //   conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"compareMap"}');
             else  
-              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
+            Win?.postMessage('{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}', 'http://localhost:3001');
+            //   conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":"' + toolInstance.data + '"}');
             break;
 
         }
@@ -747,24 +752,27 @@ const Index: React.FC<IProps> = () => {
                 }    
               }))
               {
-                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
+                Win?.postMessage('{"type": "setViewType", "data": "Plan Drawings"}', 'http://localhost:3001');
+                // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "Plan Drawings"}');
               }
               else if(initData?.structure.designs.find((des:any)=>{
                 if(des.type==="BIM"){
                   return des
                 }    
               })){
-                
-                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
+                Win?.postMessage('{"type": "setViewType", "data": "BIM"}', 'http://localhost:3001');
+                // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "BIM"}');
               }
             }
 
             break;
           case "Reality":
             if(initData&& initData.currentViewType==='orthoPhoto')
-              conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"orthoPhoto"}');
+            Win?.postMessage('{"type": "setViewType", "data": "compareMap"}', 'http://localhost:3001');
+            //   conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"compareMap"}');
             else
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
+            Win?.postMessage('{"type": "setViewType", "data": "pointCloud"}', 'http://localhost:3001');
+            //   conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data": "pointCloud"}');
             break;
 
         }
@@ -775,27 +783,31 @@ const Index: React.FC<IProps> = () => {
         setOpenIssueView(true);
         break;
       case "createIssue":
-
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
+        Win?.postMessage('{"type":"createIssue","data":" "}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createIssue","data":" "}');
         // conn.subscribeTopic(MqttConnector.getMultiverseRecTopicString(),appEventsCB)
         break;
 
       case "showIssue":
+        Win?.postMessage('{"type":"showIssue","data":" "}', 'http://localhost:3001');
         // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"'+toolInstance.toolAction+'","data":" "}');
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showIssue","data":" "}');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showIssue","data":" "}');
         break;
       case "hideIssue":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
+        Win?.postMessage('{"type":"hideIssue","data":" "}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideIssue","data":" "}')
         break;
-      case "selectIssue":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+      case "selectIssue": 
+        Win?.postMessage('{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');        
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "removedIssue":
         (async () => {
           const issueDetelteStatus = await deleteTheIssue(toolInstance.data);
           if (issueDetelteStatus) {
             let issueId = (toolInstance.data as { _id: any })._id;
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(issueId) + '}')
+            Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(issueId) + '}', 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(issueId) + '}')
           }
         })();
         break;
@@ -804,7 +816,8 @@ const Index: React.FC<IProps> = () => {
           
         break;
       case 'setFilteredIssueList':
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case 'closeFilterOverlay':
         closeFilterOverlay()
@@ -825,41 +838,52 @@ const Index: React.FC<IProps> = () => {
         //setOpenIssueView(true);
         break;
       case "createFailIssue":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
+        Win?.postMessage( '{"type":"createFailIssue","data":" "}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailIssue","data":" "}');
         break;
       case "createSuccessIssue":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "editIssue":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "createTask":
+        Win?.postMessage( '{"type":"' + toolInstance.type + '","data":" "}', 'http://localhost:3001');
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":" "}');
         break;
       case "createFailTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailTask","data":" "}');
+        Win?.postMessage( '{"type":"createFailTask","data":" "}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"createFailTask","data":" "}');
         break;
       case "createSuccessTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "selectTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "showTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}');
+        Win?.postMessage('{"type":"showTask","data":" "}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"showTask","data":" "}');
         break;
       case "hideTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
+        Win?.postMessage('{"type":"hideTask","data":" "}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"hideTask","data":" "}')
         break;
       case "editTask":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "removedTask":
         (async () => {
           const TaskDetelteStatus = await deleteTheTask(toolInstance.data);
           if (TaskDetelteStatus) {
             let taskId = (toolInstance.data as { _id: any })._id;
-            conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
+            Win?.postMessage( '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}', 'http://localhost:3001');
+            // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
           }
         })();
         // setClickedTool(toolInstance);
@@ -869,13 +893,15 @@ const Index: React.FC<IProps> = () => {
         handleOnTaskFilter(toolInstance.data);
         break;
       case 'setFilteredTaskList':
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage(  '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break; 
       case 'sortTask':
         handleOnTasksSort(toolInstance.data)
         break;
       case "setViewLayers":
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        Win?.postMessage(  '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}', 'http://localhost:3001');
+        // conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
       case "addViewLayer":
         // newLayers.push(toolInstance.toolAction);
@@ -894,60 +920,12 @@ const Index: React.FC<IProps> = () => {
       case "closeTaskDrawer":
         delete router.query.tsk
         router.push(router)
-      case "fetchProject" : 
-          fetchProject()
-          break;
-      case "RecProcoreIssue":
-        const foundIndex = initData?.currentIssueList.findIndex((issueObj: Issue) => {
-          return issueObj._id === (toolInstance?.data as { result?: Issue })?.result?._id;
-      }); 
-      if (initData && foundIndex && foundIndex !== -1) {
-        const result = (toolInstance?.data as { result?: Issue })?.result;
-        if (result !== undefined) {
-          const updatedList = [...initData.currentIssueList];  
-          updatedList[foundIndex] = result;  
-          setInintData({ ...initData, currentIssueList: updatedList });
-        }
-      }
-        break;
-        case "RecProcoreTask":
-        const foundIndexValue = initData?.currentTaskList.findIndex((taskObj: ITasks) => {
-          return taskObj._id === (toolInstance?.data as { result?: ITasks })?.result?._id;
-      }); 
-      if (initData && foundIndexValue && foundIndexValue !== -1) {
-        const result = (toolInstance?.data as { result?: ITasks })?.result;
-        if (result !== undefined) {
-          const updatedList = [...initData.currentTaskList];  
-          updatedList[foundIndexValue] = result;  
-          setInintData({ ...initData, currentTaskList: updatedList });
-        }
-      }
-        break;
-      case 'getViewerScreenshot':
-        CustomToast('The downloading of the image has started.it will take some time to complete...','success')  
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getViewerScreenshot", "data": ""}`);
-      break
+
       default:
         break;
     }
   };
 
-  const fetchProject = () => {  
-    getProjectDetails(router.query.projectId as string)
-        .then((response) => {
-          setProjectUtm(response?.data?.result?.utm);
-          setActiveProjectId(router.query.projectId as string);
-          setProject(response.data.result);
-          const currentProjectData = appState.currentProjectData;
-          if (currentProjectData) {
-            currentProjectData.project = response.data.result;
-            appAction.setCurrentProjectData(currentProjectData);
-          } 
-        })
-        .catch((error) => {
-          CustomToast("failed to load data","error");
-        });
-  }
 
   const getIssuesPriorityList = (projId: string) => {
     return getIssuesPriority(router.query.projectId as string)
@@ -1654,7 +1632,7 @@ const Index: React.FC<IProps> = () => {
 
   
   useEffect(() => {
-
+    const Win = (document.getElementById("IframeId") as HTMLIFrameElement)?.contentWindow;
     if (router.isReady) {
       getGenViewerData(router.query.projectId as string, router.query.structureId as string)
         .then((response) => {
@@ -1694,7 +1672,6 @@ const Index: React.FC<IProps> = () => {
               if(urlSnap)
                 vData.currentSnapshotBase=urlSnap;
             }
-            vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
             vData.taskShow=true;
             vData.issueShow=true;
             vData.isIssueFiltered=false;
@@ -1718,12 +1695,14 @@ const Index: React.FC<IProps> = () => {
             //   }
             // }
             if (mViewerStatus === "Waiting") {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
+              Win?.postMessage('{"type":"setGenData","data":' + JSON.stringify(vData) + '}', 'http://localhost:3001'); 
+              // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
               console.log("Handshake setGenData", response.result)
               setMViewerStatus("Connected")
             }
             else if (mViewerStatus === "Connected") {
-              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(vData) + '}')
+              Win?.postMessage('{"type":"setStructure","data":' + JSON.stringify(vData) + '}', 'http://localhost:3001'); 
+              // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setStructure","data":' + JSON.stringify(vData) + '}')
 
             }
           }
@@ -1737,7 +1716,7 @@ const Index: React.FC<IProps> = () => {
 
 
   useEffect(() => {
-
+    const Win = (document.getElementById("IframeId") as HTMLIFrameElement)?.contentWindow;
     if (initData) {
 
       console.log("init data after",initData);
@@ -1755,7 +1734,8 @@ const Index: React.FC<IProps> = () => {
         setRealityAvailable(false)
       }
       if (mViewerStatus === "Waiting") {
-        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        Win?.postMessage('{"type":"setGenData","data":' + JSON.stringify(initData) + '}', 'http://localhost:3001'); 
+        // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
         console.log("Handshake setGenData", initData)
         setMViewerStatus("Connected")
         
@@ -1772,10 +1752,11 @@ const Index: React.FC<IProps> = () => {
   }, [initData])
 
   useEffect(() => {
-    
+    const Win = (document.getElementById("IframeId") as HTMLIFrameElement)?.contentWindow;
     if (mViewerStatus === "Waiting") {
       if (initData) {
-        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        Win?.postMessage('{"type":"setGenData","data":' + JSON.stringify(initData) + '}', 'http://localhost:3001'); 
+        // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
         console.log("Handshake setGenData", initData)
         setMViewerStatus("Connected")
         
@@ -1802,7 +1783,6 @@ const Index: React.FC<IProps> = () => {
               }
              
             }
-                vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
                 vData.taskShow=true;
                 vData.issueShow=true;
                 vData.isIssueFiltered=false;
@@ -1814,8 +1794,8 @@ const Index: React.FC<IProps> = () => {
                 setIsList(response.result.currentIssueList)  
                 setTaskFilterList(response.result.currentTaskList)
                 setTasList(response.result.currentTaskList)
-
-                conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
+                Win?.postMessage('{"type":"setGenData","data":' + JSON.stringify(vData) + '}', 'http://localhost:3001'); 
+                // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
                 console.log("Handshake setGenData", response.result)
                 setMViewerStatus("Connected")                       
 
@@ -1836,6 +1816,7 @@ const Index: React.FC<IProps> = () => {
 
 
   const multiverseHandShakeEventsCB: OnMessageCallbak = (msg: Buffer, packer: any): void => {
+    const Win = (document.getElementById("IframeId") as HTMLIFrameElement)?.contentWindow;
     const message = JSON.parse(msg.toString())
     console.log("Handshake data Rec on APP", JSON.parse(msg.toString()))
     if (message.type === "getAuthToken") {
@@ -1844,7 +1825,8 @@ const Index: React.FC<IProps> = () => {
       let user = null;
       if (userObj) user = JSON.parse(userObj);
       if (user) {
-        console.log("Going to send Handshake setAuth");
+        // console.log("Going to send Handshake setAuth",user);
+        // Win?.postMessage('{"type":"setAuthToken","data":' + JSON.stringify(user) + '}', 'http://localhost:3001'); 
         conn.publishMessage(MqttConnector.getMultiverseHandShakeString(), '{"type":"setAuthToken","data":' + JSON.stringify(user) + '}');
       }
 
@@ -1854,8 +1836,8 @@ const Index: React.FC<IProps> = () => {
       setMViewerStatus("Waiting");
       console.log("READY, Handshake")
       if (initData) {
-
-        conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
+        Win?.postMessage('{"type":"setGenData","data":' + JSON.stringify(initData) + '}', 'http://localhost:3001'); 
+        // conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(initData) + '}')
         console.log("READY, Handshake setGenData", initData);
         setMViewerStatus("Connected");
       }
@@ -1924,11 +1906,6 @@ const Index: React.FC<IProps> = () => {
 
     }
 
-
-    if(message.type === "toast"){
-      CustomToast(message?.data?.message,message?.data?.code);
-    }
-
   }
 
   useEffect(()=>{
@@ -1955,22 +1932,11 @@ const Index: React.FC<IProps> = () => {
 
 
   const receiveMessage = (event:any) => {
-    console.log("event in multiverse",event);
-    
     if (event.origin === MULTIVERSE.ORIGIN_URL) {
-      if(event.data.type === "createScreenshot" && event.data.screenshot)
-        setScreenShot(event.data)
-      if(event.data.type === "getViewerScreenshot")
-      {
-        var link = document.createElement("a");
-        link.download = `img_${snapshot?.date}.png`;
-        link.href = URL.createObjectURL(event.data.screenshot as Blob);
-        link.hidden = true; 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      }       
+      if(event.data.screenshot)
+        setScreenShot(event.data) 
+      if(event.data.clickEvent)
+        console.log("Viewer ClickEvenr rec");       
     }
   }
 
@@ -1980,14 +1946,8 @@ useEffect(()=>{
     window.removeEventListener('message', receiveMessage);
   };
 },[])
-const download360Image = () =>{
-  let typeChangeToolAction: IToolbarAction = { type: "getViewerScreenshot", data: "" };
-  toolClicked(typeChangeToolAction)
-  }
-const downloadPdfReport = () => {
-window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ364905/structures/STR693023/designs/DSG708047/sample.pdf`, '_blank');
-}
   return (
+    <div id="main_id">
     <ApiDataContextProvider  
     initialTypes={issueTypesList}
     initialPriority={issuePriorityList}
@@ -2135,14 +2095,7 @@ window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ3649
                 
                 : <></>}
             </div></div></div>
-        <div>
-        {
-        currentViewMode === 'Reality' &&
-          <div className="absolute top-[1rem] right-[1rem]">
-            <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
-          </div>
-          }
-        </div>
+
         <div>
         {initData && 
         <Suspense fallback={<CustomLoader />}>
@@ -2155,6 +2108,7 @@ window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ3649
       </div>
     </div>
     </ApiDataContextProvider>
+    </div>
   );
 };
 export default Index;

@@ -10,9 +10,23 @@ import CustomLoader from '../../../divami_components/custom_loader/CustomLoader'
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
 import { IprocoreActions } from '../../../../models/Iprocore';
 import { useAppContext } from '../../../../state/appState/context';
+import { IToolbarAction } from '../../../../models/ITools';
+interface IProps{
+  issue:any;
+  task:any;
+  handleCloseProcore:any;
+  getIssues?:(s:string)=>{} | undefined;
+  getTasks?:(s:string)=>{} | undefined;
+    generatedpdf:any
+    weburl:any
+    screenshot:any
+    attachment:any
+    toolClicked?: (toolAction: IToolbarAction) => void;
+    handleInstance:any
 
-const LinkExistingRfi = (props: any) => {
-  const {issue,task,
+}
+const LinkExistingRfi: React.FC<IProps> = ({
+    issue,task,
     handleCloseProcore,
     getIssues,
     getTasks,
@@ -20,9 +34,11 @@ const LinkExistingRfi = (props: any) => {
     weburl,
     screenshot,
     attachment,
-  }=props as any;
+    toolClicked,
+    handleInstance
+  }) => {
   const [loading, setLoading] = useState(false)
-  const { handleInstance } = props as any;
+  // const { handleInstance } = props as any;
   const [footerState, SetFooterState] = useState(true);
   const [rfiData, setRfiData] = useState<any[]>([]);
   const [questionBody, setQuestionBody] = useState('');
@@ -74,14 +90,18 @@ const LinkExistingRfi = (props: any) => {
      linkIssueRfi(issue.project, issue._id, selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            getIssues(issue.structure)
+            let IntegrationObj: IToolbarAction = { type: "RecProcoreIssue", data: linkResponse };
+            toolClicked && toolClicked(IntegrationObj)
+            getIssues && getIssues(issue?.structure)
            }
         })
         } else {
       linkTaskRfi(task.project, task._id, selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
-            getTasks(task.structure)
+            let IntegrationObj: IToolbarAction = { type: "RecProcoreTask", data: linkResponse };
+            toolClicked && toolClicked(IntegrationObj)
+            getTasks && getTasks(task?.structure)
           }
         })
     }

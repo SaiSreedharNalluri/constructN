@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { showObservationDetails, showRfiDetails, showSubmittalDetails } from "../../../services/procore";
 import { PROCORE } from "../../../config/config";
 import { PopupIcon, PriorityStatus, PriorityTitle, ProcoreLogo, SecondBodyDiv, SecondContPrior, TabOneDiv } from "../../divami_components/issue_detail/IssueDetailStyles";
-import { Button } from "@mui/material";
 import popup from "../../../public/divami_icons/popup.svg"
-import { Grid } from "react-loader-spinner";
 import styled from "@emotion/styled";
 import { useAppContext } from "../../../state/appState/context";
 interface ProcoreExistProps {
@@ -47,20 +45,43 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
     if (type === "rfi") {
       showRfiDetails(id,procoreProjectId).then((response) => {
         if (response) {
-          setDetails(response);
+          let statusText = response.status;
+
+          if(statusText === 'draft'){
+            statusText ='Draft'
+          }else if(statusText ==='open'){
+            statusText ='Open'
+          }
+          setDetails({...response,  status:statusText,});
         }
       });
     } else if (type === "observation") {
       showObservationDetails(id,procoreProjectId).then((response)=>{
         
         if(response){
-          setDetails({ ...response, link: generateLink(type, id) });
+          let statusText = response.status;
+
+   
+    if (statusText === 'ready_for_review') {
+      statusText = 'Ready For Review';
+    }else if( statusText === 'not_accepted'){
+      statusText ='Not Accepted'
+    }else if(statusText === 'closed'){
+      statusText = 'Closed'
+    }else if(statusText === 'initiated'){
+      statusText ='Initiated'
+    }else if(statusText === 'open'){
+      statusText='Open'
+    }
+
+          setDetails({ ...response,  status:statusText, link: generateLink(type, id) });
         }
       })
     }else if ( type === "submittal"){
       showSubmittalDetails(id,procoreProjectId).then((response)=>{
         
         if(response){
+
           setDetails({ ...response, link: generateLink(type, id) });
         }
       })
@@ -93,7 +114,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
           <PopupIcon
           src={popup}
           alt={"link"}></PopupIcon>
-           <a href={details.link} target="_blank" rel="noopener noreferrer" className=" ml-2px text-box-white hover:underline">
+           <a href={details.link} target="_blank" rel="noopener noreferrer" style={{color:"white"}}>
            View {type} in Procore</a> 
        </ProcoreSectionIcon>
           </SecondBodyDiv>

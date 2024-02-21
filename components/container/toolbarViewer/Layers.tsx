@@ -4,6 +4,7 @@ import cameraIcon from "../../../public/divami_icons/cameraIcon.svg";
 import hexagonIcon from "../../../public/divami_icons/hexagonIcon.svg";
 import videoRecorderIcon from "../../../public/divami_icons/videoRecorderIcon.svg";
 import DroneImage from "../../../public/divami_icons/DroneImage.svg";
+import LaserIcon from "../../../public/icons/LaserIcon.svg";
 
 import downArrowIcon from "../../../public/divami_icons/downArrowIcon.svg";
 import { ClickAwayListener } from "@mui/material";
@@ -16,6 +17,7 @@ import {
   LayersWrapper,
   SelectLayersWrapper,
   ContainerDiv,
+  TypeArrowIconDiv,
 } from "./ToolBarStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { ILayer } from "../../../models/IReality";
@@ -53,6 +55,12 @@ const LayerIcons = ({iconsList}:any)=>{
                 <CameraIcon src={DroneImage} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
+          } else if (label.name === "Laser") {
+            return (
+              <LayerSecondSectionCamImg key={label.name + index}>
+                <CameraIcon src={LaserIcon} alt="Laser" />
+              </LayerSecondSectionCamImg>
+            );
           }
         })}
 </>
@@ -79,6 +87,21 @@ const Layers = ({
     item3: true,
   });
   const customLogger = new CustomLoggerClass();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+   
+    if(anchorEl === null ) {
+      console.log("eventClick",event);
+      setAnchorEl(event.currentTarget);
+    }
+    else {
+      // setAnchorEl(null);
+    }
+  };
+  const handleClose = (e:any) => {
+    setAnchorEl(null);
+  };
   useEffect(() => {
     // let newLayersArr = [];
     // if (myLayersList != undefined) {
@@ -144,7 +167,7 @@ const Layers = ({
         setOpenList(false);
       }}
     >
-      <ContainerDiv>
+      <ContainerDiv onClick={handleClick}>
         <LayersWrapper
           onClick={()=>{customLogger.logInfo("ToolBar - Change Layer Filter");onListClick();}}
           // style={{ border: "2px solid blue" }}
@@ -158,7 +181,9 @@ const Layers = ({
             )}
           </IconsContainer>
           <LayerSecondSectionCamImg>
+            <TypeArrowIconDiv>
             <DownIcon src={downArrowIcon} alt="Arrow" />
+            </TypeArrowIconDiv>
           </LayerSecondSectionCamImg>
         </LayersWrapper>
         <SelectLayersWrapper typeOfWindow={"layer"} style={{ width: "238px" }}>
@@ -174,6 +199,10 @@ const Layers = ({
             // setActiveRealityMap={setActiveRealityMap}
             // layersUpdated={layersUpdated}
             initData={initData}
+            anchorEl={anchorEl}
+            open={open}
+            handleClick={handleClick}
+            handleClose={handleClose}
           />
         </SelectLayersWrapper>
       </ContainerDiv>

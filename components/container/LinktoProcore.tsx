@@ -142,7 +142,7 @@ const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Pr
 
 	return (
 		<div className="absolute top-[0px] shadow-md right-0 z-10 bg-[#F3F3F3] border-b mx-0.5 border-[#F3F3F3] pb-4">
-			<div className="flex px-4 py-2 text-lg w-[30vw] justify-between border-b-[0.5px] border-[#666]">
+			<div className="flex px-4 py-2 text-lg w-[25vw] justify-between border-b-[0.5px] border-[#666]">
 				Link Project to Procore{" "}
 				<CloseIcon
 					className="cursor-pointer"
