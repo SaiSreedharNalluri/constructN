@@ -66,27 +66,6 @@ const unsubscribe = (eventName: string, listener: EventListenerOrEventListenerOb
   document.removeEventListener(eventName, listener)
 }
 
-const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetStateAction<[] | {name: string}[]>>, setLoading: Dispatch<SetStateAction<boolean>>) => {
-  const userObj: any = getCookie('user');
-  const user = JSON.parse(userObj);
-  try{
-    setLoading(true);
-    const resp =  await instance.get(
-      `${API.BASE_URL}/measurements`,
-      {
-        headers: authHeader.authHeader(),
-        params: { snapshot }
-      }
-    )
-    const filterById = [...(resp.data.result || [])].filter((point)=>(point?.context?.createdBy === user._id))
-    setApiPoints(filterById);
-  }catch{
-    setApiPoints([]);
-    CustomToast('Failed to Load Measurements!',"error");
-  }finally{
-    setLoading(false);
-  }
-};
 
 const getMeasurement = async (measurementId: string) => {
   return await instance.get(
@@ -147,10 +126,10 @@ const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<Set
   }
 };
 
-const Measurements3DView: FC<any> = ({ potreeUtils = {}, realityMap ={}, loadMeasurements = ()=>{} }) => {
+const Measurements3DView: FC<any> = ({ potreeUtils = {}, loadMeasurements = ()=>{}, refetch=()=>[], apiPoints=[] }) => {
 
   return (<div id='rahmanMeasurement'>
-            <MeasurementTypePicker potreeUtils={potreeUtils} realityMap={realityMap} loadMeasurements={loadMeasurements} />
+            <MeasurementTypePicker potreeUtils={potreeUtils} loadMeasurements={loadMeasurements} refetch={refetch} apiPoints={apiPoints} />
           </div>)
 
 }
@@ -258,13 +237,11 @@ const SegmentButtonGroup = styled(ButtonGroup)({
 
 
 
-const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasurements }) => {
+const MeasurementTypePicker: FC<any> = ({ potreeUtils, loadMeasurements, apiPoints, refetch }) => {
 
   const [measurementsLoaded, setMeasurementsLoaded]=useState(false)
   
   const [points, setPoints]= useState<{ _id?: string, removeMarker: Function; position: object; mtype?: string; uuid: string; name?: string, points?: { position: object}[], visible: boolean}[]>([]);
-
-  const [apiPoints, setApiPoints]= useState<{name: string}[] | []>([])
 
   const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, getContext, handleContext} = potreeUtils || {}
 
@@ -315,9 +292,6 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
     }
   },[apiPoints])
 
-  const refetch = ()=> {
-    getMeasurements(snapshot, setApiPoints, setLoading)
-  }
 
   useEffect(()=>{
     (points || []).forEach((point: any)=>{
@@ -371,28 +345,39 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
       setMeasurementType(measure.name);
     }
   };
+
+  function debounce(func=()=>{}, delay = 1000){
+    let timeout: any;
+    return () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(), delay);
+    };
+  }
+
+    const throttledFn = debounce(() => {
+      loadCameraMeasure()
+    }, 1000);
+
+  const loadCameraMeasure = () =>{
+    if(loadMeasurements && !loading){
+      loadMeasurements(apiPoints);
+    }
+  };
   
   useEffect(()=>{
     subscribe("measurement-moved", mouseMoved);
     subscribe("marker-added", markerAdded);
     subscribe('measurement-created', showConfirm);
     subscribe('setactive-measurement', setActiveMeasurement);
+    subscribe('load-measurements', throttledFn);
     return(()=>{
       unsubscribe("measurement-moved", mouseMoved);
       unsubscribe("marker-added", markerAdded);
       unsubscribe("measurement-created", showConfirm);
-      subscribe('setactive-measurement', setActiveMeasurement);
+      unsubscribe('setactive-measurement', setActiveMeasurement);
+      unsubscribe('load-measurements', throttledFn);
     })
   },[])
-
-  const mapReality = JSON.stringify(realityMap)
-
-  useEffect(()=>{
-    if(snapshot){
-      refetch();
-    }
-  },[mapReality])
-  
 
   useEffect(()=>{
     if(loadAddMeasurementsEvents){

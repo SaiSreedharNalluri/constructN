@@ -8,6 +8,11 @@ import Measurements3DView from './measurements/measurements-3d';
 import { Button, Checkbox, Tooltip } from '@mui/material';
 import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
+import { useRouter } from 'next/router';
+import { CustomToast } from '../divami_components/custom-toaster/CustomToast';
+import { API } from '../../config/config';
+import instance from '../../services/axiosInstance';
+import authHeader from '../../services/auth-header';
 
 const subscribe = (eventName, listener) => {
   document.addEventListener(eventName, listener)
@@ -16,12 +21,38 @@ const subscribe = (eventName, listener) => {
 const unsubscribe = (eventName, listener) => {
   document.removeEventListener(eventName, listener)
 }
+
+const getMeasurements = async (snapshot, setApiPoints, setLoading) => {
+  const userObj = getCookie('user');
+  const user = JSON.parse(userObj);
+  try{
+    setLoading(true);
+    const resp =  await instance.get(
+      `${API.BASE_URL}/measurements`,
+      {
+        headers: authHeader.authHeader(),
+        params: { snapshot }
+      }
+    )
+    const filterById = [...(resp.data.result || [])].filter((point)=>(point?.context?.createdBy === user._id))
+    setApiPoints(filterById);
+  }catch{
+    setApiPoints([]);
+    CustomToast('Failed to Load Measurements!',"error");
+  }finally{
+    setLoading(false);
+  }
+};
  
 function PotreeViewer(props) {
+    const router = useRouter();
     const [viewerCount, setViewerCount] = useState(props.viewerCount);
     const [showPointCloud, setShowPointCloud] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
     const [showHidden, setShowHidden] = useState(false);
+    const [apiPoints, setApiPoints] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const snapshot = router.query.snap;
     const useObj = getCookie("user");
     const user = JSON.parse(useObj|| "{}");
     const isSupportUser = user?.isSupportUser;
@@ -41,6 +72,10 @@ function PotreeViewer(props) {
 
     const setPointCloud = (e) =>{
       setShowPointCloud(e.detail);
+    }
+
+    const refetch = () => {
+      getMeasurements(snapshot, setApiPoints, setLoading)
     }
 
     const initViewer = function() {
@@ -93,6 +128,12 @@ function PotreeViewer(props) {
         unsubscribe("show-pointcloud", setPointCloud);
       })
     },[])
+
+    useEffect(()=>{
+      if(snapshot){
+        refetch();
+      }
+    },[props.realityMap])
 
     const getButton = () => {
       if(props.isCompare && showPointCloud?.view && showPointCloud.disable){
@@ -155,10 +196,10 @@ function PotreeViewer(props) {
         {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
               <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-[80px] p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
           </div>: null}
-          {!isCompareViewer ? (
+          {!isCompareViewer && !loading ? (
             <div className='absolute z-10 right-0 bottom-0'>
               {/* <CameraButtons></CameraButtons> */}
-              <Measurements3DView potreeUtils={potreeUtils} realityMap={props.realityMap} loadMeasurements={loadMeasurements} viewerId={viewerId} />
+              <Measurements3DView potreeUtils={potreeUtils} loadMeasurements={loadMeasurements} viewerId={viewerId} refetch={refetch} apiPoints={apiPoints} />
             </div>
           ) : (
             ""
