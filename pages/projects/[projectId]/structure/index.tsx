@@ -63,7 +63,7 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import html2canvas from "html2canvas";
 import DownloadImageReport from "../../../../components/divami_components/download_image_report/downloadImageReport";
 import GenerateReport from "../../../../components/divami_components/download_image_report/generateReport";
-import { PDFDownloadLink, pdf, render } from "@react-pdf/renderer";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -2025,7 +2025,7 @@ const Index: React.FC<IProps> = () => {
               <div>
         {
         currentViewMode === 'Reality' &&
-          <div className="absolute top-[11rem] right-[1rem]">
+          <div className="absolute top-[1rem] right-[1rem]">
             <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
           </div>
           }
