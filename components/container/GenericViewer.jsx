@@ -846,9 +846,9 @@ function GenericViewer(props) {
   }
 
   const loadMeasurements =(points)=>{
-    
+    const loadAllMeasurements = ["PRJ521675"].includes(project._id);
     if (potreeUtils.current !== undefined) {
-      potreeUtils.current.loadMeasurements(points);
+      potreeUtils.current.loadMeasurements(points, !loadAllMeasurements);
     }
   }
 
