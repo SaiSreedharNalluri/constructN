@@ -52,9 +52,6 @@ import {
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
 import { IUser } from "../../../../models/IUser";
-import {
-  useSearchParams,
-} from 'react-router-dom';
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../services/sections";
 import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
