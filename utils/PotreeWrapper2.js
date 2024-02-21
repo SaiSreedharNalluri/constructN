@@ -986,16 +986,15 @@ export const PotreeViewerUtils = () => {
         publish("measurement-moved", { measure: measurement, isClick }); 
     }
 
-    const loadMeasurements =(points = [])=>{
+    const loadMeasurements =(points = [], applyNearMeasure = true)=>{
         if(_isPointCloudLoaded){
             clearAllMeasurements();
             const cameraObj = _viewer?.scene?.view?.position;
-            const filteredPoints = points.filter((pt)=>{
+            const nearPointsToCam = points.filter((pt)=>{
                 let isInside = false;
                 pt.data.forEach((sglp)=>{
                     const distance  = cameraObj.distanceTo(new THREE.Vector3(sglp.x, sglp.y, sglp.z));
-                    console.log(distance,'distancedistance')
-                    if(distance > 5.4){
+                    if(distance > 8){
                         isInside = false;
                         return;
                     }
@@ -1003,6 +1002,7 @@ export const PotreeViewerUtils = () => {
                 })
                 return(isInside);
             });
+            const filteredPoints = applyNearMeasure ? nearPointsToCam : points;
             _viewer.setLengthUnit('ft');
             filteredPoints.forEach((point)=>{
                 let measure = new Potree.Measure();

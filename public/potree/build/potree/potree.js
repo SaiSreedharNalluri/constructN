@@ -54416,7 +54416,6 @@
 					let msg = `${txtHeight} ${suffix}`;
 					this.heightLabel.setText(msg);
 					if(this.lengthUnit && this.lengthUnit.code === 'ft'){
-						console.log(Math.floor((height - feet) * 12 * 16),'nsksnkns')
 						//convertion of ft to ft-inches
 						var feet = Math.floor(height);
 						var inches = (height - feet) * 12;
