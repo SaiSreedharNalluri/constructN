@@ -82,9 +82,13 @@ function PotreeViewer(props) {
       })
     },[])
 
+    const isDrone = ["Drone Image"].includes(showPointCloud?.mode);
+    
+    let show = true;
+
     const getButton = () => {
       if(showPointCloud?.pointCloudVisible) return;
-      if(props.isCompare && showPointCloud?.view && showPointCloud.disable){
+      if(props.isCompare && showPointCloud?.view && showPointCloud.disable && isDrone){
         return (<Tooltip title='Please Select Image'>
         <div>
           <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>
@@ -92,7 +96,7 @@ function PotreeViewer(props) {
         </Tooltip>)
       }
 
-      if(showPointCloud?.view && showPointCloud.disable && !showPointCloud.prevImage ){
+      if(showPointCloud?.view && showPointCloud.disable && !showPointCloud.prevImage && isDrone){
         return(<Tooltip title='Please Select Image'>
         <div>
           <Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} disabled>Reality</Button>
@@ -100,7 +104,7 @@ function PotreeViewer(props) {
         </Tooltip>)
       }
 
-      if(showPointCloud?.view && showPointCloud.disable){
+      if(showPointCloud?.view && showPointCloud.disable && isDrone){
         return(<Button className={`w-[140px] font-['Open_Sans'] text-[12px]`} onClick={loadPrevDroneImage} >Reality</Button>)
       }
 
@@ -111,6 +115,8 @@ function PotreeViewer(props) {
           }
         }} className={`w-[140px] pointer font-['Open_Sans'] text-[#101F4C] text-[12px] opacity-[0.7]`}>Reality</Button>)
       }
+
+      show = false;
 
       return(<Button className={`w-[140px] pointer text-[#101F4C] font-['Open_Sans'] text-[10px] opacity-[0.7]`} onClick={()=>{ if(onEscape){onEscape();} }}><ThreeDRotationIcon className='mr-1.5 text-[#101F4C] opacity-[0.8]' />Point Cloud</Button>)
       
@@ -137,10 +143,10 @@ function PotreeViewer(props) {
           </div>
           {!isMobile()?
           <>
-              <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
+              {!isCompareViewer ? <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
                   {getButton()}
-                </div>
-              {showPointCloud.view && !showHidden ? <div className='flex justify-center mt-2'>
+                </div>: null}
+              {showPointCloud.view && !showHidden && show ? <div className='flex justify-center mt-2'>
                     <div className={`absolute z-10 opacity-0 transition-opacity duration-1000 ease-in-out bg-gray-500 text-white top-16 p-4 text-[14px] ${showMessage ? 'opacity-100': 'opacity-0'}`}>Navigate across the point cloud using mouse / trackpad. Double click to go to a particular location </div>
               </div>: null}
               {!isCompareViewer ? (
