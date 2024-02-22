@@ -62,6 +62,7 @@ import { useAppContext } from "../../../../state/appState/context";
 import { Button, Menu, MenuItem } from "@mui/material";
 import html2canvas from "html2canvas";
 import DownloadImageReport from "../../../../components/divami_components/download_image_report/downloadImageReport";
+import { isMultiverseEnabled } from "../../../../utils/constants";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -190,6 +191,19 @@ const Index: React.FC<IProps> = () => {
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
 
   const [isLoadErr,setLoadErr] = useState(false);
+
+  useEffect(()=>{
+    if(router && router.isReady){
+    if(isMultiverseEnabled){
+        //  redirect(`/projects/${router.query.projectId}/structure/${router.query.structId}/multiverseviewer`,"push");  
+        router.push({
+          pathname: `/projects/[projectId]/structure/[structureId]/multiverseviewer`,
+          query: {...router.query,structureId:router.query.structId},
+        })
+      }
+
+  }
+  },[router.query])
 
   let isSupportUser = useRef(false);
   //const [searchParams,setSearchParams] = useSearchParams();

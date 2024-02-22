@@ -873,10 +873,10 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
               Raise Issue
             </RaiseButtonDiv>
 
-            <ContentError>
+            {/* <ContentError>
               Check out
               <ContentErrorSpan> How to raise an Issue?</ContentErrorSpan>
-            </ContentError>
+            </ContentError> */}
           </ErrorImageDiv>
         </TaskListContainer>
       )}

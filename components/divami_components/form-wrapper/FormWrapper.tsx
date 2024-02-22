@@ -59,6 +59,12 @@ const FormWrapper = (props: any) => {
 //  useEffect(() => {}, [userPassword]);
 
  const [userConfirmPassword, setUserConfirmPassword] = useState("");
+ const [Textlength, setLength] = useState("");
+ const [number, setNumber] = useState("");
+ const [uppercase, setUppercase] = useState("");
+ const [lowercase, setLowercase] = useState("");
+ const [special, setSpecial] = useState("")
+ const [errorMessage, setErr] = useState("");
  useEffect(() => {}, [userPassword,userConfirmPassword]);
 
   useEffect(() => {
@@ -73,7 +79,7 @@ const FormWrapper = (props: any) => {
   const [showMessage, setShowMessage] = useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [errorMessage,setErrorMessage] = useState<string>("")
+  // const [errorMessage,setErrorMessage] = useState<string>("")
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -259,73 +265,55 @@ const FormWrapper = (props: any) => {
       );
     }
   };
-
-
-  const sendDataToParent = (e: any) => {
-    const password = e.target.value;
-    const errorMessage = validatePassword(password);
-    if (errorMessage) {
-      setErrorMessage(errorMessage);
-    } else {
-      setErrorMessage(""); 
-      if (onData) {
-        onData(password);
+  const [target,setTarget]=useState("")
+  useEffect(() => {
+    let message = `Enter ${Textlength} characters`;
+    if (number || uppercase || lowercase || special) {
+      message += " with a mix of";
+      if (number.length>0) message += ` number${""},`;
+      if (uppercase.length>0) message += ` uppercase${""},`;
+      if (lowercase.length>0) message += ` lowercase${""},`;
+      if (special.length>0) message += ` special characters${""},`;
+      message = message.slice(0, -1);
+      const lastCommaIndex = message.lastIndexOf(",");
+      if (lastCommaIndex !== -1) {
+        message = message.slice(0, lastCommaIndex) + " &" + message.slice(lastCommaIndex + 1);
       }
     }
+    if (!Textlength && !number && !uppercase && !lowercase && !special) {
+      message = "";
+    }
+    if (!special && message.endsWith("special characters")) {
+      const lastSpaceIndex = message.lastIndexOf(" ");
+      message = message.slice(0, lastSpaceIndex) + ".";
+    }
+    setErr(message);
+  }, [Textlength, number, uppercase, lowercase, special]);
+  const sendDataToParent = (e: any) => {
+    const password = e.target.value;
+    setTarget(e.target.value);
+    let lengthMessage = "";
+    let uppercaseMessage = "";
+    let lowercaseMessage = "";
+    let numberMessage = "";
+    let specialMessage = "";
+
+    // Check password length
+    if (password.length > 8 && password.length < 14) {
+      lengthMessage = "";
+    } else {
+      lengthMessage = "8-14";
+    }
+    setLength(lengthMessage);
+    const hasUpperCase = /[A-Z]/.test(password);
+    setUppercase(hasUpperCase ? "" : "uppercase");
+    const hasLowerCase = /[a-z]/.test(password);
+    setLowercase(hasLowerCase ? "" : "lowercase");
+    const hasNumber = /\d/.test(password);
+    setNumber(hasNumber ? "" : "number");
+    const hasSpecialCharacters = /[!@#$%^&*(),.?":{}|<>;+-]/.test(password);
+    setSpecial(hasSpecialCharacters ? "" : "special characters");
   };
-
-  function hasUpperCase(str: string): boolean {
-    return /[A-Z]/.test(str);
-  }
-  
-  function hasLowerCase(str: string): boolean {
-    return /[a-z]/.test(str);
-  }
-  
-  function hasNumber(str: string): boolean {
-    return /\d/.test(str);
-  }
-
-  function hasSpecialCharacters(str: string): boolean {
-    return /[!@#$%^&*]/.test(str);
-  }
-
-  function calculateEmptySpace(string:string) {
-    if(string.length === 0) return false;
-    return string.trim() !== string;
-  }
-  
-  const validatePassword = (password: string): string | null => {
-    if (password.length === 0) {
-      return "Password is required";
-    }
-    
-    if (password.length < 8 || password.length > 14) {
-      return "Password must be between 8 and 14 characters";
-    }
-  
-    if (!hasUpperCase(password)) {
-      return "Password must contain at least one uppercase letter";
-    }
-  
-    if (!hasLowerCase(password)) {
-      return "Password must contain at least one lowercase letter";
-    }
-  
-    if (!hasNumber(password)) {
-      return "Password must contain at least one number";
-    }
-  
-    if (!hasSpecialCharacters(password)) {
-      return "Password must contain at least one special character";
-    }
-  
-    if (calculateEmptySpace(password)) {
-      return "Password cannot contain leading or trailing spaces";
-    }
-  
-    return null; };
-
   const handleDateChange = (
     e: any,
     id: string,
@@ -481,7 +469,7 @@ const FormWrapper = (props: any) => {
     );
   };
   function checkDataisEmpty() {
-    const regex = /^[^\s][^\s]*$/;
+    const regex = /^([A-Za-z\-']+ )?[A-Za-z\-']+$/;
     const maxLimit = 20; // Maximum character limit for firstName and lastName fields
 
     const isEmptyField = config.some((val: any) => {
