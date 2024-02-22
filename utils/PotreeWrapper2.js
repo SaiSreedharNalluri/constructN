@@ -547,7 +547,7 @@ export const PotreeViewerUtils = () => {
             _eventHandler(_viewerId, getContext(event.detail.image));
         }
         prevImage = { reality: _currentReality, image: event.detail.image };
-        publish("show-pointcloud", { view: false, disable: false , pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
+        publish("show-pointcloud", { view: false, disable: false , mode: _currentReality?.type, pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
     }   
 
     const onImageUnLoad = (event) => {
@@ -1432,10 +1432,10 @@ export const PotreeViewerUtils = () => {
         _viewer.setEDLEnabled(cond);
         if (cond) {
             if(_currentMode !== "Drone Image") _viewer.setEDLOpacity(0);
-            publish("show-pointcloud", { view: false, disable: false, pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)})
+            publish("show-pointcloud", { view: false, disable: false, mode: _currentReality?.type, pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)})
         } else {
             _viewer.setEDLOpacity(1);
-            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage , pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
+            publish("show-pointcloud", { view: true, disable: ["Drone Image","3d"].includes(_currentMode), prevImage , mode: _currentReality?.type, pointCloudVisible: ["Phone Image","360 Image"].includes(_currentReality?.type)});
         }
     }
 
@@ -1807,9 +1807,9 @@ export const PotreeViewerUtils = () => {
         return viewerState;
     }
 
-    const updateViewerState = (viewerState) => {
+    const updateViewerState = (viewerState, isCompare = false) => {
          // console.log("Inside update viewer state: ", this.viewerId, viewerState);
-         let offset =  _currentReality !== undefined ? _currentReality.pointCloudData.offset : _globalOffset
+         let offset =  _currentReality !== undefined && !isCompare ? _currentReality.pointCloudData.offset : _globalOffset
          if (_currentMode === "3d") {
             // console.log("Inside set viewer state for 3D: ", this.viewerId)
             
@@ -2103,7 +2103,7 @@ export const PotreeViewerUtils = () => {
             // console.log("Testing realityViewToggle: ", _isSupportUser);
                 unloadAllImages();
                 // _viewer.fitToScreen();
-                publish("show-pointcloud", { view: true, disable: false });
+                publish("show-pointcloud", { view: true, disable: false , mode: _currentReality?.type });
         }
     }
     
