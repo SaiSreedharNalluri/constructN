@@ -2138,7 +2138,7 @@ window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ3649
         <div>
         {
         currentViewMode === 'Reality' &&
-          <div className="absolute top-[11rem] right-[1rem]">
+          <div className="absolute top-[1rem] right-[1rem]">
             <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
           </div>
           }
