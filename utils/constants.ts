@@ -24,4 +24,4 @@ export const userNotificationData = [
   { id: 2, name: 'All' },
 ];
 //export const viewerPagePath = "/projects/[projectId]/structure/[structureId]/multiverseviewer";
-export const isMultiverseEnabled = false;
+export const isMultiverseEnabled = true;
