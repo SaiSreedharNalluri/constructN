@@ -1,7 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import { Document, Page, Text, StyleSheet,Image,View } from '@react-pdf/renderer';
 import { IProjects } from '../../../models/IProjects';
-import html2canvas from 'html2canvas';
+import { IStructure } from '../../../models/IStructure';
+import { ISnapshot } from '../../../models/ISnapshot';
 
 const styles = StyleSheet.create({
     container: {
@@ -18,25 +19,15 @@ const styles = StyleSheet.create({
 });
 
 interface IProps {
-    project: IProjects
+    project: IProjects,
+    imageSrc:string,
+    structure:IStructure
+    snapshot:ISnapshot
 }
-const GenerateReport: React.FC<IProps> = ({ project }) => {
-  const[imageSrc,setImageSrc] =useState<string>('')
-  useEffect(()=>{
+const GenerateReport: React.FC<IProps> = ({ project,imageSrc }) => {
+useEffect(()=>{
 
-  },[imageSrc,project])
-  useEffect(()=>{
-  captureCanvas()
-  },[])
-  const captureCanvas = () => {
-    const element = document.getElementById("potreeViewer_1") || document.body;
-    html2canvas(element).then(canvas => {
-        const dataURL = canvas.toDataURL();
-        setImageSrc(dataURL);
-    }).catch(error => {
-        console.error('Error capturing canvas:', error);
-    });
-};
+},[project,imageSrc])
   return (
       <Document>
     <Page style={styles.container} size={'A4'} >

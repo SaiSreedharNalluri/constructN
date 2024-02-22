@@ -1664,6 +1664,16 @@ const Index: React.FC<IProps> = () => {
   //   )
     
   // }
+  const [imageSrc, setImageSrc] = useState<string>('');
+ const captureCanvas = () => {
+      const element = document.getElementById("potreeViewer_1") || document.body;
+      html2canvas(element).then(canvas => {
+          const dataURL = canvas.toDataURL();
+          setImageSrc(dataURL);
+      }).catch(error => {
+          console.error('Error capturing canvas:', error);
+      });
+  };
   const download360Image = () =>{
     CustomToast('The downloading of the image has started.it will take some time to complete...','success')
     html2canvas(document.getElementById("potreeViewer_1") || document.body).then(function(canvas) {
@@ -1684,8 +1694,10 @@ const Index: React.FC<IProps> = () => {
       // const asPdf = pdf([] as any); 
       // asPdf.updateContainer(reportString);
       // const blob = await asPdf.toBlob();
-      
-      const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} />).toBlob());
+      captureCanvas()
+      CustomToast('The report generation is started.it will take some time to complete and download...','success')
+      setTimeout(async () => {
+      const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imageSrc}/>).toBlob());
       const a = document.createElement('a');
       a.href = url;
       a.download = 'fee_acceptance.pdf';
@@ -1694,6 +1706,7 @@ const Index: React.FC<IProps> = () => {
 
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      },2000)
     };
 
 
