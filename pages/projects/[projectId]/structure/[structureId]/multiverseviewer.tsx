@@ -233,7 +233,7 @@ const Index: React.FC<IProps> = () => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
   // }, [project]);
 
-  
+ 
   const isObjectEmpty = (objectName: any) => {
     return (
       objectName &&
@@ -258,6 +258,8 @@ const Index: React.FC<IProps> = () => {
     filterData: {},
     numberOfFilters: 0,
   });
+  const [issueFilterFormData,setIssFilterForm] = useState<any>()
+  const [taskFilterFormData,setTskFilterForm] = useState<any>()
 
   // const closeIssueCreate = () => {
   //   setOpenCreateIssue(false);
@@ -690,6 +692,20 @@ const Index: React.FC<IProps> = () => {
       setLeftNav(true);
     }
   };
+  useEffect(()=>{
+    setTaskFilterList(taskFilterList)
+    if(issueFilterState.isFilterApplied === true){
+      setTimeout(()=>{
+      handleOnIssueFilter(issueFilterFormData)
+      },2000)
+    }
+    if(taskFilterState.isFilterApplied === true){
+      setTimeout(()=>{
+      handleOnTaskFilter(taskFilterFormData)
+      },2000)
+      
+    }
+  },[issueFilterList,taskFilterList])
 
   const toolClicked = (toolInstance: IToolbarAction) => {
     console.log("toolInstrance", toolInstance)
@@ -800,6 +816,7 @@ const Index: React.FC<IProps> = () => {
         })();
         break;
       case 'handleIssueFilter':
+          setIssFilterForm(toolInstance.data)
           handleOnIssueFilter(toolInstance.data)
           
         break;
@@ -829,6 +846,11 @@ const Index: React.FC<IProps> = () => {
         break;
       case "createSuccessIssue":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        const newIssue = toolInstance.data;
+        const insertIndex = issueFilterList.length;
+        const updatedList:any = [...issueFilterList.slice(0, insertIndex), newIssue, ...issueFilterList.slice(insertIndex)];
+        setIssueFilterList(updatedList);
+
         break;
       case "editIssue":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
@@ -841,6 +863,12 @@ const Index: React.FC<IProps> = () => {
         break;
       case "createSuccessTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
+        const newTask = toolInstance.data;
+        const insertIndexVal = taskFilterList.length;
+        const updatedLists:any = [...taskFilterList.slice(0, insertIndexVal), newTask, ...taskFilterList.slice(insertIndexVal)];
+        console.log("updatedList",updatedLists);
+        
+        setTaskFilterList(updatedLists);
         break;
       case "selectTask":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
@@ -866,6 +894,7 @@ const Index: React.FC<IProps> = () => {
         break;
      
       case 'handleTaskFilter':
+        setTskFilterForm(toolInstance.data)
         handleOnTaskFilter(toolInstance.data);
         break;
       case 'setFilteredTaskList':
@@ -1249,7 +1278,7 @@ const Index: React.FC<IProps> = () => {
     ref.current?.issueFilterState(issueFilterState)
   },[issueFilterState])
 
-  const handleOnTaskFilter = (formData: any) => {
+  const handleOnTaskFilter = (formData: any) => {       
     const result = taskFilterList.filter(
       (item) => {
         const dueDate = setTheFormatedDate(item.dueDate);

@@ -865,10 +865,10 @@ const CustomTaskListDrawer = (props: any) => {
               Raise Task
             </RaiseButtonDiv>
 
-            <ContentError>
+            {/* <ContentError>
               Check out
               <ContentErrorSpan> How to raise a Task?</ContentErrorSpan>
-            </ContentError>
+            </ContentError> */}
           </ErrorImageDiv>
         </TaskListContainer>
       )}

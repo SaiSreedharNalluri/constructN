@@ -37,7 +37,7 @@ const EditUserProfile = ({
       .max(30,'Maximum 30 characters Exceeded')
       .matches(/^[a-zA-Z\s]+$/, "Special characters are not allowed")
       .matches(
-        /^(?!\s)[^\s]+(?<!\s)$/,
+        /^([A-Za-z\-']+ )?[A-Za-z\-']+$/,
         'Spaces are not allowed at the beginning, end of the firstname'
       ),
     lastName: Yup.string()
@@ -48,7 +48,7 @@ const EditUserProfile = ({
       .min(1, 'Minimum 1 characters required')
       .max(30,'Maximum 30 characters Exceeded')
       .matches(
-        /^(?!\s)[^\s]+(?<!\s)$/,
+        /^([A-Za-z\-']+ )?[A-Za-z\-']+$/,
         'Spaces are not allowed at the beginning, end of the lastname'
       ),
   });
