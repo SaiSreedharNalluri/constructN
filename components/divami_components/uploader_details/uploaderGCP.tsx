@@ -20,7 +20,7 @@ const UploaderGCP = () => {
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(event.target.value);
-    uploaderAction.setGCPDescription(textareaValue)
+    uploaderAction.setGCPDescription(event.target.value)
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target;

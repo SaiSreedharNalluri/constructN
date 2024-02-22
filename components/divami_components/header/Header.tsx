@@ -270,11 +270,7 @@ const Header: React.FC<any> = ({
   const goToProjectsList = (event:React.MouseEvent) => {
     event.stopPropagation()
     event.preventDefault()
-    if (
-      (workerExists && [UploaderStep.Upload, UploaderStep.Details].includes(uploaderState.step)) ||
-      workerExists ||
-      [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
-    ) {
+    if (uploaderState.step !== UploaderStep.Upload) {
      setIsShowPopUp(true)
      return
     }
@@ -301,7 +297,8 @@ const Header: React.FC<any> = ({
     if (e.currentTarget.id === "Design" && isDesignAvailable) {
       if(isMultiverseEnabled === true){
       let DesignInstance: IToolbarAction = { data: "Design",type:"setViewMode"};
-      toolClicked(DesignInstance);
+      if(!isDesignSelected)
+        toolClicked(DesignInstance);
       }
       else if(isMultiverseEnabled === false){
         toolInstance.toolName = "viewMode";
@@ -314,7 +311,8 @@ const Header: React.FC<any> = ({
     } else if (e.currentTarget.id === "Reality" && isRealityAvailable) {
       if(isMultiverseEnabled === true){
         let DesignInstance: IToolbarAction = { data: "Reality",type:"setViewMode"};
-        toolClicked(DesignInstance);
+        if(isDesignSelected)
+          toolClicked(DesignInstance);
       }
       else if(isMultiverseEnabled === false){
         toolInstance.toolName = "viewMode";

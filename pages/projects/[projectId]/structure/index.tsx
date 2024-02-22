@@ -52,9 +52,6 @@ import {
 import enterfullscreenIcon from "../../../../public/divami_icons/enterfullscreen.svg";
 import exitfullscreenIcon from "../../../../public/divami_icons/exitfullscreen.svg";
 import { IUser } from "../../../../models/IUser";
-import {
-  useSearchParams,
-} from 'react-router-dom';
 import { setTheFormatedDate } from "../../../../utils/ViewerDataUtils";
 import { getSectionsList } from "../../../../services/sections";
 import CustomLoggerClass from "../../../../components/divami_components/custom_logger/CustomLoggerClass";
@@ -62,6 +59,8 @@ import { useAppContext } from "../../../../state/appState/context";
 import { Button, Menu, MenuItem } from "@mui/material";
 import html2canvas from "html2canvas";
 import DownloadImageReport from "../../../../components/divami_components/download_image_report/downloadImageReport";
+import GenerateReport from "../../../../components/divami_components/download_image_report/generateReport";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 import { isMultiverseEnabled } from "../../../../utils/constants";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -189,7 +188,9 @@ const Index: React.FC<IProps> = () => {
   const [issueLoader, setIssueLoader] = useState(false);
   const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
-
+  const imgRef = useRef<string>('')
+  const miniMapImg = useRef<string>('')
+  const [logedInUser,setLogedInUser] =useState<string>('')
   const [isLoadErr,setLoadErr] = useState(false);
 
   useEffect(()=>{
@@ -1679,6 +1680,24 @@ const Index: React.FC<IProps> = () => {
   //   )
     
   // }
+  useEffect(()=>{
+   setLogedInUser(localStorage.getItem('userInfo') as string)
+  },[])
+ const captureCanvas = async () => {
+     await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
+        const dataURL = canvas.toDataURL();
+        imgRef.current = dataURL
+      }).catch(error => {
+        console.error('Error capturing canvas:', error);
+    });
+     await html2canvas(document.getElementById("minimap-1") || document.body).then(canvas => {
+          const dataURL = canvas.toDataURL();
+          miniMapImg.current = dataURL
+      }).catch(error => {
+          console.error('Error capturing canvas:', error);
+      });
+      downloadPdfReport()
+  };
   const download360Image = () =>{
     CustomToast('The downloading of the image has started.it will take some time to complete...','success')
     html2canvas(document.getElementById("potreeViewer_1") || document.body).then(function(canvas) {
@@ -1694,9 +1713,22 @@ const Index: React.FC<IProps> = () => {
       }, "image/png");
     });
 }
-const downloadPdfReport = () => {
-  window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ364905/structures/STR693023/designs/DSG708047/sample.pdf`, '_blank');
-}
+    const downloadPdfReport = async () => {
+      // const reportString = <GenerateReport />;
+      // const asPdf = pdf([] as any); 
+      // asPdf.updateContainer(reportString);
+      // const blob = await asPdf.toBlob();
+     // captureCanvas()
+      CustomToast('The report generation is started.it will take some time to complete and download...','success')
+      const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fee_acceptance.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
   return (
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
@@ -2022,8 +2054,8 @@ const downloadPdfReport = () => {
               <div>
         {
         currentViewMode === 'Reality' &&
-          <div className="absolute top-[11rem] right-[1rem]">
-            <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
+          <div className="absolute top-[1rem] right-[1rem]">
+            <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>
           }
             </div>

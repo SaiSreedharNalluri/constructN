@@ -1,4 +1,4 @@
-import { TextField, Box, ListItem, List, MenuProps, Menu, alpha } from "@mui/material";
+import { TextField, Box, ListItem, List, MenuProps, Menu, alpha, MenuItem } from "@mui/material";
 import { styled } from "@mui/system";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -27,6 +27,7 @@ export const StyledMenu = styled((props: MenuProps) => (
       vertical: 'bottom',
       horizontal: 'right',
     }}
+    transitionDuration={10}
     transformOrigin={{
       vertical: 'top',
       horizontal: 'right',

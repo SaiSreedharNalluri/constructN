@@ -97,6 +97,7 @@ export const StyledMenu = styled((props: MenuProps) => (
       vertical: 'bottom',
       horizontal: 'right',
     }}
+    transitionDuration={10}
     transformOrigin={{
       vertical: 'top',
       horizontal: 'right',
