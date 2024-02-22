@@ -187,7 +187,9 @@ const Index: React.FC<IProps> = () => {
   const [issueLoader, setIssueLoader] = useState(false);
   const [highlightCreateIcon, setHighlightCreateIcon] = useState(false);
   const [highlightCreateTaskIcon, setHighlightCreateTaskIcon] = useState(false);
-
+  const imgRef = useRef<string>('')
+  const miniMapImg = useRef<string>('')
+  const [logedInUser,setLogedInUser] =useState<string>('')
   const [isLoadErr,setLoadErr] = useState(false);
 
   let isSupportUser = useRef(false);
@@ -1664,15 +1666,23 @@ const Index: React.FC<IProps> = () => {
   //   )
     
   // }
-  const [imageSrc, setImageSrc] = useState<string>('');
- const captureCanvas = () => {
-      const element = document.getElementById("potreeViewer_1") || document.body;
-      html2canvas(element).then(canvas => {
+  useEffect(()=>{
+   setLogedInUser(localStorage.getItem('userInfo') as string)
+  },[])
+ const captureCanvas = async () => {
+     await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
+        const dataURL = canvas.toDataURL();
+        imgRef.current = dataURL
+      }).catch(error => {
+        console.error('Error capturing canvas:', error);
+    });
+     await html2canvas(document.getElementById("minimap-1") || document.body).then(canvas => {
           const dataURL = canvas.toDataURL();
-          setImageSrc(dataURL);
+          miniMapImg.current = dataURL
       }).catch(error => {
           console.error('Error capturing canvas:', error);
       });
+      downloadPdfReport()
   };
   const download360Image = () =>{
     CustomToast('The downloading of the image has started.it will take some time to complete...','success')
@@ -1694,22 +1704,17 @@ const Index: React.FC<IProps> = () => {
       // const asPdf = pdf([] as any); 
       // asPdf.updateContainer(reportString);
       // const blob = await asPdf.toBlob();
-      captureCanvas()
+     // captureCanvas()
       CustomToast('The report generation is started.it will take some time to complete and download...','success')
-      setTimeout(async () => {
-      const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imageSrc}/>).toBlob());
+      const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
       const a = document.createElement('a');
       a.href = url;
       a.download = 'fee_acceptance.pdf';
       document.body.appendChild(a);
       a.click();
-
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      },2000)
     };
-
-
   return (
     <div className=" w-full  h-full">
       <div className="w-full" onClick={createCancel}>
@@ -2036,7 +2041,7 @@ const Index: React.FC<IProps> = () => {
         {
         currentViewMode === 'Reality' &&
           <div className="absolute top-[1rem] right-[1rem]">
-            <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
+            <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>
           }
             </div>
