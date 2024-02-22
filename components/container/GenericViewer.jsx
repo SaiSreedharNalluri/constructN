@@ -514,7 +514,7 @@ function GenericViewer(props) {
             potreeCompareUtils.current != undefined
           ) {
             let viewerState = potreeUtils.current.getViewerState();
-            potreeCompareUtils.current.updateViewerState(viewerState);
+            potreeCompareUtils.current.updateViewerState(viewerState, currentIsCompare.current);
             syncPotreeEvent.current = false;
           }
         } else if (syncPotreeEvent.current) {
@@ -539,7 +539,7 @@ function GenericViewer(props) {
             potreeCompareUtils.current != undefined
           ) {
             let viewerState = potreeCompareUtils.current.getViewerState();
-            potreeUtils.current.updateViewerState(viewerState);
+            potreeUtils.current.updateViewerState(viewerState, currentIsCompare.current);
             syncPotreeEvent.current = false;
           }
         } else if (syncPotreeEvent.current) {
