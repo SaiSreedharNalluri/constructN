@@ -88,8 +88,9 @@ const styles = StyleSheet.create({
   heading: {
     fontWeight: 'bold',
     marginBottom: '2px',
+    padding:'4px',
     backgroundColor: "rgba(109, 109, 109, 0.2)",
-    fontSize: 12,
+    fontSize: 10,
     textAlign: 'center',
     width: '100%',
   },
