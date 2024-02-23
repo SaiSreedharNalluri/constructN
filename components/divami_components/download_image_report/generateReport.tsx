@@ -17,8 +17,7 @@ const styles = StyleSheet.create({
     flex: 0.1,
     border: '1px solid black',
     padding: '5px',
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
   },
   titleContainer: {
     marginRight:'auto',
@@ -53,15 +52,10 @@ const styles = StyleSheet.create({
     border: '1px solid black',
     flexDirection: 'column',
   },
-  logoContainer: {
-    flex: 0.3,
-  },
   logo: {
-    width: '50px',
-    height: '50px',
-    marginBottom: '5px',
-    flex:.1,
-    position:'absolute',
+    width: 200,
+    height: 200,
+    objectFit:'contain',
   },
   image: {
     width: '100%',
@@ -133,10 +127,10 @@ const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapsh
       <Page size="A4">
         <View style={styles.container}>
         <View style={styles.section1}>
-            <View style={styles.logoContainer}>
-              <Image style={styles.logo} src="../../../public/divami_icons/logo-yellow.svg" />
+            <View>
+            <Image style={styles.logo} src="https://constructn-attachments-us.s3.us-west-2.amazonaws.com/defaults/Full-Yellow.png" />
             </View>
-            <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width:'100%'}}>
+            <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width:'100%',marginBottom:'15px'}}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
             </View>
@@ -187,7 +181,7 @@ const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapsh
           </View>
         </View>
       </Page>
-    </Document>
+   </Document>
   );
 };
 

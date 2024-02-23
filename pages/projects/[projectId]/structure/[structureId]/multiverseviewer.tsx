@@ -71,6 +71,8 @@ import { useAppContext } from "../../../../../state/appState/context";
 import { MULTIVERSE } from "../../../../../config/config";
 import DownloadImageReport from "../../../../../components/divami_components/download_image_report/downloadImageReport";
 import html2canvas from "html2canvas";
+import { pdf } from "@react-pdf/renderer";
+import GenerateReport from "../../../../../components/divami_components/download_image_report/generateReport";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -227,7 +229,13 @@ const Index: React.FC<IProps> = () => {
   const [taskStatusList, setTaskStatusList] = useState<any>(null);
   const [issueTagStatus, setIssueTagStatus] = useState<string[]>([]);
   const [TaskTagStatus, setTaskTagStatus] = useState<[string]>();
-
+  const [actionType,setActionType] =useState('ImageDownload') //ImageDownload,ReportDownload
+  const imgRef = useRef<string>('')
+  const miniMapImg = useRef<string>('')
+  const [logedInUser,setLogedInUser] =useState<string>('')
+  useEffect(()=>{
+    setLogedInUser(localStorage.getItem('userInfo') as string)
+   },[])
   //const [searchParams,setSearchParams] = useSearchParams();
   // useEffect(() => {
   //   setBreadCrumbsData((prev: any) => prev.splice(0, 1, project));
@@ -1962,18 +1970,39 @@ const Index: React.FC<IProps> = () => {
         setScreenShot(event.data)
       if(event.data.type === "getViewerScreenshot")
       {
-        var link = document.createElement("a");
-        link.download = `img_${snapshot?.date}.png`;
-        link.href = URL.createObjectURL(event.data.screenshot as Blob);
-        link.hidden = true; 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
+        if(actionType === 'ImageDownload')
+        {
+            
+        }
+        else{
+          var link = document.createElement("a");
+          link.download = `img_${snapshot?.date}.png`;
+          link.href = URL.createObjectURL(event.data.screenshot as Blob);
+          link.hidden = true; 
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+        }
+        
       }       
     }
   }
-
+  const captureCanvas = async () => {
+    await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
+       const dataURL = canvas.toDataURL();
+       imgRef.current = dataURL
+     }).catch(error => {
+       console.error('Error capturing canvas:', error);
+   });
+    await html2canvas(document.getElementById("minimap-1") || document.body).then(canvas => {
+         const dataURL = canvas.toDataURL();
+         miniMapImg.current = dataURL
+     }).catch(error => {
+         console.error('Error capturing canvas:', error);
+     });
+     downloadPdfReport()
+ };
 useEffect(()=>{
   window.addEventListener('message', receiveMessage);
   return () => {
@@ -1984,9 +2013,17 @@ const download360Image = () =>{
   let typeChangeToolAction: IToolbarAction = { type: "getViewerScreenshot", data: "" };
   toolClicked(typeChangeToolAction)
   }
-const downloadPdfReport = () => {
-window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ364905/structures/STR693023/designs/DSG708047/sample.pdf`, '_blank');
-}
+  const downloadPdfReport = async () => {
+    CustomToast('The report generation is started.it will take some time to complete and download...','success')
+    const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `report_${snapshot?.date}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
   return (
     <ApiDataContextProvider  
     initialTypes={issueTypesList}
@@ -2139,7 +2176,7 @@ window.open(`https://constructn-projects-dev.s3.ap-south-1.amazonaws.com/PRJ3649
         {
         currentViewMode === 'Reality' &&
           <div className="absolute top-[1rem] right-[1rem]">
-            <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
+            <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>
           }
         </div>
