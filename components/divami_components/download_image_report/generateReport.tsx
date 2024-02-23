@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     fontWeight:'medium',
-    fontSize: 10,
+    fontSize: 8,
   },
   section1: {
     flex: 0.1,
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: '5px',
-    fontSize: 14,
+    fontSize: 12,
     textAlign: 'left',
     marginRight:'auto'
   },
@@ -39,17 +39,17 @@ const styles = StyleSheet.create({
     marginLeft: 'auto'
   },
   section2: {
-    flex: 0.4,
+    flex: 0.5,
     border: '1px solid black',
   },
   section3: {
-    flex: 0.3,
+    flex: 0.2,
     border: '1px solid black',
     flexDirection: 'row',
     backgroundColor:'#F3F3F3'
   },
   section4: {
-    flex: 0.3,
+    flex: 0.2,
     border: '1px solid black',
     flexDirection: 'column',
   },
@@ -62,6 +62,18 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  heading1: {
+    fontWeight: 'bold',
+    marginBottom: '2px',
+    fontSize:12,
+    marginLeft:'10px'
+  },
+  noteContainer:{
+    backgroundColor:"rgba(109, 109, 109, 0.2)",
+  },
+  keyValue: {
+    marginBottom: '3px',
+  },
   column: {
     flexDirection: 'column',
     width: '100%',
@@ -70,19 +82,23 @@ const styles = StyleSheet.create({
   heading: {
     fontWeight: 'bold',
     marginBottom: '2px',
-    backgroundColor:"rgba(109, 109, 109, 0.2)",
-    fontSize:14,
-    textAlign:'center'
+    backgroundColor: "rgba(109, 109, 109, 0.2)",
+    fontSize: 12,
+    textAlign: 'center',
+    width: '100%',
   },
-  heading1: {
+  keyValueContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  key: {
+    width: '40%',
     fontWeight: 'bold',
-    marginBottom: '2px',
-    marginLeft:"5px",
-    backgroundColor:"rgba(109, 109, 109, 0.2)",
-    fontSize:14,
   },
-  keyValue: {
-    marginBottom: '3px',
+  value: {
+    width: '60%',
   },
 });
 
@@ -92,7 +108,7 @@ interface IProps {
   structure: IStructure
   snapshot: ISnapshot
   logedInUser:string,
-  miniMapImg:string
+  miniMapImg:string,
 }
 
 const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapshot,logedInUser,miniMapImg }) => {
@@ -116,31 +132,48 @@ const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapsh
             <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
             </View>
               <View style={styles.linkContainer}>
-              <Link style={styles.link} src="https://example.com">View this location in ConstructN </Link>
+              <Link style={styles.link} src={window.location.href}>View this location in ConstructN </Link>
             </View>
           </View>
           <View style={styles.section2}>
             <Image style={styles.image} src={imageSrc} />
           </View>
           <View style={styles.section3}>
-            <View style={styles.column}>
+          <View style={styles.column}>
               <Text style={styles.heading}>Project Details</Text>
-              <Text style={styles.keyValue}>Name: {project.name}</Text>
-              <Text style={styles.keyValue}>Created:{moment(project.createdAt).format('MMMM Do YYYY')}</Text>
-              <Text style={styles.keyValue}>Location: {project.address ? formatAddress(project.address) : '-'}</Text>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Name:</Text>
+                <Text style={styles.value}>{project.name}</Text>
+              </View>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Created:</Text>
+                <Text style={styles.value}>{moment(project.createdAt).format('MMMM Do YYYY')}</Text>
+              </View>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Location:</Text>
+                <Text style={styles.value}>{project.address ? formatAddress(project.address) : '-'}</Text>
+              </View>
             </View>
             <View style={styles.column}>
               <Text style={styles.heading}>Capture Details</Text>
-              <Text style={styles.keyValue}> Capture Date: {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
-              <Text style={styles.keyValue}> Floor :{structure.name}</Text>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Capture Date:</Text>
+                <Text style={styles.value}>{moment(snapshot.date).format('MMMM Do YYYY')}</Text>
+              </View>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Floor:</Text>
+                <Text style={styles.value}>{structure.name}</Text>
+              </View>
             </View>
             <View style={styles.column}>
             <Image style={styles.image} src={miniMapImg} />
             </View>
           </View>
           <View style={styles.section4}>
-          <Text style={styles.heading1} >Notes</Text>
-          <Text style={{bottom:0,position:'absolute',fontSize:14,textAlign:'center',marginBottom: '3px',marginLeft:'3px'}}>Exported by {logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
+            <View style={styles.noteContainer}>
+            <Text style={styles.heading1}>Notes</Text>
+            </View>
+          <Text style={{bottom:0,position:'absolute',fontSize:12,textAlign:'center',marginBottom: '3px',marginLeft:'10px'}}>Exported by {logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
           </View>
         </View>
       </Page>
