@@ -11,47 +11,67 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     fontWeight:'medium',
-    fontSize: 10,
+    fontSize: 8,
   },
   section1: {
     flex: 0.1,
     border: '1px solid black',
     padding: '5px',
-    justifyContent:'space-between'
+    flexDirection: 'column',
+  },
+  titleContainer: {
+    marginRight:'auto',
+  },
+  title: {
+    marginBottom: '5px',
+    fontSize: 12,
+    textAlign: 'left',
+    marginRight:'auto'
+  },
+  linkContainer: {
+    marginLeft: 'auto',
+  },
+  link: {
+    color: 'rgba(255, 132, 63, 1)',
+    marginBottom: '2px',
+    textAlign: 'right',
+    marginLeft: 'auto'
   },
   section2: {
-    flex: 0.4,
+    flex: 0.5,
     border: '1px solid black',
   },
   section3: {
-    flex: 0.3,
+    flex: 0.2,
     border: '1px solid black',
     flexDirection: 'row',
     backgroundColor:'#F3F3F3'
   },
   section4: {
-    flex: 0.3,
+    flex: 0.2,
     border: '1px solid black',
     flexDirection: 'column',
   },
   logo: {
-    width: '50px',
-    height: '50px',
-    marginBottom: '5px',
-  },
-  title: {
-    textAlign: 'left',
-    marginBottom: '5px',
-    fontSize:14
-  },
-  link: {
-    textAlign: 'right',
-    color:'rgba(255, 132, 63, 1)',
-    marginBottom: '2px'
+    width: 200,
+    height: 200,
+    objectFit:'contain',
   },
   image: {
     width: '100%',
     height: '100%',
+  },
+  heading1: {
+    fontWeight: 'bold',
+    marginBottom: '2px',
+    fontSize:12,
+    marginLeft:'10px',
+  },
+  noteContainer:{
+    backgroundColor:"rgba(109, 109, 109, 0.2)",
+  },
+  keyValue: {
+    marginBottom: '3px',
   },
   column: {
     flexDirection: 'column',
@@ -61,19 +81,24 @@ const styles = StyleSheet.create({
   heading: {
     fontWeight: 'bold',
     marginBottom: '2px',
-    backgroundColor:"rgba(109, 109, 109, 0.2)",
-    fontSize:14,
-    textAlign:'center'
+    padding:'4px',
+    backgroundColor: "rgba(109, 109, 109, 0.2)",
+    fontSize: 10,
+    textAlign: 'center',
+    width: '100%',
   },
-  heading1: {
+  keyValueContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  key: {
+    width: '40%',
     fontWeight: 'bold',
-    marginBottom: '2px',
-    marginLeft:"5px",
-    backgroundColor:"rgba(109, 109, 109, 0.2)",
-    fontSize:14,
   },
-  keyValue: {
-    marginBottom: '3px',
+  value: {
+    width: '60%',
   },
 });
 
@@ -83,50 +108,80 @@ interface IProps {
   structure: IStructure
   snapshot: ISnapshot
   logedInUser:string,
-  miniMapImg:string
+  miniMapImg:string,
 }
 
 const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapshot,logedInUser,miniMapImg }) => {
-  const formatAddress = (address:Address) => {
-    return address.line1 +  ', ' + address.zipcode  +  ', ' + address.city + ', ' + address.state + ', ' + address.country;
-  };
+  const formatAddress = (address: Address) => {
+    const sanitizeValue = (value: string | undefined) => {
+        return value !== undefined ? value : '';
+    };
+    return sanitizeValue(address.line1) + ', ' +
+           sanitizeValue(address.zipcode) + ', ' +
+           sanitizeValue(address.city) + ', ' +
+           sanitizeValue(address.state) + ', ' +
+           sanitizeValue(address.country);
+};
   return (
     <Document>
       <Page size="A4">
         <View style={styles.container}>
-          <View style={styles.section1}>
-            <Image style={styles.logo} src="https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp" />
-            <View style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-            <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
-            <Link style={styles.link} src="https://example.com">View this location in ConstructN </Link>
+        <View style={styles.section1}>
+            <View>
+            <Image style={styles.logo} src="https://constructn-attachments-us.s3.us-west-2.amazonaws.com/defaults/Full-Yellow.png" />
+            </View>
+            <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width:'100%',marginBottom:'15px'}}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
+            </View>
+            <View style={styles.linkContainer}>
+              <Link style={styles.link} src={window.location.href}>View this location in ConstructN </Link>
+            </View>
             </View>
           </View>
-          <View style={styles.section2}>
+        <View style={styles.section2}>
             <Image style={styles.image} src={imageSrc} />
           </View>
           <View style={styles.section3}>
-            <View style={styles.column}>
+          <View style={styles.column}>
               <Text style={styles.heading}>Project Details</Text>
-              <Text style={styles.keyValue}>Name: {project.name}</Text>
-              <Text style={styles.keyValue}>Created:{moment(project.createdAt).format('MMMM Do YYYY')}</Text>
-              <Text style={styles.keyValue}>Location: {project.address ? formatAddress(project.address) : '-'}</Text>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Name:</Text>
+                <Text style={styles.value}>{project.name}</Text>
+              </View>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Created:</Text>
+                <Text style={styles.value}>{moment(project.createdAt).format('MMMM Do YYYY')}</Text>
+              </View>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Location:</Text>
+                <Text style={styles.value}>{project.address ? formatAddress(project.address) : '-'}</Text>
+              </View>
             </View>
             <View style={styles.column}>
               <Text style={styles.heading}>Capture Details</Text>
-              <Text style={styles.keyValue}> Capture Date: {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
-              <Text style={styles.keyValue}> Floor :{structure.name}</Text>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Capture Date:</Text>
+                <Text style={styles.value}>{moment(snapshot.date).format('MMMM Do YYYY')}</Text>
+              </View>
+              <View style={styles.keyValueContainer}>
+                <Text style={styles.key}>Floor:</Text>
+                <Text style={styles.value}>{structure.name}</Text>
+              </View>
             </View>
             <View style={styles.column}>
             <Image style={styles.image} src={miniMapImg} />
             </View>
           </View>
           <View style={styles.section4}>
-          <Text style={styles.heading1} >Notes</Text>
-          <Text style={{bottom:0,position:'absolute',fontSize:14,textAlign:'center',marginBottom: '2px'}}>Exported by {logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
+            <View style={styles.noteContainer}>
+            <Text style={styles.heading1}>Notes</Text>
+            </View>
+          <Text style={{bottom:0,position:'absolute',fontSize:12,textAlign:'center',marginBottom: '3px',marginLeft:'10px'}}>Exported by {logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
           </View>
         </View>
       </Page>
-    </Document>
+   </Document>
   );
 };
 
