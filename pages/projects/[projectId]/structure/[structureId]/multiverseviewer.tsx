@@ -229,7 +229,6 @@ const Index: React.FC<IProps> = () => {
   const [taskStatusList, setTaskStatusList] = useState<any>(null);
   const [issueTagStatus, setIssueTagStatus] = useState<string[]>([]);
   const [TaskTagStatus, setTaskTagStatus] = useState<[string]>();
-  const [actionType,setActionType] =useState('ImageDownload') //ImageDownload,ReportDownload
   const imgRef = useRef<string>('')
   const miniMapImg = useRef<string>('')
   const [logedInUser,setLogedInUser] =useState<string>('')
@@ -1999,11 +1998,6 @@ const Index: React.FC<IProps> = () => {
         setScreenShot(event.data)
       if(event.data.type === "getViewerScreenshot")
       {
-        if(actionType === 'ImageDownload')
-        {
-            
-        }
-        else{
           var link = document.createElement("a");
           link.download = `img_${snapshot?.date}.png`;
           link.href = URL.createObjectURL(event.data.screenshot as Blob);
@@ -2012,8 +2006,6 @@ const Index: React.FC<IProps> = () => {
           link.click();
           document.body.removeChild(link);
           URL.revokeObjectURL(link.href);
-        }
-        
       }       
     }
   }
