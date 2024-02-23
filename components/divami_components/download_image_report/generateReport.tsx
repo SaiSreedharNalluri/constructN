@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
     marginBottom: '2px',
     fontSize:12,
     marginLeft:'10px',
-    color:'#F3F3F3'
   },
   noteContainer:{
     backgroundColor:"rgba(109, 109, 109, 0.2)",
