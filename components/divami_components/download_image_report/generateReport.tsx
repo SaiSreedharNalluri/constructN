@@ -17,7 +17,26 @@ const styles = StyleSheet.create({
     flex: 0.1,
     border: '1px solid black',
     padding: '5px',
-    justifyContent:'space-between'
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    marginRight:'auto',
+  },
+  title: {
+    marginBottom: '5px',
+    fontSize: 14,
+    textAlign: 'left',
+    marginRight:'auto'
+  },
+  linkContainer: {
+    marginLeft: 'auto',
+  },
+  link: {
+    color: 'rgba(255, 132, 63, 1)',
+    marginBottom: '2px',
+    textAlign: 'right',
+    marginLeft: 'auto'
   },
   section2: {
     flex: 0.4,
@@ -38,16 +57,6 @@ const styles = StyleSheet.create({
     width: '50px',
     height: '50px',
     marginBottom: '5px',
-  },
-  title: {
-    textAlign: 'left',
-    marginBottom: '5px',
-    fontSize:14
-  },
-  link: {
-    textAlign: 'right',
-    color:'rgba(255, 132, 63, 1)',
-    marginBottom: '2px'
   },
   image: {
     width: '100%',
@@ -87,18 +96,27 @@ interface IProps {
 }
 
 const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapshot,logedInUser,miniMapImg }) => {
-  const formatAddress = (address:Address) => {
-    return address.line1 +  ', ' + address.zipcode  +  ', ' + address.city + ', ' + address.state + ', ' + address.country;
-  };
+  const formatAddress = (address: Address) => {
+    const sanitizeValue = (value: string | undefined) => {
+        return value !== undefined ? value : '';
+    };
+    return sanitizeValue(address.line1) + ', ' +
+           sanitizeValue(address.zipcode) + ', ' +
+           sanitizeValue(address.city) + ', ' +
+           sanitizeValue(address.state) + ', ' +
+           sanitizeValue(address.country);
+};
   return (
     <Document>
       <Page size="A4">
         <View style={styles.container}>
           <View style={styles.section1}>
             <Image style={styles.logo} src="https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp" />
-            <View style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+            <View style={styles.titleContainer}>
             <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
-            <Link style={styles.link} src="https://example.com">View this location in ConstructN </Link>
+            </View>
+              <View style={styles.linkContainer}>
+              <Link style={styles.link} src="https://example.com">View this location in ConstructN </Link>
             </View>
           </View>
           <View style={styles.section2}>
@@ -122,7 +140,7 @@ const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapsh
           </View>
           <View style={styles.section4}>
           <Text style={styles.heading1} >Notes</Text>
-          <Text style={{bottom:0,position:'absolute',fontSize:14,textAlign:'center',marginBottom: '2px'}}>Exported by {logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
+          <Text style={{bottom:0,position:'absolute',fontSize:14,textAlign:'center',marginBottom: '3px',marginLeft:'3px'}}>Exported by {logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
           </View>
         </View>
       </Page>
