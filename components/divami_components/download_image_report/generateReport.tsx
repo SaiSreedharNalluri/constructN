@@ -53,10 +53,15 @@ const styles = StyleSheet.create({
     border: '1px solid black',
     flexDirection: 'column',
   },
+  logoContainer: {
+    flex: 0.3,
+  },
   logo: {
     width: '50px',
     height: '50px',
     marginBottom: '5px',
+    flex:.1,
+    position:'absolute',
   },
   image: {
     width: '100%',
@@ -66,7 +71,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: '2px',
     fontSize:12,
-    marginLeft:'10px'
+    marginLeft:'10px',
+    color:'#F3F3F3'
   },
   noteContainer:{
     backgroundColor:"rgba(109, 109, 109, 0.2)",
@@ -126,16 +132,20 @@ const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapsh
     <Document>
       <Page size="A4">
         <View style={styles.container}>
-          <View style={styles.section1}>
-            <Image style={styles.logo} src="https://constructn-attachments-dev.s3.ap-south-1.amazonaws.com/defaults/projectCoverPhoto.webp" />
-            <View style={styles.titleContainer}>
-            <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
+        <View style={styles.section1}>
+            <View style={styles.logoContainer}>
+              <Image style={styles.logo} src="../../../public/divami_icons/logo-yellow.svg" />
             </View>
-              <View style={styles.linkContainer}>
+            <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width:'100%'}}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
+            </View>
+            <View style={styles.linkContainer}>
               <Link style={styles.link} src={window.location.href}>View this location in ConstructN </Link>
             </View>
+            </View>
           </View>
-          <View style={styles.section2}>
+        <View style={styles.section2}>
             <Image style={styles.image} src={imageSrc} />
           </View>
           <View style={styles.section3}>
