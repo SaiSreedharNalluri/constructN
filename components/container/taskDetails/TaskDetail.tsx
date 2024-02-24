@@ -756,20 +756,20 @@ const providerType=credential.provider;
                                 callBackvalue={() => {
                                   setAttachmentPopup(false);
                                   deleteTheAttachment(delAttachment, "task");
-                                  setTaskState((prev: any) => {
-                                    const updatedTabOne = {
-                                      ...prev.TabOne,
-                                      attachments:
-                                        prev.TabOne.attachments.filter(
-                                          (attachment: any) =>
-                                            attachment._id !== a?._id
-                                        ),
-                                    };
-                                    return {
-                                      ...prev,
-                                      TabOne: updatedTabOne,
-                                    };
-                                  });
+                                  // setTaskState((prev: any) => {
+                                  //   const updatedTabOne = {
+                                  //     ...prev.TabOne,
+                                  //     attachments:
+                                  //       prev.TabOne.attachments.filter(
+                                  //         (attachment: any) =>
+                                  //           attachment._id !== a?._id
+                                  //       ),
+                                  //   };
+                                  //   return {
+                                  //     ...prev,
+                                  //     TabOne: updatedTabOne,
+                                  //   };
+                                  // });
                                 }}
                               />
                             )}
