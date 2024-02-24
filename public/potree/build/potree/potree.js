@@ -54224,6 +54224,21 @@
 			
 		// }
 
+		customFloor(number) {
+			// Check if the number is already an integer
+			if (Number.isInteger(number)) {
+				return number;
+			}
+		
+			// If the number is negative, subtract 1 before converting to an integer
+			if (number < 0) {
+				return parseInt(number.toString().split('.')[0]) - 1;
+			}
+		
+			// If the number is positive, simply convert to an integer
+			return parseInt(number.toString().split('.')[0]);
+		}
+
 		getFractionFromDecimal(fraction){
 			const gcd = function(a, b) {
 				if (b < 0.0000001) return a;               
@@ -54338,12 +54353,14 @@
 					}
 
 					let txtLength = Utils.addCommas(distance.toFixed(2));
-					edgeLabel.setText(`${txtLength} ${suffix}`);
+					// edgeLabel.setText(`${txtLength} ${suffix}`);
 					if(this.lengthUnit && this.lengthUnit.code === 'ft'){
 						//convertion of ft to ft-inches
 						var feet = Math.floor(distance);
 						var inches = (distance - feet) * 12;
 						edgeLabel.setText(`${feet}' ${this.getFractionFromDecimal(inches.toFixed(1))}''`);
+					}else{
+						edgeLabel.setText(`${txtLength} ${suffix}`);
 					}
 					edgeLabel.visible = this.showDistances && (index < lastIndex || this.closed) && this.points.length >= 2 && distance > 0;
 				}
@@ -54414,12 +54431,14 @@
 
 					let txtHeight = Utils.addCommas(height.toFixed(2));
 					let msg = `${txtHeight} ${suffix}`;
-					this.heightLabel.setText(msg);
+					// this.heightLabel.setText(msg);
 					if(this.lengthUnit && this.lengthUnit.code === 'ft'){
 						//convertion of ft to ft-inches
 						var feet = Math.floor(height);
 						var inches = (height - feet) * 12;
 						this.heightLabel.setText(`${feet}' ${this.getFractionFromDecimal(inches.toFixed(1))}''`);
+					}else{
+						this.heightLabel.setText(msg);
 					}
 				}
 			}
