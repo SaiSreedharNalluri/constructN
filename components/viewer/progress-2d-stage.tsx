@@ -59,7 +59,7 @@ const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: s
 
 export default function Progress2DStages(
 
-    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading, projectUsers }:
+    { stages, compare, onToggleVisibility , snapShotDate, selectedCategory, refetch, assets, structId ='', refetchCategories, setLoading, loading, projectUsers, drawnAssets, assetContext }:
 
         {
             stages: ({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[] | undefined,
@@ -83,6 +83,10 @@ export default function Progress2DStages(
             loading: boolean
 
             projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
+
+            drawnAssets?: any
+
+            assetContext?: any
 
         }) {
 
@@ -112,6 +116,10 @@ export default function Progress2DStages(
 
                     projectUsers={projectUsers}
 
+                    drawnAssets={drawnAssets}
+
+                    assetContext={assetContext}
+
                     onToggleVisibility={onToggleVisibility} compare={compare} refetchCategories={refetchCategories} />)
 
             }
@@ -130,7 +138,7 @@ const ModalMessage =({ quantity, units }: { quantity: number, units: string})=>(
 
 function Progress2DStage(
 
-    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading, projectUsers }: {
+    { stage, compare, onToggleVisibility, snapShotDate, selectedCategory, refetch =()=>{}, assets = [], structId ='', refetchCategories, loading = false, setLoading, projectUsers, drawnAssets, assetContext }: {
 
         stage: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean },
         
@@ -148,7 +156,11 @@ function Progress2DStage(
 
         refetchCategories?: () => void
 
+        drawnAssets?: any
+
         loading?: boolean
+
+        assetContext?: any
 
         projectUsers: [] | { name: string; role: string; user: { _id: string }; }[]
 
@@ -166,20 +178,50 @@ function Progress2DStage(
 
     const [edit , setEdit]= useState(false)
 
+    const { height: assetHeight, width: assetWidth} = selectedCategory || {}
+
+
+    const getMetric = (type: string, selectedData: any) =>{
+
+        const conversionUnits = assetContext?.unitHandler?.toDisplayUnits('ft',1);
+
+		if(type === 'Count'){
+			return(1)
+		}
+		if(type === 'Length'){
+			return(length)
+		}
+		if(type === 'Linear Area'){
+			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
+		}
+		if(type === 'Horizontal Area'){
+			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2))
+		}
+		if(type === 'Linear Volume'){
+			return(+length* (assetHeight ?? 1) * (assetWidth ?? 1))
+		}
+		if(type === 'Areal Volume'){
+			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
+		}
+	}
+
     const totalValueMetrics = assets.reduce((newVal, oldVal)=>{
-        return newVal + ((Number((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
-    },0)
+        const findasset =  drawnAssets.find((as: {name: string})=>(as.name === oldVal?._id ));
+        return (newVal + (getMetric(stage.measurement!,findasset) || 0));
+    },0);
 
     const [completed, setCompleted] = useState<{checked: boolean, details?: Partial<IAssetStage> & { assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & { visible: boolean }}>({ checked: false})
 
     const [assetValue , totalAssetValue]= useState<string |  number>((stage.metrics?.[structId] || totalValueMetrics).toFixed(1))
 
     const totalCompletedMetrics = stage.assets?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
-        return newVal + (Number(((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
+        const findasset =  drawnAssets.find((as: {name: string})=>(as.name === oldVal?._id ));
+        return (newVal + (getMetric(stage.measurement!,findasset) || 0));
     },0)
 
     const totalCompletedCompareMetrics = stage.assetsCompare?.filter((asset)=>(asset.status === 'Active')).reduce((newVal, oldVal)=>{
-        return newVal + (Number(((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
+        const findasset =  drawnAssets.find((as: {name: string})=>(as.name === oldVal?._id ));
+        return (newVal + (getMetric(stage.measurement!,findasset) || 0));
     },0)
 
     const getProgress = (): number | number[] => {

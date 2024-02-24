@@ -63,9 +63,9 @@ const removeAssetStage = (assetId: string, stage: string) => {
 
 }
 
-const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (asset: IAsset) => void, supportUser: boolean }> =
+const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (asset: IAsset) => void, supportUser: boolean, assetContext: any, selectedCategory: IAssetCategory | undefined }> =
 
-    ({ assetId, snapshotBase, onChange, supportUser }) => {
+    ({ assetId, snapshotBase, onChange, supportUser, assetContext , selectedCategory}) => {
 
         const params = useParams();
 
@@ -254,11 +254,20 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                         </Tabs>
 
-                        {selectedTab === 'asset-details' && <div className='px-4 overflow-auto'><ElementDetails asset={asset} onChange={_onChange} values={values} supportUser={supportUser} onDeleteStage={_onDeleteStage} onSave={onSave}
+                        {selectedTab === 'asset-details' && <div className='px-4 overflow-auto'>
+                            <ElementDetails 
+                            asset={asset} 
+                            onChange={_onChange} 
+                            values={values} 
+                            supportUser={supportUser} 
+                            onDeleteStage={_onDeleteStage} 
+                            onSave={onSave}
                             stages={stages}
                             metrics={metrics}
                             metricsChange={onChange}
                             refetchAssets={refetchAssets}
+                            assetContext={assetContext}
+                            selectedCategory={selectedCategory}
                             actualCategoryName={actualCategoryName}
                             /> </div>}
 

@@ -19,6 +19,7 @@ import Metrics from './metrics-details'
 import EmailButton from './send-email'
 import { LightBoxInstance } from '../../services/light-box-service'
 import { useParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 
 interface Stage extends IAssetStage {
 	id?: string;
@@ -46,10 +47,18 @@ const ElementDetails: React.FC<{
     refetchAssets: () => void,
 
     actualCategoryName: string,
+
+    assetContext: any,
+
+    selectedCategory: IAssetCategory | undefined,
     
-}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {}, stages =[] , metrics , metricsChange, refetchAssets , actualCategoryName }) => {
+}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {}, stages =[] , metrics , metricsChange, refetchAssets , actualCategoryName, assetContext, selectedCategory }) => {
 
     const params = useParams();
+
+    const userObj: string = (getCookie('user') || "{}") as string;
+
+    const user = JSON.parse(userObj);
 
     const { description: actualDecription = '', progress = {}, name: actualName, _id: assetId } = asset || {}
 
@@ -57,26 +66,48 @@ const ElementDetails: React.FC<{
 
     const { name , description, stage } = values || {}
 
+    const selectedData: any = Object.values(assetContext?.selection?.isSelected || {})?.[0];
+
+    const conversionUnits = assetContext?.unitHandler?.toDisplayUnits('ft',1);
+
+    const { height: assetHeight, width: assetWidth } = selectedCategory || {};
+
     const fields = [
+        {
+            label:"Length",
+            name: "length",
+            disabled: true,
+            units: 'ft',
+            show: true,
+            value: (selectedData.getLength() * conversionUnits)?.toFixed(2)
+        },
         {
             label:"Area",
             name: "area",
-            show: true
+            show: selectedData.shapeType === "Polygon",
+            units: 'ft²',
+            disabled: true,
+            value: selectedData.shapeType === "Polygon" ? (selectedData.getArea() * conversionUnits**2)?.toFixed(2) : null
         },
         {
             label:"Volume",
             name: "volume",
-            show: true
-        },
-        {
-            label:"Height",
-            name: "height",
-            show: true
+            units: 'ft³',
+            show: selectedData.shapeType === "Polygon",
         },
         {
             label:"Width",
             name: "width",
-            show: true
+            units: 'ft',
+            show: true,
+            value: assetWidth
+        },
+        {
+            label:"Height",
+            name: "height",
+            units: 'ft',
+            show: true,
+            value: assetHeight
         }
     ]
 
@@ -116,26 +147,33 @@ const ElementDetails: React.FC<{
                     <Button 
                     size='small'  
                     className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
-                    disabled={ !( actualName !== name || description !== actualDecription ||  stage !== actualStage ) || !name}
+                    disabled={!( actualName !== name || description !== actualDecription ||  stage !== actualStage ) || !name}
                     onClick={onSave}
                     >
                         Save
                     </Button>
                     </div>
-                    <div className='mt-4 ml-1 flex flex-wrap'>
-                        {fields.map((field, index)=>(<div className='flex items-baseline basis-1/2 justify-between mt-2' key={field.label}>
-                            <div className={index%2 ? "ml-2":'ml-0'}>{field.label}</div>
-                            <div className='flex items-baseline'>
-                                <OutlinedInput size="small" sx={{ width:"64px" }} name={field.name} className='mr-1'/>
-                                <div className='text-[12px]'>ft</div>
+                    {user?.isSupportUser ? <div className='mt-4 ml-1 flex flex-wrap'>
+                        {fields.map((field)=>(field.show? <div className='flex items-baseline basis-1/2 justify-between mt-2' key={field.label}>
+                            <div className={"text-[12px]"}>{field.label}</div>
+                            <div className='flex items-baseline w-[100px]'>
+                                <OutlinedInput size="small" sx={{ width:"60px", ".MuiInputBase-inputSizeSmall":{
+                                    padding:'8px',
+                                    fontSize:'12px'
+                                } }} name={field.name} className='mr-1' value={field.value} disabled={field.disabled} />
+                                <div className='text-[12px]'>{field?.units}</div>
                             </div>
-                        </div>))}
-                    </div>
+                        </div>: null))}
+                    </div>: null}
                     <Metrics stages ={stages}
                     assetId = {assetId}
                     metrics = {metrics}
                     refetchAssets ={refetchAssets}
+                    assetWidth={assetWidth}
+                    assetHeight={assetHeight}
                     asset={asset}
+                    selectedData={selectedData}
+                    conversionUnits={conversionUnits}
                     onChange={metricsChange} />
                     <div className='my-2'>
                         <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
@@ -198,6 +236,8 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1 })
                 sx={{
 
                     fontFamily: 'Open Sans',
+
+                    fontSize:'14px',
 
                     "& .MuiOutlinedInput-root": {
 

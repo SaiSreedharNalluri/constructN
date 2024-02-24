@@ -14,7 +14,7 @@ import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 
 interface Stage extends IAssetStage {
 	id?: string;
-	factor?: number;
+	measurementFactor?: number;
 	metric?: number | string | { metric: string | number} | { metric: { metric: string | number; } };
 }
 
@@ -105,6 +105,10 @@ export default function Metrics({
 	refetchAssets = ()=>{},
 	asset,
 	onChange,
+	assetWidth,
+	assetHeight,
+	conversionUnits,
+	selectedData
 }: {
 	stages: Stage[];
 	assetId: string;
@@ -112,28 +116,49 @@ export default function Metrics({
 	refetchAssets: () => void,
 	asset: IAsset,
 	onChange?: (asset: IAsset) => void,
+	assetWidth?: number,
+	assetHeight?: number,
+	selectedData?: any,
+	conversionUnits: number
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
 		metric: ((metrics[stage._id] as { metric: { metric: string } })?.metric?.metric ?? (metrics[stage._id] as { metric: string; })?.metric) ?? metrics[stage._id],
+		measurementFactor: stage?.measurementFactor || 1
 	}));
+	
 
 	const [stageValues, setStageValues] = useState<Stage[]>([
 		...(formatStageData || []),
 	]);
 
+	const length = (selectedData.getLength() * conversionUnits)?.toFixed(2)
+	
+
+	const getMetric =(type: string)=>{
+		if(type === 'Count'){
+			return(1)
+		}
+		if(type === 'Length'){
+			return(length)
+		}
+		if(type === 'Linear Area'){
+			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
+		}
+		if(type === 'Horizontal Area'){
+			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2))
+		}
+		if(type === 'Linear Volume'){
+			return(+length* (assetHeight ?? 1) * (assetWidth ?? 1))
+		}
+		if(type === 'Areal Volume'){
+			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
+		}
+	}
+
 	const [showConfirmation, setShowConfirmation] = useState('');
 
 	const [loading, setLoading] = useState(false);
-
-	let activeDisabled = false;
-
-	formatStageData.forEach((stage)=>{
-		if(!(stage.metric) && +(stage.metric) !== 0){
-			activeDisabled = true;
-			return;
-		}
-	})
 
 	return (
 		<div className="mt-4">
@@ -169,10 +194,10 @@ export default function Metrics({
 										{row.name}
 									</TableCell>
 									<TableCell
-										align="right"
+										align="left"
 										className="w-1/3 p-0"
 									>
-										{row.metric as string || ""}
+										{getMetric(row.measurement)}
 									</TableCell>
 									<TableCell
 										align="center"
@@ -185,17 +210,24 @@ export default function Metrics({
 										className="w-1/6 p-0"
 									>
 										<Input
-											value={row.factor}
+											value={row.measurementFactor}
 											size="small"
 											type="number"
+											sx={{ width:"60px", ".MuiInputBase-inputSizeSmall":{
+												padding:'8px',
+												fontSize:'12px'
+											} }}
 											disabled={loading}
+											inputProps={{
+												step: "1"
+											}}
 											onChange={(val) =>{
 												setProgress({
 													id: row.id,
 													val: +val.target.value < 0 ? +val.target.value * -1: val.target.value,
 													stageValues,
 													setStageValues,
-													key: 'factor'
+													key: 'measurementFactor'
 												});
 											}
 											}
@@ -220,26 +252,15 @@ export default function Metrics({
 			}}
         	/>: null}
 			<div className="mt-4 flex justify-between">
-				{activeDisabled ?<Tooltip title='Fill all the metrics and save to enable this'>
 				<div>
 					<Checkbox sx={{
 						'&.Mui-checked': {
 						color: '#F1742E',
 						},
 					}} 
-					disabled={activeDisabled}
 					checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
 						<span className="font-semibold pt-1" >Active</span>
 				</div>
-				</Tooltip>: <div>
-					<Checkbox sx={{
-						'&.Mui-checked': {
-						color: '#F1742E',
-						},
-					}} 
-					checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
-						<span className="font-semibold pt-1" >Active</span>
-				</div>}
 				{stageValues.length > 0 ? (
 					<Button
 						size="small"
