@@ -1084,9 +1084,9 @@ export const PotreeViewerUtils = () => {
 
 
     const myevent = (e) => {
-        publish('setactive-measurement', { measure: e.measurement })
-        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_removed', markeremoved)
-        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_dropped', markerdropped)
+        publish('setactive-measurement', { measure: e.measurement });
+        e?.measurement?.addEventListener('marker_removed', markeremoved);
+        e?.measurement?.addEventListener('marker_dropped', markerdropped);
     }
 
     const clearAllMeasurements= () =>{
