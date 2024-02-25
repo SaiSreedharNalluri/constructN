@@ -791,7 +791,7 @@ const providerType=credential.provider;
                                 SecondaryButtonlabel={"Cancel"}
                                 callBackvalue={() => {
                                   setAttachmentPopup(false);
-                                  deleteTheAttachment(a?._id, "issue");
+                                  deleteTheAttachment(delAttachment, "issue");
                                   setDelAttachment(undefined)
                                   // setTaskState((prev: any) => {
                                   //   const updatedTabOne = {
