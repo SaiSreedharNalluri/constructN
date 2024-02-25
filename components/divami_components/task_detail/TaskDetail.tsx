@@ -127,6 +127,7 @@ import jsPDF from "jspdf";
 import { useAppContext } from "../../../state/appState/context";
 import LinktoProcore from "../../container/LinktoProcore";
 import { IProjects } from "../../../models/IProjects";
+import { isProcoreEnabled } from "../../../utils/constants";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -1370,6 +1371,7 @@ const handleScreenShotAndAttachment =() =>{
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
+            {isProcoreEnabled ? (
             <div className="mr-[10px]">
             {providerType === 'procore' ? ( 
               <div>
@@ -1400,7 +1402,7 @@ const handleScreenShotAndAttachment =() =>{
     />
     </Tooltip>
   )}
-  </div>
+  </div>):(<></>)}
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}
