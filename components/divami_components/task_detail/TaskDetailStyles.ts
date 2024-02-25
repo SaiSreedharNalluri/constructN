@@ -479,8 +479,9 @@ export const AssignEditSearchContainer = styled("div")({
 export const BodyContainer = styled(Box)<ContainerProps>`
   height: ${(props) =>
     // props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
-    props.footerState ? "calc(100% - 130px)" : "calc(100% - 50px)"};
+    props.footerState ? "calc(100% - 130px)" : "calc(100vh - 180px)"};
   overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 export const FourthBodyDiv = styled("div")((props: any) => ({

@@ -170,7 +170,7 @@ export const ProjectListCardView = ({
         
             else if (each.status !== "Draft" && each.status !== "PendingApproval"){
               router.push(`/projects/${each._id}/sections`);
-            Mixpanel.track( {name: "projects_card_clicked",project_id:each._id,company_id:each.company.name,screen_name:"projects_list_page",event_category:"projects_list",event_action:"projects_card_clicked",user_id:userId._id,layout:"grid"})          
+            Mixpanel.track( {name: "projects_card_clicked",project_id:each._id,company_id:each.company?.name,screen_name:"projects_list_page",event_category:"projects_list",event_action:"projects_card_clicked",user_id:userId?._id,layout:"grid"})          
             }
            
             customLogger.logInfo("Project Card - Sections");

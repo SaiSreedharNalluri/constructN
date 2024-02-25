@@ -130,7 +130,7 @@ const Header: React.FC<any> = ({
       let projectId = router?.query?.projectId as string
       //var projectDataListString = localStorage.getItem(ProjectLocalStorageKey.ProjectDataListKey)
       //var projectDataList: ProjectData[] | undefined = projectDataListString ? JSON.parse(projectDataListString) as ProjectData[] : undefined
-      if(appState.currentProjectData && appState.currentProjectData.project._id === projectId) {
+      if(appState.currentProjectData && appState.currentProjectData?.project?._id === projectId) {
         //no need to update
         return
       }
