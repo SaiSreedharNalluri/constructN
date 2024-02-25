@@ -41,6 +41,7 @@ import { CustomToast } from "../custom-toaster/CustomToast";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { PROCORE } from "../../../config/config";
+import { isProcoreEnabled } from "../../../utils/constants";
 const SignInPage = () => {
   const customLogger = new CustomLoggerClass();
   const router = useRouter();
@@ -265,12 +266,12 @@ const SignInPage = () => {
               {/* Render the loader if loading state is true */}
             </ButtonSection>
             <br />
-            <p className="flex justify-center">or</p>
-            <ProcoreButton onClick={handleProcoreButtonClick}>
-            <Image src={procore} alt="logo" height={20}
+            {isProcoreEnabled ?(
+            <><p className="flex justify-center">or</p><ProcoreButton onClick={handleProcoreButtonClick}>
+                <Image src={procore} alt="logo" height={20}
                   width={20} />
-            <TextContainer>Sign In with Procore</TextContainer>
-          </ProcoreButton>
+                <TextContainer>Sign In with Procore</TextContainer>
+              </ProcoreButton></>):(<></>)}
 
             <NewUserDiv>
               New User?{"   "}

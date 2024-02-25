@@ -17,7 +17,8 @@ const ProcoreFooter = (props:any) => {
     <Button className="border border-solid border-border-yellow p-2 w-[150px]   text-border-yellow font-medium py-2 px-4 rounded " type="reset"  onClick={() => {
                     handleInstances()
                   }}>Cancel</Button>
-    <Button className="border border-solid border-border-yellow p-2 w-[150px] bg-border-yellow  text-box-white font-medium py-2 px-4 rounded hover:bg-border-yellow hover:text-box-white" type="submit" disabled={allFieldsTrue} onClick={() => { handleExternalSubmit()}}>Create</Button>
+    <Button className={`border border-solid p-2 w-[150px] bg-border-yellow  text-box-white font-medium py-2 px-4 rounded hover:bg-border-yellow hover:text-box-white
+    ${allFieldsTrue ?'bg-gray-300 text-box-white':"border-border-yellow bg-border-yellow  text-box-white"}`}type="submit" disabled={allFieldsTrue} onClick={() => { handleExternalSubmit()}}>Create</Button>
   </ButtonsContainer></div>
   )
 }
