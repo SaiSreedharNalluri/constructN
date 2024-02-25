@@ -3,8 +3,8 @@ import {
   CustomTaskProcoreLinks,
 } from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
-import { Box, Button, TextField } from "@mui/material";
-import { ChangeEvent, useMemo, useRef, useState } from "react";
+import { Box, TextField } from "@mui/material";
+import { ChangeEvent,  useRef, useState } from "react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
@@ -15,7 +15,6 @@ import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
-import { IprocoreActions } from "../../../../models/Iprocore";
 import { useAppContext } from "../../../../state/appState/context";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
 import { IToolbarAction } from "../../../../models/ITools";
@@ -46,7 +45,7 @@ interface IProps {
   getTasks?:(s:string)=>{} | undefined;
   generatedpdf:any
   weburl:any
-  screenshot:any
+  screenshot?:any
   attachment:any
   toolClicked?: (toolAction: IToolbarAction) => void;
 }
@@ -72,13 +71,7 @@ const LinkNewRFI : React.FC<IProps> = ({
     attachment,
     toolClicked
   }) => {
-  const ButtonsContainer = styled(Box)({
-    padding: "10px",
-    paddingTop: "20px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  });
+
   const [footerState, SetFooterState] = useState(true);
   const [scheduleImpact, setScheduleImpact] = useState("");
   const [scheduleImpactValue,setScheduleImpactValue]=useState<number | null>(0)
@@ -137,7 +130,7 @@ const LinkNewRFI : React.FC<IProps> = ({
     responsible_contractor_id: null,
     drawing_number: "",
     question: {
-      body:issue?.description || task?.description ||" ",
+      body:issue?.description || task?.description ||"",
       attachments: [],
     },
     specification_section_id: null,
@@ -158,14 +151,18 @@ const LinkNewRFI : React.FC<IProps> = ({
   };
   const handleCostImpactChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value;
+    if (selectedValue !== '') {
     setCostImpact(selectedValue);
     setShowInput(selectedValue === 'yes_known');
+    }
   };
 
   const handleScheduleImpactChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value;
-    setScheduleImpact(selectedValue);
-    setshowValueInput(selectedValue === 'yes_known');
+    if (selectedValue !== '') {
+      setScheduleImpact(selectedValue);
+      setshowValueInput(selectedValue === 'yes_known');
+  }
   };
 
   const handleCostImpactValueChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -183,7 +180,6 @@ const LinkNewRFI : React.FC<IProps> = ({
 
   const handleExternalSubmit = () => {
       formikRef.current?.submitForm();
-    
   };
   
   const handleSubmit = (rfi: {
@@ -224,7 +220,7 @@ const LinkNewRFI : React.FC<IProps> = ({
                   formdata.append(`rfi[${key}][${nestedKey}][${attachment[i].name}]`, attachment[i]);
                 }
               }
-              formdata.append(`rfi[${key}][${nestedKey}][${screenshot.name}]`, screenshot)
+              formdata.append(`rfi[${key}][${nestedKey}][${screenshot?.name}]`, screenshot)
               formdata.append(`rfi[${key}][${nestedKey}][${generatedpdf.name}]`, generatedpdf)
               if (files && files.length > 0) {
                 for (let i = 0; i < files.length; i++) {
@@ -291,15 +287,22 @@ const LinkNewRFI : React.FC<IProps> = ({
       CustomToast("RFI creation failed", "error");
     }
   })
-  .catch((error) => {
-    if (error) {
-      CustomToast("RFI creation failed", "error");
+  .catch((error:any) => {
+    if(error.response.status === 403){
+      CustomToast(error.response.data.errors,'error')
+      handleBack()
+      // setLoading(false)
+    }
+    if(error.response.status === 400){
+      CustomToast(error.response.data.errors,'error')
+      setLoading(false);
     }
   });
+
   }
   const validationSchema = Yup.object().shape({
     subject: Yup.string().transform(removeSpaces).required('Subject is required'),
-    rfi_manager_id: Yup.number().nullable().required('Select RFI manager'),
+    rfi_manager_id: Yup.number().required('Select RFI manager'),
     received_from_login_information_id: Yup.number().nullable().required('Select Received From'),
     question: Yup.object().shape({
       body: Yup.string().trim().required('Question is required'),
@@ -316,16 +319,8 @@ const LinkNewRFI : React.FC<IProps> = ({
       otherwise: Yup.number() 
     })
   });
-  
-   
-   
-  
   const handleBack = () => {
-    let closeNewRFI: IprocoreActions = {
-      action: "closeNewRFI",
-      status: false,
-    };
-    handleInstance(closeNewRFI);
+     handleInstance("closeRFI",);
   };
   return (
     <>
@@ -386,14 +381,13 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
                           name="rfi_manager_id"
                           as="select"
-                          onChange={(e: any) =>
-                            setFieldValue(
-                              "rfi_manager_id",
-                              parseFloat(e.target.value)
-                            )
-                          }
+                          placeHolder="select a person"
+                          onClick={(e: any) => {
+                            const selectedValue = parseFloat(e.target.value);
+                             setFieldValue("rfi_manager_id", isNaN(selectedValue) ? "" : selectedValue);
+                          }}
                         >
-                          <option value="">Select a person</option>
+                          <option >Select a person</option>
                           {rfiManager.map((option: any) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
@@ -416,13 +410,12 @@ const LinkNewRFI : React.FC<IProps> = ({
                           name="distribution_ids"
                           type="Number"
                           as="select"
-                          onChange={(e: any) => {
-                            setFieldValue("distribution_ids", [
-                              parseFloat(e.target.value),
-                            ]);
+                          onClick={(e: any) => {
+                            const selectedValue =parseFloat(e.target.value);
+                            setFieldValue("distribution_ids",isNaN(selectedValue)?"":selectedValue);
                           }}
                         >
-                          <option value="">Select a person</option>
+                          <option value="">Select a Person</option>
                           {potentialDistMem.map((option: any) => (
                             <option key={option.id} value={option.id as number}>
                               {option.name}
@@ -442,10 +435,11 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
                           name="received_from_login_information_id"
                           as="select"
-                          onChange={(e: any) => {
+                          onClick={(e: any) => {
+                            const selectedValue =parseFloat(e.target.value)
                             setFieldValue(
                               "received_from_login_information_id",
-                              parseFloat(e.target.value)
+                            isNaN(selectedValue) ? "" :selectedValue
                             );
                           }}
                         >
@@ -457,7 +451,7 @@ const LinkNewRFI : React.FC<IProps> = ({
                           ))}
                         </Field>
                         {errors.received_from_login_information_id && touched.received_from_login_information_id && (
-                        <div className="text--border-yellow  w-[182px]">{errors.received_from_login_information_id}</div>
+                        <div className="text-border-yellow  w-[182px]">{errors.received_from_login_information_id}</div>
                       )}
                       </div>
                     </div>
@@ -470,10 +464,10 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
                           name="responsible_contractor_id"
                           as="select"
-                          onChange={(e: any) => {
+                          onClick={(e: any) => {
+                            const selectedValue = parseFloat(e.target.value)
                             setFieldValue(
-                              "responsible_contractor_id",
-                              parseFloat(e.target.value)
+                              "responsible_contractor_id", isNaN(selectedValue) ? "": selectedValue
                             );
                           }}
                         >
@@ -511,10 +505,9 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
                           name="specification_section_id"
                           as="select"
-                          onChange={() => {}}
+                          onClick={() => {}}
                         >
-                          <option value="">Select spec section</option>
-                          <option value=""></option>
+                          <option>Select spec section</option>
                         </Field>
                       </div>
                     </div>
@@ -527,14 +520,14 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
                           name="location_id"
                           as="select"
-                          onChange={(e: any) => {
+                          onClick={(e: any) => {
                             setFieldValue(
                               "location_id",
                               parseFloat(e.target.value)
                             );
                           }}
                         >
-                          <option value="">select a location</option>
+                          <option value="">Select a location</option>
                         </Field>
                       </div>
                     </div>
@@ -549,10 +542,10 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
                           name="project_stage_id"
                           as="select"
-                          onChange={(e: any) => {
+                          onCLick={(e: any) => {
+                            const selectedValue = parseFloat(e.target.value);
                             setFieldValue(
-                              "project_stage_id",
-                              parseFloat(e.target.value)
+                              "project_stage_id", isNaN(selectedValue) ? "" : selectedValue
                             );
                           }}
                         >
@@ -613,11 +606,10 @@ const LinkNewRFI : React.FC<IProps> = ({
                         className="border border-border-grey border-solid focus:outline-orange-300 w-full p-2 rounded hover:border-grey-500"
                         name="cost_code_id"
                         as="select"
-                        onChange={(e: any) => {
+                        onClick={(e: any) => {
+                          const selectedValue = parseFloat(e.target.value)
                           setFieldValue(
-                            "received_from_login_information_id",
-                            parseFloat(e.target.value)
-                          );
+                            "cost_code_id", isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
                         <option value="">Select a cost code</option>
