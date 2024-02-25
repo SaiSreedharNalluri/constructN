@@ -54,7 +54,6 @@ import Hotspots from './hotspots';
 import HotspotsCompare from './hotspotsCompare';
 import styles from "../../styles/GenericViewer.module.css"
 import CustomLoader from '../divami_components/custom_loader/CustomLoader';
-import { publish } from '../../services/light-box-service';
 function GenericViewer(props) {
   const genericViewer = 'genericViewer';
   const genericViewerRef = useRef();
@@ -717,7 +716,6 @@ function GenericViewer(props) {
           break;
         case 'sync':
           // console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId));
-          publish("load-measurements", event);
           if (currentIsCompare.current == true) {
             if (isRealityViewer(viewerId)) {
               syncPotreeEvent.current = true;
@@ -846,9 +844,12 @@ function GenericViewer(props) {
   }
 
   const loadMeasurements =(points)=>{
-    const loadAllMeasurements = ["PRJ521675"].includes(project._id);
+    if (potreeCompareUtils.current !== undefined) {
+      potreeCompareUtils.current.loadMeasurements(points);
+    }
+    
     if (potreeUtils.current !== undefined) {
-      potreeUtils.current.loadMeasurements(points, !loadAllMeasurements);
+      potreeUtils.current.loadMeasurements(points);
     }
   }
 
