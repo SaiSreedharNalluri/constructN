@@ -5,6 +5,9 @@ import { PopupIcon, PriorityStatus, PriorityTitle, ProcoreLogo, SecondBodyDiv, S
 import popup from "../../../public/divami_icons/popup.svg"
 import styled from "@emotion/styled";
 import { useAppContext } from "../../../state/appState/context";
+import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
+import listingErrorIcon from "../../../public/divami_icons/listingErrorIcon.svg";
+import { ErrorImageDiv,ImageErrorIcon  } from "../issueListing/IssueListStyles";
 interface ProcoreExistProps {
   selected: any;
 }
@@ -21,6 +24,20 @@ export const ProcoreSectionIcon = styled.div({
   },
 });
 
+export const MessageDivShowErr = styled("div")({
+  width: "350px",
+  height: "40px",
+  fontFamily: "Open Sans",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: "14px",
+  lineHeight: "19px",
+  textAlign: "center",
+  color: "#101F4C",
+  marginTop: "40px",
+  marginLeft: "12px",
+});
+
 
 
 const ProcoreExist: React.FC<ProcoreExistProps> = ({
@@ -30,6 +47,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
   const { type, id } = selected.procore;
   const [details, setDetails] = useState<any>(null);
   const { state: appState} = useAppContext();
+  const [loading , setLoading] = useState<boolean>(false);
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
 
@@ -42,7 +60,10 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
   };
 
   useEffect(() => {
+    setLoading(true)
+  
     if (type === "rfi") {
+      setLoading(true)
       showRfiDetails(id,procoreProjectId).then((response) => {
         if (response) {
           let statusText = response.status;
@@ -53,9 +74,14 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
             statusText ='Open'
           }
           setDetails({...response,  status:statusText,});
+          setLoading(false)
         }
+      })
+      .catch((error) => {
+        setLoading(false)
       });
     } else if (type === "observation") {
+      setLoading(true)
       showObservationDetails(id,procoreProjectId).then((response)=>{
         
         if(response){
@@ -75,19 +101,27 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
     }
 
           setDetails({ ...response,  status:statusText, link: generateLink(type, id) });
+          setLoading(false)
         }
       })
+      .catch((error) => {
+        setLoading(false)
+      });
     }else if ( type === "submittal"){
+      setLoading(true)
       showSubmittalDetails(id,procoreProjectId).then((response)=>{
         
         if(response){
 
           setDetails({ ...response, link: generateLink(type, id) });
+          setLoading(false)
         }
-      })
-    }else{
-      console.log('error in type and id ')
+      }).catch((error) => {
+        setLoading(false)
+      });
+     
     }
+  
   }, []);
 
   const fullDetails = [
@@ -101,7 +135,10 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
 
   return (
     <div>
-        {details && (
+      {loading?(<div>
+        <CustomLoader></CustomLoader>
+      </div>):(<div>
+        {details && details ? (
       <TabOneDiv>
         {fullDetails.map((detail)=>(<SecondBodyDiv key={detail.label}>
             <SecondContPrior>
@@ -115,13 +152,18 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
           src={popup}
           alt={"link"}></PopupIcon>
            <a href={details.link} target="_blank" rel="noopener noreferrer" style={{color:"white"}}>
-           View {type} in Procore</a> 
+           View {type === 'rfi' ? type.toUpperCase() : type.charAt(0).toUpperCase() + type.slice(1)} in Procore</a> 
        </ProcoreSectionIcon>
           </SecondBodyDiv>
         </TabOneDiv>
    
-        )}
-       
+        ):(<div>
+           <ErrorImageDiv>
+          <ImageErrorIcon src={listingErrorIcon} alt="Error Image" />
+          <MessageDivShowErr className="text-center justify-center">{`The ${type.charAt(0).toUpperCase() + type.slice(1)}  you are trying to access might have been deleted at Procore`}</MessageDivShowErr>
+          </ErrorImageDiv>
+        </div>)}
+        </div>)}
     
   </div>
   

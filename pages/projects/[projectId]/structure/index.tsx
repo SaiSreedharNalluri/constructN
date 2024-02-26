@@ -1714,16 +1714,11 @@ const Index: React.FC<IProps> = () => {
     });
 }
     const downloadPdfReport = async () => {
-      // const reportString = <GenerateReport />;
-      // const asPdf = pdf([] as any); 
-      // asPdf.updateContainer(reportString);
-      // const blob = await asPdf.toBlob();
-     // captureCanvas()
       CustomToast('The report generation is started.it will take some time to complete and download...','success')
       const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'fee_acceptance.pdf';
+      a.download = `report_${snapshot?.date}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

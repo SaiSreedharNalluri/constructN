@@ -136,6 +136,7 @@ import ProcoreExist from "../../container/procore/procoreExist";
 import { useAppContext } from "../../../state/appState/context";
 import LinktoProcore from "../../container/LinktoProcore";
 import { IProjects } from "../../../models/IProjects";
+import { isProcoreEnabled } from "../../../utils/constants";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -215,7 +216,6 @@ function BasicTabs(props: any) {
   const[isAdding,setIsAdding]=useState(false)
   const router = useRouter();
   const [showPreview,setShowPreview]=useState(false)
-  const [providerType, setProviderType] = useState("")
   const[attachment,setAttachment]=useState<{
     name: string;
     url: string;
@@ -226,10 +226,9 @@ const [attachmentPopup, setAttachmentPopup] = useState(false);
 
 const userCredentials = localStorage.getItem('userCredentials');
 let credential=null;
-if(userCredentials) {
-  credential=JSON.parse(userCredentials);
-setProviderType(credential.provider)
-}
+if(userCredentials)  credential=JSON.parse(userCredentials);
+  const providerType =credential.provider;
+
  
   useEffect(() => {
     let temp = taskStatus?.map((task: any) => {
@@ -1419,6 +1418,7 @@ const convertObjectToPdf = () => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
+            {isProcoreEnabled ? (
               <div className="mr-[10px]">
             {providerType === 'procore' ? ( 
               <div>
@@ -1449,7 +1449,7 @@ const convertObjectToPdf = () => {
     />
     </Tooltip>
   )}
-  </div>
+  </div>):(<></>)}
  
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
