@@ -64,3 +64,8 @@ export const PROCORE = {
 export const MULTIVERSE ={
     ORIGIN_URL : "http://localhost:3001"
 }
+export const MQTT = {
+    HOSTNAME:'e15f0a91.ala.asia-southeast1.emqxsl.com',
+    USER:'shivram',
+    PASSWORD:';bigWig8',
+}

@@ -64,3 +64,8 @@ export const PROCORE = {
 export const MULTIVERSE = {
     ORIGIN_URL : "${MULTIVERSE_ORIGIN_URL}",
 }
+export const MQTT = {
+    HOSTNAME:'${MQTT_HOSTNAME}',
+    USER:'${MQTT_USER}',
+    PASSWORD:'${MQTT_PASSWORD}',
+}
