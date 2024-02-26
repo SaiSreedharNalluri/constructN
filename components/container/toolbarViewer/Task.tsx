@@ -50,7 +50,7 @@ export type taskToolHandle = {
 function Task({
   rightMenuClickHandler,
   tasksList,
-  setTasksList,
+  // setTasksList,
   currentProject,
   currentSnapshot,
   currentStructure,
@@ -453,16 +453,16 @@ function Task({
           anchor={"right"}
           open={openDrawer}
           onClose={() => {
-            setTasksList([
-              ...tasksList.sort((a: any, b: any) => {
-                return (
-                  new Date(b.createdAt).valueOf() -
-                  new Date(a.createdAt).valueOf()
-                );
-              }),
-            ]);
-
             setOpenDrawer((prev: any) => !prev);
+            // setTasksList([
+            //   ...tasksList.sort((a: any, b: any) => {
+            //     return (
+            //       new Date(b.createdAt).valueOf() -
+            //       new Date(a.createdAt).valueOf()
+            //     );
+            //   }),
+            // ]);
+
           }}
         >
           <TaskList
