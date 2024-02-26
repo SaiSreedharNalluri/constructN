@@ -57,7 +57,7 @@ import { getStructureHierarchy, getStructureList } from "../../../services/struc
 import { IBaseResponse } from "../../../models/IBaseResponse";
 import { IProjects } from "../../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../../models/IStructure";
-import { ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
+import { InProgressProjectUploadMap, ProjectData, ProjectLocalStorageKey } from "../../../state/appState/state";
 import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
 import { ProjectCounts } from "../../../models/IUtils";
@@ -102,10 +102,8 @@ const Header: React.FC<any> = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName, setProjectName] = useState('')
   const [notificationCount, setNotificationCount] = useState(0);
-  const [uploaderCount, setUploaderCount] = useState(0);
   const { state: uploaderState } = useUploaderContext();
   const { state: appState, appContextAction } = useAppContext();
-  const [projectUplObj,setProjectUplObj] = useState<ProjectCounts>({})
   const { appAction } = appContextAction;
   let [userId, setUserId] = useState<string>("");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -262,7 +260,7 @@ const Header: React.FC<any> = ({
     deleteCookie('projectData');
     deleteCookie('isProjectTimeZone');
     localStorage.removeItem('uploaededData')
-    localStorage.removeItem('InProgressPendingUploads')
+    localStorage.removeItem(ProjectLocalStorageKey.InProgressUploadsKey)
     // router.push("/login");
     router.push("/login?logOut=successful");
   };
@@ -378,7 +376,7 @@ const Header: React.FC<any> = ({
   };
   const handleUploaderClose =()=>{
     setOpenUploader(false)
-    Mixpanel.track( {name: "uploader_notification_window_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_notification_window_closed",user_id:userId,notifications_count:uploaderCount})
+    Mixpanel.track( {name: "uploader_notification_window_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_notification_window_closed",user_id:userId,notifications_count:getUploaderCount()})
   }
   const clearNotificationsCount = () => {
     clearUserNotificationsCount().then((response) => {
@@ -396,7 +394,7 @@ const Header: React.FC<any> = ({
       [UploaderStep.ChooseFiles, UploaderStep.Review, UploaderStep.ChooseGCPs].includes(uploaderState.step)
     ) {
       event.preventDefault();
-      localStorage.removeItem('InProgressPendingUploads')
+      localStorage.removeItem(ProjectLocalStorageKey.InProgressUploadsKey)
       event.returnValue = true;
     }
    };
@@ -424,51 +422,23 @@ const Header: React.FC<any> = ({
    }, [url,uploaderState.step,workerExists])
    useEffect(() => {
     window.addEventListener("visibilitychange", ()=>{
-      calculateProjectCounts()
+      updateProjectUploadsInAppState()
     });
     return (() => {
       window.removeEventListener("visibilitychange", ()=>{});
     })
   }, [])
-  useEffect(() => {
-  calculateProjectCounts();
-  }, [appState.inProgressPendingUploads]);
-  const calculateProjectCounts = () => {
-    const counts:ProjectCounts = {};
-    let uploadingcount:number  = 0;
-    let  inProgressPendingUploads = localStorage.getItem('InProgressPendingUploads');
-    if(inProgressPendingUploads!=null && inProgressPendingUploads!= undefined)
-        {
-         JSON.parse(inProgressPendingUploads)&&JSON.parse(inProgressPendingUploads).forEach((jobInfo:IJobs) => {
-            const projectId = jobInfo.project as string;
-
-            if (!counts[projectId]) {
-              counts[projectId] = 1;
-              uploadingcount++;
-            } else {
-              counts[projectId]++;
-              uploadingcount++;
-            }
-          });
-        }
-        else{
-          if (appState.inProgressPendingUploads.length > 0) {
-            appState.inProgressPendingUploads.forEach((jobInfo) => {
-              const projectId = jobInfo.project as string;
-    
-              if (!counts[projectId]) {
-                counts[projectId] = 1;
-                uploadingcount++;
-              } else {
-                counts[projectId]++;
-                uploadingcount++;
-              }
-            });
-          }
-        }
-
-    setProjectUplObj(counts);
-    setUploaderCount(uploadingcount);
+  const getUploaderCount = (): number => {
+    let count = 0;
+    for (const [key, value] of Object.entries(appState.inProgressProjectUploadMap)) {
+      count += value.inProgressUploads.length
+    }
+    return count
+  }
+  const updateProjectUploadsInAppState = () => {
+    let inProgressProjectUploadsString = localStorage.getItem(ProjectLocalStorageKey.InProgressUploadsKey);
+    let inProgressProjectUploadMap: InProgressProjectUploadMap = inProgressProjectUploadsString ? JSON.parse(inProgressProjectUploadsString) as InProgressProjectUploadMap : {}
+    appAction.setInProgressProjectUpload(inProgressProjectUploadMap)
   };
   return (
     <>
@@ -550,11 +520,11 @@ const Header: React.FC<any> = ({
                 setAnchorEl(null)
                 setSupportMenu(false);
                 setOpenProfile(false);
-                Mixpanel.track( {name: "uploader_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_clicked",user_id:userId,notifications_count:uploaderCount})
+                Mixpanel.track( {name: "uploader_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_clicked",user_id:userId,notifications_count:getUploaderCount()})
               }
             }}>
               <div className="hover:bg-[#E7E7E7] p-[7px] rounded-full" >
-                <Badge badgeContent={uploaderCount} color="warning">
+                <Badge badgeContent={getUploaderCount()} color="warning">
                   <Image
                     src={uploadIcon}
                     alt="Uploader Icon"
@@ -568,8 +538,8 @@ const Header: React.FC<any> = ({
             {openUploader && (
               <div>
                  <CustomDrawer onClose={handleUploaderClose}>
-             { Mixpanel.track( {name: "uploader_notification_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_notification_window_loaded",user_id:userId,notifications_count:uploaderCount})}
-                 <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplObj={projectUplObj}/></div>
+             { Mixpanel.track( {name: "uploader_notification_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_notification_window_loaded",user_id:userId,notifications_count:getUploaderCount()})}
+                 <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplMap={appState.inProgressProjectUploadMap}/></div>
                 </CustomDrawer>
               </div>
             )}
