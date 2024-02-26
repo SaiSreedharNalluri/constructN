@@ -1690,6 +1690,8 @@ const Index: React.FC<IProps> = () => {
           if (response.success === true) {  
             setIssueFilterList(response.result.currentIssueList) 
             setTaskFilterList(response.result.currentTaskList)
+            setIssueFilterState(prev => ({...prev, isFilterApplied: false,numberOfFilters:0,filterData:{}}))
+            setTaskFilterState(prev => ({...prev, isFilterApplied: false,numberOfFilters:0,filterData:{}}))
 
             // if (router.query.type !== response.result.data?.currentViewType || router.query.snap !== response.result?.data?.currentSnapshotBase._id) {
             //   router.query.type = response.result.data?.currentViewType as string;
@@ -1843,6 +1845,8 @@ const Index: React.FC<IProps> = () => {
                 setIsList(response.result.currentIssueList)  
                 setTaskFilterList(response.result.currentTaskList)
                 setTasList(response.result.currentTaskList)
+                setIssueFilterState(prev => ({...prev, isFilterApplied: false,numberOfFilters:0,filterData:{}}))
+                setTaskFilterState(prev => ({...prev, isFilterApplied: false,numberOfFilters:0,filterData:{}}))
 
                 conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setGenData","data":' + JSON.stringify(vData) + '}')
                 console.log("Handshake setGenData", response.result)
@@ -1923,7 +1927,7 @@ const Index: React.FC<IProps> = () => {
   const appEventsCB: OnMessageCallbak = (msg: Buffer, packet: any): void => {
     const message = JSON.parse(msg.toString())
     console.log("callback data", JSON.parse(msg.toString()))
-    
+
 
     // if(message.data.currentViewType !== router.query.type || message.data.currentSnapshotBase?._id !== router.query.snap){
     //   updateRouter(message.data.currentViewType,message.data.currentSnapshotBase?._id) //Router Current Type 
