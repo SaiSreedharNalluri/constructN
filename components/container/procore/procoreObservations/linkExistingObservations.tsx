@@ -5,13 +5,12 @@ import {
   CustomTaskProcoreLinks,
 } from '../../../divami_components/issue_detail/IssueDetailStyles';
 import ProcoreHeader from '../procoreHeader';
-import ProcoreFooter from '../procoreFooter';
-import { ListRfi, linkIssueObservation, linkTaskObservation, listObservation, updateAttachmentsExistObservation } from '../../../../services/procore';
+import {  linkIssueObservation, linkTaskObservation, listObservation, updateAttachmentsExistObservation } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
-import { IprocoreActions } from '../../../../models/Iprocore';
 import { useAppContext } from '../../../../state/appState/context';
 import { IToolbarAction } from '../../../../models/ITools';
+import PopupComponent from '../../../popupComponent/PopupComponent';
 interface IProps{
   issue :any
     task:any
@@ -43,23 +42,25 @@ const LinkExistingObservation: React.FC<IProps> = ({
   const [footerState, SetFooterState] = useState(true);
   const [observationData, setObservationData] = useState<any>({});
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [showPopup, setShowPopup] = useState<boolean>(false)
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const handleBack = () => {
-    let closeNewRFI: IprocoreActions = {
-      action: 'newCloseObservation',
-      status: false,
-    };
-    handleInstance(closeNewRFI);
+    handleInstance('CloseObservation');
   };
+
+  const handlePopup=()=>{
+      setShowPopup(false)
+      handleBack();
+  }
 
   const handleRadioChange = (rfinumber: number) => {
     setSelectedItem(rfinumber);
   };
 
-  const handleLink = () => {
+  const handleLink = async () => {
     const selectedObservation:any = observationData.find((item:any) => item.id === selectedItem);
     const observationObject = {
       name: selectedObservation.name,
@@ -80,8 +81,14 @@ const LinkExistingObservation: React.FC<IProps> = ({
     formData.append(`attachments[${generatedpdf.name}]`, generatedpdf );
     formData.append(`attachments[screenShot]`,screenshot)
     try{
+    await  updateAttachmentsExistObservation(selectedItem,formData)
+      .then((response)=>{
+        if(response){
+              CustomToast("Observation linked successfully", 'success');
+           handleCloseProcore();
+        }
+      })
     if (issue) {
-     
       linkIssueObservation(issue.project, issue._id,selectedItem)
         .then((linkResponse) => {
           if (linkResponse) {
@@ -101,16 +108,11 @@ const LinkExistingObservation: React.FC<IProps> = ({
           }
         })
     }
-    updateAttachmentsExistObservation(selectedItem,formData)
-    .then((response)=>{
-      if(response){
-            CustomToast("Observation linked successfully", 'success');
-         handleCloseProcore();
-      }
-    })
+   
   }
   catch(error){
-    CustomToast("Linking Observation failed", 'error');
+    handleCloseProcore();
+   CustomToast("Linking Observation failed", 'error');
  }
   };
 
@@ -124,16 +126,43 @@ const LinkExistingObservation: React.FC<IProps> = ({
       //     const dateB: Date = new Date(b.updated_at);
       //     return dateB.getTime() - dateA.getTime();
       // });
+      if(response?.data && response?.data.length > 0){
 
-      const sortedObservations =response?.data.sort((a:any,b:any)=>{
-        return b.number - a.number
-      })
-        
+        const sortedObservations = response?.data.sort((a:any, b:any) => {
+          const numA = parseInt(a.number.match(/\d+/)[0], 10); 
+          const numB = parseInt(b.number.match(/\d+/)[0], 10);
+      
+         
+          const alphaA = a.number.replace(/\d+/g, '');
+          const alphaB = b.number.replace(/\d+/g, ''); 
+          
+          if (numA !== numB) {
+              return numB - numA; 
+          } else {
+            
+              return alphaA.localeCompare(alphaB); 
+          }
+      });
         setObservationData(sortedObservations);
-        setLoading(false);
-      })
+       
+      }else{
+      
+        setShowPopup(true)
+
+      }setLoading(false)
+    })
       .catch((error) => {
-        console.error('Error fetching Observation data:', error);
+        if(error.response.status === 403){
+          setShowPopup(false)
+          CustomToast(error.response.data.errors,'error')
+          handleBack()
+          // setLoading(false)
+        }
+        if(error.response.status === 400){
+          CustomToast(error.response.errors,'error')
+
+        }
+        setLoading(false)
       });
      
     }, [])
@@ -152,6 +181,8 @@ const LinkExistingObservation: React.FC<IProps> = ({
               {observationData.map((item: any) => (
                <div key={item.id} className="rfi-item">
                <Radio
+               color='warning'
+               size='small'
                  checked={selectedItem === item.id}
                  onChange={() => handleRadioChange(item.id)}
                />
@@ -174,6 +205,18 @@ const LinkExistingObservation: React.FC<IProps> = ({
               Link
             </Button>
          </div>)}
+         {showPopup?(<PopupComponent 
+        modalTitle={'Warning'} 
+        modalmessage={'There Is No Observation Do You Want To Create It?'}
+         primaryButtonLabel={'Yes'} 
+         SecondaryButtonlabel={'Cancel'}
+         secondaryCallback={handlePopup}
+          setShowPopUp={setShowPopup}
+           open={true}
+           callBackvalue={() => {
+           setShowPopup(false)
+          handleInstance("New_Observation");
+          }}></PopupComponent>):(<div></div>)}
         
       </CustomTaskProcoreLinks>
     </>

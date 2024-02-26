@@ -9,14 +9,12 @@ import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { statusData } from "../../../../utils/Procoreconstants";
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
-import { IprocoreActions } from "../../../../models/Iprocore";
 import { useAppContext } from "../../../../state/appState/context";
 import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
 import axios from "axios";
-import { FirstPageOutlined } from "@mui/icons-material";
 import { IToolbarAction } from "../../../../models/ITools";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
@@ -270,10 +268,7 @@ if (prostoreFileIds && prostoreFileIds.length > 0) {
     createSubmittal(formdata,procoreProjectId)
     .then((response) => {
       if (response) {
-        setLoading(false)
-       
-      }
-      if (issue) {
+        if (issue) {
         
         linkIssueSubmittal(issue.project, issue._id, response?.data.id)
           .then((linkResponse) => {
@@ -307,10 +302,21 @@ if (prostoreFileIds && prostoreFileIds.length > 0) {
             }
           });
       }
-    })
-    .catch((error) => {
-      if (error) {
-        CustomToast("Submittal creation failed","error");
+    }else{
+          handleCloseProcore()
+    }})
+    .catch((error:any) => {
+      if(error.response.status === 403){
+        CustomToast(error.response.data.errors,'error')
+        handleBack()
+        // setLoading(false)
+      }
+      if(error.response.status === 400){
+        CustomToast(error.response.errors,'error')
+      }
+      if(error.response.status === 422){
+        CustomToast('Submittal Creation failed','error')
+        handleBack()
       }
     });
   }catch (error) {
@@ -319,16 +325,10 @@ if (prostoreFileIds && prostoreFileIds.length > 0) {
 setLoading(false)
   };
   const handleBack = () => {
-    let closeNewRFI: IprocoreActions = {
-      action: "newCloseObservation",
-      status: false,
-    };
-    handleInstance(closeNewRFI);
+    handleInstance("CloseSubmittal");
   };
   const validationSchema = Yup.object().shape({
-    number: Yup.string().trim().required('Title is required'),
-  
-   
+    number: Yup.string().trim().required('Number is required'), 
   });
   return (
     <>
@@ -384,7 +384,9 @@ setLoading(false)
                         name="specification_section_id"
                         as="select"
                         placeHolder="select Type"
-                      ></Field>
+                      >
+                         <option value="">Select a Spec Section</option>
+                      </Field>
                     </Grid>
                   </Grid>
                   <Grid
@@ -400,7 +402,7 @@ setLoading(false)
                       <Field
                         className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
                         name="revision"
-                        type="text"
+                        type="number"
                         placeHolder=" number"
                       ></Field>
                     </Grid>
@@ -434,7 +436,7 @@ setLoading(false)
                         name="type"
                         as="select"
                         placeHolder="select Type"
-                      ></Field>
+                      ><option value="">Select a Submittal Type</option></Field>
                     </Grid>
                     <Grid item xs={6}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
@@ -445,7 +447,9 @@ setLoading(false)
                         name="submittal_package_id"
                         as="select"
                         placeHolder="select Package"
-                      ></Field>
+                      >
+                        <option value="">Select a Submittal Package</option>
+                      </Field>
                     </Grid>
                   </Grid>
                   <Grid
@@ -463,10 +467,9 @@ setLoading(false)
                         name="responsible_contractor_id"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue =parseFloat(e.target.value);
                           setFieldValue(
-                            "responsible_contractor_id",
-                            parseFloat(e.target.value)
-                          );
+                            "responsible_contractor_id",isNaN(selectedValue)?"":selectedValue);
                         }}
                       >
                         <option value="">
@@ -488,9 +491,9 @@ setLoading(false)
                         name="received_from_id"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue =parseFloat(e.target.value);  
                           setFieldValue(
-                            "received_from_id",
-                            parseFloat(e.target.value)
+                            "received_from_id",isNaN(selectedValue)?"":selectedValue
                           );
                         }}
                       >
@@ -517,12 +520,11 @@ setLoading(false)
                         className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
                         name="submittal_manager_id"
                         as="select"
-                        onChange={(e: any) =>
+                        onChange={(e: any) =>{
+                          const selectedValue =parseFloat(e.target.value);
                           setFieldValue(
-                            "submittal_manager_id",
-                            parseFloat(e.target.value)
-                          )
-                        }
+                            "submittal_manager_id",isNaN(selectedValue)?"":selectedValue )
+                        }}
                       >
                         <option value="">Select a person</option>
                         {rfiManager.map((option: any) => (
@@ -626,10 +628,9 @@ setLoading(false)
                         name="cost_code_id"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue =parseFloat(e.target.value);
                           setFieldValue(
-                            "cost_code_id",
-                            parseFloat(e.target.value)
-                          );
+                            "cost_code_id",isNaN(selectedValue)?"":selectedValue);
                         }}
                       >
                         <option value="">Select a cost code</option>
@@ -656,7 +657,9 @@ setLoading(false)
                         name="location_id"
                         as="select"
                         placeHolder="select Type"
-                      ></Field>
+                      >
+                        <option value="">Select a Location</option>
+                      </Field>
                     </Grid>
                     <Grid item xs={6}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
@@ -667,12 +670,13 @@ setLoading(false)
                         name="distribution_member_ids"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue =parseFloat(e.target.value);
                           setFieldValue("distribution_member_ids", [
-                            parseFloat(e.target.value),
+                            isNaN(selectedValue)?"":selectedValue
                           ]);
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value="">Select a Person</option>
                         {potentialDistMem.map((option:any) => (
                           <option key={option?.id} value={option?.id as number}>
                             {option?.name}

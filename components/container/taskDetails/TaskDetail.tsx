@@ -131,6 +131,7 @@ import procore from "../../../public/divami_icons/procore.svg";
 import { useAppContext } from "../../../state/appState/context";
 import ProcoreLink from "../procore/procoreLinks";
 import LinktoProcore from "../LinktoProcore";
+import { isProcoreEnabled } from "../../../utils/constants";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -756,20 +757,20 @@ const providerType=credential.provider;
                                 callBackvalue={() => {
                                   setAttachmentPopup(false);
                                   deleteTheAttachment(delAttachment, "task");
-                                  setTaskState((prev: any) => {
-                                    const updatedTabOne = {
-                                      ...prev.TabOne,
-                                      attachments:
-                                        prev.TabOne.attachments.filter(
-                                          (attachment: any) =>
-                                            attachment._id !== a?._id
-                                        ),
-                                    };
-                                    return {
-                                      ...prev,
-                                      TabOne: updatedTabOne,
-                                    };
-                                  });
+                                  // setTaskState((prev: any) => {
+                                  //   const updatedTabOne = {
+                                  //     ...prev.TabOne,
+                                  //     attachments:
+                                  //       prev.TabOne.attachments.filter(
+                                  //         (attachment: any) =>
+                                  //           attachment._id !== a?._id
+                                  //       ),
+                                  //   };
+                                  //   return {
+                                  //     ...prev,
+                                  //     TabOne: updatedTabOne,
+                                  //   };
+                                  // });
                                 }}
                               />
                             )}
@@ -1286,7 +1287,6 @@ const handleScreenShotAndAttachment =() =>{
   
     const tableData = [];
     const keyLabels:any = {
-        _id:"ID",
         sequenceNumber:"Sequence Number",
         title:"Title",
         assignees: "Assignees",
@@ -1323,7 +1323,7 @@ const handleScreenShotAndAttachment =() =>{
                 if(data.progress== -1){
                     tableData.push([label,"NA"])
                 }
-            } else if(key === "context" || key === 'screenshot' || key === "attachments") {
+            } else if(key === '_id' || key === "context" || key === 'screenshot' || key === "attachments") {
                 tableData.pop();
             }
              else {
@@ -1387,34 +1387,39 @@ const handleScreenShotAndAttachment =() =>{
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
+            {isProcoreEnabled?(
             <div className="mr-[10px]">
-            {providerType === 'procore' ? (
-              procoreProjectId !== undefined  && procoreCompanyId !==undefined ?(
+            {providerType === 'procore' ? ( 
+              <div>
+              {appState.currentProjectData?.project?.metaDetails?.procore?.projectId !== undefined ?(
                 <div className="p-[6px] hover:bg-[#E7E7E7] ">
-
-     <ProcoreLogo
-       src={procore}
-       alt="logo"
-       style={{ cursor: selectedTask?.integration ? 'not-allowed' : 'pointer' }}
-   onClick={()=>{
-if(!selectedTask.integration){ handleProcoreLinks()}}}
-     />
-   </div>):
-   (<div>
-    <Tooltip title={'Link project to procore'}>
-       <ProcoreLogo
-       onClick={()=>setShowLink(true)}
-     src={procore} 
-     alt="logo"
-/></Tooltip>
-  </div>)) : (
-   <ProcoreLogo
-     src={procore} 
-     alt="logo"
-     title="Login via Procore required"
-   />
-      )}
-      </div>
+              <Tooltip title={'Procore icon'}>
+                <ProcoreLogo
+                  src={procore}
+                  alt="logo"
+                  style={{ cursor: selectedTask?.integration ? 'not-allowed' : 'pointer' }}
+              onClick={()=>{
+          if(!selectedTask.integration){ handleProcoreLinks()}}}
+                />
+                </Tooltip>
+              </div>
+              ):(<div>
+                <Tooltip title={'Link project to procore'}>
+                   <ProcoreLogo
+                   onClick={()=>setShowLink(true)}
+                 src={procore} 
+                 alt="logo"
+    /></Tooltip>
+              </div>)}   
+   </div> ) : (
+    <Tooltip title={'Login via Procore required'}>
+    <ProcoreLogo
+      src={procore} 
+      alt="logo"
+    />
+    </Tooltip>
+  )}
+  </div>):(<></>)}
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon
                   src={Edit}

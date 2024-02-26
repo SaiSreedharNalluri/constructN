@@ -11,17 +11,15 @@ import {
 } from "../../divami_components/issue_detail/IssueDetailStyles";
 import BackArrow from "../../../public/divami_icons/backArrow.svg";
 import { TitleContainer } from "../../divami_components/issue_detail/IssueDetailStyles";
-import { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import rfiAdd from "../../../public/divami_icons/addButton.svg";
 import { HelpCenterOutlined } from "@mui/icons-material";
 import LinkNewObservation from "./procoreObservations/linkNewObservation";
-import jsPDF from "jspdf";
 import LinkNewRFI from "./newRFI/linkNewRfi";
 import {
   contributingBehaviorList,
   contributingConditionsList,
   costImpact,
-  filesUpload,
   getcoastCode,
   getLocation,
   getReceivedFrom,
@@ -29,7 +27,7 @@ import {
   getRfiManager,
   getRfiStage,
   hazardList,
-  listSubmittal,
+  permissions,
   potentialDistributionMembers,
   scheduleImpact,
   specSection,
@@ -43,25 +41,17 @@ import LinkExistingObservation from "./procoreObservations/linkExistingObservati
 import LinkExistingSubmittal from "./procoreSubmittal/linkExistingSubmittal";
 import { useAppContext } from "../../../state/appState/context";
 import router from "next/router";
-import axios from "axios";
-import { screen } from "@testing-library/react";
+import { CustomToast } from "../../divami_components/custom-toaster/CustomToast";
 
 const ProcoreLink = (props: any) => {
   const { handleCloseProcore,
           generatedpdf ,
           issue,
-          setEnabled,
           task,
-          setSelectedIssue,
-          updatedselectedIssue,
           getIssues,
           getTasks,
           screenshot,
           attachment,toolClicked} = props;
-
-
-
-  console.log('checking screen',screenshot)
   const [loading, setLoading] = useState(false)
   const [selectedComponent, setSelectedComponent] = useState<any | null>(null);
 
@@ -80,6 +70,11 @@ const ProcoreLink = (props: any) => {
   const [rfistage, setrfistage] = useState([]);
   const [scheduleImpactt, setScheduleImpact] = useState([]);
   const [costImpacts, setcostImpact] = useState([]);
+  const [userPermission, setUserPermission] =useState<object[]>()
+  const [isAdminObservation, setIsAdminObservation] = useState<boolean>(false)
+  const [isAdminRfi,setIsAdminRfi] =useState<boolean>(false)
+  const [isAdminSubmittal, setIsAdminSubmittal]=useState<boolean>(false)
+  const [isAdminDocument ,setIsAdminDocument]=useState<boolean>(false)
  
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
@@ -87,15 +82,16 @@ const ProcoreLink = (props: any) => {
   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const weburl=()=>{
     if(issue){
-      return `${window.origin}/projects/${issue.project}/structure?structId=${issue.structure}&type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
+      return `${window.origin}/projects/${issue.project}/structure/${issue.structure}/multiverseviewer?type=${router.query.type}&snap=${router.query.snap}&iss=${issue._id}`
     }else{
-      return `${window.origin}/projects/${task.project}/structure?structId=${task.structure}&type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
+      return `${window.origin}/projects/${task.project}/structure/${task.structure}/multiverseviewer?type=${router.query.type}&snap=${router.query.snap}&tsk=${task._id}`
     }
   }
   const fetchData = async () => {
     try {
       setLoading(true);
       const [
+        userPermissionData,
         rfiManagerData,
         receivedFromData,
         responsibleContractorData,
@@ -111,7 +107,9 @@ const ProcoreLink = (props: any) => {
         contributingConditionData,
         hazardData,
         typeData,
+        
       ] = await Promise.all([
+        permissions(procoreProjectId),
         getRfiManager(procoreProjectId),
         getReceivedFrom(procoreProjectId),
         getResponsibleContractor(procoreProjectId),
@@ -126,13 +124,9 @@ const ProcoreLink = (props: any) => {
         contributingBehaviorList(procoreCompanyId),
         contributingConditionsList(procoreCompanyId),
         hazardList(procoreCompanyId),
-        typesList(procoreProjectId),
-
-
-
-        
-      ]);
-
+        typesList(procoreProjectId),      
+]);
+      setUserPermission(userPermissionData.tools);
       setRfiManager(rfiManagerData);
       setReceivedFrom(receivedFromData);
       setResponsibleContractor(responsibleContractorData);
@@ -150,81 +144,44 @@ const ProcoreLink = (props: any) => {
       setTypes(typeData);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      CustomToast(`You don't have the access for this project`,'error')
+      setLoading(false)
     }
   };
-  const [uploadedFileIds, setUploadedFileIds] = useState([]);
-  const [fileUuidNameMap, setFileUuidNameMap] = useState({});
-  // const fileuploadFunction =(files:any)=>{
-  //   const filesToUpload =[generatedpdf,screenshot,...(attachment || []),...(files || [])];
-    
-  //   const uploadPromises =filesToUpload.map((file:any)=>{
-
-  //     const filename =file?.name;
-  //     const contentType =file?.type;
-
-  //     const formattedData = {
-  //       "response_filename": filename,
-  //       "response_content_type": contentType,
-  //   };
-  //   if(generatedpdf && screenshot){
-  //   return filesUpload(procoreProjectId, formattedData);}
-  //   });
-
-  //   Promise.all(uploadPromises).then(uploadResponses =>{
-  //     const ids:any = [];
-  //     const uuidNameMap:any = {};
-  //     uploadResponses.forEach((response, index) => {
-  //       if (response) {
-  //           const id = response.uuid;
-  //           const filename = filesToUpload[index]?.name;
-  //           uuidNameMap[id] = filename;
-  //           ids.push(id);
-  //           const url = response.url;
-  //           const key = response.fields['key'];
-  //           const contentType = response.fields['Content-Type'];
-  //           const contentDisposition = response.fields['Content-Disposition'];
-  //           const policy = response.fields['policy'];
-  //           const credential = response.fields['x-amz-credential'];
-  //           const algorithm = response.fields['x-amz-algorithm'];
-  //           const date = response.fields['x-amz-date'];
-  //           const signature = response.fields['x-amz-signature'];
-
-  //           const formData = new FormData();
-
-  //           formData.append(`key`, key);
-  //           formData.append(`Content-Type`, contentType);
-  //           formData.append(`Content-Disposition`, contentDisposition);
-  //           formData.append(`policy`, policy);
-  //           formData.append(`x-amz-credential`, credential);
-  //           formData.append(`x-amz-algorithm`, algorithm);
-  //           formData.append(`x-amz-date`, date);
-  //           formData.append(`x-amz-signature`, signature);
-  //           formData.append(`file`, filesToUpload[index]);
-
-
-  //           axios.post(url,formData,{
-  //             headers:{
-  //               'Content-Type':'multipart/form-data',
-  //             },
-  //           })
-  //           .then(response=>{
-  //             console.log('dharani api response',response);
-             
-
-  //           })
-  //       }})
-  //       setUploadedFileIds(ids); 
-  //       setFileUuidNameMap(uuidNameMap);
-      
-  //   })
-  // }
   useEffect(() => {
     fetchData();
-    //fileuploadFunction('');
   }, [generatedpdf,screenshot]);
-console.log('before testing its',fileUuidNameMap)
-  const handleInstanceClick = (componentType: any) => {
+
+  useEffect(() => {
+    if (userPermission) {
+      let isAdminForObservation = userPermission?.some((permission: any) => 
+        permission?.name === "observations" && 
+        permission?.user_access_level && 
+        permission?.user_access_level.name === "Admin"
+      );
+      let isAdminForRfi = userPermission?.some((permission:any)=>
+      permission?.name === "rfi"  &&
+      permission?.user_access_level && 
+      permission?.user_access_level.name ==="Admin" );
+
+      let isAdminForSubmittal = userPermission?.some((permission:any)=>
+      permission?.name ==='submittal_log' &&
+      permission?.user_access_level &&
+      permission?.user_access_level.name ==='Admin')
+
+      let isAdminForDocument = userPermission?.some((permission:any)=>
+      permission?.name === 'documents' &&
+      permission?.user_access_level &&
+      permission?.user_access_level.name ==="Admin")
+
+      setIsAdminSubmittal(isAdminForSubmittal)
+      setIsAdminRfi(isAdminForRfi)
+      setIsAdminObservation(isAdminForObservation);
+      setIsAdminDocument(isAdminForDocument)
+    }
+  }, [userPermission]);
+
+  const handleInstanceClick = (componentType:string) => {
     switch (componentType) {
       case "RFI":
         setSelectedComponent(
@@ -252,7 +209,7 @@ console.log('before testing its',fileUuidNameMap)
           />
         );
         break;
-      case "closeNewRFI":
+      case "closeRFI":
         setSelectedComponent(null);
         break;
       case "Existing_RFI":
@@ -271,7 +228,7 @@ console.log('before testing its',fileUuidNameMap)
             toolClicked={toolClicked}></LinkExistingRfi>
         )
         break;
-      case "newCloseObservation":
+      case "CloseObservation":
         setSelectedComponent(null);
         break;
       case "New_Observation":
@@ -348,6 +305,9 @@ console.log('before testing its',fileUuidNameMap)
           toolClicked={toolClicked}
           ></LinkExistingSubmittal>)
         break;
+        case "CloseSubmittal":
+        setSelectedComponent(null)
+        break;
        default:
         setSelectedComponent(null);
     }
@@ -390,7 +350,11 @@ console.log('before testing its',fileUuidNameMap)
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100 "
             onClick={() => {
+              if(isAdminRfi){
               handleInstanceClick("RFI");
+              }else{
+                CustomToast('You need to have Procore Admin access to enable this feature','error');
+              }
             }}
           >
             <AddRfi className="" src={rfiAdd} alt="Link new RFI"></AddRfi>
@@ -400,7 +364,11 @@ console.log('before testing its',fileUuidNameMap)
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100"
             onClick={() => {
+              if(isAdminRfi){
                 handleInstanceClick("Existing_RFI");
+              }else{
+                CustomToast('You need to have Procore Admin access to enable this feature','error');
+              }
               }}
             >
           
@@ -414,7 +382,11 @@ console.log('before testing its',fileUuidNameMap)
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100"
             onClick={() => {
+              if(isAdminObservation){
               handleInstanceClick("New_Observation");
+            }else{
+              CustomToast('You need to have Procore Admin access to enable this feature','error')
+            }
             }}
           >
             <AddRfi
@@ -430,7 +402,11 @@ console.log('before testing its',fileUuidNameMap)
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100"
             onClick={() => {
+              if(isAdminObservation){
                 handleInstanceClick("Existing_Observation");
+              }else{
+                CustomToast('You need to have Procore Admin access to enable this feature','error');
+              }
               }}
           >
             <HelpCenterOutlined className="ml-45 mt-6"></HelpCenterOutlined>
@@ -443,7 +419,11 @@ console.log('before testing its',fileUuidNameMap)
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100"
             onClick={() => {
+              if(isAdminSubmittal && isAdminDocument){
               handleInstanceClick("Link_new_submittal");
+            }else{
+              CustomToast('You need to have Procore Admin access to enable this feature','error')
+            }
             }}
           >
             <AddRfi className="" src={rfiAdd} alt="Link new submittal"></AddRfi>
@@ -455,7 +435,11 @@ console.log('before testing its',fileUuidNameMap)
             id="targetElementId"
             className="cursor-pointer hover:bg-gray-100"
             onClick={() => {
+              if(isAdminSubmittal && isAdminDocument){
              handleInstanceClick("Existing_Submittal");
+              }else{
+                CustomToast('You need to have Procore Admin access to enable this feature','error')
+              }
             
             }}
           >

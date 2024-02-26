@@ -39,6 +39,7 @@ function createAxiosResponseInterceptor() {
   const interceptor = procoreinstance.interceptors.response.use(
     (response) => {
       if (response.data.success === false) {
+        return response
         // Sentry.captureException(response.data.message)
       }
       return response;
@@ -49,8 +50,7 @@ function createAxiosResponseInterceptor() {
       console.log("Axios Caught Error", error);
       console.log("config error, retry ", originalConfig);
 
-      if (error) {
-      
+      if (error.response.status===401) {
         procoreinstance.interceptors.response.eject(interceptor);
         console.log("401 My Old Refresh token is", getLocalRefreshToken());
         if (isRefreshing) {
