@@ -204,6 +204,7 @@ const ProcoreLink = (props: any) => {
             scheduleImpactt={scheduleImpactt}
             costImpacts={costImpacts}
             specSection={specSectionn}
+            location={location}
             handleCloseProcore={handleCloseProcore}
             toolClicked={toolClicked}
           />
@@ -250,6 +251,9 @@ const ProcoreLink = (props: any) => {
             hazard={hazard}
             contributingCondition={contributingCondition}
             contributingBehavior={contributingBehavior}
+            trade={trades}
+            location={location}
+            specSection={specSectionn}
             toolClicked={toolClicked}
           ></LinkNewObservation>
         );
@@ -285,6 +289,8 @@ const ProcoreLink = (props: any) => {
             responsibleContractor={responsibleContractor}
             potentialDistMem={potentialDistMem}
             coastCodee={coastCodee}
+            specSection={specSectionn}
+            location={location}
             handleInstance={handleInstanceClick}
             toolClicked={toolClicked}
           ></NewLinkSubmittal>

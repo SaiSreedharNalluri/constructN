@@ -1418,20 +1418,21 @@ const convertObjectToPdf = () => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
-            {isProcoreEnabled ? (
+            {isProcoreEnabled?(
               <div className="mr-[10px]">
             {providerType === 'procore' ? ( 
               <div>
-              {appState.currentProjectData?.project.metaDetails?.procore?.projectId !== undefined ? (
+              {appState.currentProjectData?.project?.metaDetails?.procore?.projectId !== undefined ?(
                 <div className="p-[6px] hover:bg-[#E7E7E7] ">
-
+              <Tooltip title={ selectedIssue?.integration ? 'Procore Linked' : 'Link To Procore' }>
                 <ProcoreLogo
                   src={procore}
                   alt="logo"
-                  style={{ cursor: selectedIssue.integration ? 'not-allowed' : 'pointer' }}
+                  style={{ cursor: selectedIssue?.integration ? 'not-allowed' : 'pointer' }}
               onClick={()=>{
           if(!selectedIssue.integration){ handleProcoreLinks()}}}
                 />
+                </Tooltip>
               </div>
               ):(<div>
                 <Tooltip title={'Link project to procore'}>
