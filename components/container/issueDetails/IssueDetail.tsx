@@ -134,6 +134,7 @@ import ProcoreLink from "../procore/procoreLinks";
 import { ProcoreLogo } from "../../divami_components/issue_detail/IssueDetailStyles";
 import procore from "../../../public/divami_icons/procore.svg";
 import LinktoProcore from "../../container/LinktoProcore";
+import { isProcoreEnabled } from "../../../utils/constants";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -1263,9 +1264,9 @@ const CustomIssueDetailsDrawer = (props: any) => {
   const [generatedpdf,setGeneratedpdf]=useState<any>(undefined)
   const [screenshot, setscreenshot]=useState<any>(undefined)
   const [attachment,setAttachment]=useState<any>(undefined)
-  const handleProcoreLinks = () =>{
-    handleScreenShotAndAttachment()
-    convertObjectToPdf()
+  const handleProcoreLinks = async () =>{
+   await handleScreenShotAndAttachment()
+   await convertObjectToPdf()
     setProcorePopup(true)
     setIssueDetail(false)
   }
@@ -1302,7 +1303,7 @@ const  handleCloseProcore=()=>{
           setscreenshot(screenshotFile);
       })
       .catch(error => {
-          console.error('Error fetching screenshot:', error);
+          console.log("ScreenShot is not fetched");
       });
  }
 
@@ -1319,7 +1320,6 @@ const convertObjectToPdf = () => {
   const tableData = [];
 
   const keyLabels:any = {
-      _id:"ID",
       sequenceNumber:"Sequence Number",
       title:"Title",
       assignees: "Assignees",
@@ -1356,7 +1356,7 @@ const convertObjectToPdf = () => {
               if(data.progress== -1){
                   tableData.push([label,"NA"])
               }
-          } else if(key === "context" || key === 'screenshot' || key === "attachments") {
+          } else if(key === '_id' || key === "context" || key === 'screenshot' || key === "attachments") {
               tableData.pop();
           }
            else {
@@ -1429,12 +1429,13 @@ const convertObjectToPdf = () => {
               </DarkToolTip>
             </LeftTitleCont>
             <RightTitleCont>
+              {isProcoreEnabled?(
               <div className="mr-[10px]">
             {providerType === 'procore' ? ( 
               <div>
               {appState.currentProjectData?.project?.metaDetails?.procore?.projectId !== undefined ?(
                 <div className="p-[6px] hover:bg-[#E7E7E7] ">
-
+              <Tooltip title={'Procore icon'}>
                 <ProcoreLogo
                   src={procore}
                   alt="logo"
@@ -1442,6 +1443,7 @@ const convertObjectToPdf = () => {
               onClick={()=>{
           if(!selectedIssue.integration){ handleProcoreLinks()}}}
                 />
+                </Tooltip>
               </div>
               ):(<div>
                 <Tooltip title={'Link project to procore'}>
@@ -1459,7 +1461,7 @@ const convertObjectToPdf = () => {
     />
     </Tooltip>
   )}
-  </div>
+  </div>):(<></>)}
  
               <div className="rounded-full p-[6px] hover:bg-[#E7E7E7] mr-[10px]">
                 <EditIcon

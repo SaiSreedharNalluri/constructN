@@ -163,7 +163,7 @@ const ProjectDetails: React.FC = () => {
             </div>
             <div className="flex items-center">
               {providerType === 'procore' ? <>
-              {procoreProjectId ? <div className="text-[#252BBE] cursor-pointer mr-4 underline" onClick={()=>(window.open(`${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/home`,'_blank'))}>Project Id : {procoreProjectId}</div> :<Button
+              {procoreProjectId ? <div className="text-[#252BBE] cursor-pointer mr-4 underline" onClick={()=>(window.open(`${PROCORE.SANDBOX_URL}/${procoreProjectId}/project/home`,'_blank'))}>ProcoreProject Id : {procoreProjectId}</div> :<Button
                 className="bg-[#F1742E] cursor-pointer mr-4 normal-case hover:bg-[#F1742E] text-[#fff] font-sans"
                 onClick={() =>setShowLink(true)}
               >
