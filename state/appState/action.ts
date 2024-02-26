@@ -1,14 +1,15 @@
 import { IJobs } from "../../models/IJobs";
 import { IProjects } from "../../models/IProjects";
 import { ChildrenEntity, IStructure } from "../../models/IStructure";
-import { ProjectData } from "./state";
+import { InProgressProjectUploadMap, ProjectData } from "./state";
 
 export enum AppActionType {
     projectListViewLoaded,
     appendProjectData,
     setCurrentProjectData,
     addCaptureUpload,
-    updateCaptureUploadStatus,
+    // updateCaptureUploadStatus,
+    setInProgressProjectUpload,
     removeCaptureUpload,
     setIsLoading
 }
@@ -32,10 +33,15 @@ export interface addCaptureUpload {
   payload: { job: IJobs}
 }
 
-export interface updateCaptureUploadStatus {
-  type: AppActionType.updateCaptureUploadStatus;
-  payload: { job: IJobs}
+export interface setInProgressProjectUpload {
+  type: AppActionType.setInProgressProjectUpload;
+  payload: { inProgressProjectUploadMap: InProgressProjectUploadMap}
 }
+
+// export interface updateCaptureUploadStatus {
+//   type: AppActionType.updateCaptureUploadStatus;
+//   payload: { job: IJobs}
+// }
 
 export interface removeCaptureUpload {
   type: AppActionType.removeCaptureUpload;
@@ -73,12 +79,18 @@ export const appContextActions = (dispatch: React.Dispatch<AppActions>) => {
           payload: { job: job }
         })
       },
-      updateCaptureUploadStatus: (job :IJobs) => {
+      setInProgressProjectUpload: (inProgressProjectUploadMap : InProgressProjectUploadMap) => {
         dispatch({
-          type: AppActionType.updateCaptureUploadStatus,
-          payload: { job: job }
+          type: AppActionType.setInProgressProjectUpload,
+          payload: { inProgressProjectUploadMap: inProgressProjectUploadMap }
         })
       },
+      // updateCaptureUploadStatus: (job :IJobs) => {
+      //   dispatch({
+      //     type: AppActionType.updateCaptureUploadStatus,
+      //     payload: { job: job }
+      //   })
+      // },
       removeCaptureUpload: (job :IJobs) => {
         dispatch({
           type: AppActionType.removeCaptureUpload,
@@ -96,6 +108,7 @@ export type AppActions = projectListViewLoaded
  | appendProjectData
  | setCurrentProjectData
  | addCaptureUpload
- | updateCaptureUploadStatus
+ | setInProgressProjectUpload
+//  | updateCaptureUploadStatus
  | removeCaptureUpload
  | setIsLoading

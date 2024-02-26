@@ -1,6 +1,7 @@
 import { IJobs } from "../../models/IJobs";
+import { getJobIdFromModelOrString, getProjectIdFromModelOrString, getStructureIdFromModelOrString } from "../../utils/utils";
 import { AppActionType, AppActions } from "./action";
-import { AppState } from "./state";
+import { AppState, InProgressProjectUploadMap, InProgressProjectUploads, ProjectLocalStorageKey } from "./state";
 
 export const appReducer = (state: AppState, action: AppActions): AppState => {
     switch (action.type) {
@@ -29,77 +30,79 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 ...state,
                 currentProjectData: action.payload.projectData
             }
-        case AppActionType.addCaptureUpload:
-            let inProgressUploads = localStorage.getItem('InProgressPendingUploads');
-           if (state.inProgressPendingUploads.length > 0) {
-               let jobs = state.inProgressPendingUploads.concat([action.payload.job])
-                if(inProgressUploads !=undefined && inProgressUploads != null)
-                {    
-                    if(JSON.parse(inProgressUploads).some((obj:IJobs)=>obj._id === action.payload.job._id)!=true)
-                    {
-                    localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat([action.payload.job])))
-                    }
-                    return {
-                        ...state,
-                        inProgressPendingUploads: jobs
-                    }   
-                }
-                else{
-                    localStorage.setItem('InProgressPendingUploads',stringifySafe(jobs))
-                    return {
-                        ...state,
-                        inProgressPendingUploads: jobs
-                    }
-                }
-               
-            } else {
-                if(inProgressUploads !=undefined && inProgressUploads != null)
-                {
-                    if(JSON.parse(inProgressUploads).some((obj:IJobs)=>obj._id === action.payload.job._id)!=true)
-                    {
-                       
-                        localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(inProgressUploads).concat(action.payload.job)))
-                    }
-                    return {
-                        ...state,
-                        inProgressPendingUploads: [action.payload.job]
-                    }
-                }
-                else{
-                    localStorage.setItem('InProgressPendingUploads', stringifySafe([action.payload.job]))
-                    return {
-                        ...state,
-                        inProgressPendingUploads: [action.payload.job]
-                    }
-                }
-               
-            }
-
-        case AppActionType.updateCaptureUploadStatus:
-            let restOfTheJobs = state.inProgressPendingUploads.filter((job, index) => {
-                return job._id !== action.payload.job._id
-            })
-            localStorage.setItem('InProgressPendingUploads',stringifySafe(restOfTheJobs))
+        case AppActionType.setInProgressProjectUpload:
             return {
                 ...state,
-                inProgressPendingUploads: restOfTheJobs.concat([action.payload.job])
+                inProgressProjectUploadMap: action.payload.inProgressProjectUploadMap
+            }
+        case AppActionType.addCaptureUpload:
+            let job  = action.payload.job
+            let projectId = getProjectIdFromModelOrString(job.project)
+            let projectName = state.currentProjectData?.project.name
+            let inProgressProjects = Object.keys(state.inProgressProjectUploadMap)
+            if (inProgressProjects.length > 0 && inProgressProjects.includes(projectId)) {
+                let inProgressUploads = state.inProgressProjectUploadMap[projectId].inProgressUploads
+                let inProgressProjectUpload: InProgressProjectUploads = {
+                    ...state.inProgressProjectUploadMap[projectId],
+                    inProgressUploads: [...inProgressUploads, job]
+                }
+                let newProjectUploadMap: InProgressProjectUploadMap = {
+                    ...state.inProgressProjectUploadMap,
+                    [projectId as string]: inProgressProjectUpload
+                }
+                localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
+                return {
+                    ...state,
+                    inProgressProjectUploadMap: newProjectUploadMap
+                }
+            } else {
+                let inProgressProjectUpload: InProgressProjectUploads = {
+                    projectName: projectName !== undefined ? projectName : "Unnamed",
+                    inProgressUploads: [job]
+                }
+                let newProjectUploadMap: InProgressProjectUploadMap = { 
+                    ...state.inProgressProjectUploadMap,
+                    [projectId as string]: inProgressProjectUpload
+                }
+                localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
+                return {
+                    ...state,
+                    inProgressProjectUploadMap: newProjectUploadMap
+                }
             }
         case AppActionType.removeCaptureUpload:
-            let pendingUploads = localStorage.getItem('InProgressPendingUploads'); 
-        let pendingJobs = state.inProgressPendingUploads.filter((job, index) => {
-            return job._id !== action.payload.job._id
-        })
-        if(pendingUploads!=null && pendingUploads!= undefined)
-        {
-            localStorage.setItem('InProgressPendingUploads',stringifySafe(JSON.parse(pendingUploads).filter((job:IJobs) => {
-                return job._id !== action.payload.job._id
-            })))
-        }
-        //localStorage.setItem('InProgressPendingUploads',stringifySafe(pendingJobs))
-        return {
-            ...state,
-            inProgressPendingUploads: pendingJobs
-        }
+            let removeJob = action.payload.job
+            let removeProjectId = getProjectIdFromModelOrString(removeJob.project)
+            let inProgressProjectsBeforeRemoveJob = Object.keys(state.inProgressProjectUploadMap)
+            if (inProgressProjectsBeforeRemoveJob.length > 0 && inProgressProjectsBeforeRemoveJob.includes(removeProjectId)) {
+                if (state.inProgressProjectUploadMap[removeProjectId].inProgressUploads.length > 1) {
+                    let inProgressUploads = state.inProgressProjectUploadMap[removeProjectId].inProgressUploads.filter((job, index) => {
+                        return job._id !== removeProjectId
+                    })
+                    let inProgressProjectUpload: InProgressProjectUploads = {
+                        ...state.inProgressProjectUploadMap[removeProjectId],
+                        inProgressUploads: inProgressUploads
+                    }
+                    let newProjectUploadMap: InProgressProjectUploadMap = {
+                        ...state.inProgressProjectUploadMap,
+                        [removeProjectId as string]: inProgressProjectUpload
+                    }
+                    localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
+                    return {
+                        ...state,
+                        inProgressProjectUploadMap: newProjectUploadMap
+                    }
+                } else {
+                    let {[removeProjectId]: _, ...newInProgressProjectUploadMap} = state.inProgressProjectUploadMap
+                    localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newInProgressProjectUploadMap))
+                    return {
+                        ...state,
+                        inProgressProjectUploadMap: newInProgressProjectUploadMap
+                    }
+                }
+            } else {
+                return state
+            }
         case AppActionType.setIsLoading:
             return {
                 ...state,
@@ -109,7 +112,7 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
             return state
     }
 }
-export function stringifySafe(Ijobarray:IJobs[]) {
+export function stringifySafe(inProgressProjectUploadMap:InProgressProjectUploadMap) {
     const seen = new WeakSet();
 
     function replacer(key:any,value:any) {
@@ -121,5 +124,5 @@ export function stringifySafe(Ijobarray:IJobs[]) {
         }
         return value;
     }
-    return JSON.stringify(Ijobarray, replacer);
+    return JSON.stringify(inProgressProjectUploadMap, replacer);
 }

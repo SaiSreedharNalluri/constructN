@@ -354,10 +354,13 @@ const Index: React.FC<IProps> = () => {
   }
 
   const handleOnWorkerCompletion = (captureId:string) => {
-    let job = appState.inProgressPendingUploads.find((job) => {
-      return getCaptureIdFromModelOrString(job.captures[0]) === captureId
-    })
-    if(job) {
+    let job;
+    for (const [key, value] of Object.entries(appState.inProgressProjectUploadMap)) {
+      job = value.inProgressUploads.find((job) => {
+        return getCaptureIdFromModelOrString(job.captures[0]) === captureId
+      })
+    }
+    if(job !== undefined) {
       updateUploadCompletionStatus(job, captureId)
     } else {
       console.log("TestingUploader handlWorkerCompletionStatus no job in appState: ")
