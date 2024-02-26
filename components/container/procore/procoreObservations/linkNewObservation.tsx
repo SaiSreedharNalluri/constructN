@@ -254,10 +254,10 @@ createObservation(formData)
             {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue =
                Object.values(values).every((value) =>{
-                if(values.name!=="" && values.type_id!==null && values.status!=="" && values.description!==""){
-                   return false;
+                if(values.name!=="" && values.type_id!==null && values.type_id !== undefined && values.status!=="" && values.description!==""){
+                   return true;
                 }else{
-                  return true;
+                  return false;
                 }
               }
                 )
@@ -281,10 +281,10 @@ createObservation(formData)
                         as="select"
                         onChange={(e:any) => {
                           const selectedValue = parseFloat(e.target.value)
-                          setFieldValue("type_id", isNaN(selectedValue) ? "" : selectedValue);
+                          setFieldValue("type_id", isNaN(selectedValue) ? undefined : selectedValue);
                         }}
                       >
-                        <option value="">Select a type</option>
+                        <option value={undefined} className="text-text-gray">Select a type</option>
 
                         {types.map((option: any) => (
                           <option
@@ -310,7 +310,7 @@ createObservation(formData)
                           setFieldValue("status", e.target.value);
                         }}
                       >
-                        <option value="">Select a status</option>
+                        <option value='' className="text-text-gray">Select a status</option>
 
                         {statusData.map((option: any) => (
                           <option
@@ -353,7 +353,7 @@ createObservation(formData)
                           setFieldValue("priority", e.target.value);
                         }}
                       >
-                        <option value="">Select a Priority</option>
+                        <option value='' className="text-text-gray">Select a Priority</option>
                         {priorityData.map((option: any) => (
                           <option
                             className=""
@@ -455,10 +455,10 @@ createObservation(formData)
                         as="select"
                         onChange={(e: any) =>{
                           const selectedValue = parseFloat(e.target.value);
-                          setFieldValue( "assignee_id",isNaN(selectedValue) ? "" : selectedValue)
+                          setFieldValue( "assignee_id",isNaN(selectedValue) ? undefined : selectedValue)
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value={undefined} className="text-text-gray">Select a person</option>
                           {rfiManager.map((option: any) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
@@ -477,11 +477,11 @@ createObservation(formData)
                         onChange={(e: any) => {
                           const selectedValue = parseFloat(e.target.value);
                           setFieldValue("distribution_member_ids", [
-                            isNaN(selectedValue) ? "" : selectedValue
+                            isNaN(selectedValue) ? undefined : selectedValue
                           ]);
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value={undefined} className="text-text-gray">Select a person</option>
                         {potentialDistMem.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -532,7 +532,7 @@ createObservation(formData)
                             "contributing_condition_id",isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
-                        <option value="">Select a Conditions</option>
+                        <option value="" className="text-text-gray">Select a Conditions</option>
                         {contributingCondition.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -552,7 +552,7 @@ createObservation(formData)
                             "contributing_behavior_id",isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
-                        <option value="">Select a Contributing Behavior</option>
+                        <option value="" className="text-text-gray">Select a Contributing Behavior</option>
                         {contributingBehavior.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -576,10 +576,10 @@ createObservation(formData)
                         onChange={(e: any) => {
                           const selectedValue =parseFloat(e.target.value);
                           setFieldValue(
-                            "hazard_id",isNaN(selectedValue)?"":selectedValue);
+                            "hazard_id",isNaN(selectedValue)?undefined:selectedValue);
                         }}
                       >
-                        <option value="">Select a Hazard</option>
+                        <option value={undefined} className="text-text-gray">Select a Hazard</option>
                         {hazard.map((option: any) => (
                           <option
                             className=""

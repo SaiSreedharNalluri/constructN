@@ -196,18 +196,20 @@ const LinkNewRFI : React.FC<IProps> = ({
   };
   const handleCostImpactChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value;
-    if (selectedValue !== '') {
+   
     setCostImpact(selectedValue);
+    if (selectedValue === "yes_known") {
     setShowInput(selectedValue === 'yes_known');
     }
   };
 
   const handleScheduleImpactChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value;
-    if (selectedValue !== '') {
-      setScheduleImpact(selectedValue);
+     setScheduleImpact(selectedValue);
+      if(selectedValue === "yes_known"){
       setshowValueInput(selectedValue === 'yes_known');
-  }
+    }
+  
   };
 
   const handleCostImpactValueChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -250,10 +252,14 @@ const LinkNewRFI : React.FC<IProps> = ({
   }) => {
     setLoading(true)
     rfi.question.body= rfi.question.body +`<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>` ;
+    if(scheduleImpact !==''){
     rfi.schedule_impact.status = scheduleImpact;
+    }
     rfi.cost_impact.status = costImpact;
-    rfi.cost_impact.value = costImpactValue;
-    rfi.schedule_impact.value = scheduleImpactValue;
+    if(costImpact === 'yes_known'){
+      rfi.cost_impact.value = costImpactValue;}
+    if(scheduleImpact === 'yes_known'){
+    rfi.schedule_impact.value = scheduleImpactValue;}
     const formdata:any =new FormData()
     Object.entries(rfi).forEach(([key, value]) => {
       if (value !== null && value !== undefined && value !== "" && !(Array.isArray(value) && value.length === 0)) {
@@ -382,21 +388,29 @@ const LinkNewRFI : React.FC<IProps> = ({
             validationSchema={validationSchema}
           >
             {({ setFieldValue,errors, touched ,values }) => {
-              const allFieldsTrue = 
-               Object.values(values).every((value) =>{
-                if(values.subject!=="" && 
-                values.rfi_manager_id!==null
-                 && values.received_from_login_information_id!==null &&
-                  values.question.body !=="" && 
-                  (values.cost_impact.status !== "yes_known" || (values.cost_impact.status === "yes_known" && values.cost_impact.value !== undefined && values.cost_impact.value !== null)) &&
-                  (values.schedule_impact.status !== "yes_known" || (values.schedule_impact.status === "yes_known" && values.schedule_impact.value !== undefined && values.schedule_impact.value !== null))){
-                   return false;
-                }else{
-                  return true;
-                }
+            const isAllFieldsTrue = Object.values(values).every(value => {
+              if (
+                  values.subject !== "" &&
+                  values.rfi_manager_id !== undefined && values.rfi_manager_id !== null  &&
+                  values.received_from_login_information_id !== undefined && values.received_from_login_information_id !== null &&
+                  values.question.body !== "" &&
+                  (values.cost_impact.status !== "yes_known" ||
+                      (values.cost_impact.status === "yes_known" &&
+                          values.cost_impact.value !== undefined &&
+                          values.cost_impact.value !== null)) &&
+                  (values.schedule_impact.status !== "yes_known" ||
+                      (values.schedule_impact.status === "yes_known" &&
+                          values.schedule_impact.value !== undefined &&
+                          values.schedule_impact.value !== null))
+              ) {
+                  return true; 
+              } else {
+                  return false; 
               }
-                )
-              setIsAllFieldsTrue(allFieldsTrue)
+          });
+          
+          setIsAllFieldsTrue(isAllFieldsTrue);
+          
               return(
               <Form>
                 <div className=" px-1  overflow-y-auto calc-h84 mt-5 ">
@@ -425,10 +439,10 @@ const LinkNewRFI : React.FC<IProps> = ({
                           //placeHolder="select a person"
                           onClick={(e: any) => {
                             const selectedValue = parseFloat(e.target.value);
-                             setFieldValue("rfi_manager_id", isNaN(selectedValue) ? "" : selectedValue);
+                             setFieldValue("rfi_manager_id", isNaN(selectedValue) ? undefined : selectedValue);
                           }}
                         >
-                          <option className="text-text-gray">Select a person</option>
+                          <option value={undefined} className="text-text-gray">Select a person</option>
                           {rfiManager.map((option: any) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
@@ -451,10 +465,10 @@ const LinkNewRFI : React.FC<IProps> = ({
                           as="select"
                           onClick={(e: any) => {
                             const selectedValue =parseFloat(e.target.value);
-                            setFieldValue("distribution_ids",isNaN(selectedValue)?"":selectedValue);
+                            setFieldValue("distribution_ids",isNaN(selectedValue)? undefined:selectedValue);
                           }}
                         >
-                          <option value="">Select a Person</option>
+                          <option value={undefined} className="text-text-gray">Select a Person</option>
                           {potentialDistMem.map((option: any) => (
                             <option key={option.id} value={option.id as number}>
                               {option.name}
@@ -476,11 +490,11 @@ const LinkNewRFI : React.FC<IProps> = ({
                             const selectedValue =parseFloat(e.target.value)
                             setFieldValue(
                               "received_from_login_information_id",
-                            isNaN(selectedValue) ? "" :selectedValue
+                            isNaN(selectedValue) ? undefined :selectedValue
                             );
                           }}
                         >
-                          <option value="">Select a person</option>
+                          <option value={undefined} className="text-text-gray">Select a person</option>
                           {receivedForm.map((option: any) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
@@ -502,11 +516,11 @@ const LinkNewRFI : React.FC<IProps> = ({
                            onClick={(e: any) => {
                             const selectedValue = parseFloat(e.target.value)
                             setFieldValue(
-                              "responsible_contractor_id", isNaN(selectedValue) ? "": selectedValue
+                              "responsible_contractor_id", isNaN(selectedValue) ? undefined: selectedValue
                             );
                           }}
                         >
-                          <option value="">
+                          <option value={undefined} className="text-text-gray">
                             Select a Responsible contractor
                           </option>
                           {responsibleContractor.map((option: any) => (
@@ -587,11 +601,11 @@ const LinkNewRFI : React.FC<IProps> = ({
                           onCLick={(e: any) => {
                             const selectedValue = parseFloat(e.target.value);
                             setFieldValue(
-                              "project_stage_id", isNaN(selectedValue) ? "" : selectedValue
+                              "project_stage_id", isNaN(selectedValue) ? undefined : selectedValue
                             );
                           }}
                         >
-                          <option value="">Select a RFI stage</option>
+                          <option value={undefined} className="text-text-gray">Select a RFI stage</option>
                           {rfistage.map((option: any) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
@@ -610,7 +624,7 @@ const LinkNewRFI : React.FC<IProps> = ({
                           value={scheduleImpact}
                           onChange={handleScheduleImpactChange}
                         >
-                          <option value="">Select a Impact schedule</option>
+                          <option value="" className="text-text-gray">Select a Impact schedule</option>
                           {scheduleImpactt.map((option: any) => (
                             <option key={option.value} value={option.value}>
                               {option.name}
@@ -645,10 +659,10 @@ const LinkNewRFI : React.FC<IProps> = ({
                         onClick={(e: any) => {
                           const selectedValue = parseFloat(e.target.value)
                           setFieldValue(
-                            "cost_code_id", isNaN(selectedValue) ? "" : selectedValue);
+                            "cost_code_id", isNaN(selectedValue) ? undefined : selectedValue);
                         }}
                       >
-                        <option value="">Select a cost code</option>
+                        <option  value={undefined} className="text-text-gray">Select a cost code</option>
                         {coastCodee.length === 0 && (
                           <option value="" disabled>
                              No options available
@@ -672,7 +686,7 @@ const LinkNewRFI : React.FC<IProps> = ({
                         value={costImpact}
                         onChange={handleCostImpactChange}
                       >
-                        <option value="">Select a cost Impact</option>
+                        <option value="" className="text-text-gray">Select a cost Impact</option>
                         {costImpacts.map((option: any) => (
                           <option key={option.value} value={option.value}>
                             {option.name}

@@ -27,8 +27,8 @@ const ProcoreFooter = (props:any) => {
         lineHeight: "16px",
       })) as any;
       const ContainedButton = styled(StyledButton)({
-        backgroundColor: allFieldsTrue? "#888888 !important": '#f1742e !important',
-        color: allFieldsTrue?"#ffffff !important": '#ffffff',
+        backgroundColor: !allFieldsTrue? "#888888 !important": '#f1742e !important',
+        color: !allFieldsTrue ? "#ffffff !important": '#ffffff',
         fontFamily: "Open Sans",
         fontStyle: "normal",
         fontWeight: "400",
@@ -64,7 +64,7 @@ const ProcoreFooter = (props:any) => {
       </OulinedButton>
     <ContainedButton 
     type="submit" 
-    disabled={allFieldsTrue} 
+    disabled={!allFieldsTrue} 
     onClick={() => { handleExternalSubmit()}}>
       Create
       </ContainedButton>

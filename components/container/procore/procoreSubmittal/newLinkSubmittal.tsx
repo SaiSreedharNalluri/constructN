@@ -352,9 +352,9 @@ setLoading(false)
              {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = Object.values(values).every((value) => {
                 if (values.number !== "") {
-                  return false;
-                } else {
                   return true;
+                } else {
+                  return false;
                 }
               });
               setIsAllFieldsTrue(allFieldsTrue)
@@ -478,7 +478,7 @@ setLoading(false)
                             "responsible_contractor_id",isNaN(selectedValue)?"":selectedValue);
                         }}
                       >
-                        <option value="">
+                        <option value="" className="text-text-gray">
                           Select a Responsible contractor
                         </option>
                         {responsibleContractor.map((option: any) => (
@@ -501,7 +501,7 @@ setLoading(false)
                           );
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value=""  className="text-text-gray">Select a person</option>
                         {receivedForm.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -528,7 +528,7 @@ setLoading(false)
                             "submittal_manager_id",isNaN(selectedValue)?"":selectedValue )
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value="" className="text-text-gray">Select a person</option>
                         {rfiManager.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -546,7 +546,7 @@ setLoading(false)
                           setFieldValue("status", e.target.value);
                         }}
                       >
-                        <option value="">Select a status</option>
+                        <option value="" className="text-text-gray">Select a status</option>
                         {statusData.map((option: any) => (
                         <option
                          className=""
