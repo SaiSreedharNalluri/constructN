@@ -2197,6 +2197,8 @@ const download360Image = () =>{
                 
                 : <></>}
             </div></div></div>
+            
+        {/* commenting downloads for release 
         <div>
         {
         currentViewMode === 'Reality' &&
@@ -2204,7 +2206,7 @@ const download360Image = () =>{
             <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>
           }
-        </div>
+        </div> */}
         <div>
         {initData && 
         <Suspense fallback={<CustomLoader />}>
