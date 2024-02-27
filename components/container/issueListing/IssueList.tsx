@@ -63,7 +63,7 @@ import {
   TopButton,
 } from "./IssueListStyles";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
 import { toast } from "react-toastify";
 import { Issue } from "../../../models/Issue";
@@ -131,8 +131,12 @@ export interface ISortProps {
   sortStatus: string[];
   sortPriority: string[];
 }
+export type IssueToolHandle = {
+  DeletedIssue:(deletedItem:string)=>void
+  
+};
 
-const CustomIssueListDrawer: React.FC<IProps> = ({
+function CustomIssueListDrawer({
   visibility,
   closeOverlay,
   issuesList,
@@ -161,7 +165,14 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   toolClicked,
   initData
 
-}) => {
+}:IProps,ref:Ref<IssueToolHandle>) {
+
+  useImperativeHandle(ref, () => {
+    return{
+      DeletedIssue(deletedItem:string){
+        setOpenIssueDetail(false) 
+      }
+    }},[])
 
   const handleClose = () => {
     onClose(true);
@@ -1338,7 +1349,7 @@ const CustomIssueListDrawer: React.FC<IProps> = ({
   );
 };
 
-export default CustomIssueListDrawer;
+export default forwardRef(CustomIssueListDrawer);
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />

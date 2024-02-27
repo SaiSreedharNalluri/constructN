@@ -20,24 +20,12 @@ export const CustomSearchField = styled(TextField)({
   },
 });
 
-export const StyledMenu = styled((props: MenuProps) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transitionDuration={10}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
+export const StyledMenu = styled(Menu)(({ theme }) => ({
+    '& .MuiPaper-root': {
+      width: '250px',
+    },
+  }));
   
-
-}));
 export const SelectTypeContainer = styled(Box)((props: any) => ({
   display: props.openselectlayer ? "" : "none",
   // width: "250px",

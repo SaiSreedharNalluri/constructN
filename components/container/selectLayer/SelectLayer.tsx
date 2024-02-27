@@ -223,7 +223,7 @@ const SelectLayer = ({
     onClose={handleClose}
   >
     {/* <MenuItem onClick={handleClick}> */}
-    <SelectLayerContainer openselectlayer={anchorEl}>
+    {/* <SelectLayerContainer openselectlayer={anchorEl}> */}
       <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon
@@ -261,7 +261,7 @@ const SelectLayer = ({
             return renderTree(eachNode,index)})}
         </StyledTreeView>
       </TreeViewContainer>
-    </SelectLayerContainer>
+    {/* </SelectLayerContainer> */}
     {/* </MenuItem> */}
       </StyledMenu>
   );

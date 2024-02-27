@@ -141,6 +141,7 @@ export type toolBarHandle = {
   issueFilterState:(handleMenuInstance:any)=>void;
   taskFilterState:(taskFilterState:any)=>void;
   projectUsersAndStatus:(projectUsers:any,issueStatusList:any,tasksStatusList:any)=>void;
+  deleteInstance:(deleteItem:string)=>void;
 };
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
@@ -819,6 +820,7 @@ const Index: React.FC<IProps> = () => {
           if (issueDetelteStatus) {
             let issueId = (toolInstance.data as { _id: any })._id;
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(issueId) + '}')
+            ref.current?.deleteInstance("deletedIssue")
           }
         })();
         break;
@@ -895,6 +897,7 @@ const Index: React.FC<IProps> = () => {
           if (TaskDetelteStatus) {
             let taskId = (toolInstance.data as { _id: any })._id;
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
+            ref.current?.deleteInstance("deletedTask")
           }
         })();
         // setClickedTool(toolInstance);

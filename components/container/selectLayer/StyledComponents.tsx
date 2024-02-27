@@ -90,23 +90,10 @@ export const StyledTreeView = styled(TreeView)({
   },
 });
 
-export const StyledMenu = styled((props: MenuProps) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transitionDuration={10}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
-  
-
+export const StyledMenu = styled(Menu)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    width: '238px',
+  },
 }));
 export const SelectLayerContainer = styled(Box)((props: any) => ({
   display: props.openselectlayer ? "" : "none",
