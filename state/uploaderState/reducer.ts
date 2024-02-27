@@ -311,6 +311,14 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
 }
 
 const getCurrentPopup = (state: UploaderState, popupType: UploaderPopups, message?: string): PopupData => {
+    let selectedCaptureId: string | undefined;    
+if (state.selectedJob && state.selectedJob.captures && state.selectedJob.captures.length > 0) {
+    selectedCaptureId = getCaptureIdFromModelOrString(state.selectedJob.captures[0]);
+}
+let retryAction = '';
+if (typeof selectedCaptureId !== 'undefined' && state.inProgressWorkers && typeof state.inProgressWorkers[selectedCaptureId] !== 'undefined') {
+    retryAction = "Retry";
+}
     switch (popupType) {
         case UploaderPopups.completedWithError:
             return {
@@ -319,6 +327,7 @@ const getCurrentPopup = (state: UploaderState, popupType: UploaderPopups, messag
                 modalMessage: message ? message : "Some files failed to upload",
                 primaryButtonLabel: 'Skip and Process',
                 secondaryButtonlabel: 'Discard',
+                third:retryAction
             }
         case UploaderPopups.deleteJob:
             return {
