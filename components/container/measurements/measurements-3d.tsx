@@ -729,7 +729,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
           } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <div onKeyDown={(e)=>{
           e.stopPropagation();
-          if(e.key === 'Enter'){
+          if(e.key === 'Enter' && !loading){
             deleteCallback();
           }
         }}> <PopupComponent
