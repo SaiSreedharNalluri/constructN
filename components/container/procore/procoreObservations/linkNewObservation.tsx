@@ -9,8 +9,6 @@ import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
 import { CustomToast } from "../../../divami_components/custom-toaster/CustomToast";
-import { IprocoreActions } from "../../../../models/Iprocore";
-import router from "next/router";
 import { useAppContext } from "../../../../state/appState/context";
 import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
 import { styled } from "@mui/material/styles";
@@ -170,8 +168,7 @@ const LinkNewObservation : React.FC<IProps> = ({
 createObservation(formData)
     .then((response) => {
       if (response) {       
-      
-      if (issue) {
+           if (issue) {
         linkIssueObservation(issue.project, issue._id, response?.data.id)
           .then((linkResponse) => {
             if (linkResponse) {
@@ -204,18 +201,21 @@ createObservation(formData)
             }
           });
       }
-  }else{
+    }else{
     setLoading(false)
-    CustomToast("Observation creation failed","error");
+    handleCloseProcore();
+    }
+}) .catch((error) => {
+  if(error.response.status === 403){
+    CustomToast(error.response.data.errors,'error')
+    handleBack()
+    // setLoading(false)
   }
-})
-
-    .catch((error) => {
-      if (error) {
-        setLoading(false)
-        CustomToast("Observation creation failed","error");
-      }
-    });
+  if(error.response.status === 400){
+    CustomToast(error.response.data.errors,'error')
+    setLoading(false)
+  }
+});
   };
   const validationSchema = Yup.object().shape({
     name: Yup.string().trim().required('Title is required'),
@@ -226,11 +226,7 @@ createObservation(formData)
   });
   
   const handleBack = () => {
-    let closeNewRFI: IprocoreActions = {
-      action: "newCloseObservation",
-      status: false,
-    };
-    handleInstance(closeNewRFI);
+    handleInstance("CloseObservation");
   };
   
   return (
@@ -278,8 +274,9 @@ createObservation(formData)
                         className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
                         name="type_id"
                         as="select"
-                        onChange={(e: any) => {
-                          setFieldValue("type_id", parseFloat(e.target.value));
+                        onChange={(e:any) => {
+                          const selectedValue = parseFloat(e.target.value)
+                          setFieldValue("type_id", isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
                         <option value="">Select a type</option>
@@ -399,7 +396,10 @@ createObservation(formData)
                         name="trade_id"
                         as="select"
                         placeHolder="select Trade"
-                      ></Field>
+                      >
+                        <option>Select Trade</option>
+                      </Field>
+                      
                     </Grid>
                   </Grid>
                   <Grid
@@ -417,7 +417,9 @@ createObservation(formData)
                         name="location_id"
                         as="select"
                         placeHolder="select Location"
-                      ></Field>
+                      >
+                        <option>Select Location</option>
+                      </Field>
                     </Grid>
                     <Grid item xs={6}>
                       <label className=" text-gray-700 font-medium text-[11px] mb-1">
@@ -428,7 +430,9 @@ createObservation(formData)
                         name="specification_section_id"
                         as="select"
                         placeHolder="select Spec Section"
-                      ></Field>
+                      >
+                        <option>Select Spec Section</option>
+                      </Field>
                     </Grid>
                   </Grid>
                   <Grid
@@ -446,10 +450,8 @@ createObservation(formData)
                         name="assignee_id"
                         as="select"
                         onChange={(e: any) =>{
-                          setFieldValue(
-                            "assignee_id",
-                            parseFloat(e.target.value)
-                          )
+                          const selectedValue = parseFloat(e.target.value);
+                          setFieldValue( "assignee_id",isNaN(selectedValue) ? "" : selectedValue)
                         }}
                       >
                         <option value="">Select a person</option>
@@ -471,8 +473,9 @@ createObservation(formData)
                         name="distribution_member_ids"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue = parseFloat(e.target.value);
                           setFieldValue("distribution_member_ids", [
-                            parseFloat(e.target.value),
+                            isNaN(selectedValue) ? "" : selectedValue
                           ]);
                         }}
                       >
@@ -528,10 +531,9 @@ createObservation(formData)
                         name="contributing_condition_id"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue = parseFloat(e.target.value);
                           setFieldValue(
-                            "contributing_condition_id",
-                            parseFloat(e.target.value)
-                          );
+                            "contributing_condition_id",isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
                         <option value="">Select a Conditions</option>
@@ -551,10 +553,9 @@ createObservation(formData)
                         name="contributing_behavior_id"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue = parseFloat(e.target.value);
                           setFieldValue(
-                            "contributing_behavior_id",
-                            parseFloat(e.target.value)
-                          );
+                            "contributing_behavior_id",isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
                         <option value="">Select a Contributing Behavior</option>
@@ -581,10 +582,9 @@ createObservation(formData)
                         name="hazard_id"
                         as="select"
                         onChange={(e: any) => {
+                          const selectedValue =parseFloat(e.target.value);
                           setFieldValue(
-                            "hazard_id",
-                            parseFloat(e.target.value)
-                          );
+                            "hazard_id",isNaN(selectedValue)?"":selectedValue);
                         }}
                       >
                         <option value="">Select a Hazard</option>

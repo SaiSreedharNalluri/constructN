@@ -5,15 +5,14 @@ import {
   CustomTaskProcoreLinks,
 } from '../../../divami_components/issue_detail/IssueDetailStyles';
 import ProcoreHeader from '../procoreHeader';
-import ProcoreFooter from '../procoreFooter';
 import { filesUpload,linkIssueSubmittal,linkTaskSubmittal, listSubmittal, projectFile, showSubmittalDetails, updateAttachmentsExistSubmittal } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
-import { IprocoreActions } from '../../../../models/Iprocore';
 import { useAppContext } from '../../../../state/appState/context';
 import router from 'next/router';
 import axios from 'axios';
 import { IToolbarAction } from '../../../../models/ITools';
+import PopupComponent from '../../../popupComponent/PopupComponent';
 interface IProps{
   issue:any
   task:any
@@ -52,24 +51,22 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const [oldDescription, setOldDescription]=useState<string>()
+  const [showPopup, setShowPopup] = useState<boolean>(false)
   const procoreCompanyId=procoreProjectDetails?.procore?.companyId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
 
   const handleBack = () => {
-    let closeNewRFI: IprocoreActions = {
-      action: 'newCloseObservation',
-      status: false,
-    };
-    handleInstance(closeNewRFI);
+    handleInstance("CloseSubmittal");
   };
+
+  const handlePopup=()=>{
+  setShowPopup(false)
+  handleBack()
+}
 
   const handleRadioChange = (rfinumber: number) => {
     setSelectedItem(rfinumber);
-    showSubmittalDetails(rfinumber,procoreProjectId).then((response)=>{
-      if(response){
-        setOldDescription(response?.rich_text_description)
-      }
-    })
+    
   };
   const fileUploads = () => {
     return new Promise(async (resolve, reject) => {
@@ -156,6 +153,11 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
 const handleLink = async () => {
   try {
     setLoading(true)
+    const description =await showSubmittalDetails(selectedItem,procoreProjectId)
+      if(description){
+        setOldDescription(description?.rich_text_description)
+      }
+   
       const prostoreFileIds:any = await fileUploads();
 
       const formData= new FormData()
@@ -170,7 +172,14 @@ const handleLink = async () => {
   
       formData.append(`submittal[number]`, submittalNumber)
       formData.append(`submittal[description]`, `${oldDescription}<a href="${weburl()}"> (${sequenceNumber} View in ConstructN)</a>`)
-  
+     
+
+      const response = await updateAttachmentsExistSubmittal(procoreProjectId, selectedItem, formData);
+      if (response) {
+          CustomToast("submittal linked successfully", 'success');
+          handleCloseProcore();
+      }
+      
       if (issue) {
           const linkResponse = await linkIssueSubmittal(issue.project, issue._id, selectedItem);
           if (linkResponse) {
@@ -187,12 +196,9 @@ const handleLink = async () => {
           }
       }
   
-      const response = await updateAttachmentsExistSubmittal(procoreProjectId, selectedItem, formData);
-      if (response) {
-          CustomToast("submittal linked successfully", 'success');
-          handleCloseProcore();
-      }
+      
   } catch (error) {
+    handleCloseProcore()
       CustomToast("Linking Submittal failed", 'error');
   }
   setLoading(false)
@@ -203,12 +209,28 @@ const handleLink = async () => {
   useEffect(() => {
     setLoading(true)
     listSubmittal(procoreProjectId)
-    .then((response: any) => {
-      setSubmittalData(response.data);
+    .then((response) => {
+      if (response?.data && response?.data.length > 0) {
+        setSubmittalData(response?.data);
+      } else {
+        setShowPopup(true)
+
+      }
       setLoading(false);
     })
     .catch((error) => {
-      console.error('Error fetching submittal data:', error);
+
+      if(error?.response?.status === 403){
+        setShowPopup(false)
+
+        CustomToast(error?.response.data.errors,'error')
+        handleBack()
+        // setLoading(false)
+      }
+      if(error.response.status === 400){
+        CustomToast(error.response.errors,'error')
+      }
+      setLoading(false)
     });
    
   }, [router.isReady])
@@ -228,6 +250,8 @@ const handleLink = async () => {
            { submittalData.map((rfi:any) => (
               <div key={rfi.id} className="rfi-item">
                 <Radio
+                color='warning'
+                 size='small'
                   checked={selectedItem === rfi.id}
                   onChange={() => handleRadioChange(rfi.id)}
                 />
@@ -251,6 +275,18 @@ const handleLink = async () => {
             </Button>
         
         </div>)}
+        {showPopup?(<PopupComponent 
+        modalTitle={'Warning'} 
+        modalmessage={'There Is No Submittal Do You Want To Create It?'}
+         primaryButtonLabel={'Yes'} 
+         SecondaryButtonlabel={'Cancel'}
+         secondaryCallback={handlePopup}
+          setShowPopUp={setShowPopup}
+           open={true}
+           callBackvalue={() => {
+           setShowPopup(false)
+           handleInstance("Link_new_submittal");
+          }}></PopupComponent>):(<div></div>)}
         
       </CustomTaskProcoreLinks>
     </>

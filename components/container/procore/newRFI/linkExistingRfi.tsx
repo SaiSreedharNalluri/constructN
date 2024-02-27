@@ -8,9 +8,9 @@ import ProcoreHeader from '../procoreHeader';
 import { ListRfi, linkIssueRfi,linkTaskRfi, updateAttachmentsExistRfi, } from '../../../../services/procore';
 import CustomLoader from '../../../divami_components/custom_loader/CustomLoader';
 import { CustomToast } from '../../../divami_components/custom-toaster/CustomToast';
-import { IprocoreActions } from '../../../../models/Iprocore';
 import { useAppContext } from '../../../../state/appState/context';
 import { IToolbarAction } from '../../../../models/ITools';
+import PopupComponent from '../../../popupComponent/PopupComponent';
 interface IProps{
   issue:any;
   task:any;
@@ -43,25 +43,26 @@ const LinkExistingRfi: React.FC<IProps> = ({
   const [rfiData, setRfiData] = useState<any[]>([]);
   const [questionBody, setQuestionBody] = useState('');
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [showPopup, setShowPopup] = useState<boolean>(false)
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const handleBack = () => {
-    let closeNewRFI: IprocoreActions = {
-      action: 'newCloseObservation',
-      status: false,
-    };
-    handleInstance(closeNewRFI);
+    handleInstance('closeRFI');
   };
 
+  const handlePopup=()=>{
+    setShowPopup(false)
+    handleBack()
+  }
   const handleRadioChange = (rfinumber: number) => {
     
     setSelectedItem(rfinumber);
   };
   const existingResponse = ()=>{
-    rfiData.map((rfi:any)=>{
-      if(rfi.id===selectedItem){
+    rfiData.map((rfi)=>{
+      if(rfi?.id===selectedItem){
         if (rfi.questions) {
           if (rfi.questions[0]?.body) {
             setQuestionBody(rfi.questions[0].body);
@@ -74,7 +75,7 @@ const LinkExistingRfi: React.FC<IProps> = ({
   existingResponse()
  },[selectedItem])
 
-  const handleLink = () => {
+  const handleLink = async () => {
     
  const formData:any=new FormData()
     formData.append(`rfi[question][body]`,`${questionBody} <a href=\"${weburl()}\"> #${sequenceNumber}( View in ConstructN)</a>`)
@@ -86,6 +87,12 @@ const LinkExistingRfi: React.FC<IProps> = ({
   }
    formData.append(`rfi[question][attachments][ScreenShot]`,screenshot);
     try{
+     await updateAttachmentsExistRfi(procoreProjectId,selectedItem,formData).then((response)=>{
+        if(response){
+          CustomToast("RFI linked successfully", 'success');
+          handleCloseProcore();
+         }
+      })
     if (issue) {
      linkIssueRfi(issue.project, issue._id, selectedItem)
         .then((linkResponse) => {
@@ -105,14 +112,10 @@ const LinkExistingRfi: React.FC<IProps> = ({
           }
         })
     }
-    updateAttachmentsExistRfi(procoreProjectId,selectedItem,formData).then((response)=>{
-      if(response){
-        CustomToast("RFI linked successfully", 'success');
-        handleCloseProcore();
-       }
-    })
+   
   }
   catch(error){
+    handleCloseProcore()
      CustomToast("Linking RFI failed", 'error');
   }
   };
@@ -120,14 +123,27 @@ const LinkExistingRfi: React.FC<IProps> = ({
   useEffect(() => {
     setLoading(true)
     ListRfi(procoreProjectId)
-      .then((response: any) => {
-      
-        setRfiData(response.data);
+      .then((response) => {
+      if (response.data && response.data.length > 0) {
+          setRfiData(response.data);
+        } else {
+          setShowPopup(true)
+         
+        }
        
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error fetching RFI data:', error);
+        if(error.response.status === 403){
+          setShowPopup(false)
+          CustomToast(error.response.data.errors,'error')
+          handleBack()
+          // setLoading(false)
+        }
+        if(error.response.status === 400){
+          CustomToast(error.response.errors,'error')
+        }
+        setLoading(false)
       });
     }, [])
   return (
@@ -143,6 +159,8 @@ const LinkExistingRfi: React.FC<IProps> = ({
             rfiData.map((rfi) => (
               <div key={rfi.id} className="rfi-item">
                 <Radio
+                color='warning'
+                size='small'
                   checked={selectedItem === rfi.id}
                   onChange={() => handleRadioChange(rfi.id)}
                 />
@@ -163,6 +181,18 @@ const LinkExistingRfi: React.FC<IProps> = ({
               Link
             </Button>
         </div>)}
+        {showPopup?(<PopupComponent 
+        modalTitle={'Warning'} 
+        modalmessage={'There Is No RFI Do You Want To Create It?'}
+         primaryButtonLabel={'Yes'} 
+         SecondaryButtonlabel={'Cancel'}
+         secondaryCallback={handlePopup}
+          setShowPopUp={setShowPopup}
+           open={true}
+           callBackvalue={() => {
+           setShowPopup(false)
+          handleInstance("RFI");
+          }}></PopupComponent>):(<div></div>)}
       </CustomTaskProcoreLinks>
     </>
   );
