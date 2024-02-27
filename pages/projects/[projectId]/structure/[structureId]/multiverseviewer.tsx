@@ -1510,14 +1510,19 @@ const Index: React.FC<IProps> = () => {
 
   const r: any = useRef();
 
+  const connection = MqttConnector.getConnection()
+
+
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
       setIsFullScreen(true);
+      connection?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setFullScreenMode", "data": "true"}`);
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
         setIsFullScreen(false);
+        connection?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setFullScreenMode", "data": "false"}`);
       }
     }
   };
