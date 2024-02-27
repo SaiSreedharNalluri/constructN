@@ -2020,8 +2020,8 @@ const Index: React.FC<IProps> = () => {
           URL.revokeObjectURL(link.href);
       }  
       if(event.data.type === "getReport"){
-        imgRef.current = event.data.reportScreenshot.screenshot
-        miniMapImg.current = event.data.reportScreenshot.mimiMapscreenshot
+        imgRef.current = event.data.screenshot
+        miniMapImg.current = event.data.miniMapscreenshot
         downloadPdfReport()
       }
     }
@@ -2029,6 +2029,7 @@ const Index: React.FC<IProps> = () => {
   const captureCanvas = async () => {
     let typeChangeToolAction: IToolbarAction = { type: "getReport", data: "" };
     toolClicked(typeChangeToolAction)
+    CustomToast('The report generation is started.it will take some time to complete and download...','success')
   //   await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
   //      const dataURL = canvas.toDataURL();
   //      imgRef.current = dataURL
@@ -2056,7 +2057,6 @@ const download360Image = () =>{
   toolClicked(typeChangeToolAction)
   }
   const downloadPdfReport = async () => {
-    CustomToast('The report generation is started.it will take some time to complete and download...','success')
     const url = URL.createObjectURL(await pdf(<GenerateReport project={appState.currentProjectData?.project as IProjects} structure ={initData?.structure as IStructure} snapshot={initData?.currentSnapshotBase as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
     const a = document.createElement('a');
     a.href = url;
