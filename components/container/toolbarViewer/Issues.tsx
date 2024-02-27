@@ -48,7 +48,7 @@ export type IssueToolHandle = {
   handleIssueInstance: (IssuetoolInstance: any) => void;
   issueFilterState:(handleIssueFilterState:any)=>void;
   projectUsersAndStatus:(projectUsers:any,issueStatusList:any)=>void;
-  
+  DeletedIssue:(deletedItem:string)=>void
   
 };
 
@@ -89,6 +89,7 @@ function Issues({
   
   }:any,ref:Ref<IssueToolHandle>) {
     const router = useRouter();
+    const issRef = React.useRef<IssueToolHandle>(null);
   const {screenshot} = useApiDataContext();
   const customLogger = new CustomLoggerClass();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -153,7 +154,11 @@ function Issues({
     projectUsersAndStatus(projectUsers:any,issueStatusList:any){
       setProjectUsers(projectUsers);      
       setIssueStatusList(issueStatusList);
-    } 
+    },
+    DeletedIssue(DeleteItem:string){
+      if(DeleteItem === "deletedIssue"){ setOpenIssueDetails(false)
+      issRef.current?.DeletedIssue(DeleteItem)}
+    }
     }  
   },[router.isReady,initData]);
 
@@ -464,6 +469,7 @@ function Issues({
             issueContext={issueContext}
             toolClicked={toolClicked}
             initData={initData.currentIssueList}
+            ref={issRef}
            
 
           />

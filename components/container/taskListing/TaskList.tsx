@@ -1,6 +1,6 @@
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 // ../styles/Home.module.css
 import Image from "next/image";
 // import dividerIcon from "../../../public/images/dividerIcon.svg";
@@ -122,8 +122,11 @@ interface IProps {
   deleteTheAttachment?: any;
   taskContext:any;
 }
+export type taskToolHandle = {
+  DeletedTask:(deletedItem:string)=>void
+};
 
-const CustomTaskListDrawer = (props: any) => {
+const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
   const {
     onClose,
     tasksList,
@@ -198,7 +201,12 @@ const CustomTaskListDrawer = (props: any) => {
     },
   ];
   const [errorShow, setErrorShow] = useState<any>(tasksList);
-
+  useImperativeHandle(ref, () => {
+    return{
+      DeletedTask(deletedItem:string){
+        setOpenTaskDetail(false) 
+      }
+    }},[])
   useEffect(() => {
     setTaskList(tasksList);
     setDownloadList(tasksList);
@@ -876,7 +884,7 @@ const CustomTaskListDrawer = (props: any) => {
   );
 };
 
-export default CustomTaskListDrawer;
+export default forwardRef(CustomTaskListDrawer);
 export const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({

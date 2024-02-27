@@ -32,12 +32,14 @@ export type IssueToolHandle = {
   handleRouterIssueRef: (handleMenuInstance: any) => void;
   issueFilterState:(handleMenuInstance:any)=>void;
   projectUsersAndStatus:(projectUsers:any,issueStatusList:any)=>void;
+  DeletedIssue:(deletedItem:string)=>void;
 };
 export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
   handleRouterTask:(handleMenuInstance:any)=> void;
   taskFilterState:(taskFilterState:any)=>void;
   projectUsersAndStatus:(projectUsers:any,tasksStatusList:any)=>void;
+  DeletedTask:(deletedItem:string)=>void
 };
 
 export type designToolHandle = {
@@ -111,6 +113,10 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
         issueRef.current?.projectUsersAndStatus(projectUsers,issueStatusList)
         taskRef.current?.projectUsersAndStatus(projectUsers,tasksStatusList)
       },
+      deleteInstance(deletedItem:string){
+        if(deletedItem === "deletedIssue") issueRef.current?.DeletedIssue(deletedItem)
+        else if(deletedItem === "deletedTask") taskRef.current?.DeletedTask(deletedItem)
+      }
 
 
     };
