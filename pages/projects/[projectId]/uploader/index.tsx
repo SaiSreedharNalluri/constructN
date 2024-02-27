@@ -529,8 +529,11 @@ const Index: React.FC<IProps> = () => {
       modalmessage={uploaderState.currentPopup.modalMessage}
       primaryButtonLabel={uploaderState.currentPopup.primaryButtonLabel}
       SecondaryButtonlabel={uploaderState.currentPopup.secondaryButtonlabel}
+      thirdButtonLable={uploaderState.currentPopup.third}
       isShowWarningText={uploaderState.currentPopup.type === UploaderPopups.deleteJob ? true : false}
       isCancelCallBack={true}
+      isThirdButton={uploaderState.currentPopup.third?true:false}
+      width={uploaderState.currentPopup.third?"65%":""}
       callBackvalue={() => {
         switch (uploaderState.currentPopup?.type) {
           case UploaderPopups.deleteJob:
@@ -544,6 +547,22 @@ const Index: React.FC<IProps> = () => {
             return
           case UploaderPopups.discard:
             uploaderAction.discard()
+            uploaderAction.setIsShowPopup({isShowPopup: false})
+            return
+            case UploaderPopups.retry:
+             let selectedCaptureId :any;    
+              if (uploaderState.selectedJob && uploaderState.selectedJob.captures && uploaderState.selectedJob.captures.length > 0) {
+                   selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0]);
+              }
+              let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
+              if(filesList != undefined)
+              {
+                uploaderAction.retryJobUploading(selectedCaptureId)
+              }
+              else{
+                CustomToast(`You don't have sufficient data to complete these operation`,'error')
+              }
+              
             uploaderAction.setIsShowPopup({isShowPopup: false})
             return
         }
@@ -563,6 +582,9 @@ const Index: React.FC<IProps> = () => {
           case UploaderPopups.discard:
             uploaderAction.setIsShowPopup({isShowPopup: false})
             return
+            case UploaderPopups.retry:
+              uploaderAction.setIsShowPopup({isShowPopup: false})
+              return
         }
       }}
     />)}

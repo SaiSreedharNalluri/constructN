@@ -34,6 +34,8 @@ import projectDetails from "../../../public/divami_icons/projectDetails.svg";
 import uploadHighlight from "../../../public/divami_icons/uploadHighlight.svg";
 import  uploadIcon from "../../../public/divami_icons/uploadIcon.svg";
 import projectDetailsHighlighted from "../../../public/divami_icons/projectDetailsHighlighted.svg";
+import { useUploaderContext } from "../../../state/uploaderState/context";
+import { UploaderStep } from "../../../state/uploaderState/state";
 
 import {
   HighlightedSytledImage,
@@ -52,6 +54,7 @@ import moment from 'moment-timezone';
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import Link from "next/link";
 import { Mixpanel } from "../../analytics/mixpanel";
+import PopupComponent from "../../popupComponent/PopupComponent";
 interface IProps {
   onChangeData: () => void;
 }
@@ -59,6 +62,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   const customLogger = new CustomLoggerClass();
   let [eMail, setEMail] = useState<string>("");
   const router = useRouter();
+  const { state: uploaderState } = useUploaderContext();
+  const [itemName,setItemName]=useState("")
+  const [isShowPopUp, setIsShowPopUp] = useState(false);
   const [config, setConfig] = React.useState([
     {
       id: "dashboard",
@@ -190,7 +196,18 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     };
     
   }, [router.isReady]);
-
+ const goToProjectsList = (event:React.MouseEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    if (uploaderState.step !== UploaderStep.Upload) {
+     setIsShowPopUp(true)
+     return
+    }
+    else {
+      leftClickHandler(event)
+    }
+    customLogger.logInfo("Projects Page");
+  };
   const leftClickHandler = (e: any) => {
     let iconClicked = "";
     switch (e.currentTarget.id) {
@@ -348,7 +365,8 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
           >
             <TooltipText title={item.toolTipMsg} placement="right">
             <SideMenuOptionImageContainer id={item.id} onClick={(e)=>{customLogger.logInfo(` ${item?.toolTipMsg} Page`)
-              leftClickHandler(e)}} >
+              setItemName(item.id)
+              goToProjectsList(e)}} >
                 {router.pathname.includes(item.id) || item.isActive ? (
                   <OvershowImg>
                     <HighlightedSytledImage
@@ -369,7 +387,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
         </SideMenuOptionContainer>
       ))}
       {supportItemsConfig.map((item, index) => (
-        <SideMenuOptionContainer ref={chatIconRef}  className="fixed bottom-0" key={index}>
+        <SideMenuOptionContainer ref={chatIconRef}  className="fixed bottom-0" key={index} >
           <SideMenuOption
           // onClick={() =>
           //   item.label === "settings" ? handleClick(item) : null
@@ -401,6 +419,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
       
             </TooltipText>
           </SideMenuOption>
+      
         </SideMenuOptionContainer>
       ))}
          {/* <div  className=" text-[12px] fixed bottom-1 text-center text-[#787878]">
@@ -412,6 +431,19 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
               </div>
             </TooltipText>
           </div> */}
+              {
+        isShowPopUp && (<PopupComponent
+          open={isShowPopUp}
+          setShowPopUp={setIsShowPopUp}
+          modalTitle={"Alert"}
+          modalmessage={`You have unsaved changes. Navigating away from this page will result in the loss of your current edits. Are you sure you want to proceed and lose your changes?`}
+          primaryButtonLabel={"Confirm"}
+          SecondaryButtonlabel={"Cancel"}
+          callBackvalue={() => {
+            router.push(`/projects//${router.query.projectId as string}/${itemName}`);
+          }}
+        />)
+      }
     </SideMenuContainer>
   );
 };

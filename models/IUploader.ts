@@ -43,3 +43,8 @@ export enum UploaderModalMessage{
     This action is irreversible, and all data will be lost.`
 
 }
+
+
+export enum UploaderThirdButton{
+    UploadCompleteWithErrorsPButton='Retry',
+}

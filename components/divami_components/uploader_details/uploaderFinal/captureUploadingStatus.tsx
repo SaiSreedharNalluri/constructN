@@ -22,6 +22,7 @@ import { UploaderPopups } from "../../../../state/uploaderState/state";
 import { RawImageStatus } from "../../../../models/IRawImages";
 import { CustomToast } from "../../custom-toaster/CustomToast";
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import { Button } from "@mui/material";
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -127,7 +128,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
     }, false) : false
     return rawImagesStatus
   }
-  const getCaptureStatus =(job: IJobs)=>{
+  const getCaptureStatus =(job: IJobs)=>{     
     switch(job.status)
     {
       case JobStatus.uploaded:
@@ -135,24 +136,43 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       case JobStatus.pendingUpload:
         return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
       case JobStatus.uploadFailed:
+    let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
         if (getRawImagesStatus(job)) {
-          return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
+          return (
+          <div className="flex justify-center w-full">
+
+          <CircularProgress color="warning" size={"24px"} thickness={5}/>
+
+          </div>
+          )
         } else {
-          return(
+          return(           
             <div>
-            {uploaderState.showRetry && uploaderState.selectedJob && uploaderState.selectedJob.status === JobStatus.uploadFailed && job._id === uploaderState.showRetry ?
-            (<div><AutorenewIcon color="warning" className="text-white bg-[#F1742E] rounded-full cursor-pointer"onClick={(event)=>{
-              event.stopPropagation();
-            let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
-            if(filesList != undefined)
-            {
-              uploaderAction.retryJobUploading(job)
-            }
-            else{
-              CustomToast(`You don't have sufficient data to complete these operation`,'error')
-            }
+            {uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId] !=undefined ?
+            (
+              <div className="flex items-center bg-[#fdf5f5] px-[4px] py-[4px]">
+              <ErrorIcon color="error" />
+              <p className="text-red-600 ml-[8px]">Upload Failed</p>
+              <Button className="bg-red-500 text-white hover:bg-red-500 ml-[1rem] py-[1px] normal-case " onClick={(event)=>{
+                    event.stopPropagation();
+                    let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
+                    if(filesList != undefined)
+                    {
+                      uploaderAction.retryJobUploading(job)
+                    }
+                    else{
+                      CustomToast(`You don't have sufficient data to complete these operation`,'error')
+                    }
+ 
             
-            }}/></div>):(<div> <ErrorIcon color="error" /></div>)}
+            }}>Retry</Button>
+            </div>
+            ):(        
+              <div className=" flex justify-between items-center bg-[#fdf5f5] px-[10px] py-[4px] rounded font-sans ">
+              <ErrorIcon color="error" />
+              <p className="text-red-600 ml-[8px]">Upload Failed</p>
+              </div>
+             )}
             </div>
           ) 
         }
@@ -193,8 +213,8 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                   isUploadedOn ? "bg-white" : "bg-[#FFECE2]"
                 } w-full`}
               >
-                <tr className="w-full flex justify-between border-b border-b-[#F1742E] mx-auto">
-                  <th className="ml-[8px] py-[2px] text-left w-[35%]  flex items-center">
+                <tr className="w-full flex border-b border-b-[#F1742E] mx-auto">
+                <th className="ml-[8px] py-[2px] text-left w-[35%] flex items-center">
                     {isUploadedOn && (
                 <CustomCheckbox
                 checked={
@@ -208,26 +228,18 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       Level
                     </span>
                   </th>
-                  <th
-                    className=" text-left w-[18%]">
-                    Capture Date
-                  </th>
-                  <th
-                      className="pl-2 text-left w-[18%]"
-                    >
-                      Uploaded Date
-                    </th>
-                 
-                      <><th
-                          className="pl-2 text-left w-[9%]"
-                        >
+<th className=" text-left w-[15%] ">
+  Capture Date
+</th>
+<th className=" text-left w-[22%]">
+  Uploaded Date
+</th>
+<th className="pl-2 text-left w-[30%]">
 
-                        </th>
-                        <th
-                          className="pl-2 text-left w-[9%]"
-                        >
+</th>
+<th className="pl-2 text-left w-[9%]">
 
-                        </th></>
+</th>                
             </tr>
               </thead>
               <tbody
@@ -243,14 +255,15 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     }}
                     className={`cursor-${isUploading ? "pointer" : "default"} ${
                       index === hoveredRowIndex ? "bg-gray-200" : ""
-                    }  ${uploaderState.selectedJob?._id===job._id?"bg-[#D9D9D9] text-[#F1742E]":""} flex justify-between w-full my-[4px] mx-auto`}
-                    onMouseEnter={() =>{ 
-                      setHoveredRowIndex(index)
-                      let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
-                      if(uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId] !=undefined)
-                      uploaderAction.setShowRetry(job._id)} 
-                      }
-                    onMouseLeave={() =>{setHoveredRowIndex(null), uploaderAction.setShowRetry(null)} }
+                    }  ${uploaderState.selectedJob?._id===job._id?"bg-[#D9D9D9] text-[#F1742E]":""} flex w-full my-[4px] mx-auto`}
+                    // onMouseEnter={() =>{ 
+                    //   setHoveredRowIndex(index)
+                    //   let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
+                    //   if(uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId] !=undefined)
+                    //   uploaderAction.setShowRetry(job._id)
+                    // } 
+                    //   }
+                    // onMouseLeave={() =>{setHoveredRowIndex(null), uploaderAction.setShowRetry(null)} }
                   >
                     <td className="pl-2 w-[35%]  flex items-center">
                       {isUploadedOn && (
@@ -279,7 +292,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                       </TooltipText>
                     </td>
                     <td
-                      className="pl-2 w-[18%] flex items-center"
+                      className="pl-2 w-[15%] flex items-center"
                     >
                      {
                       job.captures && job.captures.length > 0 && typeof job.captures[0] != 'string' ? (
@@ -290,12 +303,12 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
                     }
                     </td>
                     <td
-                      className="pl-2 w-[18%] flex items-center"
+                      className="pl-2 w-[22%] flex items-center"
                     >
                       {getTheProjectDateAndTime(job.updatedAt)}
                     </td>
                     <td
-                        className="pl-2 w-[9%] flex items-center"
+                        className="pl-2 w-[30%] flex items-center"
                       >
                         {getCaptureStatus(job)}
                       </td>

@@ -85,6 +85,8 @@ export interface PopupComponentProps {
   isCancelCallBack?:boolean
 handleCancel?:(value:boolean)=>void
 hideCloseButton?:boolean
+isThirdButton?:boolean
+thirdButtonLable?:string
 }
 
 export function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -167,8 +169,10 @@ const PopupComponent = (props: PopupComponentProps) => {
     isShowWarningText = false,
     handleCancel,
     isCancelCallBack,
-    hideCloseButton=false
-  } = props;
+    hideCloseButton=false,
+    isThirdButton,
+    thirdButtonLable
+  } = props;  
   const handleClosePopup=()=>{
     if(isUploader === false)
     {
@@ -267,9 +271,9 @@ const PopupComponent = (props: PopupComponentProps) => {
                 }}
               >
                 {SecondaryButtonlabel}
-              </Button>):""}
-
-              <Button
+              </Button>):""}          
+<div className={`flex justify-end  ${isThirdButton?"w-[60%]":""}`}>
+<Button
                 variant="contained"
                 onClick={() => callBackvalue("Delete")}
                 disabled={disablePrimaryButton}
@@ -288,6 +292,22 @@ const PopupComponent = (props: PopupComponentProps) => {
               >
                 {primaryButtonLabel}
               </Button>
+              {isThirdButton===true?<Button  
+                             style={{
+                  color: "white",
+                  width: "100px",
+                  height: "40px",
+                  textTransform: "none",
+                  marginBottom: "22px",
+                  fontFamily: "Open Sans",
+                  fontSize: "16px",
+                  border: "1px solid #FF843F", 
+                  backgroundColor: "red",
+                
+                }}  onClick={() =>{console.log("clicked on retry");
+                 callBackvalue()}}>{thirdButtonLable}</Button>:""}
+</div>
+             
             </ButtonDiv>
           ) : (
             <></>
