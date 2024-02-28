@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Dispatch, FC, MutableRefObject, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import IconButton from '@mui/material/IconButton'
 
@@ -38,6 +38,9 @@ import PopupComponent from '../../popupComponent/PopupComponent'
 import { CustomToast } from '../../divami_components/custom-toaster/CustomToast'
 import { getCookie } from 'cookies-next'
 import Image from 'next/image'
+import AssetCategoryPicker from '../../progress-2d/asset-category-picker'
+import { IAssetCategory } from '../../../models/IAssetCategory'
+import { useParams } from 'next/navigation'
 
 const rightClickNeeded =['Distance','Area','Angle']
 
@@ -66,7 +69,11 @@ const unsubscribe = (eventName: string, listener: EventListenerOrEventListenerOb
   document.removeEventListener(eventName, listener)
 }
 
-const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetStateAction<[] | {name: string}[]>>, setLoading: Dispatch<SetStateAction<boolean>>) => {
+const dummyCategory: IAssetCategory = { name: 'None', _id: '', project: '', stages : [], shape: 'Polgon', height: 0, width: 0, properties: ''};
+
+const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetStateAction<[] | {name: string, context:{ category: string} }[]>>, setLoading: Dispatch<SetStateAction<boolean>>, apiPointsRef: MutableRefObject<[] | {
+  name: string;
+}[] | undefined>) => {
   const userObj: any = getCookie('user');
   const user = JSON.parse(userObj);
   try{
@@ -78,7 +85,8 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
         params: { snapshot }
       }
     )
-    const filterById = [...(resp.data.result || [])].filter((point)=>(point?.context?.createdBy === user._id))
+    const filterById = [...(resp.data.result || [])].filter((point)=>(point?.context?.createdBy === user._id));
+    apiPointsRef.current = filterById;
     setApiPoints(filterById);
   }catch{
     setApiPoints([]);
@@ -87,6 +95,16 @@ const getMeasurements = async (snapshot: string, setApiPoints: Dispatch<SetState
     setLoading(false);
   }
 };
+
+const fetchAssetCategories = (projectId: string) => {
+
+  try {
+
+      return instance.get(`${API.PROGRESS_2D_URL}/asset-categories?project=${projectId}`, { headers: authHeader.authHeader()})
+
+  } catch (error) { throw error }
+
+}
 
 
 const getMeasurement = async (measurementId: string) => {
@@ -98,6 +116,16 @@ const getMeasurement = async (measurementId: string) => {
   )
 };
 
+// const fetchAssets = (structureId: string, category: string, date: string = '2000-01-01T00:00:00.000Z') => {
+
+//   try {
+
+//       return instance.get(`${API.PROGRESS_2D_URL}/assets`, { headers: authHeader.authHeader(), params:{ structure: structureId, category, date } })
+
+//   } catch (error) { throw error }
+
+// }
+
 const updateMeasurement = async ({
   name = '',
   type = '',
@@ -106,21 +134,28 @@ const updateMeasurement = async ({
   measurementId = '',
   setLoading=()=>{},
   refetch=()=>{},
-}: { name?: string, type?: string, measurementId?: string; data?:object[]; snapshot: string; setLoading: Dispatch<SetStateAction<boolean>>; refetch: Function}) => {
+  selectedCategory= undefined,
+}: { name?: string, type?: string, measurementId?: string; data?:object[]; snapshot: string; setLoading: Dispatch<SetStateAction<boolean>>; refetch: Function, selectedCategory?: string}) => {
   try{
   setLoading(true);
-  await instance.put(
-    `${API.BASE_URL}/measurements/${measurementId}`,
-    {
-      name,
-      type,
-      snapshot,
-      data,
-    },
-    {
-      headers: authHeader.authHeader(),
-    }
-  );
+  // if(selectedCategory){
+  //   await instance.put(`${API.PROGRESS_2D_URL}/assets/${measurementId}`, { points: data }, { headers: authHeader.authHeader() })
+  // }else{
+    await instance.put(
+      `${API.BASE_URL}/measurements/${measurementId}`,
+      {
+        name,
+        type,
+        snapshot,
+        data,
+      },
+      {
+        headers: authHeader.authHeader(),
+      }
+    );
+
+  // }
+  
   CustomToast('Measurement Updated Sucessfull!',"success");
   refetch();
   }catch{
@@ -130,15 +165,19 @@ const updateMeasurement = async ({
   }
 };
 
-const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<SetStateAction<boolean>>, refetch: Function=()=>{}) => {
+const deleteMeasurement = async (measurementId: string, setLoading: Dispatch<SetStateAction<boolean>>, refetch: Function=()=>{}, selectedCategory: IAssetCategory| undefined = undefined) => {
   try{
     setLoading(true)
-    await instance.delete(
-    `${API.BASE_URL}/measurements/${measurementId}`,
-    {
-      headers: authHeader.authHeader(),
-    }
-  )
+    // if(selectedCategory){
+    //   await  instance.delete(`${API.PROGRESS_2D_URL}/assets/${measurementId}`, { headers: authHeader.authHeader()})
+    // }else{
+      await instance.delete(
+        `${API.BASE_URL}/measurements/${measurementId}`,
+        {
+          headers: authHeader.authHeader(),
+        }
+      )
+    // }
   refetch();
   CustomToast('Measurement Sucessfully Deleted!',"success");
   }catch{
@@ -261,11 +300,20 @@ const SegmentButtonGroup = styled(ButtonGroup)({
 
 const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurements }) => {
 
+  const params = useParams();
+
+  const router = useRouter();
+
+  const userObj: any = getCookie('user');
+
+  const user = JSON.parse(userObj || '{}');
+
+
   const [measurementsLoaded, setMeasurementsLoaded]=useState(false)
   
-  const [points, setPoints]= useState<{ _id?: string, removeMarker: Function; position: object; mtype?: string; uuid: string; name?: string, points?: { position: object}[], visible: boolean}[]>([]);
+  const [points, setPoints]= useState<{ _id?: string, removeMarker: Function; position: object; mtype?: string; uuid: string; name?: string, points?: { position: object}[], visible: boolean, categoryId?: string}[]>([]);
 
-  const [apiPoints, setApiPoints]= useState<{name: string}[] | []>([])
+  const [apiPoints, setApiPoints]= useState<{name: string, context:{ category: string } }[] | []>([])
 
   const { loadMeasurementModule, loadAddMeasurementsEvents , getPoints , removeMeasurement, getContext, handleContext} = potreeUtils || {}
 
@@ -285,11 +333,70 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
 
   const [activeMeasure, setActiveMeasure] = useState<{name: string} | ''>('');
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<IAssetCategory | undefined>(dummyCategory);
 
-  const router = useRouter();
+  const categRef = useRef<IAssetCategory | undefined>();
+
+  const apiPointsRef =  useRef<{name: string, context:{ category: string}}[] | []>();
+
+  const [assetCategories, setAssetCategories] = useState<IAssetCategory[]>([]);
+
+  // const structureId =  router.query.structId as string;
 
   const snapshot = router.query.snap as string;
+
+  const measurement = points.find((point)=>((point._id === selected || point.uuid === selected)));
+
+  const refetchCategories = () => {
+
+    const projId = params && params['projectId'] as string;
+    
+    fetchAssetCategories(projId!).then((response) => {
+        if (response.data.result) {
+            setAssetCategories(response.data.result);
+        }
+    })
+}
+
+
+const _onCategorySelected = (category: IAssetCategory | undefined) => {
+  
+  if(category?._id !== selectedCategory?._id){
+
+    setSelectedCategory(category);
+
+    categRef.current = category;
+    
+    if(apiPointsRef.current && category?._id){
+      const filterByCateg = apiPointsRef.current?.filter((pts: {context:{ category: string}})=>(pts.context.category === category?._id));
+      setApiPoints(filterByCateg);
+    }else{
+      setApiPoints([...(apiPointsRef.current || [])]);
+    }
+
+    // setApiPoints(()=>{})
+
+    // if (category !== undefined) {
+
+    //     fetchAssets(structureId, category._id).then((res)=>{
+    //       const formatAssets = res.data?.result?.map((asset: { name: string , _id: string , points: object[]})=>{
+    //         return({ name: asset.name, type:'Distance', _id: asset._id , data: asset.points , categoryId: asset?.category?._id})
+    //       })
+    //       setApiPoints(formatAssets);
+    //     })
+
+    // }
+  }else{
+    setSelectedCategory(undefined);
+    categRef.current = undefined;
+    setApiPoints(apiPointsRef.current || []);
+    // refetch();
+  }
+  
+}
+
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onSelect = (measure: { uuid?: string; _id?: string , context?: object }, fromEvent = false) => {
     if(fromEvent){
@@ -311,13 +418,29 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
 
   useEffect(()=>{
     if(loadMeasurements && !loading){
-      loadMeasurements(apiPoints);
+      let filterByCateg;
+      if(categRef?.current?._id){
+        filterByCateg = apiPointsRef.current?.filter((pts: {context:{ category: string}})=>(pts.context.category === categRef?.current?._id));
+      }else{
+        filterByCateg = apiPoints;
+      }
+      loadMeasurements(filterByCateg);
       setMeasurementsLoaded(!measurementsLoaded)
     }
   },[apiPoints])
 
-  const refetch = ()=> {
-    getMeasurements(snapshot, setApiPoints, setLoading)
+  const refetch = () => {
+    // if(categRef.current){
+    //   fetchAssets(structureId, categRef.current?._id!).then((res)=>{
+    //     const formatAssets = res.data?.result?.map((asset: { name: string , _id: string , points: object[], category:{_id: string}})=>{
+    //       return({ name: asset.name, type:'Distance', _id: asset._id , data: asset.points , categoryId: asset?.category?._id})
+    //     })
+    //     setApiPoints(formatAssets);
+    //   });
+    // }else{
+      getMeasurements(snapshot, setApiPoints, setLoading, apiPointsRef)
+    // }
+    
   }
 
   useEffect(()=>{
@@ -352,7 +475,8 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
         data: formatData,
         measurementId: measure._id,
         setLoading,
-        refetch
+        refetch,
+        selectedCategory: measure?.categoryId
       });
       setMeasurementType('');
     }
@@ -391,6 +515,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
   useEffect(()=>{
     if(snapshot){
       refetch();
+      refetchCategories()
     }
   },[mapReality])
 
@@ -403,7 +528,6 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
     }
   },[loadAddMeasurementsEvents, getPoints])
 
-  const measurement = points.find((point)=>((point._id === selected || point.uuid === selected)));
 
   const removeMeasure =() => {
     if(activeMeasure){
@@ -453,7 +577,8 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
           data: formatData,
           measurementId: measurement?._id,
           setLoading,
-          refetch
+          refetch,
+          selectedCategory: measurement?.categoryId
         });
       setMeasurementType('');
       }} />
@@ -534,7 +659,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
 	);
 
   const deleteCallback = async () =>{ 
-    await deleteMeasurement(deleteMeasurementId, setLoading, refetch);
+    await deleteMeasurement(deleteMeasurementId, setLoading, refetch, selectedCategory);
     setDeleteMeasurementId('');
     setSelected('');
   }
@@ -564,7 +689,6 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
 
     {measurementType === 'Undo' ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8]'>Please click <SaveIcon /> to save the changes</div> : null}
 
-
     <div className={`flex-column absolute right-[60px] bottom-0 rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
 
       <div
@@ -591,6 +715,8 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
       </div>
 
       {/* <h6 className='px-6 py-1 bg-[#e2e3e5] text-sm rounded-t-md text-gray-700'>Measurements</h6> */}
+
+      {show && user?.isSupportUser ? <div className='mx-3 mt-3 mui-select-fillavailable'> <AssetCategoryPicker selected={selectedCategory} categories={[...(assetCategories || []), dummyCategory ]} onSelect={_onCategorySelected} /> </div>: null}
 
       { show && <div className={`flex mx-3 mt-3 rounded-md justify-between`} style={{border: '1px solid #e2e3e5'}}>
 
@@ -726,7 +852,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils,  realityMap, loadMeasurem
           setActiveMeasure('');
           setMeasurementType('');
         }
-          } refetch={refetch} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
+          } refetch={refetch} selectedCategory={selectedCategory} assetCategories={assetCategories} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <div onKeyDown={(e)=>{
           e.stopPropagation();
           if(e.key === 'Enter'){
