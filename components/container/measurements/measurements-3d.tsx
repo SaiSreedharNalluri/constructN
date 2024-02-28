@@ -716,7 +716,7 @@ const _onCategorySelected = (category: IAssetCategory | undefined) => {
 
       {/* <h6 className='px-6 py-1 bg-[#e2e3e5] text-sm rounded-t-md text-gray-700'>Measurements</h6> */}
 
-      {show && user?.isSupportUser ? <div className='w-fit mx-3 mt-3'> <AssetCategoryPicker selected={selectedCategory} categories={[...(assetCategories || []), dummyCategory ]} onSelect={_onCategorySelected} /> </div>: null}
+      {show && user?.isSupportUser ? <div className='mx-3 mt-3 mui-select-fillavailable'> <AssetCategoryPicker selected={selectedCategory} categories={[...(assetCategories || []), dummyCategory ]} onSelect={_onCategorySelected} /> </div>: null}
 
       { show && <div className={`flex mx-3 mt-3 rounded-md justify-between`} style={{border: '1px solid #e2e3e5'}}>
 

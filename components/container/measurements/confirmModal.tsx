@@ -87,7 +87,7 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
             fullWidth 
             value={name}
             onChange={(e) => setName(e.target.value) } />
-            {user?.isSupportUser ? <div className='mt-3 w-fit'>
+            {user?.isSupportUser ? <div className='mt-3 mui-select-fillavailable'>
                   <AssetCategoryPicker selected={category} categories={[...(assetCategories || []), { name: 'None', _id: '', project: '', stages : [], shape: 'Polgon', height: 0, width: 0, properties: ''}]} onSelect={_onCategorySelected} /> 
               </div>: null}
         </div>)

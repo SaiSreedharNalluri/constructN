@@ -16,7 +16,7 @@ const MenuProps = {
 
       marginTop: 2,
 
-      width: 200,
+      minWidth: 250,
 
     }
   }
