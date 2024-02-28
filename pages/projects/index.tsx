@@ -653,6 +653,8 @@ const Index: React.FC<any> = () => {
                   </Tooltip>
                 )}
                 {isGridView ? (
+                   <Tooltip title={"Sort"}>
+                  <div>
                  <CustomMenu
                     width={24}
                     height={24}
@@ -660,6 +662,8 @@ const Index: React.FC<any> = () => {
                     imageSrc={sortIcon}
                     menuOptions={sortMenuOptions}
                   />
+                  </div>
+                  </Tooltip>
                 ) : (
                   <></>
                 )}
