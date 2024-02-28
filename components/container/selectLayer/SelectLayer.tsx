@@ -86,6 +86,7 @@ const SelectLayer = ({
         icon={<Image src={UnCheckedIcon} alt="" />}
         checkedIcon={<Image src={CheckedIcon} alt="" />}
         size="small"
+        onClick={(e)=>e.stopPropagation()}
         onChange={(e) => {
           // const arr = handleSelection(treeViewData, node.id);
           // setTreeViewData([...arr]);
@@ -239,6 +240,7 @@ const SelectLayer = ({
           variant="outlined"
           value={searchTerm}
           onChange={handleSearch}
+          onClick={(e)=>e.stopPropagation()}
           InputLabelProps={{ shrink: false }}
           InputProps={{
             startAdornment: (

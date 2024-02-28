@@ -99,7 +99,7 @@ const Layers = ({
       setAnchorEl(event.currentTarget);
     }
     else {
-      // setAnchorEl(null);
+      setAnchorEl(null);
     }
   };
   const handleClose = (e:any) => {
