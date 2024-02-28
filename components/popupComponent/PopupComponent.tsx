@@ -305,7 +305,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                   backgroundColor: "red",
                 
                 }}  onClick={() =>{console.log("clicked on retry");
-                 callBackvalue()}}>{thirdButtonLable}</Button>:""}
+                 callBackvalue("Retry")}}>{thirdButtonLable}</Button>:""}
 </div>
              
             </ButtonDiv>

@@ -37,7 +37,6 @@ export enum UploaderPopups {
     deleteJob,
     completedWithError,
     discard,
-    retry
 }
 
 export interface UploaderState {

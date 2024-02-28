@@ -327,7 +327,7 @@ if (typeof selectedCaptureId !== 'undefined' && state.inProgressWorkers && typeo
                 modalMessage: message ? message : "Some files failed to upload",
                 primaryButtonLabel: 'Skip and Process',
                 secondaryButtonlabel: 'Discard',
-                third:retryAction
+                thirdButtonLabel:retryAction
             }
         case UploaderPopups.deleteJob:
             return {
