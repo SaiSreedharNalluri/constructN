@@ -6,20 +6,69 @@ const ProcoreFooter = (props:any) => {
       handleInstances}=props as any
     
     const ButtonsContainer = styled(Box)({
-        padding: "10px",
+        padding: "5px",
         paddingTop: "20px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
       });
+      const StyledButton = styled(Button)((props: any) => ({
+        // border: "2px solid red",
+      
+        width: props.loginField ? "340px" : "180px !important",
+        height: "40px",
+        textTransform: "none",
+        backgroundColor: props.loginField ? "#888888 !important" : "",
+        color: props.loginField ? "#ffffff !important" : "",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "16px",
+        lineHeight: "16px",
+      })) as any;
+      const ContainedButton = styled(StyledButton)({
+        backgroundColor: !allFieldsTrue? "#888888 !important": '#f1742e !important',
+        color: !allFieldsTrue ? "#ffffff !important": '#ffffff',
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "16px",
+        lineHeight: "16px",
+        "&:hover": {
+          backgroundColor: "#f1742e",
+          color: "#ffffff",
+        },
+      });
+      const OulinedButton = styled(StyledButton)({
+        backgroundColor: "#ffffff",
+        color: "#f1742e",
+        borderColor: "#f1742e",
+        fontFamily: "Open Sans",
+        fontStyle: "normal",
+        fontWeight: "400",
+        fontSize: "16px",
+        lineHeight: "16px",
+        "&:hover": {
+          backgroundColor: "#ffffff",
+          borderColor: "#f1742e",
+        },
+      });
   return (
-    <div><ButtonsContainer>
-    <Button className="border border-solid border-border-yellow p-2 w-[150px]   text-border-yellow font-medium py-2 px-4 rounded " type="reset"  onClick={() => {
-                    handleInstances()
-                  }}>Cancel</Button>
-    <Button className={`border border-solid p-2 w-[150px] bg-border-yellow  text-box-white font-medium py-2 px-4 rounded hover:bg-border-yellow hover:text-box-white
-    ${allFieldsTrue ?'bg-gray-300 text-box-white':"border-border-yellow bg-border-yellow  text-box-white"}`}type="submit" disabled={allFieldsTrue} onClick={() => { handleExternalSubmit()}}>Create</Button>
-  </ButtonsContainer></div>
+    <ButtonsContainer>
+      <OulinedButton
+       variant="outlined"
+       type="reset"  
+       onClick={() => {
+            handleInstances()
+        }}>Cancel
+      </OulinedButton>
+    <ContainedButton 
+    type="submit" 
+    disabled={!allFieldsTrue} 
+    onClick={() => { handleExternalSubmit()}}>
+      Create
+      </ContainedButton>
+  </ButtonsContainer>
   )
 }
 

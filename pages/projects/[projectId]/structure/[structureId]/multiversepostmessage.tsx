@@ -10,7 +10,7 @@ import { CustomToast } from "../../../../../components/divami_components/custom-
 import GenericViewer from "../../../../../components/container/GenericViewer";
 import LeftOverLay from "../../../../../components/container/leftOverLay";
 import MapLoading from "../../../../../components/container/mapLoading";
-import Header from "../../../../../components/container/MultiverseHeader/Header";
+import Header from "../../../../../components/divami_components/header/Header";
 import SidePanelMenu from "../../../../../components/divami_components/side-panel/SidePanel";
 import ToolBarMenuWrapper from "../../../../../components/container/toolbarViewer/ToolBarMenuWrapper";
 import { IDesignMap } from "../../../../../models/IDesign";

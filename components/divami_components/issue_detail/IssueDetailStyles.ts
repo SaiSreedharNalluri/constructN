@@ -17,8 +17,8 @@ interface TabPanelProps {
 export const PopupIcon = styled (Image)`
 marginRight:4px;
 cursor:pointer;
-width:15px;
-height:15px`;
+width:18px;
+height:18px`;
 
 export const ProcoreLogo = styled(Image)`
   cursor:pointer;
