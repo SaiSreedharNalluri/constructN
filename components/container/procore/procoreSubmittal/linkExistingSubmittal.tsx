@@ -50,7 +50,7 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
-  const [oldDescription, setOldDescription]=useState<string>()
+  const [oldDescription, setOldDescription]=useState<string>("")
   const [showPopup, setShowPopup] = useState<boolean>(false)
   const procoreCompanyId=procoreProjectDetails?.procore?.companyId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
@@ -154,16 +154,17 @@ const handleLink = async () => {
   try {
     setLoading(true)
     const description =await showSubmittalDetails(selectedItem,procoreProjectId)
-      if(description){
-        setOldDescription(description?.rich_text_description)
-      }
-   
+ 
       const prostoreFileIds:any = await fileUploads();
 
       const formData= new FormData()
       const selectedSubmittal= submittalData.find((item: any) => item.id === selectedItem);
       const submittalNumber = selectedSubmittal.number;
-  
+      if (description && description.attachments && description.attachments.length > 0) {
+        description.attachments.forEach((attachment: any) => {
+          formData.append(`submittal[prostore_file_ids][]`, attachment.id);
+        });
+      }
       if (prostoreFileIds && prostoreFileIds.length > 0) {
           for (let i = 0; i < prostoreFileIds.length; i++) {
               formData.append(`submittal[prostore_file_ids][]`, prostoreFileIds[i]);
@@ -171,7 +172,9 @@ const handleLink = async () => {
       }
   
       formData.append(`submittal[number]`, submittalNumber)
-      formData.append(`submittal[description]`, `${oldDescription}<a href="${weburl()}"> (${sequenceNumber} View in ConstructN)</a>`)
+    
+      formData.append(`submittal[description]`, `${description?.rich_text_description}<a href="${weburl()}"> (#${sequenceNumber} View in ConstructN)</a>`)
+      
      
 
       const response = await updateAttachmentsExistSubmittal(procoreProjectId, selectedItem, formData);

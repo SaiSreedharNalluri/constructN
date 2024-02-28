@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {CustomTaskProcoreLinks,BodyContainer} from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
-import {  Checkbox, Grid, TextField } from "@mui/material";
+import {  Checkbox, Grid, TextField, Tooltip } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-import { createSubmittal, filesUpload, linkIssueSubmittal, linkTaskSubmittal, projectFile } from "../../../../services/procore";
+import { createSubmittal, filesUpload, getSubmittalReceivedFrom, getSubmittalResponsibleContractor, linkIssueSubmittal, linkTaskSubmittal, projectFile } from "../../../../services/procore";
 import ProcoreFooter from "../procoreFooter";
 import ProcoreHeader from "../procoreHeader";
 import * as Yup from 'yup';
@@ -17,6 +17,10 @@ import CustomLoader from "../../../divami_components/custom_loader/CustomLoader"
 import axios from "axios";
 import { IToolbarAction } from "../../../../models/ITools";
 import CustomLabel from "../../../divami_components/custom-label/CustomLabel";
+import { AttachedImageDiv } from "../newRFI/linkNewRfi";
+import { AttachedImageTitle, DeleteIcon } from "../../issueDetails/IssueDetailStyles";
+import { truncateString } from "../../../../pages/projects";
+import Delete from "../../../../public/divami_icons/delete.svg";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -69,9 +73,57 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
   const [loading, setLoading] = useState(false)
   const formikRef = useRef<FormikProps<any>>(null);
   const { state: appState} = useAppContext();
+  const [received, setReceived]=useState([])
+  const [responsibleContractorValues, setResponsibleContractorValues]=useState([])
+  const [receivedId,setReceivedId]=useState<number|null>(null)
+  const [responsibleContractorId, setResponsibleContractorId]=useState<number|null>(null)
+  const [dropDownLoading, setDropDownLoading] = useState(false)
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber;
+
+useEffect(()=>{
+  setDropDownLoading(true)
+  getSubmittalReceivedFrom(procoreProjectId,responsibleContractorId).then((response:any)=>{
+    
+    if(response){
+      setReceived(response)
+      setDropDownLoading(false)
+  }
+  })
+  },[responsibleContractorId])
+
+  useEffect(()=>{
+    setDropDownLoading(true)
+    getSubmittalResponsibleContractor(procoreProjectId,receivedId).then((response:any)=>{
+      if(response){
+        setResponsibleContractorValues(response)
+        if(response.length>0){
+
+          setResponsibleContractorId(response[0].id)
+        }
+        setDropDownLoading(false)
+      }
+    })
+  
+  },[receivedId])
+
+const handleResponsibleContractor =(e:ChangeEvent<HTMLInputElement>)=>{
+    const selectedValue =parseFloat(e.target.value)
+    setResponsibleContractorId(isNaN(selectedValue)?null:selectedValue)
+  
+}
+
+const handleRecievedFrom =(e:ChangeEvent<HTMLInputElement>)=>{
+  const selectedValue =parseFloat(e.target.value)
+  setReceivedId(isNaN(selectedValue)?null:selectedValue)
+  
+}
+
+const handleDelete = (indexToRemove:number) => {
+  const updatedFiles:any = files?.filter((file, index) => index !== indexToRemove);
+  setFiles(updatedFiles); 
+};
   const initialValues: {
     title: string;
     specification_section_id: number | null;
@@ -256,6 +308,8 @@ try{
   setLoading(true)
   const prostoreFileIds:any =await fileUploads();
     formData.description= formData.description + `<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>`
+    formData.received_from_id = receivedId
+    formData.responsible_contractor_id = responsibleContractorId
     const formdata = new FormData()
     Object.entries(formData).forEach(([key, value]) => {  
       if(value!==null && value!==undefined && value !=="" && !(Array.isArray(value) && value.length === 0)){
@@ -472,21 +526,26 @@ setLoading(false)
                         className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="responsible_contractor_id"
                         as="select"
-                        onChange={(e: any) => {
-                          const selectedValue =parseFloat(e.target.value);
-                          setFieldValue(
-                            "responsible_contractor_id",isNaN(selectedValue)?"":selectedValue);
-                        }}
+                        onChange={handleResponsibleContractor}
                       >
-                        <option value="" className="text-text-gray">
+                        <option value={undefined} className="text-text-gray">
                           Select a Responsible contractor
                         </option>
-                        {responsibleContractor.map((option: any) => (
+                       
+                        {responsibleContractorValues.length === 0 && (
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           )}
+                        {responsibleContractorValues.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
                           </option>
                         ))}
                       </Field>
+                      {dropDownLoading && (
+                            <CustomLoader></CustomLoader>
+                         )}
                     </Grid>
                     <Grid item xs={6}>
                     <CustomLabel label={"Received From"}></CustomLabel>
@@ -494,20 +553,19 @@ setLoading(false)
                         className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="received_from_id"
                         as="select"
-                        onChange={(e: any) => {
-                          const selectedValue =parseFloat(e.target.value);  
-                          setFieldValue(
-                            "received_from_id",isNaN(selectedValue)?"":selectedValue
-                          );
-                        }}
+                        onChange={handleRecievedFrom}
                       >
-                        <option value=""  className="text-text-gray">Select a person</option>
-                        {receivedForm.map((option: any) => (
+                        <option value={undefined}  className="text-text-gray">Select a person</option>
+                       
+                        {received.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
                           </option>
                         ))}
                       </Field>
+                      {dropDownLoading && (
+                             <CustomLoader></CustomLoader>
+                         )}
                     </Grid>
                   </Grid>
                   <Grid
@@ -695,8 +753,22 @@ setLoading(false)
                       <Field
                         className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="lead_time"
-                        type="number"
+                        type="text"
                         placeHolder="enter Time(days)"
+                        onKeyPress={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                          if (
+                              !/^\d$/.test(event.key) ||
+                              (event.currentTarget.value.includes(".") && event.key === ".")
+                          ) {
+                              event.preventDefault();
+                          }
+                      }}
+                      onChange={(e:any)=>{
+                        const selectedValue =parseFloat(e.target.value);
+                        setFieldValue(
+                          "lead_time",isNaN(selectedValue)?"":selectedValue )
+                      }}
+                      
                       ></Field>
                     </Grid>
                     <Grid item xs={6}>
@@ -721,7 +793,11 @@ setLoading(false)
                   >
                     <Grid item xs={6}>
                     <CustomLabel label={"Private"}></CustomLabel>
-                      <Checkbox {...label} name="private" />
+                      <Checkbox {...label} name="private"
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setFieldValue('private', isChecked);
+                    }} />
                     </Grid>
                   </Grid>
                   <Grid container className="pt-[5px]">
@@ -746,11 +822,11 @@ setLoading(false)
                   </Grid>
                   <Grid container className="pt-[5px] mb-[20px]">
                   <Grid item xs={15}>
+                  <CustomLabel label={"Attachments"}></CustomLabel>
                   <div {...getRootProps()}>
                     <input {...getInputProps()}
                     type="file"
                     name="attachments" />
-                    <CustomLabel label={"Attachments"}></CustomLabel>
                     {
                       isDragActive ? (
                         <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
@@ -768,21 +844,30 @@ setLoading(false)
                   </div>
                   </Grid>
                   </Grid>
+                  <>
                   {files&&files.length > 0 && (
                         <div>
-                          <strong>Uploaded Files:</strong>
-                          <ul>
-                            {files.map((file: File, index: number) => (
-                              <li
-                                key={index}
-                                style={{ cursor: "pointer" }}
-                              >
-                                {file.name}
-                              </li>
-                            ))}
-                          </ul>
+                         {files.map((file: File, index: number) => {
+                                return(
+                              <AttachedImageDiv className={`detailsImageDiv`} key={index}>
+                              <div className="w-[50%]">
+                                <Tooltip title={file?.name?.length > 20 ? file?.name : ""}>
+                                  <AttachedImageTitle>{truncateString(file?.name, 20)}</AttachedImageTitle>
+                                </Tooltip>
+                                </div>
+                                <DeleteIcon
+                                  src={Delete}
+                                  alt={"delete icon"}
+                                  onClick={() => {
+                                    handleDelete(index)
+                                  } } />
+                              
+                              </AttachedImageDiv>
+                               )})}
+                          
                         </div>
                       )}
+                      </>
                 </div>
               </Form>
        )

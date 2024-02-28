@@ -613,7 +613,7 @@ export const projectFile =(projectId:number|undefined,formData:object)=>{
 
 export const permissions =(projectId:number | undefined)=>{
 
-  return procoreinstance .get(`${PROCORE.SANDBOX_URL}//rest/v1.0/settings/permissions?project_id=${projectId}`,
+  return procoreinstance .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/settings/permissions?project_id=${projectId}`,
   {
     headers:accesstoken(),
   })
@@ -623,4 +623,64 @@ export const permissions =(projectId:number | undefined)=>{
   .catch((error)=>{
     throw error
   })
+}
+
+
+export const getSubmittalReceivedFrom =(projectId:number | undefined, responsibleContractorId:number|null)=>{
+  if(responsibleContractorId !== null){
+  return procoreinstance
+  .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_received_froms?responsible_contractor_id=${responsibleContractorId}`,
+  {
+    headers:accesstoken(),
+  })
+  .then((response)=>{
+    return response.data
+  })
+  .catch((error)=>{
+    throw error
+  })
+}else{
+
+    return procoreinstance
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_received_froms`,
+  {
+    headers:accesstoken(),
+  })
+  .then((response)=>{
+    return response.data
+  })
+  .catch((error)=>{
+    throw error
+  })
+  }
+}
+
+
+export const getSubmittalResponsibleContractor =(projectId:number | undefined, receivedFromId: number | null)=>{
+  
+  if(receivedFromId !==null){
+    return procoreinstance
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_responsible_contractors?received_from_id=${receivedFromId}`,
+    {
+      headers:accesstoken()
+    })
+    .then((response)=>{
+      return response.data
+    })
+    .catch((error)=>{
+      throw error
+    })
+  }else{
+    return procoreinstance
+    .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_responsible_contractors`,
+    {
+      headers:accesstoken()
+    })
+    .then((response)=>{
+      return response.data
+    })
+    .catch((error)=>{
+      throw error
+    })
+  }
 }
