@@ -367,7 +367,7 @@ const _onCategorySelected = (category: IAssetCategory | undefined) => {
       const filterByCateg = apiPointsRef.current?.filter((pts: {context:{ category: string}})=>(pts.context.category === category?._id));
       setApiPoints(filterByCateg);
     }else{
-      setApiPoints(apiPointsRef.current || []);
+      setApiPoints([...(apiPointsRef.current || [])]);
     }
 
     // setApiPoints(()=>{})
