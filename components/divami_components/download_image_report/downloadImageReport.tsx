@@ -24,17 +24,17 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
     <React.Fragment>
   <div className="absolute top-[11rem] right-0 pointer text-center">
   <Button
-    className="bg-white w-[8.75rem]  font-['Open_Sans'] hover:bg-white"
+    className="bg-white w-[8.75rem] hover:bg-white "
     aria-controls={open ? 'basic-menu' : undefined}
     aria-haspopup="true"
     aria-expanded={open ? 'true' : undefined}
     onClick={handleMenuClick}
   >
     <FileDownloadIcon className='text-[#101F4C] opacity-[0.8] ml-1.5'/>
-    <label className='text-[#101F4C] opacity-[0.8] text-[10px] text-center ml-1.5'>
+    <label className='text-[#101F4C] opacity-[0.8]  text-[10px] text-center ml-1.5 font-sans'>
       Download
     </label>
-    {open ? <KeyboardArrowUpIcon className="text-[#101F4C] opacity-[0.8] mx-1.5"/> : <KeyboardArrowDownIcon className="text-[#101F4C] opacity-[0.8] mx-1.5"/>}
+    {open ? <KeyboardArrowUpIcon className="text-[#101F4C] opacity-[0.8] mx-1.5" fontSize="medium"/> : <KeyboardArrowDownIcon className="text-[#101F4C] opacity-[0.8] mx-1.5 " fontSize="medium"/>}
   </Button>
   <Menu
     id="basic-menu"
@@ -61,7 +61,7 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
       handleMenuClose();
     }}>
       <Image src={pngIcon} alt={""} className="w-[0.75rem] h-[1rem]" />
-      <label className='text-[#101F4C] opacity-[0.8] text-[10px] text-center ml-3'>
+      <label className='text-[#101F4C] opacity-[0.8] text-[10px] text-center ml-3 font-sans'>
       360 Image
       </label>
     </MenuItem>
@@ -70,7 +70,7 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
       handleMenuClose();
     }}>
        <Image src={pdfIcon} alt={""} className="w-[0.75rem] h-[1rem]" />
-      <label className='text-[#101F4C] opacity-[0.8] text-[10px] text-center ml-3'>
+      <label className='text-[#101F4C] opacity-[0.8] text-[10px] text-center ml-3 font-sans'>
         PDF Report
       </label>
     </MenuItem>
