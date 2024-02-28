@@ -14,8 +14,6 @@ const MenuProps = {
 
     style: {
 
-      maxHeight: ITEM_HEIGHT * 15 + ITEM_PADDING_TOP,
-
       marginTop: 2,
 
       width: 200,

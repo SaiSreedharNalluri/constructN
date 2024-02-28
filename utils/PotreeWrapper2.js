@@ -1017,6 +1017,7 @@ export const PotreeViewerUtils = () => {
             measure.name = point.name;
             measure.mtype = point.type;
             measure._id = point._id;
+            // measure.categoryId = point.categoryId; 
             measure.context = point.context;
             point.data.forEach((position)=>{
                 measure.addMarker(new THREE.Vector3(position.x, position.y, position.z));
