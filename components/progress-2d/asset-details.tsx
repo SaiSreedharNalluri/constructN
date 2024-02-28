@@ -75,7 +75,16 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         const [loading, setLoading] = useState<boolean>(false)
 
-        const [values, setValues] = useState({ name : '', description: '', stage: '' })
+        const [values, setValues] = useState<{
+            name: string;
+            description: string;
+            stage: string;
+            height: number;
+            width: number;
+            metrics?: { [key: string]: { measurementFactor: number; }; };
+        }>({ name : '', description: '', stage: '', height: 0, width: 0 })
+
+        const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {}, height: actualHeight, width: actualWidth } = asset || {}
 
         const refetchAssets = () => {
 
@@ -101,17 +110,17 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
             refetchAssets()
         }, [assetId])
 
+
         useEffect(()=>{
-            setValues({ name: actualName , description: actualDecription, stage: actualStage as string })
+            const { height: assetHeight = 0, width: assetWidth = 0 } = selectedCategory || {};
+            setValues({ ...(values || {}), name: actualName , description: actualDecription, stage: actualStage as string, height: assetHeight, width: assetWidth })
         },[asset])
 
-        const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {} } = asset || {}
-        
         const { stages, name: actualCategoryName } = category as IAssetCategory || {}
         
         const { stage: actualStage } = progress  as IAssetProgress || {}
 
-        const { name , description, stage } = values || {}
+        const { name , description, stage, height: assetHeight, width: assetWidth, metrics: assetMetrics } = values || {}
 
         const onSave = () => {
 
@@ -147,12 +156,13 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 })
 
-            }  
-            if(name !== actualName || description !== actualDecription) {
+            };
+            
+            if(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetHeight) {
 
                         setLoading(true)
         
-                        updateAssetDetails(assetId, { name, description}).then(res => {
+                        updateAssetDetails(assetId, { name, description, height: assetHeight, width: assetWidth, metrics: assetMetrics}).then(res => {
         
                             if(onChange) onChange(res.data.result)
 
@@ -175,7 +185,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         }
 
-        const _onChange = (key: string, value: string) => setValues({ ...values, [key]: value})
+        const _onChange = (key: string, value: string | number) => setValues({ ...values, [key]: value})
 
         const _onDeleteStage = (stage: string) => {
 
@@ -259,6 +269,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                             asset={asset} 
                             onChange={_onChange} 
                             values={values} 
+                            setValues={setValues}
                             supportUser={supportUser} 
                             onDeleteStage={_onDeleteStage} 
                             onSave={onSave}
@@ -267,7 +278,6 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                             metricsChange={onChange}
                             refetchAssets={refetchAssets}
                             assetContext={assetContext}
-                            selectedCategory={selectedCategory}
                             actualCategoryName={actualCategoryName}
                             /> </div>}
 

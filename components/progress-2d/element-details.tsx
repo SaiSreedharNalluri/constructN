@@ -1,6 +1,6 @@
 import { IconButton, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography , Button, Input} from '@mui/material'
 
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import { IAsset, IAssetCategory, IAssetProgress, IAssetStage, NOT_STARTED_STAGE } from '../../models/IAssetCategory'
 
@@ -34,13 +34,28 @@ const ElementDetails: React.FC<{
 
     onDeleteStage?: (stage: string) => void,
 
-    values?: { [key: string]: string },
+    values: {
+        name: string;
+        description: string;
+        stage: string;
+        height: number;
+        width: number;
+    },
 
     onSave?: ()=> void,
 
     stages?: Stage[],
 
-    metrics: { [key: string]: string | number | { metric: string } | { metric: { metric: number | string }} },
+    setValues: Dispatch<SetStateAction<{
+        name: string;
+        description: string;
+        stage: string;
+        height: number;
+        width: number;
+        metrics?: { [key: string]: { measurementFactor: number; }; };
+    }>>,
+
+    metrics: { [key: string]: { measurementFactor: number } };
 
     metricsChange?: (asset: IAsset) => void,
 
@@ -50,9 +65,7 @@ const ElementDetails: React.FC<{
 
     assetContext: any,
 
-    selectedCategory: IAssetCategory | undefined,
-    
-}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {}, stages =[] , metrics , metricsChange, refetchAssets , actualCategoryName, assetContext, selectedCategory }) => {
+}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {}, stages =[] , metrics, metricsChange, refetchAssets , actualCategoryName, assetContext, setValues }) => {
 
     const params = useParams();
 
@@ -60,17 +73,14 @@ const ElementDetails: React.FC<{
 
     const user = JSON.parse(userObj);
 
-    const { description: actualDecription = '', progress = {}, name: actualName, _id: assetId } = asset || {}
+    const { name: actualName, _id: assetId} = asset || {}
 
-    const { stage: actualStage } = progress  as IAssetProgress || {}
-
-    const { name , description, stage } = values || {}
+    const { height: assetHeight, width: assetWidth } = values || {}
 
     const selectedData: any = Object.values(assetContext?.selection?.isSelected || {})?.[0];
 
     const conversionUnits = assetContext?.unitHandler?.toDisplayUnits('ft',1);
 
-    const { height: assetHeight, width: assetWidth } = selectedCategory || {};
 
     const fields = [
         {
@@ -111,6 +121,7 @@ const ElementDetails: React.FC<{
         }
     ]
 
+
     return (
         <>
             {
@@ -143,16 +154,6 @@ const ElementDetails: React.FC<{
                         </Typography>
 
                     </div>
-                    <div className='mt-4 flex justify-end'>
-                    <Button 
-                    size='small'  
-                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
-                    disabled={!( actualName !== name || description !== actualDecription ||  stage !== actualStage ) || !name}
-                    onClick={onSave}
-                    >
-                        Save
-                    </Button>
-                    </div>
                     {user?.isSupportUser ? <div className='mt-4 ml-1 flex flex-wrap'>
                         {fields.map((field)=>(field.show? <div className='flex items-baseline basis-1/2 justify-between mt-2' key={field.label}>
                             <div className={"text-[12px]"}>{field.label}</div>
@@ -160,21 +161,32 @@ const ElementDetails: React.FC<{
                                 <OutlinedInput size="small" sx={{ width:"60px", ".MuiInputBase-inputSizeSmall":{
                                     padding:'8px',
                                     fontSize:'12px'
-                                } }} name={field.name} className='mr-1' value={field.value} disabled={field.disabled} />
+                                } }} name={field.name} onChange={(e)=>{onChange && onChange(field.name, e.target.value)}} className='mr-1' value={field.value || ''} disabled={field.disabled} />
                                 <div className='text-[12px]'>{field?.units}</div>
                             </div>
                         </div>: null))}
                     </div>: null}
                     <Metrics stages ={stages}
                     assetId = {assetId}
-                    metrics = {metrics}
+                    metrics={metrics}
                     refetchAssets ={refetchAssets}
                     assetWidth={assetWidth}
                     assetHeight={assetHeight}
+                    setValues={setValues}
+                    values={values}
                     asset={asset}
                     selectedData={selectedData}
                     conversionUnits={conversionUnits}
                     onChange={metricsChange} />
+                    <div className='mt-4 flex justify-end'>
+                    <Button 
+                    size='small'  
+                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
+                    onClick={onSave}
+                    >
+                        Save
+                    </Button>
+                    </div>
                     <div className='my-2'>
                         <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
                     </div>
@@ -210,6 +222,7 @@ interface IElementProps {
     actualValue?: string
 
 }
+
 
 const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1 }) => {
 
@@ -261,7 +274,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
 
     const handleChange = (event: SelectChangeEvent) => {
 
-        if (!shouldDisable(event.target.value)) {
+        if (!shouldDisable(event.target.value) || actualValue === event.target.value) {
 
             setStage(event.target.value)
 
@@ -274,8 +287,6 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
     }
 
     const shouldDisable = (stageId: string) => {
-
-        if(actualValue === stageId) return false
 
         for (let i = 0; i < progressSnapshot.length; i++) {
 

@@ -1,10 +1,9 @@
 import { Button, TableRow, TableHead, TableContainer, TableCell, TableBody, Table, Select, MenuItem, styled, Tooltip } from "@mui/material";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Input from "@mui/material/OutlinedInput";
 import { IAsset, IAssetStage } from "../../models/IAssetCategory";
 import instance from "../../services/axiosInstance";
 import { API } from "../../config/config";
-import { toast } from "react-toastify";
 import authHeader from "../../services/auth-header";
 
 const headers = {headers: authHeader.authHeader()}
@@ -15,7 +14,6 @@ import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 interface Stage extends IAssetStage {
 	id?: string;
 	measurementFactor?: number;
-	metric?: number | string | { metric: string | number} | { metric: { metric: string | number; } };
 }
 
 interface SetProgressProps {
@@ -49,42 +47,6 @@ const setProgress = ({
 	});
 };
 
-const onSave = async ({
-	assetId = "",
-	stageValues = [],
-	setLoading = () => {},
-	refetchAssets = () => {}
-}: {
-	assetId: string;
-	stageValues?: Stage[];
-	setLoading: Dispatch<SetStateAction<boolean>>;
-	refetchAssets: ()=> void;
-}) => {
-	const metricValues: { [key: string]: string | number | object } = {};
-	stageValues.forEach((stage) => {
-		const stageID = stage._id;
-
-
-		if(stageID && (stage.metric || stage.metric === 0 )){
-			metricValues[stageID] = { metric: stage.metric, uom: stage.uom };
-		}
-	});
-
-	try {
-		setLoading(true);
-		await updateAssetDetails(assetId, { metrics: metricValues });
-		toast.success("Updated asset metrics successfully!", {
-			autoClose: 5000,
-		});
-		refetchAssets()
-	} catch {
-		toast.error("Failed to update asset metrics!", { autoClose: 5000 });
-	} finally {
-		setLoading(false);
-	}
-};
-
-
 const onStatusToggle = async ({assetId ='', status, setLoading, refetchAssets }: { assetId: string , status: string, setLoading: Dispatch<SetStateAction<boolean>>, refetchAssets: () => void }) =>{
 	try {
 		setLoading(true);
@@ -108,29 +70,57 @@ export default function Metrics({
 	assetWidth,
 	assetHeight,
 	conversionUnits,
-	selectedData
+	selectedData,
+	setValues,
+	values
 }: {
 	stages: Stage[];
 	assetId: string;
-	metrics: { [key: string]: string | number | { metric: string } | { metric: { metric: number | string }} };
+	metrics: { [key: string]: { measurementFactor: number } };
 	refetchAssets: () => void,
 	asset: IAsset,
 	onChange?: (asset: IAsset) => void,
 	assetWidth?: number,
 	assetHeight?: number,
 	selectedData?: any,
-	conversionUnits: number
+	conversionUnits: number,
+	values: {
+        name: string;
+        description: string;
+        stage: string;
+        height: number;
+        width: number;
+        metrics?: {
+            measurementFactor?: number | undefined;
+        }},
+	setValues: Dispatch<SetStateAction<{
+        name: string;
+        description: string;
+        stage: string;
+        height: number;
+        width: number;
+        metrics?: { [key: string]: { measurementFactor: number; }; };
+    }>>,
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
-		metric: ((metrics[stage._id] as { metric: { metric: string } })?.metric?.metric ?? (metrics[stage._id] as { metric: string; })?.metric) ?? metrics[stage._id],
-		measurementFactor: stage?.measurementFactor || 1
+		measurementFactor: metrics[stage._id]?.measurementFactor || 1
 	}));
-	
 
 	const [stageValues, setStageValues] = useState<Stage[]>([
 		...(formatStageData || []),
 	]);
+
+	useEffect(()=>{
+		const metricValues: { [key: string]: { measurementFactor: number; }; } = {};
+		stageValues.forEach((stage) => {
+		const stageID = stage._id;
+		if(stageID){
+			metricValues[stageID] = { measurementFactor: stage.measurementFactor || 1 };
+		}
+		});
+		setValues({...values, metrics: metricValues})
+	},[stageValues])
 
 	const length = (selectedData.getLength() * conversionUnits)?.toFixed(2)
 	
@@ -261,25 +251,6 @@ export default function Metrics({
 					checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
 						<span className="font-semibold pt-1" >Active</span>
 				</div>
-				{stageValues.length > 0 ? (
-					<Button
-						size="small"
-						className="py-2 pl-[7px] pr-[8px] mr-2 rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300"
-						onClick={async () =>{
-							await onSave({
-								assetId,
-								stageValues,
-								setLoading,
-								refetchAssets,
-							});
-							onChange && onChange(asset);
-						}
-						}
-						disabled={loading}
-					>
-						Save
-					</Button>
-				) : null}
 			</div>
 		</div>
 	);
