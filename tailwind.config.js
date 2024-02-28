@@ -54,6 +54,8 @@ module.exports = {
         'border-yellow': '#F1742E',
         "box-orange":'#FFECE2',
         "box-white":'#FFFFFF',
+        "text-gray":'#888888',
+        "border-dropDown":'#101F4B',
         "border-black":"border-gray-950",
       },
       fontSize: {

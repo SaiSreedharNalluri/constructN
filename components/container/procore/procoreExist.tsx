@@ -12,12 +12,19 @@ interface ProcoreExistProps {
   selected: any;
 }
 export const ProcoreSectionIcon = styled.div({
-  borderRadius: '10px',
-  padding: '6px',
+  marginTop:'30px',
+  borderRadius: '8px',
+  padding: '10px 20px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   background: '#F1742E',
+  color:  '#ffffff',
+fontFamily: "Open Sans",
+fontStyle: "normal",
+fontWeight: "380",
+fontSize: "14px",
+lineHeight: "16px",
   '&:hover': {
     cursor: 'pointer',
     background: '#F1742E',
@@ -150,7 +157,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
           <ProcoreSectionIcon>
           <PopupIcon
           src={popup}
-          alt={"link"}></PopupIcon>
+          alt={"link"}></PopupIcon>&nbsp;
            <a href={details.link} target="_blank" rel="noopener noreferrer" style={{color:"white"}}>
            View {type === 'rfi' ? type.toUpperCase() : type.charAt(0).toUpperCase() + type.slice(1)} in Procore</a> 
        </ProcoreSectionIcon>

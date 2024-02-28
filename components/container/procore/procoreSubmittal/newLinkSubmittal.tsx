@@ -16,6 +16,7 @@ import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
 import axios from "axios";
 import { IToolbarAction } from "../../../../models/ITools";
+import CustomLabel from "../../../divami_components/custom-label/CustomLabel";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -31,6 +32,8 @@ interface IProps{
   issue:any
   task:any
   handleCloseProcore:any
+  specSection:any
+  location:any
   getIssues?:(s:string)=>{} | undefined;
   getTasks?:(s:string)=>{} | undefined;
    generatedpdf:any
@@ -48,6 +51,8 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
     coastCodee,
     issue,
     task,
+    specSection,
+    location,
     handleCloseProcore,
      getIssues,
      getTasks,
@@ -347,16 +352,16 @@ setLoading(false)
              {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = Object.values(values).every((value) => {
                 if (values.number !== "") {
-                  return false;
-                } else {
                   return true;
+                } else {
+                  return false;
                 }
               });
               setIsAllFieldsTrue(allFieldsTrue)
             
               return(
               <Form>
-                <div className=" overflow-y-auto">
+                <div className=" px-1  overflow-y-auto calc-h84 mt-5">
                   <Grid
                     container
                     spacing={2}
@@ -364,54 +369,19 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        TITLE
-                      </label>
+                    <CustomLabel label={"Title"}></CustomLabel>
                       <Field
                         fullWidth
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="title"
                         type="text"
                         placeHolder="enter title"
                       ></Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        SPEC SECTION
-                      </label>
+                    <CustomLabel label={"* Number"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                        name="specification_section_id"
-                        as="select"
-                        placeHolder="select Type"
-                      >
-                         <option value="">Select a Spec Section</option>
-                      </Field>
-                    </Grid>
-                  </Grid>
-                  <Grid
-                    container
-                    spacing={2}
-                    justifyContent="space-between"
-                    className="pt-[5px]"
-                  >
-                    <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        REVISION
-                      </label>
-                      <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                        name="revision"
-                        type="number"
-                        placeHolder=" number"
-                      ></Field>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        NUMBER <span className="text-border-yellow text-base"> *</span>
-                      </label>
-                      <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="number"
                         type="text"
                         pattern="[0-9]+"
@@ -428,27 +398,28 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        SUBMITTAL TYPE
-                      </label>
+                    <CustomLabel label={"Revision"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                        name="type"
-                        as="select"
-                        placeHolder="select Type"
-                      ><option value="">Select a Submittal Type</option></Field>
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
+                        name="revision"
+                        type="number"
+                        placeHolder=" number"
+                      ></Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        SUBMITTAL PACKAGE
-                      </label>
+                    <CustomLabel label={"Spec Section"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
-                        name="submittal_package_id"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
+                        name="specification_section_id"
                         as="select"
-                        placeHolder="select Package"
+                        placeHolder="select Type"
                       >
-                        <option value="">Select a Submittal Package</option>
+                         <option value="">Select a Spec Section</option>
+                         {specSection.length === 0 && (
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           )}
                       </Field>
                     </Grid>
                   </Grid>
@@ -459,11 +430,46 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        RESPONSIBLE CONTRACTOR
-                      </label>
+                    <CustomLabel label={"Submittal Type"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
+                        name="type"
+                        as="select"
+                        placeHolder="select Type"
+                      ><option value="">Select a Submittal Type</option>
+                      
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           </Field>
+                    </Grid>
+                    <Grid item xs={6}>
+                    <CustomLabel label={"Submittal Package"}></CustomLabel>
+                      <Field
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
+                        name="submittal_package_id"
+                        as="select"
+                        placeHolder="select Package"
+                      >
+                        <option value="">Select a Submittal Package</option>
+                       
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                          
+                      </Field>
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    className="pt-[5px]"
+                  >
+                    <Grid item xs={6}>
+                    <CustomLabel label={"Responsible Contractor"}></CustomLabel>
+                      <Field
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="responsible_contractor_id"
                         as="select"
                         onChange={(e: any) => {
@@ -472,7 +478,7 @@ setLoading(false)
                             "responsible_contractor_id",isNaN(selectedValue)?"":selectedValue);
                         }}
                       >
-                        <option value="">
+                        <option value="" className="text-text-gray">
                           Select a Responsible contractor
                         </option>
                         {responsibleContractor.map((option: any) => (
@@ -483,11 +489,9 @@ setLoading(false)
                       </Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        RECEIVED FROM
-                      </label>
+                    <CustomLabel label={"Received From"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="received_from_id"
                         as="select"
                         onChange={(e: any) => {
@@ -497,7 +501,7 @@ setLoading(false)
                           );
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value=""  className="text-text-gray">Select a person</option>
                         {receivedForm.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -513,11 +517,9 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        SUBMITTAL MANAGER
-                      </label>
+                    <CustomLabel label={"Submittal Manager"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="submittal_manager_id"
                         as="select"
                         onChange={(e: any) =>{
@@ -526,7 +528,7 @@ setLoading(false)
                             "submittal_manager_id",isNaN(selectedValue)?"":selectedValue )
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value="" className="text-text-gray">Select a person</option>
                         {rfiManager.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -535,18 +537,16 @@ setLoading(false)
                       </Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        STATUS
-                      </label>
+                    <CustomLabel label={"Status"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="status_id"
                         as="select"
                         onChange={(e: any) => {
                           setFieldValue("status", e.target.value);
                         }}
                       >
-                        <option value="">Select a status</option>
+                        <option value="" className="text-text-gray">Select a status</option>
                         {statusData.map((option: any) => (
                         <option
                          className=""
@@ -568,11 +568,9 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        SUBMIT BY
-                      </label>
+                    <CustomLabel label={"Submit By"}></CustomLabel>
                       <input
-                        className="border border-solid border-border-black p-2 focus:outline-yellow-500 rounded w-full hover:border-yellow-500"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         type="date"
                         placeholder="date"
                         name="submit_by"
@@ -583,11 +581,9 @@ setLoading(false)
                       />
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        RECEIVED DATE
-                      </label>
+                    <CustomLabel label={"Received Date"}></CustomLabel>
                       <input
-                        className="border border-solid border-border-black p-2 focus:outline-yellow-500 rounded w-full hover:border-yellow-500"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         type="date"
                         placeholder="date"
                         name="received_date"
@@ -605,11 +601,9 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        ISSUE DATE
-                      </label>
+                    <CustomLabel label={"Issue Date"}></CustomLabel>
                       <input
-                        className="border border-solid border-border-black p-2 focus:outline-yellow-500 rounded w-full hover:border-yellow-500"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         type="date"
                         placeholder="date"
                         name="issue_date"
@@ -620,11 +614,9 @@ setLoading(false)
                       />
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        COST CODE
-                      </label>
+                    <CustomLabel label={"Cost Code"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="cost_code_id"
                         as="select"
                         onChange={(e: any) => {
@@ -639,6 +631,11 @@ setLoading(false)
                             {option.full_code}&nbsp;{option.name}
                           </option>
                         ))}
+                        {coastCodee.length === 0 && (
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           )}
                       </Field>
                     </Grid>
                   </Grid>
@@ -649,24 +646,25 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        LOCATION
-                      </label>
+                    <CustomLabel label={"Location"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="location_id"
                         as="select"
                         placeHolder="select Type"
                       >
                         <option value="">Select a Location</option>
+                        {location.length === 0 && (
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           )}
                       </Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        DISTRIBUTION MEMBER
-                      </label>
+                    <CustomLabel label={"Distribution Members"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="distribution_member_ids"
                         as="select"
                         onChange={(e: any) => {
@@ -692,23 +690,19 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        LEAD TIME
-                      </label>
+                    <CustomLabel label={"Lead Time"}></CustomLabel>
 
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="lead_time"
                         type="number"
                         placeHolder="enter Time(days)"
                       ></Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        REQUIRED ON-SITE DATE
-                      </label>
+                    <CustomLabel label={"Required On Site Date"}></CustomLabel>
                       <input
-                        className="border border-solid border-border-black p-2 focus:outline-yellow-500 rounded w-full hover:border-yellow-500"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         type="date"
                         placeholder="date"
                         name="required_on_site_date"
@@ -726,26 +720,24 @@ setLoading(false)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        PRIVATE
-                      </label>
+                    <CustomLabel label={"Private"}></CustomLabel>
                       <Checkbox {...label} name="private" />
                     </Grid>
                   </Grid>
                   <Grid container className="pt-[5px]">
                     <Grid item xs={15}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        DESCRIPTION
-                      </label>
-                      <TextField
+                    <CustomLabel label={"Description"}></CustomLabel>
+                    <Field
                         fullWidth
                         required
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full h-[50px]  p-2 rounded hover:border-grey-500"
                         type="text"
                         name="description"
                         value={values.description}
                         id="outlined-multiline-flexible"
+                        color="warning"
                         multiline
-                        onChange={(e) => {
+                        onChange={(e:any) => {
                           setFieldValue("description", e.target.value);
                         }}
                         maxRows={4}
@@ -758,17 +750,12 @@ setLoading(false)
                     <input {...getInputProps()}
                     type="file"
                     name="attachments" />
-                    <label
-                      htmlFor="attachments"
-                      className="text-gray-700 font-medium text-[11px] mb-1"
-                    >
-                      Attachments
-                    </label>
+                    <CustomLabel label={"Attachments"}></CustomLabel>
                     {
                       isDragActive ? (
                         <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
                       ) : (
-                        <div className="flex justify-center border border-soild border-grey-500 focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500">
+                        <div className="flex justify-center border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500">
                           <UploaderIcon
                             src={uploaderIcon}
                             alt="upload"

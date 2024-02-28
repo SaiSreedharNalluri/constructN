@@ -15,6 +15,7 @@ import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
 import { IToolbarAction } from "../../../../models/ITools";
+import CustomLabel from "../../../divami_components/custom-label/CustomLabel";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -32,6 +33,9 @@ interface IProps{
   hazard:any
   contributingBehavior:any
   contributingCondition:any
+  trade:any
+  location:any
+  specSection:any
   issue:any
   task:any
   handleCloseProcore:any
@@ -54,6 +58,9 @@ const LinkNewObservation : React.FC<IProps> = ({
     issue,
     task,
     handleCloseProcore,
+    trade,
+    location,
+    specSection,
     getIssues,
     getTasks,
     toolClicked
@@ -247,10 +254,10 @@ createObservation(formData)
             {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue =
                Object.values(values).every((value) =>{
-                if(values.name!=="" && values.type_id!==null && values.status!=="" && values.description!==""){
-                   return false;
+                if(values.name!=="" && values.type_id!==null && values.type_id !== undefined && values.status!=="" && values.description!==""){
+                   return true;
                 }else{
-                  return true;
+                  return false;
                 }
               }
                 )
@@ -266,20 +273,18 @@ createObservation(formData)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        TYPE <span className="text-border-yellow text-base text-[11px]"> *</span>
-                      </label>
+                    <CustomLabel label={"* Type"}></CustomLabel>
                       <Field
                         required
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="type_id"
                         as="select"
                         onChange={(e:any) => {
                           const selectedValue = parseFloat(e.target.value)
-                          setFieldValue("type_id", isNaN(selectedValue) ? "" : selectedValue);
+                          setFieldValue("type_id", isNaN(selectedValue) ? undefined : selectedValue);
                         }}
                       >
-                        <option value="">Select a type</option>
+                        <option value={undefined} className="text-text-gray">Select a type</option>
 
                         {types.map((option: any) => (
                           <option
@@ -295,19 +300,17 @@ createObservation(formData)
                       )}
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        STATUS <span className="text-border-yellow text-base text-[11px]"> *</span>
-                      </label>
+                    <CustomLabel label={"* Status"}></CustomLabel>
                       <Field
                         required
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="status"
                         as="select"
                         onChange={(e: any) => {
                           setFieldValue("status", e.target.value);
                         }}
                       >
-                        <option value="">Select a status</option>
+                        <option value='' className="text-text-gray">Select a status</option>
 
                         {statusData.map((option: any) => (
                           <option
@@ -329,12 +332,10 @@ createObservation(formData)
                     justifyContent="space-between"
                     className="pt-[5px]"
                   >
-                    <Grid item xs={2}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        TITLE  <span className="text-border-yellow text-base text-[11px]">*</span>
-                      </label>
+                    <Grid item xs={6}>
+                    <CustomLabel label={"* Title"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="name"
                         type="text"
                         placeHolder="Title"
@@ -343,18 +344,16 @@ createObservation(formData)
                       )}
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        PRIORITY
-                      </label>
+                    <CustomLabel label={"Priority"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="priority"
                         as="select"
                         onChange={(e: any) => {
                           setFieldValue("priority", e.target.value);
                         }}
                       >
-                        <option value="">Select a Priority</option>
+                        <option value='' className="text-text-gray">Select a Priority</option>
                         {priorityData.map((option: any) => (
                           <option
                             className=""
@@ -374,11 +373,9 @@ createObservation(formData)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        NUMBER(Assigned)
-                      </label>
+                    <CustomLabel label={"Number"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:outline-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="number"
                         type="text"
                         placeHolder=" number"
@@ -388,16 +385,19 @@ createObservation(formData)
                       ></Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        TRADE
-                      </label>
+                    <CustomLabel label={"Trade"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="trade_id"
                         as="select"
                         placeHolder="select Trade"
                       >
                         <option>Select Trade</option>
+                        {trade.length === 0 && (
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           )}
                       </Field>
                       
                     </Grid>
@@ -409,29 +409,35 @@ createObservation(formData)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        LOCATION
-                      </label>
+                    <CustomLabel label={"Location"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="location_id"
                         as="select"
                         placeHolder="select Location"
                       >
                         <option>Select Location</option>
+                        {location.length === 0 && (
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           )}
                       </Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        SPEC SECTION
-                      </label>
+                    <CustomLabel label={"Spec Section"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="specification_section_id"
                         as="select"
                         placeHolder="select Spec Section"
                       >
                         <option>Select Spec Section</option>
+                        {specSection.length === 0 && (
+                          <option value="" disabled>
+                             No options available
+                             </option>
+                           )}
                       </Field>
                     </Grid>
                   </Grid>
@@ -442,19 +448,17 @@ createObservation(formData)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        ASSIGNEE
-                      </label>
+                    <CustomLabel label={"Assignee"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="assignee_id"
                         as="select"
                         onChange={(e: any) =>{
                           const selectedValue = parseFloat(e.target.value);
-                          setFieldValue( "assignee_id",isNaN(selectedValue) ? "" : selectedValue)
+                          setFieldValue( "assignee_id",isNaN(selectedValue) ? undefined : selectedValue)
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value={undefined} className="text-text-gray">Select a person</option>
                           {rfiManager.map((option: any) => (
                             <option key={option.id} value={option.id}>
                               {option.name}
@@ -465,21 +469,19 @@ createObservation(formData)
 
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        DISTRIBUTION MEMBER
-                      </label>
+                    <CustomLabel label={"Distribution Members"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="distribution_member_ids"
                         as="select"
                         onChange={(e: any) => {
                           const selectedValue = parseFloat(e.target.value);
                           setFieldValue("distribution_member_ids", [
-                            isNaN(selectedValue) ? "" : selectedValue
+                            isNaN(selectedValue) ? undefined : selectedValue
                           ]);
                         }}
                       >
-                        <option value="">Select a person</option>
+                        <option value={undefined} className="text-text-gray">Select a person</option>
                         {potentialDistMem.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -495,11 +497,9 @@ createObservation(formData)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        DUE DATE
-                      </label>
+                    <CustomLabel label={"Due Date"}></CustomLabel>
                       <input
-                        className="border border-solid border-border-black p-2 focus:outline-yellow-500 rounded w-full hover:border-yellow-500"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         type="date"
                         placeholder="date"
                         name="due_date"
@@ -510,9 +510,7 @@ createObservation(formData)
                       />
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        PRIVATE
-                      </label>
+                    <CustomLabel label={"Private"}></CustomLabel>
                       <Checkbox {...label} name="personal" />
                     </Grid>
                   </Grid>
@@ -523,11 +521,9 @@ createObservation(formData)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        CONTRIBUTING CONDITION
-                      </label>
+                    <CustomLabel label={"Contributing Condition"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="contributing_condition_id"
                         as="select"
                         onChange={(e: any) => {
@@ -536,7 +532,7 @@ createObservation(formData)
                             "contributing_condition_id",isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
-                        <option value="">Select a Conditions</option>
+                        <option value="" className="text-text-gray">Select a Conditions</option>
                         {contributingCondition.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -545,11 +541,9 @@ createObservation(formData)
                       </Field>
                     </Grid>
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        CONTRIBUTING BEHAVIOR
-                      </label>
+                    <CustomLabel label={"Contributing Behavior"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="contributing_behavior_id"
                         as="select"
                         onChange={(e: any) => {
@@ -558,7 +552,7 @@ createObservation(formData)
                             "contributing_behavior_id",isNaN(selectedValue) ? "" : selectedValue);
                         }}
                       >
-                        <option value="">Select a Contributing Behavior</option>
+                        <option value="" className="text-text-gray">Select a Contributing Behavior</option>
                         {contributingBehavior.map((option: any) => (
                           <option key={option.id} value={option.id}>
                             {option.name}
@@ -574,20 +568,18 @@ createObservation(formData)
                     className="pt-[5px]"
                   >
                     <Grid item xs={6}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        HAZARD
-                      </label>
+                    <CustomLabel label={"Hazard"}></CustomLabel>
                       <Field
-                        className="border border-solid border-gray-400 focus:border-border-yellow  hover:border-border-yellow w-[182px] h-[38px] rounded"
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="hazard_id"
                         as="select"
                         onChange={(e: any) => {
                           const selectedValue =parseFloat(e.target.value);
                           setFieldValue(
-                            "hazard_id",isNaN(selectedValue)?"":selectedValue);
+                            "hazard_id",isNaN(selectedValue)?undefined:selectedValue);
                         }}
                       >
-                        <option value="">Select a Hazard</option>
+                        <option value={undefined} className="text-text-gray">Select a Hazard</option>
                         {hazard.map((option: any) => (
                           <option
                             className=""
@@ -602,17 +594,16 @@ createObservation(formData)
                   </Grid>
                   <Grid container className="pt-[5px]">
                     <Grid item xs={15}>
-                      <label className=" text-gray-700 font-medium text-[11px] mb-1">
-                        DESCRIPTION <span className="text-border-yellow text-base text-[11px]"> *</span>
-                      </label>
-                      <TextField
+                    <CustomLabel label={"* Description"}></CustomLabel>
+                      <Field
                         fullWidth
                         required
+                        className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full h-[50px]  p-2 rounded hover:border-grey-500"
                         value={values.description}
                         name="description"
-                        id="outlined-multiline-flexible"
                         multiline
                         maxRows={4}
+                        color="warning"
                         onChange={(e: any) => {
                           setFieldValue("description", e.target.value);
                         }}
@@ -633,9 +624,9 @@ createObservation(formData)
                     </label>
                     {
                       isDragActive ? (
-                        <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
+                        <div className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"></div>
                       ) : (
-                        <div className="flex justify-center border border-soild border-grey-500 focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500">
+                        <div className="flex justify-center border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500">
                           <UploaderIcon
                             src={uploaderIcon}
                             alt="upload"

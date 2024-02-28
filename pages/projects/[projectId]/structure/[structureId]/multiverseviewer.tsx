@@ -966,6 +966,9 @@ const Index: React.FC<IProps> = () => {
         CustomToast('The downloading of the image has started.it will take some time to complete...','success')  
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getViewerScreenshot", "data": ""}`);
       break
+      case 'getReport':
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getReport", "data": ""}`);
+        break;
       default:
         break;
     }
@@ -1513,14 +1516,19 @@ const Index: React.FC<IProps> = () => {
 
   const r: any = useRef();
 
+  const connection = MqttConnector.getConnection()
+
+
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
       setIsFullScreen(true);
+      connection?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setFullScreenMode", "data": "true"}`);
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
         setIsFullScreen(false);
+        connection?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setFullScreenMode", "data": "false"}`);
       }
     }
   };
@@ -2006,31 +2014,41 @@ const Index: React.FC<IProps> = () => {
       if(event.data.type === "getViewerScreenshot")
       {
           var link = document.createElement("a");
-          link.download = `img_${snapshot?.date}.png`;
+          link.download = `img_${initData?.currentSnapshotBase?.date}.png`;
           link.href = URL.createObjectURL(event.data.screenshot as Blob);
           link.hidden = true; 
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
           URL.revokeObjectURL(link.href);
-      }       
+      }  
+      if(event.data.type === "getReport"){
+        imgRef.current = event.data.screenshot
+        miniMapImg.current = event.data.miniMapscreenshot
+        downloadPdfReport()
+      }
     }
   }
   const captureCanvas = async () => {
-    await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
-       const dataURL = canvas.toDataURL();
-       imgRef.current = dataURL
-     }).catch(error => {
-       console.error('Error capturing canvas:', error);
-   });
-    await html2canvas(document.getElementById("minimap-1") || document.body).then(canvas => {
-         const dataURL = canvas.toDataURL();
-         miniMapImg.current = dataURL
-     }).catch(error => {
-         console.error('Error capturing canvas:', error);
-     });
-     downloadPdfReport()
+    let typeChangeToolAction: IToolbarAction = { type: "getReport", data: "" };
+    toolClicked(typeChangeToolAction)
+    CustomToast('The report generation is started.it will take some time to complete and download...','success')
+  //   await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
+  //      const dataURL = canvas.toDataURL();
+  //      imgRef.current = dataURL
+  //    }).catch(error => {
+  //      console.error('Error capturing canvas:', error);
+  //  });
+  //   await html2canvas(document.getElementById("minimap-1") || document.body).then(canvas => {
+  //        const dataURL = canvas.toDataURL();
+  //        miniMapImg.current = dataURL
+  //    }).catch(error => {
+  //        console.error('Error capturing canvas:', error);
+  //    });
+    //  downloadPdfReport()
  };
+
+ 
 useEffect(()=>{
   window.addEventListener('message', receiveMessage);
   return () => {
@@ -2042,11 +2060,10 @@ const download360Image = () =>{
   toolClicked(typeChangeToolAction)
   }
   const downloadPdfReport = async () => {
-    CustomToast('The report generation is started.it will take some time to complete and download...','success')
-    const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
+    const url = URL.createObjectURL(await pdf(<GenerateReport project={appState.currentProjectData?.project as IProjects} structure ={initData?.structure as IStructure} snapshot={initData?.currentSnapshotBase as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
     const a = document.createElement('a');
     a.href = url;
-    a.download = `report_${snapshot?.date}.pdf`;
+    a.download = `report_${initData?.currentSnapshotBase?.date}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
