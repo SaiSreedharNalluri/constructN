@@ -131,7 +131,7 @@ const ConfirmModal = ({show = false, setShow =()=>{}, measurement ={}, onCancel=
   return (
     <div onKeyDown={(e)=>{
       e.stopPropagation();
-      if(e.key === 'Enter'){
+      if(e.key === 'Enter' && !loading){
         callBack();
       }
     }}>

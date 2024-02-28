@@ -855,7 +855,7 @@ const _onCategorySelected = (category: IAssetCategory | undefined) => {
           } refetch={refetch} selectedCategory={selectedCategory} assetCategories={assetCategories} setLoading={setLoading} loading={loading} setSelected={setSelected} apiPoints={apiPoints} />: null}
         {!!deleteMeasurementId ? <div onKeyDown={(e)=>{
           e.stopPropagation();
-          if(e.key === 'Enter'){
+          if(e.key === 'Enter' && !loading){
             deleteCallback();
           }
         }}> <PopupComponent
