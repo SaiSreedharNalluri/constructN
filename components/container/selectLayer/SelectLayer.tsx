@@ -177,7 +177,7 @@ const SelectLayer = ({
         
         
       />
-      <TreeLabelContainer>{node.name}</TreeLabelContainer>
+      <TreeLabelContainer onClick={(e)=>e.stopPropagation()}>{node.name}</TreeLabelContainer>
     </TreeItemLabelContainer>
   );
   const renderTree = (nodes: ILayer,index:number) => {
