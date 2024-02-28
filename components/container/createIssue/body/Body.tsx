@@ -225,7 +225,7 @@ const Body = ({
                       ...each,
                       formLabel:<div>
                       Start Date
-                      <Tooltip title='Expected / Actual start date of the task'>
+                      <Tooltip title='Expected / Actual start date of the issue'>
                       <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
                       </Tooltip>
                     </div>,
@@ -345,7 +345,7 @@ const Body = ({
                       ...each,
                       formLabel:<div>
                         Expected Start Date
-                        <Tooltip title='Expected start date for the assigned user on this task'>
+                        <Tooltip title='Expected start date for the assigned user on this issue'>
                         <InfoOutlinedIcon className="ml-2 text-sm"></InfoOutlinedIcon>
                         </Tooltip>
                       </div>,
