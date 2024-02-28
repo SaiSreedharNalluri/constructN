@@ -1743,7 +1743,13 @@ const Index: React.FC<IProps> = () => {
               if(urlSnap)
                 vData.currentSnapshotBase=urlSnap;
             }
+            let stageLayer : ILayer | undefined=
+            vData.currentLayersList?.find((layer:ILayer)=>{
+              if(layer.name==='Stages')
+                return true
+            })
             vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
+            stageLayer && vData.currentLayersList.push(stageLayer);
             vData.taskShow=true;
             vData.issueShow=true;
             vData.isIssueFiltered=false;
@@ -1851,7 +1857,13 @@ const Index: React.FC<IProps> = () => {
               }
              
             }
+            let stageLayer : ILayer | undefined=
+            vData.currentLayersList?.find((layer:ILayer)=>{
+              if(layer.name==='Stages')
+                return true
+            })
                 vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
+                stageLayer && vData.currentLayersList.push(stageLayer);
                 vData.taskShow=true;
                 vData.issueShow=true;
                 vData.isIssueFiltered=false;
