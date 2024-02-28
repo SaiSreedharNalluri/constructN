@@ -1,5 +1,5 @@
 import { Field, Form, Formik, FormikProps, useFormikContext } from "formik";
-import { Grid, TextField, Checkbox,} from "@mui/material";
+import { Grid, TextField, Checkbox, Tooltip,} from "@mui/material";
 import { CustomTaskProcoreLinks, BodyContainer,} from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -16,6 +16,10 @@ import Image from "next/image";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
 import { IToolbarAction } from "../../../../models/ITools";
 import CustomLabel from "../../../divami_components/custom-label/CustomLabel";
+import { AttachedImageDiv } from "../newRFI/linkNewRfi";
+import { AttachedImageTitle, DeleteIcon } from "../../issueDetails/IssueDetailStyles";
+import { truncateString } from "../../../../pages/projects";
+import Delete from "../../../../public/divami_icons/delete.svg";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -75,6 +79,11 @@ const LinkNewObservation : React.FC<IProps> = ({
      }
     
     }
+
+    const handleDelete = (indexToRemove:number) => {
+      const updatedFiles:any = files?.filter((file, index) => index !== indexToRemove);
+      setFiles(updatedFiles); 
+    };
     const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
@@ -117,11 +126,30 @@ const LinkNewObservation : React.FC<IProps> = ({
   const formikRef = useRef<FormikProps<any>>(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
-  const [files, setFiles] = useState<[Blob]>();
+  const [files, setFiles] = useState<File[]>();
   const [loading, setLoading] = useState(false)
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
-  const onDrop = useCallback((acceptedFiles: any) => {
-      setFiles(acceptedFiles);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFiles(prevFiles => {
+      if (!prevFiles) {
+        prevFiles = [];
+      }
+  
+      const updatedFiles = [
+        ...prevFiles,
+        ...acceptedFiles.map(file => {
+          const fileNameParts = file.name.split('.');
+          const extension = fileNameParts.pop();
+          const originalFileName = fileNameParts.join('.');
+          const renamedFileName = `(#${issue?.sequenceNumber || task?.sequenceNumber})${originalFileName}.${extension}`;
+          
+          return new File([file], renamedFileName, {
+            type: file.type
+          });
+        })
+      ];
+      return updatedFiles;
+    });
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
  
@@ -511,7 +539,10 @@ createObservation(formData)
                     </Grid>
                     <Grid item xs={6}>
                     <CustomLabel label={"Private"}></CustomLabel>
-                      <Checkbox {...label} name="personal" />
+                      <Checkbox {...label} name="personal" onChange={(e) => {
+            const isChecked = e.target.checked;
+            setFieldValue('personal', isChecked);
+        }}/>
                     </Grid>
                   </Grid>
                   <Grid
@@ -614,14 +645,10 @@ createObservation(formData)
                   </Grid>
                   <Grid container className="pt-[5px] mb-[20px]">
                   <Grid item xs={15}>
+                  <CustomLabel label={"Attachments"}></CustomLabel>
                   <div {...getRootProps()}>
                     <input {...getInputProps()} />
-                    <label
-                      htmlFor="attachments"
-                      className="text-gray-700 font-medium text-[11px] mb-1"
-                    >
-                      Attachments
-                    </label>
+                   
                     {
                       isDragActive ? (
                         <div className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"></div>
@@ -639,21 +666,30 @@ createObservation(formData)
                   </div>
                   </Grid>
                   </Grid>
+                  <>
                   {files&&files.length > 0 && (
                         <div>
-                          <strong>Uploaded Files:</strong>
-                          <ul>
-                            {files.map((file: any, index: number) => (
-                              <li
-                                key={index}
-                                style={{ cursor: "pointer" }}
-                              >
-                                {file.name}
-                              </li>
-                            ))}
-                          </ul>
+                         {files.map((file: File, index: number) => {
+                                return(
+                              <AttachedImageDiv className={`detailsImageDiv`} key={index}>
+                              <div className="w-[50%]">
+                                <Tooltip title={file?.name?.length > 20 ? file?.name : ""}>
+                                  <AttachedImageTitle>{truncateString(file?.name, 20)}</AttachedImageTitle>
+                                </Tooltip>
+                                </div>
+                                <DeleteIcon
+                                  src={Delete}
+                                  alt={"delete icon"}
+                                  onClick={() => {
+                                    handleDelete(index)
+                                  } } />
+                              
+                              </AttachedImageDiv>
+                               )})}
+                          
                         </div>
                       )}
+                      </>
                 </div>
               </Form>
               )

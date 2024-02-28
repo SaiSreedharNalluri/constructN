@@ -3,7 +3,7 @@ import {
   CustomTaskProcoreLinks,
 } from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
-import { Box, MenuItem, Select, TextField } from "@mui/material";
+import { Box, MenuItem, Select, TextField, Tooltip } from "@mui/material";
 import { ChangeEvent,  useRef, useState } from "react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
@@ -19,11 +19,21 @@ import { useAppContext } from "../../../../state/appState/context";
 import CustomLoader from "../../../divami_components/custom_loader/CustomLoader";
 import { IToolbarAction } from "../../../../models/ITools";
 import CustomLabel from "../../../divami_components/custom-label/CustomLabel";
-{/* <label className=" text-text-gray font-sans text-base text-[11px] mb-1"></label> */}
+import {  AttachedImageTitle, DeleteIcon } from "../../issueDetails/IssueDetailStyles";
+import { truncateString } from "../../../../pages/projects";
+import Delete from "../../../../public/divami_icons/delete.svg";
+
 export const LabelContainer=styled('div')({
      fontFamily:'sans-serif',
      
 })
+export const AttachedImageDiv = styled("div")`
+  display: flex;
+ // justify-content:  space-around;
+  align-items: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
+`;
 
 const StyledMenuItem = styled(MenuItem)({
   height: "38px",
@@ -125,11 +135,30 @@ const LinkNewRFI : React.FC<IProps> = ({
   const [showInput, setShowInput] = useState(false);
   const [showValueInput, setshowValueInput] = useState(false);
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
-  const [files, setFiles] = useState<[Blob]>();
+  const [files, setFiles] = useState<File[]>();
   const formikRef = useRef<FormikProps<any>>(null);
   const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
-  const onDrop = useCallback((acceptedFiles: any) => {
-      setFiles(acceptedFiles);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFiles(prevFiles => {
+      if (!prevFiles) {
+        prevFiles = [];
+      }
+  
+      const updatedFiles = [
+        ...prevFiles,
+        ...acceptedFiles.map(file => {
+          const fileNameParts = file.name.split('.');
+          const extension = fileNameParts.pop();
+          const originalFileName = fileNameParts.join('.');
+          const renamedFileName = `(#${issue?.sequenceNumber || task?.sequenceNumber})${originalFileName}.${extension}`;
+          
+          return new File([file], renamedFileName, {
+            type: file.type
+          });
+        })
+      ];
+      return updatedFiles;
+    });
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const { state: appState} = useAppContext();
@@ -146,6 +175,11 @@ const LinkNewRFI : React.FC<IProps> = ({
      }
     
     }
+
+    const handleDelete = (indexToRemove:number) => {
+      const updatedFiles:any = files?.filter((file, index) => index !== indexToRemove);
+      setFiles(updatedFiles); 
+    };
 
   const initialValues: {
     subject: string;
@@ -745,9 +779,12 @@ const LinkNewRFI : React.FC<IProps> = ({
                       )}
                     </div>
                   </div>
-                  <div className="mt-3" {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    <CustomLabel label={"Attachments"}></CustomLabel>
+                  
+                  <div className="mt-3" >
+                  <CustomLabel label={"Attachments"}></CustomLabel>
+                  <div {...getRootProps()}>
+                    <input  {...getInputProps()} />
+                    
                     {
                       isDragActive ? (
                         <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
@@ -762,22 +799,32 @@ const LinkNewRFI : React.FC<IProps> = ({
                      
                       
                     }
+                    </div>
                   </div>
+                  <>
                   {files&&files.length > 0 && (
                         <div>
-                          <strong>Uploaded Files:</strong>
-                          <ul>
-                            {files.map((file: any, index: number) => (
-                              <li
-                                key={index}
-                                style={{ cursor: "pointer" }}
-                              >
-                                {file.name}
-                              </li>
-                            ))}
-                          </ul>
+                         {files.map((file: File, index: number) => {
+                                return(
+                              <AttachedImageDiv className={`detailsImageDiv`} key={index}>
+                              <div className="w-[50%]">
+                                <Tooltip title={file?.name?.length > 20 ? file?.name : ""}>
+                                  <AttachedImageTitle>{truncateString(file?.name, 20)}</AttachedImageTitle>
+                                </Tooltip>
+                                </div>
+                                <DeleteIcon
+                                  src={Delete}
+                                  alt={"delete icon"}
+                                  onClick={() => {
+                                    handleDelete(index)
+                                  } } />
+                              
+                              </AttachedImageDiv>
+                               )})}
+                          
                         </div>
                       )}
+                      </>
                 </div>
               </Form>
               )

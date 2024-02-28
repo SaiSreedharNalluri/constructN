@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { showObservationDetails, showRfiDetails, showSubmittalDetails } from "../../../services/procore";
 import { PROCORE } from "../../../config/config";
 import { PopupIcon, PriorityStatus, PriorityTitle, ProcoreLogo, SecondBodyDiv, SecondContPrior, TabOneDiv } from "../../divami_components/issue_detail/IssueDetailStyles";
-import popup from "../../../public/divami_icons/popup.svg"
+import ExternalLinkIcon from "../../../public/divami_icons/ExternalLinkIcon.svg"
 import styled from "@emotion/styled";
 import { useAppContext } from "../../../state/appState/context";
 import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
@@ -156,7 +156,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
           <SecondBodyDiv>
           <ProcoreSectionIcon>
           <PopupIcon
-          src={popup}
+          src={ExternalLinkIcon}
           alt={"link"}></PopupIcon>&nbsp;
            <a href={details.link} target="_blank" rel="noopener noreferrer" style={{color:"white"}}>
            View {type === 'rfi' ? type.toUpperCase() : type.charAt(0).toUpperCase() + type.slice(1)} in Procore</a> 
