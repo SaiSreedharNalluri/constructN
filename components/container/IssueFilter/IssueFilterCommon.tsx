@@ -444,12 +444,12 @@ const FilterCommon: React.FC<IProps> = ({
     if (issueFilterState?.isFilterApplied) {
     }
     
-    setStartData([
-      {
-        ...DATE_PICKER_DATA[0],
-        defaultValue: issueFilterState?.filterData.fromDate,
-      },
-    ]);
+    // setStartData([
+    //   {
+    //     ...DATE_PICKER_DATA[0],
+    //     defaultValue: issueFilterState?.filterData.fromDate,
+    //   },
+    // ]);
   }, [taskType, taskStatus, tagStatus, projectUsers, taskPriority,FilterState[0].options]);
 
   // Select All Handling
