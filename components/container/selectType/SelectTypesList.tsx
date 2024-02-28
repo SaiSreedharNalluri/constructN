@@ -127,6 +127,9 @@ setFilteredItems(result)
             variant="outlined"
             // value={searchTerm}
             // onChange={handleSearch}
+            onClick={(e: any) => {
+              e.stopPropagation();
+            }}
             onChange={(e: any) => {
               onSearchChange(e);
             }}
