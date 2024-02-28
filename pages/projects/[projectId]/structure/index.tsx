@@ -2034,8 +2034,8 @@ const Index: React.FC<IProps> = () => {
             </div>
               <div>
         {
-        currentViewMode === 'Reality' &&
-          <div className="absolute top-[1rem] right-[1rem]">
+        currentViewMode === 'Reality' && currentViewType === "pointCloud"  &&
+          <div className="absolute top-[1rem] right-3">
             <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>
           }
