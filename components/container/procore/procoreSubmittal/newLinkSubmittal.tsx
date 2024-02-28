@@ -84,11 +84,9 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber;
 
 useEffect(()=>{
-  console.log("useEffect statred");
   
   setDropDownLoading(true)
   getSubmittalReceivedFrom(procoreProjectId,responsibleContractorId).then((response:any)=>{
-    console.log("useEffect api");
     
      if(response){
       setReceived(response)
@@ -99,11 +97,8 @@ useEffect(()=>{
 
   useEffect(()=>{
     setDropDownLoading(true)
-    console.log("useEffect 2nd use");
     getSubmittalResponsibleContractor(procoreProjectId,receivedId).then((response:any)=>{
-      console.log("useEffect 2nd api");
       if(response){
-        console.log("useEffect 2nd resp",response);
         setResponsibleContractorValues(response)
         setDropDownLoading(false)
       }
@@ -112,7 +107,6 @@ useEffect(()=>{
   },[receivedId])
 
 const handleResponsibleContractor =(e:ChangeEvent<HTMLInputElement>)=>{
-  console.log("event",e.target.value);
   
     const selectedValue =parseFloat(e.target.value)
     setResponsibleContractorId(isNaN(selectedValue)?null:selectedValue)
