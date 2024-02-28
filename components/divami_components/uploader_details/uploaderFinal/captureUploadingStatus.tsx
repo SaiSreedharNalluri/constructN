@@ -18,7 +18,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Delete from "../../../../public/divami_icons/delete.svg";
 import PopupComponent from "../../../popupComponent/PopupComponent";
 import { UploadStatus, UploaderModalMessage, UploaderModalPrimaryButton, UploaderModalSecondaryButton, UploaderModalTitle } from "../../../../models/IUploader";
-import { UploaderPopups } from "../../../../state/uploaderState/state";
 import { RawImageStatus } from "../../../../models/IRawImages";
 import { CustomToast } from "../../custom-toaster/CustomToast";
 import AutorenewIcon from '@mui/icons-material/Autorenew';
