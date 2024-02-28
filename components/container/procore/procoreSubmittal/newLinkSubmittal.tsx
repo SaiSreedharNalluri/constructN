@@ -78,11 +78,13 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
   const [receivedId,setReceivedId]=useState<number|null>(null)
   const [responsibleContractorId, setResponsibleContractorId]=useState<number|null>(null)
   const [dropDownLoading, setDropDownLoading] = useState(false)
+  const [showError, setShowError] = useState(false);
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber;
 
 useEffect(()=>{
+  
   setDropDownLoading(true)
   getSubmittalReceivedFrom(procoreProjectId,responsibleContractorId).then((response:any)=>{
     
@@ -105,6 +107,7 @@ useEffect(()=>{
   },[receivedId])
 
 const handleResponsibleContractor =(e:ChangeEvent<HTMLInputElement>)=>{
+  
     const selectedValue =parseFloat(e.target.value)
     setResponsibleContractorId(isNaN(selectedValue)?null:selectedValue)
   
@@ -402,19 +405,25 @@ setLoading(false)
              {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = Object.values(values).every((value) => {
                 if (values.number !== "") {
+                  
                   if(receivedId !==null && responsibleContractorValues.length>0 && responsibleContractorId !== null){
+                    setShowError(false)
+                   
                     return true
                   }
                   else if(values.number !== "" && receivedId===null && responsibleContractorId === null && responsibleContractorValues.length>0) {
                     return true
                   }
                   else if(values.number !== "" && receivedId !==null && responsibleContractorId === null && responsibleContractorValues.length>0) {
+                    setShowError(true)
                     return false
                   }
                   else if(values.number !== "" && responsibleContractorId === null && responsibleContractorValues.length === 0) {
+                    setShowError(false)
                     return true
                   }
                   else{
+                    
                       return true
                   }
                 } else {
@@ -554,6 +563,9 @@ setLoading(false)
                           </option>
                         ))}
                       </Field>
+                      {showError && (
+                        <div className="text-border-yellow w-[182px]">{"Select Responsible Contractor"}</div>
+                      )}
                       {dropDownLoading && (
                             <CustomLoader></CustomLoader>
                          )}
