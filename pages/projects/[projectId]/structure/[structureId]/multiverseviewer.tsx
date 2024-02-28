@@ -2200,7 +2200,7 @@ const download360Image = () =>{
         <div>
         {
         currentViewMode === 'Reality' &&
-          <div className="absolute top-[1rem] right-[1rem]">
+          <div className="absolute top-[1rem] right-3">
             <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>
           }
