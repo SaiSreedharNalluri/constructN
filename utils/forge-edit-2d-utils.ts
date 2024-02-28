@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { IAsset, IAssetPoint, IAssetStage } from '../models/IAssetCategory'
 
 import { publish, subscribe, unsubscribe } from '../services/light-box-service'
+
 import { Vector2 } from 'three'
 
 export class ForgeEdit2DUtils {
@@ -52,8 +53,11 @@ export class ForgeEdit2DUtils {
 
     loadAssets(assets: IAsset[]) {
 
-        if((this._edit2DLayer as { context?: object })?.context){
+        if((this._edit2DLayer as { context?: object })?.context) {
+
             this._edit2DLayer?.clear();
+
+            const globalPoints: any = {}
 
             assets.forEach(asset => {
 
@@ -61,11 +65,14 @@ export class ForgeEdit2DUtils {
     
                 if(asset.shape == 'Polygon') this._createPolygon(asset._id, asset.points, color)
     
-                else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
+                else if(asset.shape == 'Polyline') {
+
+                    globalPoints[asset._id] = this._createPolyline(asset._id, asset.points, color)
+
+                }
     
             })
         }
-
     }
 
     _createPolygon(assetId: string, points: IAssetPoint[], color: string) {
@@ -80,7 +87,9 @@ export class ForgeEdit2DUtils {
 
         }));
 
-        (poly as any).name = assetId
+        (poly as any).name = assetId;
+        
+        (poly as any).shapeType = "Polygon";
 
         this._edit2DLayer.addShape(poly)
     }
@@ -97,7 +106,9 @@ export class ForgeEdit2DUtils {
 
         }));
 
-        (poly as any).name = assetId
+        (poly as any).name = assetId;
+
+        (poly as any).shapeType = "Polyline";
 
         this._edit2DLayer.addShape(poly)
     }
@@ -214,6 +225,14 @@ export class ForgeEdit2DUtils {
 
         let _position = this._applyTMInverse(new THREE.Vector3(x, y), this._tm)
 
+        // let temp = this._applyTM(new THREE.Vector3(_position.x, _position.y, _position.z), (new THREE.Matrix4() as any).fromArray(
+        //     [ 0.305049419403, -0.000012310410, 0.000000000000, 391788.218750000000,
+        //         0.000012310410, 0.305049419403, 0.000000000000, 3115298.000000000000,
+        //         0.000000000000, 0.000000000000, 0.305049419403, 0.000000000000,
+        //         0.000000000000, 0.000000000000, 0.000000000000, 1.000000000000]))
+
+        // _position = new THREE.Vector4(temp.x, temp.y, temp.z) 
+
         return this._applyOffset(_position, this._offset)
     }
 
@@ -251,11 +270,11 @@ export class ForgeEdit2DUtils {
 
     _applyTM = (position: THREE.Vector3, tm: THREE.Matrix4) => {
 
-        const a = new THREE.Vector3(position.x, position.y, position.z)
+        const a = new THREE.Vector4(position.x, position.y, position.z, 1)
 
         a.applyMatrix4(tm)
 
-        return a
+        return new THREE.Vector3(a.x, a.y, a.z)
     }
 
     private _progress2dTool = (event: any) => {
@@ -278,7 +297,10 @@ export class ForgeEdit2DUtils {
 
         const shape = this._edit2DLayer.shapes.find((value: Autodesk.Edit2D.Shape, index: number, obj: Autodesk.Edit2D.Shape[]) => shapeId == value.id)
 
-        if(shape !== undefined) (shape as any).name = assetId;
+        if(shape !== undefined){
+            (shape as any).name = assetId;
+            (shape as any).shapeType = (shape as any).isClosed ? 'Polygon' : 'Polyline';
+        }
 
         (this._edit2DContext as any).selection.selectOnly(shape)
 
@@ -396,13 +418,47 @@ export class ForgeEdit2DUtils {
 
                 const matches = this._viewer.toolController.getActiveTool().getName().match(new RegExp('Edit2_' + '(.*)' + '_default'))
 
-                publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: matches ? matches[1].replace('Tool', '') : '' })
+                const type = matches?.[1].replace('Tool', '');
+
+                if(type === 'PolygonEdit' && event?.isUndo){
+                    publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name });
+                    break;
+                }
+                
+                if(type === 'PolygonEdit' && !event?.isUndo){
+                    publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: event.action.shape.shapeType })
+                    break;
+                }
+
+                if((event.action.shape?._loops?.[0]?.[0]?.x === event.action.shape?._loops?.[0]?.[1]?.x) && (event.action.shape?._loops?.[0]?.[0]?.y === event.action.shape?._loops?.[0]?.[1]?.y)){
+                    this._edit2DLayer.removeShape(event.action.shape);
+                    break;
+                };
+
+                publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: matches ? type : '' })
 
                 break
 
             case 'RemoveShape':
 
-                if(this._editable) publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name })
+                const matchesShape = this._viewer.toolController.getActiveTool().getName().match(new RegExp('Edit2_' + '(.*)' + '_default'))
+                
+                const shapeType = matchesShape?.[1].replace('Tool', '');
+
+                if(this._editable){
+                    
+                    if(shapeType === 'PolygonEdit' && event?.isUndo){
+                        publish('add-2d-shape', { id: event.action.shape.id, points: event.action.shape._loops[0].map((point: Vector2) => this._toGlobalPosition(point)), type: event.action.shape.shapeType })
+                        break;
+                    }
+                
+                    if(shapeType === 'PolygonEdit' && !event?.isUndo){
+                        publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name });
+                        break;
+                    }
+
+                    publish('remove-2d-shape', { id: event.action.shape.id, assetId: event.action.shape.name })
+                }
 
                 else {
                     

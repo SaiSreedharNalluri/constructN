@@ -388,7 +388,9 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
   const mapReality = JSON.stringify(realityMap)
 
   useEffect(()=>{
-    refetch();
+    if(snapshot){
+      refetch();
+    }
   },[mapReality])
   
 
@@ -674,7 +676,7 @@ const MeasurementTypePicker: FC<any> = ({ potreeUtils, realityMap, loadMeasureme
 			/>: null}
       </div>: null}
 
-      { (show || selected) && <List dense className='rounded-md m-4 mt-1 pb-0  overflow-scroll' sx={{ minWidth: 240, maxWidth: 360, bgcolor: 'background.paper', border: '1px solid #e2e3e5', maxHeight: 360 }} key={points?.length} >
+      { (show || selected) && <List dense className='rounded-md m-4 mt-1 pb-0  overflow-scroll' sx={{ minWidth: 240, maxWidth: 360, bgcolor: 'background.paper', border: '1px solid #e2e3e5', maxHeight: 300 }} key={points?.length} >
 
         {points?.length > 0 && filteredpoints?.map((measurement: { type?: string; name?: string, visible?: boolean, mtype?: string, _id?: string }) => {
 
