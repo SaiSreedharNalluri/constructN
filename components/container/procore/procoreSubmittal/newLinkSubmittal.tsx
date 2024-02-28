@@ -86,7 +86,7 @@ useEffect(()=>{
   setDropDownLoading(true)
   getSubmittalReceivedFrom(procoreProjectId,responsibleContractorId).then((response:any)=>{
     
-    if(response){
+     if(response){
       setReceived(response)
       setDropDownLoading(false)
   }
@@ -98,10 +98,6 @@ useEffect(()=>{
     getSubmittalResponsibleContractor(procoreProjectId,receivedId).then((response:any)=>{
       if(response){
         setResponsibleContractorValues(response)
-        if(response.length>0){
-
-          setResponsibleContractorId(response[0].id)
-        }
         setDropDownLoading(false)
       }
     })
@@ -406,7 +402,21 @@ setLoading(false)
              {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = Object.values(values).every((value) => {
                 if (values.number !== "") {
-                  return true;
+                  if(receivedId !==null && responsibleContractorValues.length>0 && responsibleContractorId !== null){
+                    return true
+                  }
+                  else if(values.number !== "" && receivedId===null && responsibleContractorId === null && responsibleContractorValues.length>0) {
+                    return true
+                  }
+                  else if(values.number !== "" && receivedId !==null && responsibleContractorId === null && responsibleContractorValues.length>0) {
+                    return false
+                  }
+                  else if(values.number !== "" && responsibleContractorId === null && responsibleContractorValues.length === 0) {
+                    return true
+                  }
+                  else{
+                      return true
+                  }
                 } else {
                   return false;
                 }
@@ -526,7 +536,8 @@ setLoading(false)
                         className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="responsible_contractor_id"
                         as="select"
-                        onChange={handleResponsibleContractor}
+                        onClick={
+                          handleResponsibleContractor}
                       >
                         <option value={undefined} className="text-text-gray">
                           Select a Responsible contractor
@@ -553,7 +564,7 @@ setLoading(false)
                         className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                         name="received_from_id"
                         as="select"
-                        onChange={handleRecievedFrom}
+                        onClick={handleRecievedFrom}
                       >
                         <option value={undefined}  className="text-text-gray">Select a person</option>
                        
