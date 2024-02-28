@@ -73,6 +73,7 @@ import DownloadImageReport from "../../../../../components/divami_components/dow
 import html2canvas from "html2canvas";
 import { pdf } from "@react-pdf/renderer";
 import GenerateReport from "../../../../../components/divami_components/download_image_report/generateReport";
+import { isDownloadsEnabled } from "../../../../../utils/constants";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -2229,16 +2230,15 @@ const download360Image = () =>{
                 
                 : <></>}
             </div></div></div>
-            
-        {/* commenting downloads for release 
+
         <div>
         {
-        currentViewMode === 'Reality' && initData?.currentViewType==='pointCloud' &&
+        isDownloadsEnabled && currentViewMode === 'Reality' && initData?.currentViewType==='pointCloud' &&
           <div className="absolute top-[1rem] right-3">
             <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>
           }
-        </div> */}
+        </div>
         <div>
         {initData && 
         <Suspense fallback={<CustomLoader />}>
