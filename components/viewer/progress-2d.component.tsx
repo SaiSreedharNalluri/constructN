@@ -339,8 +339,11 @@ function Progress2DComponent(props: _ViewerProps) {
         } else if(_currentStructure.current === 'STR886181-DEP') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.07)
         } else if (_currentStructure.current === 'STR823522') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.118)
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.11)
+            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
+        }
+        else if(_currentStructure.current === 'STR572565') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.02)
         }
 
         return mTm!
@@ -358,7 +361,10 @@ function Progress2DComponent(props: _ViewerProps) {
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR823522') {
-            mOffset = [0.5, -0.875, 0]
+            mOffset = [0.825, -1.6, 0]
+        }
+        else if(_currentStructure.current === 'STR572565') {
+            mOffset = [0.125, -0.61, 0]
         }
 
         return mOffset!
