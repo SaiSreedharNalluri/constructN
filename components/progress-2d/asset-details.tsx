@@ -183,6 +183,31 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
         
                     }
 
+            if(!(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetWidth) && !(stage !== actualStage)){
+
+                        setLoading(true)
+        
+                        updateAssetDetails(assetId, { name, description, height: assetHeight, width: assetWidth, metrics: assetMetrics}).then(res => {
+        
+                            if(onChange) onChange(res.data.result)
+
+                            toast.success('Updated asset details successfully!', { autoClose: 5000 });
+        
+                            // setLoading(false)
+        
+                        }).catch(err => {
+        
+                            console.log(err)
+        
+                            setLoading(false)
+        
+                            toast.error('Failed to update asset details!', { autoClose: 5000 })
+
+        
+                        })
+                
+            }
+
         }
 
         const _onChange = (key: string, value: string | number) => setValues({ ...values, [key]: ['height','width'].includes(key)? +value : value })

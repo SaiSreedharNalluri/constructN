@@ -105,7 +105,7 @@ export default function Metrics({
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
-		measurementFactor: (metrics[stage._id] as { measurementFactor: number })?.measurementFactor || 1
+		measurementFactor: +(metrics[stage._id] as { measurementFactor: number })?.measurementFactor || 1
 	}));
 
 	const [stageValues, setStageValues] = useState<Stage[]>([
@@ -117,7 +117,7 @@ export default function Metrics({
 		stageValues.forEach((stage) => {
 		const stageID = stage._id;
 		if(stageID){
-			metricValues[stageID] = { measurementFactor: stage.measurementFactor || 1 };
+			metricValues[stageID] = { measurementFactor: +(stage.measurementFactor || 1) };
 		}
 		});
 		setValues({...values, metrics: metricValues})
