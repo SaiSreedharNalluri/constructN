@@ -334,7 +334,7 @@ function Progress2DComponent(props: _ViewerProps) {
         let mTm = _tm.current
         if(_currentStructure.current === 'STR940183') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
-        } else if(_currentStructure.current === 'STR886181') {
+        } else if(_currentStructure.current === 'STR886181-DEP') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.0625)
             // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), -0.035)
         } else if(_currentStructure.current === 'STR967653') {
