@@ -73,7 +73,9 @@ const ElementDetails: React.FC<{
 
     const user = JSON.parse(userObj);
 
-    const { name: actualName, _id: assetId} = asset || {}
+    const { name: actualName, _id: assetId, progress={} , } = asset || {}
+
+    const { stage: actualStage } = progress  as IAssetProgress || {}
 
     const { height: assetHeight, width: assetWidth } = values || {}
 
@@ -82,6 +84,7 @@ const ElementDetails: React.FC<{
     const conversionUnits = assetContext?.unitHandler?.toDisplayUnits('ft',1);
 
     const assetStages =  (asset?.category as IAssetCategory)?.stages
+
 
     const fields = [
         {
@@ -115,6 +118,11 @@ const ElementDetails: React.FC<{
             value: selectedData.shapeType === "Polygon" ? (selectedData.getArea() * conversionUnits**2)?.toFixed(2) : null
         },
     ]
+
+    const { name , description, stage } = values || {}
+
+    const { description: actualDecription = '' } = asset || {}
+
 
 
     return (
@@ -161,6 +169,16 @@ const ElementDetails: React.FC<{
                             </div>
                         </div>: null))}
                     </div>: null}
+                    <div className='flex mt-4 justify-end'>
+                    {!supportUser ? <Button 
+                    size='small'  
+                    disabled={ !( actualName !== name || description !== actualDecription ||  stage !== actualStage ) || !name}
+                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
+                    onClick={onSave}
+                    >
+                        Save
+                    </Button>: null}
+                    </div>
                     {supportUser ? <>
                     <Metrics stages ={stages}
                     assetId = {assetId}
