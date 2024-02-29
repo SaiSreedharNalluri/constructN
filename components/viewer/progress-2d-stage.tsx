@@ -16,6 +16,7 @@ import instance from '../../services/axiosInstance';
 import authHeader from '../../services/auth-header';
 import { CustomToast } from '../divami_components/custom-toaster/CustomToast';
 import { getCookie } from 'cookies-next';
+import { useParams } from 'next/navigation';
 
 
 const markAsComplete = async (details: { category?: string, date?: Date, stage?: string, setCompleted: Function, refetch: () => void , setLoading: Dispatch<SetStateAction<boolean>>, structId: string}) => {
@@ -40,12 +41,12 @@ const markAsComplete = async (details: { category?: string, date?: Date, stage?:
 
 }
 
-const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number }, setLoading: Function, totalMeasurement: number, structId: string, metrics: {[key: string]: number}) => {
+const updateAssetTotalMeasurement = async (categoryId: string, data: { stage?: string, totalMeasurement?: number, projId: string, oldValue: number | string }, setLoading: Function, totalMeasurement: number, structId: string, metrics: {[key: string]: number}) => {
 	try {
         setLoading(true);
 		await instance.put(`${API.PROGRESS_2D_URL}/asset-categories/${categoryId}/update-stage`, { stage: data?.stage, metrics: { ...(metrics || {}), [structId]: totalMeasurement } }, {
             headers: authHeader.authHeader(),
-            params: { stage: data?.stage }
+            params: { stage: data?.stage , project: data?.projId, structId, oldValue: data?.oldValue, newValue: totalMeasurement }
         });
         CustomToast('Successfully updated!','success');
 	} catch (error) {
@@ -168,6 +169,8 @@ function Progress2DStage(
 
     }) {
 
+    const params =  useParams()
+
     const numberFormatter = new Intl.NumberFormat('en-US',{ maximumFractionDigits: 1 });
 
     const userObj: any = getCookie('user')
@@ -178,7 +181,9 @@ function Progress2DStage(
 
     const [edit , setEdit]= useState(false)
 
-    const { height: assetHeight, width: assetWidth} = selectedCategory || {}
+    const { height: assetHeight, width: assetWidth} = selectedCategory || {};
+
+    const projId = params && params['projectId'] as string;
 
 
     const getMetric = (type: string, selectedData: any) =>{
@@ -237,7 +242,7 @@ function Progress2DStage(
     }
 
     const editCallback = async () => {
-        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: +assetValue }, setLoading, +assetValue, structId, stage.metrics!);
+        await updateAssetTotalMeasurement(selectedCategory?._id!!, { stage: stage.name , totalMeasurement: +assetValue, projId, oldValue: (stage.metrics?.[structId] || totalValueMetrics).toFixed(1) }, setLoading, +assetValue, structId, stage.metrics!);
         refetchCategories && refetchCategories();
         setEdit(false);
     }
@@ -322,13 +327,13 @@ function Progress2DStage(
                             setEdit(false);
                         }
                         }} /> : numberFormatter.format(+assetValue)} {edit? null: stage.uom}</Typography>
-                        {/* {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>{
+                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>{
                             if(!['collaborator','admin'].includes(roleforProject?.role || '')){
                                 CustomToast("Do not have access - contact Admin","error");
                                 return;
                             }
                             setEdit(true)}
-                            } />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />} */}
+                            } />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
                     </div>
                 </div>
 
