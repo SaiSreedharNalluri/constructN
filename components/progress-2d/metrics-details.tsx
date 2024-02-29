@@ -72,7 +72,8 @@ export default function Metrics({
 	conversionUnits,
 	selectedData,
 	setValues,
-	values
+	values,
+	onSave
 }: {
 	stages: Stage[];
 	assetId: string;
@@ -101,6 +102,7 @@ export default function Metrics({
         width?: number;
         metrics?: { [key: string]: { measurementFactor: number; }; };
     }>>,
+	onSave: ()=>void;
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
@@ -252,6 +254,13 @@ export default function Metrics({
 					checked={asset.status === 'Active'}  onChange={() => setShowConfirmation(asset.status !== 'Active' ? 'Active': 'InActive')} />
 						<span className="font-semibold pt-1" >Active</span>
 				</div>
+				<Button 
+                    size='small'  
+                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
+                    onClick={onSave}
+                    >
+                        Save
+                    </Button>
 			</div>
 		</div>
 	);

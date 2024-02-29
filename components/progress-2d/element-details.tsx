@@ -153,8 +153,8 @@ const ElementDetails: React.FC<{
                         {fields.map((field)=>(field.show? <div className='flex items-baseline basis-1/2 justify-between mt-2' key={field.label}>
                             <div className={"text-[12px]"}>{field.label}</div>
                             <div className='flex items-baseline w-[100px]'>
-                                <OutlinedInput size="small" sx={{ width:"60px", ".MuiInputBase-inputSizeSmall":{
-                                    padding:'8px',
+                                <OutlinedInput size="small" sx={{ width:"64px", ".MuiInputBase-inputSizeSmall":{
+                                    padding:'8px 4px',
                                     fontSize:'12px'
                                 } }} name={field.name} type='number' onChange={(e)=>{onChange && onChange(field.name, e.target.value)}} className='mr-1' value={field.value || ''} disabled={field.disabled} />
                                 <div className='text-[12px]'>{field?.units}</div>
@@ -172,16 +172,8 @@ const ElementDetails: React.FC<{
                     asset={asset}
                     selectedData={selectedData}
                     conversionUnits={conversionUnits}
+                    onSave={onSave}
                     onChange={metricsChange} />
-                    <div className='mt-4 flex justify-end'>
-                    <Button 
-                    size='small'  
-                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
-                    onClick={onSave}
-                    >
-                        Save
-                    </Button>
-                    </div>
                     <div className='my-2'>
                         <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
                     </div>
