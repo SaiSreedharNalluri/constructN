@@ -216,14 +216,14 @@ export class ForgeEdit2DUtils {
 
     _toLocalPosition = ({x, y}: {x: number, y: number}) => {
 
-        let _position = this._applyTMInverse(new THREE.Vector3(x, y), this._tm)
-
+        let _position = this._applyTMInverse(new THREE.Vector4(x, y, 0, 1), this._tm)
+        
         return this._applyOffset(_position, this._offset)
     }
 
     _toGlobalPosition = (position: THREE.Vector2) => {
 
-        let _position = this._applyTM(new THREE.Vector3(position.x, position.y, 0), this._tm)
+        let _position = this._applyTM(new THREE.Vector4(position.x, position.y, 0,1), this._tm)
 
         _position = this._removeOffset(_position, this._offset)
 
@@ -232,15 +232,15 @@ export class ForgeEdit2DUtils {
 
     _applyOffset = (position: THREE.Vector4, offset: number[]) => {
 
-        return new THREE.Vector3(position.x - offset[0], position.y - offset[1], position.z - offset[2])
+        return new THREE.Vector4(position.x - offset[0], position.y - offset[1], position.z - offset[2], 1)
     }
 
-    _removeOffset = (position: THREE.Vector3, offset: number[]) => {
+    _removeOffset = (position: THREE.Vector4, offset: number[]) => {
 
-        return new THREE.Vector3(position.x + offset[0], position.y + offset[1], position.z + offset[2])
+        return new THREE.Vector4(position.x + offset[0], position.y + offset[1], position.z + offset[2], 1)
     }
 
-    _applyTMInverse = (position: THREE.Vector3, tm: THREE.Matrix4) => {
+    _applyTMInverse = (position: THREE.Vector4, tm: THREE.Matrix4) => {
 
         const a = new THREE.Vector4(position.x, position.y, position.z, 1)
 
@@ -253,9 +253,9 @@ export class ForgeEdit2DUtils {
         return a
     }
 
-    _applyTM = (position: THREE.Vector3, tm: THREE.Matrix4) => {
+    _applyTM = (position: THREE.Vector4, tm: THREE.Matrix4) => {
 
-        const a = new THREE.Vector3(position.x, position.y, position.z)
+        const a = new THREE.Vector4(position.x, position.y, position.z, 1)
 
         a.applyMatrix4(tm)
 

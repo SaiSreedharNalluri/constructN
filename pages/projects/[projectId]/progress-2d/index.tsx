@@ -294,6 +294,8 @@ const Progress2DPage: React.FC<any> = () => {
 
         const snapshotId = searchParams.get('snapshotId')
 
+        const categoryId = searchParams.get('categoryId')
+
         if (projId && !projectId.current) {
 
             projectId.current = projId
@@ -318,7 +320,11 @@ const Progress2DPage: React.FC<any> = () => {
 
                     setAssetCategories(response[1].data.result)
 
-                    if(response[1].data.result.length > 0) _onCategorySelected(response[1].data.result[0])
+                    let mCategory = null
+
+                    if(categoryId) mCategory = response[1].data.result.find((item: IAssetCategory) => item._id === categoryId)
+
+                    if(response[1].data.result.length > 0) _onCategorySelected(mCategory ?? response[1].data.result[0])
 
                 }
 
@@ -755,6 +761,10 @@ const Progress2DPage: React.FC<any> = () => {
         setSelectedDrawing(_currentDrawing.current)
 
         if (category !== undefined) {
+
+            const queryParams = updateQueryParam(new URLSearchParams(Array.from(searchParams.entries())), 'categoryId', category._id)
+
+            router.replace(`${window.location.pathname}?${queryParams}`)
 
             _loadAssetsForCategory(category)
 

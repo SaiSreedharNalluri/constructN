@@ -334,14 +334,21 @@ function Progress2DComponent(props: _ViewerProps) {
         let mTm = _tm.current
         if(_currentStructure.current === 'STR940183') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR886181') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.0625)
+            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), -0.035)
         } else if(_currentStructure.current === 'STR967653') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
         } else if(_currentStructure.current === 'STR886181-DEP') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.07)
         } else if (_currentStructure.current === 'STR823522') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.118)
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
-        }
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.11)
+            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
+        } else if(_currentStructure.current === 'STR572565') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.02)
+        }  else if(_currentStructure.current === 'STR495107') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.02)
+        } 
 
         return mTm!
     }
@@ -352,13 +359,17 @@ function Progress2DComponent(props: _ViewerProps) {
         if(_currentStructure.current === 'STR940183') {
             mOffset = [1.2, -0.85, 0]
         } else if(_currentStructure.current === 'STR886181-DEP') {
-            mOffset = [0.75, -1.75, 0]
+            mOffset = [2.0, -2.3, 0]
         } else if(_currentStructure.current === 'STR967653') {
             mOffset = [1.375, -0.7, 0]
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR823522') {
-            mOffset = [0.5, -0.875, 0]
+            mOffset = [0.825, -1.6, 0]
+        } else if(_currentStructure.current === 'STR572565') {
+            mOffset = [0.125, -0.61, 0]
+        } else if(_currentStructure.current === 'STR495107') {
+            mOffset = [0.225, -0.2, 0]
         }
 
         return mOffset!
