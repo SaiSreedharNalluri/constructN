@@ -113,7 +113,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         useEffect(()=>{
             const { height: assetHeight, width: assetWidth } = selectedCategory || {};
-            setValues({ ...(values || {}), name: actualName , description: actualDecription, stage: actualStage as string, height: assetHeight, width: assetWidth })
+            setValues({ ...(values || {}), name: actualName , description: actualDecription, stage: actualStage as string, height: actualHeight || assetHeight, width: actualWidth || assetWidth})
         },[asset])
 
         const { stages, name: actualCategoryName } = category as IAssetCategory || {}

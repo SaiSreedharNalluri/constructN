@@ -129,19 +129,19 @@ export default function Metrics({
 		if(type === 'Count'){
 			return(1)
 		}
-		if(type === 'Length'){
+		if(type === 'L'){
 			return(+length)
 		}
-		if(type === 'Linear Area'){
+		if(type === 'LxH'){
 			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
 		}
-		if(type === 'Horizontal Area'){
+		if(type === 'A'){
 			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2))
 		}
-		if(type === 'Linear Volume'){
+		if(type === 'LxHxW'){
 			return(+length* (assetHeight ?? 1) * (assetWidth ?? 1))
 		}
-		if(type === 'Areal Volume'){
+		if(type === 'AxH'){
 			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
 		}
 		return 1;
