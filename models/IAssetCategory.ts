@@ -82,7 +82,7 @@ export interface IAsset {
 
     properties: any
 
-    metrics?: { [key: string]: { measurementFactor: number; }; }
+    metrics?: { [key: string]: { measurementFactor: number; }; } | { [key: string]: string | number | { metric: string} | { metric: { metric: string }} };
 
     compare?: boolean
 

@@ -52,10 +52,10 @@ const ElementDetails: React.FC<{
         stage: string;
         height?: number;
         width?: number;
-        metrics?: { [key: string]: { measurementFactor: number; }; };
+        metrics?: { [key: string]: { measurementFactor: number; }; } | { [key: string]: string | number | { metric: string} | { metric: { metric: string }} };
     }>>,
 
-    metrics: { [key: string]: { measurementFactor: number } };
+    metrics?: { [key: string]: { measurementFactor: number; }; } | { [key: string]: string | number | { metric: string} | { metric: { metric: string }} };
 
     metricsChange?: (asset: IAsset) => void,
 
@@ -161,6 +161,7 @@ const ElementDetails: React.FC<{
                             </div>
                         </div>: null))}
                     </div>: null}
+                    {supportUser ? <>
                     <Metrics stages ={stages}
                     assetId = {assetId}
                     metrics={metrics}
@@ -177,6 +178,8 @@ const ElementDetails: React.FC<{
                     <div className='my-2'>
                         <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
                     </div>
+                    </>
+                    : null}
                 </div>
             }
         </>

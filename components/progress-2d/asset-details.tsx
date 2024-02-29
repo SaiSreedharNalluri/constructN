@@ -81,7 +81,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
             stage: string;
             height?: number;
             width?: number;
-            metrics?: { [key: string]: { measurementFactor: number; }; };
+            metrics?: { [key: string]: { measurementFactor: number; }; } | { [key: string]: string | number | { metric: string} | { metric: { metric: string }} };
         }>({ name : '', description: '', stage: '', height: undefined, width: undefined })
 
         const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {}, height: actualHeight, width: actualWidth } = asset || {}
