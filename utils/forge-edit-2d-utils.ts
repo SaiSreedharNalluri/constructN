@@ -64,6 +64,8 @@ export class ForgeEdit2DUtils {
                 else if(asset.shape == 'Polyline') this._createPolyline(asset._id, asset.points, color)
     
             })
+
+            publish("assets-drawn",true);
         }
 
     }

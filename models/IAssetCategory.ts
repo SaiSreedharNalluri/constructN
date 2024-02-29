@@ -56,6 +56,10 @@ export interface IAsset {
 
     progressSnapshot: IAssetProgress[]
 
+    height: number
+
+    width: number
+
     project: string
 
     structure: string
@@ -78,7 +82,7 @@ export interface IAsset {
 
     properties: any
 
-    metrics?: { [key: string]: string | number | { metric: string} | { metric: { metric: string }} }
+    metrics?: { [key: string]: { measurementFactor: number; }; }
 
     compare?: boolean
 

@@ -197,6 +197,8 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [stages, setStages] = useState<({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[]>()
 
+    const [assetsDrawnOver , setAssetsDrawn] = useState(false);
+
     const [selectedCategory, setSelectedCategory] = useState<IAssetCategory>()
 
     const [selectedLayers, setSelectedLayers] = useState<string[]>()
@@ -287,6 +289,8 @@ const Progress2DPage: React.FC<any> = () => {
             setShowProgress(false);
         })
     }
+
+    const assetsDrawnCompleted = (e: any) =>(setAssetsDrawn(e.detail))
 
     const refetch = () => {
 
@@ -480,6 +484,8 @@ const Progress2DPage: React.FC<any> = () => {
 
         subscribe('update-2d-shape', _onUpdateShape)
 
+        subscribe("assets-drawn",assetsDrawnCompleted);
+
         subscribe('select-2d-shape', _onSelectShape)
 
         subscribe('sync-viewer', _syncViewer)
@@ -500,6 +506,8 @@ const Progress2DPage: React.FC<any> = () => {
             unsubscribe('update-2d-shape', _onUpdateShape)
 
             unsubscribe('select-2d-shape', _onSelectShape)
+
+            unsubscribe("assets-drawn",assetsDrawnCompleted);
 
             unsubscribe('sync-viewer', _syncViewer)
 
@@ -963,6 +971,9 @@ const Progress2DPage: React.FC<any> = () => {
 
     const _onSnapshotCompareChange = (date: Date, snapshot: any) => _extractCompareSnapshot(snapshot)
 
+    const assetsDrawn = (_forge?.current?.getExtension("Autodesk.Edit2D") as any)?.defaultContext?.layer?.shapes;
+
+
     const _renderTitle = () => {
 
         if (currentCategory.current === undefined)
@@ -1315,7 +1326,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>}
 
-                                                {loading ? [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))
+                                                {(loading || !assetsDrawnOver) ? [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))
                                                 : <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}
                                                 
                                                 snapShotDate={snapshotBase?.date}
@@ -1328,7 +1339,11 @@ const Progress2DPage: React.FC<any> = () => {
                                                 
                                                 loading={loading}
 
+                                                assetContext={(_forge?.current?.getExtension("Autodesk.Edit2D") as any)?.defaultContext}
+
                                                 projectUsers={projectUsers}
+
+                                                drawnAssets={assetsDrawn}
                                                 
                                                 refetch={()=>{ _loadAssetsForCategory(selectedCategory as IAssetCategory, selectedAsset) }}
                                                 
@@ -1354,9 +1369,13 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 assetId={selectedAsset}
 
+                                                assetContext={(_forge?.current?.getExtension("Autodesk.Edit2D") as any)?.defaultContext}
+
                                                 snapshotBase={selectedCompare? snapshotCompare: snapshotBase}
 
                                                 supportUser={isSupportUser}
+
+                                                selectedCategory={selectedCategory}
 
                                                 onChange={_onAssetDetailsChange}/>}
 
