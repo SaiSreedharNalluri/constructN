@@ -348,6 +348,7 @@ function Progress2DComponent(props: _ViewerProps) {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.02)
         }  else if(_currentStructure.current === 'STR495107') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.02)
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), -0.285)
         } 
 
         return mTm!
@@ -369,7 +370,7 @@ function Progress2DComponent(props: _ViewerProps) {
         } else if(_currentStructure.current === 'STR572565') {
             mOffset = [0.125, -0.61, 0]
         } else if(_currentStructure.current === 'STR495107') {
-            mOffset = [0.225, -0.2, 0]
+            mOffset = [-4.325, -0.3, 0]
         }
 
         return mOffset!
