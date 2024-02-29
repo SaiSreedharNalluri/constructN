@@ -38,8 +38,8 @@ const ElementDetails: React.FC<{
         name: string;
         description: string;
         stage: string;
-        height: number;
-        width: number;
+        height?: number;
+        width?: number;
     },
 
     onSave?: ()=> void,
@@ -50,8 +50,8 @@ const ElementDetails: React.FC<{
         name: string;
         description: string;
         stage: string;
-        height: number;
-        width: number;
+        height?: number;
+        width?: number;
         metrics?: { [key: string]: { measurementFactor: number; }; };
     }>>,
 
@@ -81,8 +81,23 @@ const ElementDetails: React.FC<{
 
     const conversionUnits = assetContext?.unitHandler?.toDisplayUnits('ft',1);
 
+    const assetStages =  (asset?.category as IAssetCategory)?.stages
 
     const fields = [
+        {
+            label:"Height",
+            name: "height",
+            units: 'ft',
+            show: !!assetStages?.find((stag)=>(['Linear Area','Count', 'Horizontal Area'].includes(stag.measurement))),
+            value: assetHeight
+        },
+        {
+            label:"Width",
+            name: "width",
+            units: 'ft',
+            show: !!assetStages?.find((stag)=>(['Linear Volume','Count', 'Areal Volume'].includes(stag.measurement))),
+            value: assetWidth
+        },
         {
             label:"Length",
             name: "length",
@@ -99,26 +114,6 @@ const ElementDetails: React.FC<{
             disabled: true,
             value: selectedData.shapeType === "Polygon" ? (selectedData.getArea() * conversionUnits**2)?.toFixed(2) : null
         },
-        {
-            label:"Volume",
-            name: "volume",
-            units: 'ft³',
-            show: selectedData.shapeType === "Polygon",
-        },
-        {
-            label:"Width",
-            name: "width",
-            units: 'ft',
-            show: true,
-            value: assetWidth
-        },
-        {
-            label:"Height",
-            name: "height",
-            units: 'ft',
-            show: true,
-            value: assetHeight
-        }
     ]
 
 
@@ -161,7 +156,7 @@ const ElementDetails: React.FC<{
                                 <OutlinedInput size="small" sx={{ width:"60px", ".MuiInputBase-inputSizeSmall":{
                                     padding:'8px',
                                     fontSize:'12px'
-                                } }} name={field.name} onChange={(e)=>{onChange && onChange(field.name, e.target.value)}} className='mr-1' value={field.value || ''} disabled={field.disabled} />
+                                } }} name={field.name} type='number' onChange={(e)=>{onChange && onChange(field.name, e.target.value)}} className='mr-1' value={field.value || ''} disabled={field.disabled} />
                                 <div className='text-[12px]'>{field?.units}</div>
                             </div>
                         </div>: null))}

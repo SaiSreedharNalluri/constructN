@@ -189,7 +189,7 @@ function Progress2DStage(
 			return(1)
 		}
 		if(type === 'Length'){
-			return(length)
+			return(+length)
 		}
 		if(type === 'Linear Area'){
 			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
@@ -203,6 +203,7 @@ function Progress2DStage(
 		if(type === 'Areal Volume'){
 			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
 		}
+        return 1;
 	}
 
     const totalValueMetrics = assets.reduce((newVal, oldVal)=>{
@@ -321,13 +322,13 @@ function Progress2DStage(
                             setEdit(false);
                         }
                         }} /> : numberFormatter.format(+assetValue)} {edit? null: stage.uom}</Typography>
-                        {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>{
+                        {/* {!edit? <Image src={EditIcon} alt={"edit icon"} data-testid="edit-icon" className='ml-2 cursor-pointer' onClick={()=>{
                             if(!['collaborator','admin'].includes(roleforProject?.role || '')){
                                 CustomToast("Do not have access - contact Admin","error");
                                 return;
                             }
                             setEdit(true)}
-                            } />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />}
+                            } />: <DoneIcon className='cursor-pointer ml-1 p-0.5' onClick={editCallback} />} */}
                     </div>
                 </div>
 

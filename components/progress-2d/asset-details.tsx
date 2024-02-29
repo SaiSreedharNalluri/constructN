@@ -79,10 +79,10 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
             name: string;
             description: string;
             stage: string;
-            height: number;
-            width: number;
+            height?: number;
+            width?: number;
             metrics?: { [key: string]: { measurementFactor: number; }; };
-        }>({ name : '', description: '', stage: '', height: 0, width: 0 })
+        }>({ name : '', description: '', stage: '', height: undefined, width: undefined })
 
         const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {}, height: actualHeight, width: actualWidth } = asset || {}
 
@@ -112,7 +112,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
 
         useEffect(()=>{
-            const { height: assetHeight = 0, width: assetWidth = 0 } = selectedCategory || {};
+            const { height: assetHeight, width: assetWidth } = selectedCategory || {};
             setValues({ ...(values || {}), name: actualName , description: actualDecription, stage: actualStage as string, height: assetHeight, width: assetWidth })
         },[asset])
 
@@ -185,7 +185,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         }
 
-        const _onChange = (key: string, value: string | number) => setValues({ ...values, [key]: value})
+        const _onChange = (key: string, value: string | number) => setValues({ ...values, [key]: ['height','width'].includes(key)? +value : value })
 
         const _onDeleteStage = (stage: string) => {
 

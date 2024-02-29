@@ -88,8 +88,8 @@ export default function Metrics({
         name: string;
         description: string;
         stage: string;
-        height: number;
-        width: number;
+        height?: number;
+        width?: number;
         metrics?: {
             measurementFactor?: number | undefined;
         }},
@@ -97,8 +97,8 @@ export default function Metrics({
         name: string;
         description: string;
         stage: string;
-        height: number;
-        width: number;
+        height?: number;
+        width?: number;
         metrics?: { [key: string]: { measurementFactor: number; }; };
     }>>,
 }) {
@@ -130,7 +130,7 @@ export default function Metrics({
 			return(1)
 		}
 		if(type === 'Length'){
-			return(length)
+			return(+length)
 		}
 		if(type === 'Linear Area'){
 			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
@@ -144,6 +144,7 @@ export default function Metrics({
 		if(type === 'Areal Volume'){
 			return(+(selectedData.getArea() * conversionUnits)?.toFixed(2)* (assetHeight ?? 1))
 		}
+		return 1;
 	}
 
 	const [showConfirmation, setShowConfirmation] = useState('');
@@ -187,7 +188,7 @@ export default function Metrics({
 										align="left"
 										className="w-1/3 p-0"
 									>
-										{getMetric(row.measurement)}
+										{getMetric(row.measurement)* (row.measurementFactor || 1)}
 									</TableCell>
 									<TableCell
 										align="center"
