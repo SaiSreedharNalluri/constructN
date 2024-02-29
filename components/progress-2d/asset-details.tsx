@@ -130,13 +130,13 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 changeAssetStage(assetId, values.stage, snapshotBase?.date).then(res => {
 
-                    if(!(name !== actualName || description !== actualDecription)) {
+                    if(!(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetWidth)) {
 
                         onChange && onChange(res.data.result);
                     
                     }
 
-                    if(!(name !== actualName || description !== actualDecription)) {
+                    if(!(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetWidth)) {
 
                         toast.success('Updated asset stage successfully!', { autoClose: 5000 })
                     
@@ -157,8 +157,8 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                 })
 
             };
-            
-            if(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetHeight) {
+
+            if(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetWidth) {
 
                         setLoading(true)
         
