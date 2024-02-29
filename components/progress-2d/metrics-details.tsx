@@ -134,7 +134,7 @@ export default function Metrics({
 			return(+length)
 		}
 		if(type === 'LxH'){
-			return(+(+length * conversionUnits)?.toFixed(2)* ((asset?.height || assetHeight) ?? 1))
+			return(+(+(+length * conversionUnits)?.toFixed(2)* ((asset?.height || assetHeight) ?? 1)).toFixed(2))
 		}
 		if(type === 'A'){
 			return(+(selectedData.getArea ? selectedData.getArea(): 0 * conversionUnits)?.toFixed(2))
