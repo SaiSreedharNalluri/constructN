@@ -77,7 +77,7 @@ export default function Metrics({
 }: {
 	stages: Stage[];
 	assetId: string;
-	metrics: { [key: string]: { measurementFactor: number } };
+	metrics?: { [key: string]: { measurementFactor: number; }; } | { [key: string]: string | number | { metric: string} | { metric: { metric: string }} };
 	refetchAssets: () => void,
 	asset: IAsset,
 	onChange?: (asset: IAsset) => void,
@@ -91,22 +91,21 @@ export default function Metrics({
         stage: string;
         height?: number;
         width?: number;
-        metrics?: {
-            measurementFactor?: number | undefined;
-        }},
+        metrics?: { [key: string]: { measurementFactor: number; }; } | { [key: string]: string | number | { metric: string} | { metric: { metric: string }} }
+	},
 	setValues: Dispatch<SetStateAction<{
         name: string;
         description: string;
         stage: string;
         height?: number;
         width?: number;
-        metrics?: { [key: string]: { measurementFactor: number; }; };
+        metrics?: { [key: string]: { measurementFactor: number; }; } | { [key: string]: string | number | { metric: string} | { metric: { metric: string }} };
     }>>,
 	onSave: ()=>void;
 }) {
 	const formatStageData = stages.map((stage) => ({
 		...stage,
-		measurementFactor: metrics[stage._id]?.measurementFactor || 1
+		measurementFactor: (metrics[stage._id] as { measurementFactor: number })?.measurementFactor || 1
 	}));
 
 	const [stageValues, setStageValues] = useState<Stage[]>([
