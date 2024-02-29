@@ -1,6 +1,6 @@
-import { IconButton, InputAdornment, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography , Button} from '@mui/material'
+import { IconButton, MenuItem, OutlinedInput, Select, SelectChangeEvent, Tooltip, Typography , Button, Input} from '@mui/material'
 
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import { IAsset, IAssetCategory, IAssetProgress, IAssetStage, NOT_STARTED_STAGE } from '../../models/IAssetCategory'
 
@@ -15,7 +15,16 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import moment from 'moment'
 
 import { toast } from 'react-toastify'
+import Metrics from './metrics-details'
+import EmailButton from './send-email'
+import { LightBoxInstance } from '../../services/light-box-service'
+import { useParams } from 'next/navigation'
+import { getCookie } from 'cookies-next'
 
+interface Stage extends IAssetStage {
+	id?: string;
+	metric?: number | string | { metric: string | number} | { metric: { metric: string | number; } };
+}
 
 const ElementDetails: React.FC<{
 
@@ -25,17 +34,88 @@ const ElementDetails: React.FC<{
 
     onDeleteStage?: (stage: string) => void,
 
-    values?: { [key: string]: string },
+    values: {
+        name: string;
+        description: string;
+        stage: string;
+        height?: number;
+        width?: number;
+    },
 
     onSave?: ()=> void,
-    
-}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {} }) => {
 
-    const { description: actualDecription = '', progress = {}, name: actualName } = asset || {}
+    stages?: Stage[],
 
-    const { stage: actualStage } = progress  as IAssetProgress || {}
+    setValues: Dispatch<SetStateAction<{
+        name: string;
+        description: string;
+        stage: string;
+        height?: number;
+        width?: number;
+        metrics?: { [key: string]: { measurementFactor: number; }; };
+    }>>,
 
-    const { name , description, stage} = values || {}
+    metrics: { [key: string]: { measurementFactor: number } };
+
+    metricsChange?: (asset: IAsset) => void,
+
+    refetchAssets: () => void,
+
+    actualCategoryName: string,
+
+    assetContext: any,
+
+}> = ({ asset, supportUser, onChange, onDeleteStage, values , onSave = () => {}, stages =[] , metrics, metricsChange, refetchAssets , actualCategoryName, assetContext, setValues }) => {
+
+    const params = useParams();
+
+    const userObj: string = (getCookie('user') || "{}") as string;
+
+    const user = JSON.parse(userObj);
+
+    const { name: actualName, _id: assetId} = asset || {}
+
+    const { height: assetHeight, width: assetWidth } = values || {}
+
+    const selectedData: any = Object.values(assetContext?.selection?.isSelected || {})?.[0];
+
+    const conversionUnits = assetContext?.unitHandler?.toDisplayUnits('ft',1);
+
+    const assetStages =  (asset?.category as IAssetCategory)?.stages
+
+    const fields = [
+        {
+            label:"Height",
+            name: "height",
+            units: 'ft',
+            show: !!assetStages?.find((stag)=>(['LxH', 'A'].includes(stag.measurement))),
+            value: assetHeight
+        },
+        {
+            label:"Width",
+            name: "width",
+            units: 'ft',
+            show: !!assetStages?.find((stag)=>(['LxHxW', 'AxH'].includes(stag.measurement))),
+            value: assetWidth
+        },
+        {
+            label:"Length",
+            name: "length",
+            disabled: true,
+            units: 'ft',
+            show: true,
+            value: (selectedData.getLength() * conversionUnits)?.toFixed(2)
+        },
+        {
+            label:"Area",
+            name: "area",
+            show: selectedData.shapeType === "Polygon",
+            units: 'ft²',
+            disabled: true,
+            value: selectedData.shapeType === "Polygon" ? (selectedData.getArea() * conversionUnits**2)?.toFixed(2) : null
+        },
+    ]
+
 
     return (
         <>
@@ -69,18 +149,34 @@ const ElementDetails: React.FC<{
                         </Typography>
 
                     </div>
-
-                    <div className='mt-4 flex justify-end'>
-                    <Button 
-                    size='small'  
-                    className='py-2 pl-[7px] pr-[8px] rounded-[8px] font-semibold text-white bg-[#F1742E] hover:bg-[#F1742E] disabled:bg-gray-300'
-                    disabled={ !( actualName !== name || description !== actualDecription ||  stage !== actualStage ) || !name}
-                    onClick={onSave}
-                    >
-                        Save
-                    </Button>
+                    {user?.isSupportUser ? <div className='mt-4 ml-1 flex flex-wrap'>
+                        {fields.map((field)=>(field.show? <div className='flex items-baseline basis-1/2 justify-between mt-2' key={field.label}>
+                            <div className={"text-[12px]"}>{field.label}</div>
+                            <div className='flex items-baseline w-[100px]'>
+                                <OutlinedInput size="small" sx={{ width:"64px", ".MuiInputBase-inputSizeSmall":{
+                                    padding:'8px 4px',
+                                    fontSize:'12px'
+                                } }} name={field.name} type='number' onChange={(e)=>{onChange && onChange(field.name, e.target.value)}} className='mr-1' value={field.value || ''} disabled={field.disabled} />
+                                <div className='text-[12px]'>{field?.units}</div>
+                            </div>
+                        </div>: null))}
+                    </div>: null}
+                    <Metrics stages ={stages}
+                    assetId = {assetId}
+                    metrics={metrics}
+                    refetchAssets ={refetchAssets}
+                    assetWidth={assetWidth}
+                    assetHeight={assetHeight}
+                    setValues={setValues}
+                    values={values}
+                    asset={asset}
+                    selectedData={selectedData}
+                    conversionUnits={conversionUnits}
+                    onSave={onSave}
+                    onChange={metricsChange} />
+                    <div className='my-2'>
+                        <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
                     </div>
-
                 </div>
             }
         </>
@@ -114,6 +210,7 @@ interface IElementProps {
 
 }
 
+
 const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1 }) => {
 
     return (
@@ -140,6 +237,8 @@ const Element: React.FC<IElementProps> = ({ label, value, onChange, lines = 1 })
 
                     fontFamily: 'Open Sans',
 
+                    fontSize:'14px',
+
                     "& .MuiOutlinedInput-root": {
 
                         "& > fieldset": { border: 'none !important' },
@@ -162,7 +261,7 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
 
     const handleChange = (event: SelectChangeEvent) => {
 
-        if (!shouldDisable(event.target.value)) {
+        if (!shouldDisable(event.target.value) || actualValue === event.target.value) {
 
             setStage(event.target.value)
 
@@ -175,8 +274,6 @@ const StageElement: React.FC<IElementProps> = ({ label, value, supportUser = fal
     }
 
     const shouldDisable = (stageId: string) => {
-
-        if(actualValue === stageId) return false
 
         for (let i = 0; i < progressSnapshot.length; i++) {
 

@@ -14,7 +14,6 @@ import { toast } from 'react-toastify'
 
 import { API } from '../../config/config'
 
-import Metrics from './metrics-details'
 import authHeader from '../../services/auth-header'
 import EmailButton from './send-email'
 import { useParams } from 'next/navigation'
@@ -64,9 +63,9 @@ const removeAssetStage = (assetId: string, stage: string) => {
 
 }
 
-const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (asset: IAsset) => void, supportUser: boolean }> =
+const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (asset: IAsset) => void, supportUser: boolean, assetContext: any, selectedCategory: IAssetCategory | undefined }> =
 
-    ({ assetId, snapshotBase, onChange, supportUser }) => {
+    ({ assetId, snapshotBase, onChange, supportUser, assetContext , selectedCategory}) => {
 
         const params = useParams();
 
@@ -76,7 +75,16 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         const [loading, setLoading] = useState<boolean>(false)
 
-        const [values, setValues] = useState({ name : '', description: '', stage: '' })
+        const [values, setValues] = useState<{
+            name: string;
+            description: string;
+            stage: string;
+            height?: number;
+            width?: number;
+            metrics?: { [key: string]: { measurementFactor: number; }; };
+        }>({ name : '', description: '', stage: '', height: undefined, width: undefined })
+
+        const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {}, height: actualHeight, width: actualWidth } = asset || {}
 
         const refetchAssets = () => {
 
@@ -102,17 +110,17 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
             refetchAssets()
         }, [assetId])
 
+
         useEffect(()=>{
-            setValues({ name: actualName , description: actualDecription, stage: actualStage as string })
+            const { height: assetHeight, width: assetWidth } = selectedCategory || {};
+            setValues({ ...(values || {}), name: actualName , description: actualDecription, stage: actualStage as string, height: actualHeight || assetHeight, width: actualWidth || assetWidth})
         },[asset])
 
-        const { category ='' , description: actualDecription = '', progress = {} , name: actualName = '', metrics = {} } = asset || {}
-        
         const { stages, name: actualCategoryName } = category as IAssetCategory || {}
         
         const { stage: actualStage } = progress  as IAssetProgress || {}
 
-        const { name , description, stage } = values || {}
+        const { name , description, stage, height: assetHeight, width: assetWidth, metrics: assetMetrics } = values || {}
 
         const onSave = () => {
 
@@ -122,13 +130,13 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 changeAssetStage(assetId, values.stage, snapshotBase?.date).then(res => {
 
-                    if(!(name !== actualName || description !== actualDecription)) {
+                    if(!(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetWidth)) {
 
                         onChange && onChange(res.data.result);
                     
                     }
 
-                    if(!(name !== actualName || description !== actualDecription)) {
+                    if(!(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetWidth)) {
 
                         toast.success('Updated asset stage successfully!', { autoClose: 5000 })
                     
@@ -148,12 +156,13 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
                 })
 
-            }  
-            if(name !== actualName || description !== actualDecription) {
+            };
+
+            if(name !== actualName || description !== actualDecription || assetHeight !== actualHeight || actualWidth !== assetWidth) {
 
                         setLoading(true)
         
-                        updateAssetDetails(assetId, { name, description}).then(res => {
+                        updateAssetDetails(assetId, { name, description, height: assetHeight, width: assetWidth, metrics: assetMetrics}).then(res => {
         
                             if(onChange) onChange(res.data.result)
 
@@ -176,7 +185,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
 
         }
 
-        const _onChange = (key: string, value: string) => setValues({ ...values, [key]: value})
+        const _onChange = (key: string, value: string | number) => setValues({ ...values, [key]: ['height','width'].includes(key)? +value : value })
 
         const _onDeleteStage = (stage: string) => {
 
@@ -233,7 +242,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                 {loading && _renderAssetDetailsShimmer()}
 
                 {
-                    asset && !loading && <div className='flex flex-col h-full bg-white'>
+                    asset && !loading && <div className='flex flex-col h-full bg-white overflow-auto'>
 
                         <Tabs
 
@@ -252,21 +261,27 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                                 value='asset-timeline' label={<Typography fontFamily='Open Sans' fontSize={14}
 
                                     variant='caption'>Timeline</Typography>} onClick={() => setSelectedTab('asset-timeline')} />
-                            {supportUser && <Tab
-                                    value='metrics' label={<Typography fontFamily='Open Sans' fontSize={14}
-                                    variant='caption'>Metrics</Typography>} onClick={() => setSelectedTab('metrics')} />}
 
                         </Tabs>
 
-                        {selectedTab === 'asset-details' && <div className='px-4 '><ElementDetails asset={asset} onChange={_onChange} values={values} supportUser={supportUser} onDeleteStage={_onDeleteStage} onSave={onSave}/> </div>}
+                        {selectedTab === 'asset-details' && <div className='px-4 overflow-auto'>
+                            <ElementDetails 
+                            asset={asset} 
+                            onChange={_onChange} 
+                            values={values} 
+                            setValues={setValues}
+                            supportUser={supportUser} 
+                            onDeleteStage={_onDeleteStage} 
+                            onSave={onSave}
+                            stages={stages}
+                            metrics={metrics}
+                            metricsChange={onChange}
+                            refetchAssets={refetchAssets}
+                            assetContext={assetContext}
+                            actualCategoryName={actualCategoryName}
+                            /> </div>}
 
                         {selectedTab === 'asset-timeline' && <div className='px-4 overflow-auto'><AssetTimeline asset={asset} /> </div>}
-
-                        {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} asset={asset} onChange={onChange} /></div>}
-
-                        {(selectedTab !== 'asset-timeline' && supportUser) ? <div className='absolute bottom-3 right-4'>
-                            <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
-                        </div>: null}
 
                     </div>
                 }
