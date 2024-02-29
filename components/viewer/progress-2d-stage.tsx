@@ -221,7 +221,7 @@ function Progress2DStage(
             return newVal + ((Number((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
         }
         
-        const findasset =  drawnAssets.find((as: {name: string})=>(as.name === oldVal?._id ));
+        const findasset =  drawnAssets?.find((as: {name: string})=>(as.name === oldVal?._id ));
         return (newVal + (getMetric(stage.measurement!,findasset) || 0));
     },0);
 
@@ -233,7 +233,7 @@ function Progress2DStage(
         if(!assetHeight && !assetWidth){
             return newVal + (Number(((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
         }
-        const findasset =  drawnAssets.find((as: {name: string})=>(as.name === oldVal?._id ));
+        const findasset =  drawnAssets?.find((as: {name: string})=>(as.name === oldVal?._id ));
         return (newVal + (getMetric(stage.measurement!,findasset) || 0));
     },0)
 
@@ -241,7 +241,7 @@ function Progress2DStage(
         if(!assetHeight && !assetWidth){
             return newVal + (Number(((oldVal?.metrics?.[stage._id!] as { metric: { metric: string }; })?.metric?.metric ?? (oldVal?.metrics?.[stage._id!] as { metric: string; })?.metric) || 0))
         }
-        const findasset =  drawnAssets.find((as: {name: string})=>(as.name === oldVal?._id ));
+        const findasset =  drawnAssets?.find((as: {name: string})=>(as.name === oldVal?._id ));
         return (newVal + (getMetric(stage.measurement!,findasset) || 0));
     },0)
 
