@@ -201,7 +201,7 @@ function Progress2DStage(
 			return(+length)
 		}
 		if(type === 'LxH'){
-			return(+(selectedData.getArea ? selectedData.getArea(): 0 * conversionUnits)?.toFixed(2)* ((asset?.height || assetHeight) ?? 1))
+			return(+(+length * conversionUnits)?.toFixed(2)* ((asset?.height || assetHeight) ?? 1))
 		}
 		if(type === 'A'){
 			return(+(selectedData.getArea ? selectedData.getArea(): 0 * conversionUnits)?.toFixed(2))
