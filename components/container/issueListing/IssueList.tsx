@@ -389,9 +389,9 @@ function CustomIssueListDrawer({
       }
     });
     setOpenIssueDetail(true);
-    issueMenuInstance.type = "selectIssue";
-    issueMenuInstance.data = issue
-    issueMenuClicked(issueMenuInstance);
+    // issueMenuInstance.type = "selectIssue";
+    // issueMenuInstance.data = issue
+    // issueMenuClicked(issueMenuInstance);
   };
 
   useEffect(() => { }, [issueFilterState]);

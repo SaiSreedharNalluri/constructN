@@ -66,6 +66,7 @@ export const AddUsersEmailOverlay = ({
   const [enableAddUser, setEnableAddUser] = useState(false);
   const [emailExistsError, setEmailExistsError] = useState("");
   const [isDisabled, setDisabled] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
   const columns = [
     {
       title: "",
@@ -183,6 +184,8 @@ export const AddUsersEmailOverlay = ({
     setHoveringOver("");
 
   const onAddUser = () => {
+    if(!isApplying){
+      setIsApplying(true)
     if (!enableAddUser) {
       setEnableAddUser(false);
       if (addedUsers?.length) {
@@ -227,13 +230,14 @@ export const AddUsersEmailOverlay = ({
             setOpenDrawer(false);
             appendToTable(true);
             setEnableAddUser(true);
+            setIsApplying(false)
           })
           .catch((err) => {
             CustomToast("You don't have access. Contact Admin.","error");
-    
+            setIsApplying(false)
           });
       }
-    }
+    }}
   };
 
   const onClickBack = () => {

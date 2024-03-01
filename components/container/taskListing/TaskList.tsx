@@ -443,18 +443,7 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
                     onClick={() => setSearchingOn((prev) => !prev)}
                   />
                   <DividerIcon src={DividerSvg} alt="" />
-                  {taskFilterState?.isFilterApplied ? (
-                    <AppliedFilter>
-                      {taskFilterState?.numberOfFilters} Filters{" "}
-                      <FilterIcon
-                        src={AppliedFilterIcon}
-                        alt="Arrow"
-                        onClick={() => {
-                          handleViewTaskList();
-                        }}
-                      />
-                    </AppliedFilter>
-                  ) : null}
+                 
                   <Tooltip title="Sort Menu">
                     <IconContainer
                       src={sort}
@@ -494,7 +483,7 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
 
                   <SecondDividerIcon src={DividerSvg} alt="" />
 
-                  {!taskFilterState?.isFilterApplied ? (
+                  {/* {!taskFilterState?.isFilterApplied ? (
                     <IconContainer
                       src={FilterInActive}
                       alt="Arrow"
@@ -503,15 +492,15 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
                       }}
                       data-testid="filter"
                     />
-                  ) : null} 
-                  {/* <FunnelIcon
+                  ) : null}  */}
+                  <FunnelIcon
                     src={FilterInActive}
                     alt="Arrow"
                     onClick={() => {
                       handleViewTaskList();
                     }}
                     data-testid="filter"
-                  /> */}
+                  />
                   {taskFilterState?.isFilterApplied && taskFilterState?.numberOfFilters ? (
                     <FilterIndication />
                   ) : null}

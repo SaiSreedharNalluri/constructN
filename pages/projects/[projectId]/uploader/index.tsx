@@ -84,7 +84,7 @@ const Index: React.FC<IProps> = () => {
     }
     if (appState.currentProjectData !== undefined) {
       uploaderAction.setProject(appState.currentProjectData.project);
-      refreshJobs(appState.currentProjectData.project._id)
+      refreshJobs(appState.currentProjectData.project?._id)
     } else {
       uploaderAction.setIsLoading(true)
     }
