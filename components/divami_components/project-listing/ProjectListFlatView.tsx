@@ -148,9 +148,9 @@ export const ProjectListFlatView = ({
         return  <div className="flex items-center justify-between">
         <div className="hover:cursor-pointer" onClick={() => handleProjectClick(rowData)}>
                <Tooltip
-              title={rowData.projectName?.length > 50 ? rowData.projectName : ""}
+              title={rowData.projectName?.length > 50 ? <span>{rowData.projectName}</span> : null}
             >
-              {truncateString(rowData.projectName, 50)}
+              <span>{truncateString(rowData.projectName, 50)}</span>
             </Tooltip>
         </div>
         <div>
@@ -446,6 +446,7 @@ export const ProjectListFlatView = ({
          
           rowData.status === "Draft"|| rowData.status === "PendingApproval"?  <TooltipText title="Delete Project" placement="bottom"> 
           <div>
+          <span>Delete Project</span>
           <Image src={Delete} onClick={(e)=>{ 
             e.stopPropagation(); 
             setDelete(true)
