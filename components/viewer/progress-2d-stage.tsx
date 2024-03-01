@@ -190,9 +190,9 @@ function Progress2DStage(
 
         const conversionUnits = assetContext?.unitHandler?.toDisplayUnits('ft',1);
 
-	    const length = (selectedData.getLength() * conversionUnits)?.toFixed(2);
+	    const length = (selectedData?.getLength() * conversionUnits)?.toFixed(2);
 
-        const asset =  assets?.find((singl)=>(singl._id === selectedData.name));
+        const asset =  assets?.find((singl)=>(singl._id === selectedData?.name));
 
 		if(type === 'Count'){
 			return(1)
@@ -204,13 +204,13 @@ function Progress2DStage(
 			return(+(+(+length * conversionUnits)?.toFixed(2)* ((asset?.height || assetHeight) ?? 1)).toFixed(2))
 		}
 		if(type === 'A'){
-			return(+(selectedData.getArea ? selectedData.getArea(): 0 * conversionUnits)?.toFixed(2))
+			return(+(selectedData?.getArea ? selectedData?.getArea(): 0 * conversionUnits)?.toFixed(2))
 		}
 		if(type === 'LxHxW'){
 			return((+(+length* (assetHeight ?? 1) * ((asset?.width || assetWidth) ?? 1))?.toFixed(2)))
 		}
 		if(type === 'AxH'){
-			return(+(selectedData.getArea ? selectedData.getArea(): 0 * conversionUnits)?.toFixed(2)* ((asset?.height || assetHeight) ?? 1))
+			return(+(selectedData?.getArea ? selectedData?.getArea(): 0 * conversionUnits)?.toFixed(2)* ((asset?.height || assetHeight) ?? 1))
 		}
         return 1;
 	}

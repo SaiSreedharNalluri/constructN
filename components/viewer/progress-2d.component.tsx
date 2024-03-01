@@ -20,6 +20,10 @@ import moment from 'moment'
 
 import DrawingsPicker from '../progress-2d/drawings-picker'
 
+import LockIcon from '@mui/icons-material/Lock';
+
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+
 interface _ViewerProps {
 
     id: string,
@@ -78,6 +82,8 @@ function Progress2DComponent(props: _ViewerProps) {
     const _currentStructure = useRef<string>()
 
     const _currentDrawing = useRef<string>(props.drawing ?? 'Plan Drawings')
+
+    const [editable, setEditable] = useState(props.isSupportUser);
 
     const [selectedDrawing, setSelectedDrawing] = useState<string>(props.drawing ?? _currentDrawing.current)
 
@@ -420,13 +426,27 @@ function Progress2DComponent(props: _ViewerProps) {
             </div>: null}
             
 
-            {!props.compare ? <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
+            {!props.compare ? <div className='flex flex-col absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
                 { props.category && props.isSupportUser && <Paper className='ml-3' elevation={1}>
 
                     <ClickTypesPicker />
 
                 </Paper> }
+
+                {props.isSupportUser? <div className='ml-4 mt-4 cursor-pointer'>
+                    {editable ?  <LockOpenIcon onClick={()=>{
+                        if(_edit2dUtils.current){
+                            _edit2dUtils.current._locked = true;
+                            setEditable(false);
+                        }
+                    }} />: <LockIcon onClick={()=>{
+                        if(_edit2dUtils.current){
+                            _edit2dUtils.current._locked = false;
+                            setEditable(true);
+                        }
+                    }} />}
+                </div>: null}
 
             </div>: null}
 
