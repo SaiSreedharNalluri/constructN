@@ -119,11 +119,11 @@ export const CustomMenu = ({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {menuOptions.map((option: any) => (
+        {menuOptions.map((option: any,index:number) => (
           <>
             <StyledMenu
               className="custom-styled-menu"
-              key={option.label}
+              key={`${option.label}-${index}`}
               onClick={() => {
                 if (option.onClick) 
                 {
