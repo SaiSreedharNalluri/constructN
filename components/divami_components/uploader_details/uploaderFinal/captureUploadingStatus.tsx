@@ -154,7 +154,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
               <p className="text-red-600 ml-[8px]">Upload Failed</p>
               <Button className="bg-red-500 text-white hover:bg-red-500 ml-[1rem] py-[1px] normal-case " onClick={(event)=>{
                     event.stopPropagation();
-                    let filesList = uploaderState.inProgressWorkers && uploaderState.selectedJob && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0])]
+                    let filesList = uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[getCaptureIdFromModelOrString(job.captures[0])]
                     if(filesList != undefined)
                     {
                       uploaderAction.retryJobUploading(job)

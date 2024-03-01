@@ -125,11 +125,13 @@ export const initialUploaderState: UploaderState = {
     gcpList: getInitialGCPList(false), // default is LONGLAT
     isGCPInit: true,
     skipGCP: false,
+    selectedJob: undefined,
     captureType: CaptureType.exterior,
     captureMode: CaptureMode.droneImage,
     uploadinitiate:false,
     pendingProcessJobs: [],
     pendingUploadJobs: [],
+    currentUploadFiles: [],
     processCompleteJobs: [],
     rawImagesMap: {},
     isReading:false,
