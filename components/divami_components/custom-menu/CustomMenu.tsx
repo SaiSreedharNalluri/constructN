@@ -119,11 +119,14 @@ export const CustomMenu = ({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {menuOptions.map((option: any,index:number) => (
-          <>
+      
+        {menuOptions.map((option: any,index:number) => {
+          // Use a unique identifier if available, fallback to index if not
+          const key = option.id ? `${option.id}-${index}` : index;
+          return (
             <StyledMenu
               className="custom-styled-menu"
-              key={`${option.label}-${index}`}
+              key={key}
               onClick={() => {
                 if (option.onClick) 
                 {
@@ -143,8 +146,8 @@ export const CustomMenu = ({
                 </ListItemIcon>
               )}
             </StyledMenu>
-          </>
-        ))}
+          );
+        })}
       </Menu>
     </MenuWrapper>
     </Tooltip>
