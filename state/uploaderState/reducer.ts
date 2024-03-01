@@ -38,6 +38,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 skipGCP: false,
                 selectedJob: undefined,
                 isAppendingCapture: false,
+                currentUploadFiles: [],
                 uploadinitiate:false,
             }
         case UploaderActionType.setUploadCompletionState:
@@ -268,7 +269,10 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
         //         errorCount:action.payload.errorCount
         //     } 
         case UploaderActionType.setResetUploaderState:
-            return resetUploaderState();
+            return {
+                ...state,
+                ...resetUploaderState()
+            }
         case UploaderActionType.deleteJob:
             return {
                 ...state,

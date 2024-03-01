@@ -524,7 +524,7 @@ const Index: React.FC<IProps> = () => {
         setIsShowPopUp(false)
       }}
     /> */}
-    { uploaderState.currentPopup && (<PopupComponent
+    { uploaderState.currentPopup && uploaderState.isLoading !== true && (<PopupComponent
       open={uploaderState.isShowPopup}
       setShowPopUp={(value) => {
         if (!value) {

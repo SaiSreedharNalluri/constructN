@@ -160,6 +160,8 @@ const Header: React.FC<any> = ({
         })
       }
     }
+
+    updateProjectUploadsInAppState()
   }, [router.isReady, router?.query?.projectId])
 
   useEffect(() => {
