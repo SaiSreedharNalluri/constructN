@@ -119,11 +119,11 @@ export const CustomMenu = ({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
+      
         {menuOptions.map((option: any,index:number) => {
           // Use a unique identifier if available, fallback to index if not
           const key = option.id ? `${option.id}-${index}` : index;
           return (
-          <>
             <StyledMenu
               className="custom-styled-menu"
               key={key}
@@ -146,7 +146,6 @@ export const CustomMenu = ({
                 </ListItemIcon>
               )}
             </StyledMenu>
-          </>
           );
         })}
       </Menu>
