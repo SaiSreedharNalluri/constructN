@@ -229,8 +229,8 @@ const PopupComponent = (props: PopupComponentProps) => {
           {modalContent ? (
             modalContent
           ) : (
-            <TextComponent>{isImageThere? <div className="flex">
-              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px] whitespace-pre-line">{ modalmessage}</p> </div>: <div className="whitespace-pre-line">{modalmessage}</div> }</TextComponent>
+            <>{isImageThere? <div className="flex">
+              <Image src={imageSrc} alt="" width={30} height={30}></Image><p className="ml-[10px] whitespace-pre-line">{ modalmessage}</p> </div>: <div className="whitespace-pre-line">{modalmessage}</div> }</>
           )}
         </DialogContent>
         <DialogActions
