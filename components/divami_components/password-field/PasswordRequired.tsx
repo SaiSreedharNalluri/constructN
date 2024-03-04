@@ -22,7 +22,7 @@ const PasswordRequired = ({ passwordString }: { passwordString: string }) => {
     switch (fieldType) {
       case "length":
         // code block
-        if (passwordString.length < 8 || passwordString.length > 14) {
+        if (passwordString.length <= 8 || passwordString.length >= 14) {
           return PasswordError;
         } else return iconCompleted;
 

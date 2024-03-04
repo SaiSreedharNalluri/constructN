@@ -279,6 +279,9 @@ const FormWrapper = (props: any) => {
       if (lastCommaIndex !== -1) {
         message = message.slice(0, lastCommaIndex) + " &" + message.slice(lastCommaIndex + 1);
       }
+      if (!message.endsWith(".")) {
+        message += "."; 
+      }
     }
     if (!Textlength && !number && !uppercase && !lowercase && !special) {
       message = "";
@@ -299,7 +302,7 @@ const FormWrapper = (props: any) => {
     let specialMessage = "";
 
     // Check password length
-    if (password.length > 8 && password.length < 14) {
+    if (password.length >= 8 && password.length <= 14) {
       lengthMessage = "";
     } else {
       lengthMessage = "8-14";
