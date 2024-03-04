@@ -28,7 +28,7 @@ import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from '../../../../components/progress-2d/asset-details'
 
-import { Button, Divider, IconButton, Typography, Tab, Tabs } from '@mui/material'
+import { Button, Divider, IconButton, Typography, Tab, Tabs, Switch } from '@mui/material'
 
 import { API } from '../../../../config/config'
 
@@ -203,7 +203,7 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [selectedLayers, setSelectedLayers] = useState<string[]>()
 
-    const [showMessage, setShowMessage] = useState(false);
+    const [showNotStarted, setShowNotStarted] = useState(true);
 
     const [realityDate, setRealityDate] = useState('')
 
@@ -948,6 +948,27 @@ const Progress2DPage: React.FC<any> = () => {
 
         setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
+        setShowNotStarted(checked);
+
+    }
+
+    const _toggleNotStartedSelection = (checked: boolean) => {
+
+        const notStarted = Object.values(_assetMap.current).find((aset)=>(aset.name ==='NOT STARTED'));
+
+        if(notStarted){
+
+            setStages([]);
+
+            notStarted.visible = checked;
+
+            publish('visibility-change', { assets: assets, stageMap: _assetMap.current })
+
+            setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
+
+        }
+
+
     }
 
     const _onRealityItemClick = (event: Event) => {
@@ -1325,6 +1346,16 @@ const Progress2DPage: React.FC<any> = () => {
                                                 </Button>
 
                                             </div>}
+                                            
+                                            {!selectedAsset && selectedCategory && 
+                                                <div className='flex justify-end items-center'> 
+                                                    <Switch checked={showNotStarted} onChange={(e: any)=>{
+                                                        setShowNotStarted(e.target.checked);
+                                                        _toggleNotStartedSelection(e.target.checked);
+                                                        }} inputProps={{ 'aria-label': 'controlled' }} defaultChecked /> 
+                                                    <span className='text-[14px] text-[#F1742E]'>Not Started</span>
+                                                </div>}
+
 
                                                 {(loading || !assetsDrawnOver) ? [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))
                                                 : <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}

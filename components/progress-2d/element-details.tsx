@@ -92,14 +92,14 @@ const ElementDetails: React.FC<{
             name: "height",
             units: 'ft',
             show: !!assetStages?.find((stag)=>(['LxH', 'A'].includes(stag.measurement))),
-            value: assetHeight
+            value: (assetHeight || 0) < 0 ? -1*(assetHeight || 0): assetHeight
         },
         {
             label:"Width",
             name: "width",
             units: 'ft',
             show: !!assetStages?.find((stag)=>(['LxHxW', 'AxH'].includes(stag.measurement))),
-            value: assetWidth
+            value: (assetWidth || 0) < 0 ? -1*(assetWidth || 0): assetWidth
         },
         {
             label:"Length",

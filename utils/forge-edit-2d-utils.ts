@@ -22,6 +22,8 @@ export class ForgeEdit2DUtils {
 
     private _editable: boolean
 
+    public _locked: boolean = false
+
     private _shapeMap: { [key: number]: Autodesk.Edit2D.Shape } = {}
 
 
@@ -110,7 +112,7 @@ export class ForgeEdit2DUtils {
 
     _onMoveVertex(event: any) {
 
-        if (!this._editable) {
+        if (!this._editable || this._locked) {
 
             event.action.undo();
 
@@ -128,7 +130,7 @@ export class ForgeEdit2DUtils {
 
     _onMoveShapes(event: any) {
 
-        if (!this._editable) {
+        if (!this._editable || this._locked) {
 
             event.action.undo()
 
@@ -326,14 +328,14 @@ export class ForgeEdit2DUtils {
 
         const {assets, stageMap} = structuredClone(event.detail)
 
-        let checkedCount = 0
+        // let checkedCount = 0
 
-        Object.values(stageMap).forEach((stage: any) => {
+        // Object.values(stageMap).forEach((stage: any) => {
 
-            if(stage.visible) checkedCount++
+        //     if(stage.visible) checkedCount++
 
-        })
-        if(checkedCount == 1) stageMap['NOT_STARTED'].visible = false
+        // })
+        // if(checkedCount == 1) stageMap['NOT_STARTED'].visible = false
 
         assets.forEach((asset: IAsset) => {
 
