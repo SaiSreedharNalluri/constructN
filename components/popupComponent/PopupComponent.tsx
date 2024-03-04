@@ -15,7 +15,7 @@ export const CloseIcon = styled(Image)({
 });
 
 export const BootstrapDialog = styled(Dialog)(
-  ({ theme, width, height, paddingStyle, backdropwidth, showbutton }: any) => ({
+  ({ theme, width, height, paddingstyle, backdropwidth, showbutton }: any) => ({
     fontWeight: "900",
     fontFamily: "Open Sans",
 
@@ -24,11 +24,11 @@ export const BootstrapDialog = styled(Dialog)(
       padding: "0px",
     },
     "& .MuiDialogActions-root": {
-      padding: paddingStyle ? "" : theme.spacing(1),
+      padding: paddingstyle ? "" : theme.spacing(1),
       paddingTop: showbutton ? "30px" : "",
       display: "flex",
 
-      justifyContent: paddingStyle ? "end" : "center",
+      justifyContent: paddingstyle ? "end" : "center",
     },
     "& .MuiPaper-root.MuiDialog-paper": {
       width: width ? width : "493px",
@@ -40,7 +40,7 @@ export const BootstrapDialog = styled(Dialog)(
       height: "calc(100% - 60px)",
       top: "auto !important",
       width:
-        paddingStyle || backdropwidth
+        paddingstyle || backdropwidth
           ? "calc(100%) !important"
           : "calc(100% -59px)",
       right: "0 !important",
@@ -69,7 +69,7 @@ export interface PopupComponentProps {
   hideButtons?: boolean;
   width?: string;
   height?: string;
-  paddingStyle?: boolean;
+  paddingstyle?: boolean;
   backdropwidth?: boolean;
   showbutton?: boolean;
   setSelectedOption?: any;
@@ -151,7 +151,7 @@ const PopupComponent = (props: PopupComponentProps) => {
     open,
     modalContent,
     hideButtons = false,
-    paddingStyle,
+    paddingstyle,
     width,
     backdropwidth,
     showbutton = true,
@@ -198,7 +198,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         open={open}
         width={props.width}
         height={props.height}
-        paddingStyle={props.paddingStyle}
+        paddingstyle={props.paddingstyle}
         backdropwidth={props.backdropwidth}
         showbutton={props.showbutton}
       >
@@ -221,7 +221,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         <DialogContent
           dividers
           style={
-            paddingStyle
+            paddingstyle
               ? {}
               : { borderBottom: 0, padding: "30px", paddingBottom: "22px" }
           }
@@ -242,7 +242,7 @@ const PopupComponent = (props: PopupComponentProps) => {
             <ButtonDiv className="flex justify-evenly w-full">
              {SecondaryButtonlabel!=="" ?(   
               <Button
-                variant={paddingStyle ? "outlined" : "text"}
+                variant={paddingstyle ? "outlined" : "text"}
                 // autoFocus
                 disabled={disableSecondaryButton}
                 onClick={()=>{
@@ -283,7 +283,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                   textTransform: "none",
                   fontFamily: "Open Sans",
                   fontSize: "16px",
-                  marginLeft: paddingStyle ? "20px" : "",
+                  marginLeft: paddingstyle ? "20px" : "",
                 }}
               >
                 {primaryButtonLabel}
