@@ -889,7 +889,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
                 placeholder="Search"
                 variant="outlined"
                 value={searchTerm}
-                onChange={(e) => {
+                onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {
                   setSearchTerm(e.target.value);
                 }}
                 InputLabelProps={{ shrink: false }}

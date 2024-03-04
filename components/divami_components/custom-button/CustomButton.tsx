@@ -4,7 +4,7 @@ import React from "react";
 import { Mixpanel } from "../../analytics/mixpanel";
 
 interface ContainerProps {
-  loginField: boolean;
+  loginfield: boolean;
   createIssueForm: boolean;
 }
 const StyledButtonDisable = styled(Button)((props: any) => ({
@@ -23,11 +23,11 @@ const StyledButtonDisable = styled(Button)((props: any) => ({
 const StyledButton = styled(Button)((props: any) => ({
   // border: "2px solid red",
 
-  width: props.loginField ? "340px" : "180px !important",
+  width: props.loginfield ? "340px" : "180px !important",
   height: "40px",
   textTransform: "none",
-  backgroundColor: props.loginField ? "#888888 !important" : "",
-  color: props.loginField ? "#ffffff !important" : "",
+  backgroundColor: props.loginfield ? "#888888 !important" : "",
+  color: props.loginfield ? "#ffffff !important" : "",
   fontFamily: "Open Sans",
   fontStyle: "normal",
   fontWeight: "400",
@@ -70,7 +70,7 @@ const CustomButton = (props: any) => {
     label,
     formHandler,
     setButtonClicked,
-    loginField,
+    loginfield,
     disabledButton,
     projectId,
     ref,
@@ -154,7 +154,7 @@ const createMixpanelEventData = (label:string, isButton:string, projectId:string
               e.stopPropagation();
             }
           }}
-          loginField={loginField}
+          loginfield={loginfield}
           ref={ref}
           disabled={disabledButton}
         >
@@ -193,12 +193,12 @@ const createMixpanelEventData = (label:string, isButton:string, projectId:string
   } else if (type === "disabled") {
     return (
       <div>
-        {loginField ? (
+        {loginfield ? (
           <StyledButton
             data-testid="testing_button"
             variant="outlined"
             disabled
-            loginField={loginField}
+            loginfield={loginfield}
           >
             {label}
           </StyledButton>
