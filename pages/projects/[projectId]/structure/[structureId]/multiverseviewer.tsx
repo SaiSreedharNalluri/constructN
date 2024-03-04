@@ -1751,8 +1751,8 @@ const Index: React.FC<IProps> = () => {
             })
             vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
             stageLayer && vData.currentLayersList.push(stageLayer);
-            vData.taskShow=true;
-            vData.issueShow=true;
+            vData.taskShow=initData?initData.taskShow:true;
+            vData.issueShow=initData?initData.issueShow:true;
             vData.isIssueFiltered=false;
             vData.isTaskFiltered=false;
             vData.projectUTM=appState.currentProjectData?.project?.utm || undefined ;
