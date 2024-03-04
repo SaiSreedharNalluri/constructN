@@ -132,6 +132,7 @@ import { useAppContext } from "../../../state/appState/context";
 import ProcoreLink from "../procore/procoreLinks";
 import LinktoProcore from "../LinktoProcore";
 import { isProcoreEnabled } from "../../../utils/constants";
+import { Comments } from "../../../models/IComments";
 interface ContainerProps {
   footerState: boolean;
 }
@@ -191,7 +192,6 @@ function BasicTabs(props: any) {
   } = props;
   const { taskinitialStatus , initialProjectUsersList } = useApiDataContext();
   const [value, setValue] = React.useState(0);
-  const [issueTypeConfig, setIssueTypeConfig] = useState("");
   const [formState, setFormState] = useState({
     selectedValue: "",
     selectedProgress: null,
@@ -202,16 +202,12 @@ function BasicTabs(props: any) {
   const [progressOptionsState, setProgressOptionsState] = useState<any>([{}]);
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
   const [formConfig, setFormConfig] = useState(TASK_FORM_CONFIG);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [list, setList] = useState<any>();
   const [comments, setComments] = useState("");
-  const [backendComments, setBackendComments] = useState<any>([]);
+  const [backendComments, setBackendComments] = useState<Comments[]>([]);
   const router = useRouter();
-
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [attachmentPopup, setAttachmentPopup] = useState(false);
-  const[isAdding,setIsAdding]=useState(false)
   const [showPreview,setShowPreview]=useState(false)
   const[attachment,setAttachment]=useState<{
     name: string;
@@ -302,8 +298,9 @@ const providerType=credential.provider;
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          setIsAdding(true)
-          getComments(entityId);
+          let commentsList:Comments[] = backendComments
+          commentsList.push(response.result)
+          setBackendComments(structuredClone(commentsList))
           CustomToast("Comment added successfully","success");
         }
       });
@@ -316,18 +313,6 @@ const providerType=credential.provider;
       .then((response) => {
         if (response.success === true) {
           setBackendComments(response.result);
-          if(isAdding)
-          {
-            const fileInput = document.getElementById(
-              "taskDetailsWindow"
-            ) as HTMLInputElement;
-            if (fileInput) {
-              setTimeout(()=>{
-                fileInput.scrollTo (0,fileInput.scrollHeight);
-              },100)
-              
-            }
-          }
         }
       })
       .catch((error) => {
@@ -338,7 +323,7 @@ const providerType=credential.provider;
     if (taskState?.TabOne?.id) {
       getComments(taskState?.TabOne?.id);
     }
-  }, [taskState,isAdding]);
+  }, [taskState]);
 
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
@@ -833,10 +818,9 @@ const providerType=credential.provider;
           ) : (
             <ActivityLogContainer>
               <ActivityLog
-                ActivityLog={taskState.TabTwo}
-                comments={backendComments}
+                backendComments={backendComments}
                 getComments={getComments}
-                setIsAdding={setIsAdding}
+                setBackendComments={setBackendComments}
               />
               {backendComments?.length ? (
                 <></>
@@ -913,7 +897,6 @@ const CustomTaskDetailsDrawer = (props: any) => {
   const [footerState, SetFooterState] = useState(false);
   const [selectedTask, setSelectedTask] = useState(task);
   const router = useRouter();
-  const [backendComments, setBackendComments] = useState<any>([]);
   const[isLoading,setLoading]=useState(false);
   const [taskDetail,setTaskDetail] = useState<boolean>(true);
   const [procorePopup,setProcorePopup]= useState<boolean>(false)
@@ -1444,7 +1427,7 @@ const handleScreenShotAndAttachment =() =>{
             </RightTitleCont>
           </TitleContainer>
         </HeaderContainer>
-        <BodyContainer footerState={footerState} id="taskDetailsWindow">
+        <BodyContainer footerState={footerState} id="DetailsWindow">
           <BasicTabs
             taskType={taskType}
             taskPriority={taskPriority}
