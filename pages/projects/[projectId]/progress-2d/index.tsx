@@ -28,7 +28,7 @@ import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from '../../../../components/progress-2d/asset-details'
 
-import { Button, Divider, IconButton, Typography, Tab, Tabs, Switch } from '@mui/material'
+import { Button, Divider, IconButton, Typography, Tab, Tabs, Switch, Checkbox } from '@mui/material'
 
 import { API } from '../../../../config/config'
 
@@ -1337,13 +1337,18 @@ const Progress2DPage: React.FC<any> = () => {
 
                                             </div>}
                                             
-                                            {!selectedAsset && selectedCategory && 
+                                            {!selectedAsset && selectedCategory && isSupportUser &&
                                                 <div className='flex justify-end items-center'> 
-                                                    <Switch checked={showNotStarted} onChange={(e: any)=>{
-                                                        setShowNotStarted(e.target.checked);
-                                                        _toggleNotStartedSelection(e.target.checked);
-                                                        }} inputProps={{ 'aria-label': 'controlled' }} defaultChecked /> 
-                                                    <span className='text-[14px] text-[#F1742E]'>Not Started</span>
+                                                <Checkbox sx={{
+                                                    '&.Mui-checked': {
+                                                        color: '#F1742E',
+                                                    },
+                                                }} 
+                                                checked={showNotStarted}  onChange={(e: any)=>{
+                                                    setShowNotStarted(e.target.checked);
+                                                    _toggleNotStartedSelection(e.target.checked);
+                                                    }} />
+                                                    <span className='text-[11px] text-[#F1742E]'>SHOW NOT STARTED ASSETS</span>
                                                 </div>}
 
 
