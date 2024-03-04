@@ -15,7 +15,7 @@ export const CloseIcon = styled(Image)({
 });
 
 export const BootstrapDialog = styled(Dialog)(
-  ({ theme, width, height, paddingStyle, backdropWidth, showButton }: any) => ({
+  ({ theme, width, height, paddingStyle, backdropWidth, showbutton }: any) => ({
     fontWeight: "900",
     fontFamily: "Open Sans",
 
@@ -25,7 +25,7 @@ export const BootstrapDialog = styled(Dialog)(
     },
     "& .MuiDialogActions-root": {
       padding: paddingStyle ? "" : theme.spacing(1),
-      paddingTop: showButton ? "30px" : "",
+      paddingTop: showbutton ? "30px" : "",
       display: "flex",
 
       justifyContent: paddingStyle ? "end" : "center",
@@ -71,7 +71,7 @@ export interface PopupComponentProps {
   height?: string;
   paddingStyle?: boolean;
   backdropWidth?: boolean;
-  showButton?: boolean;
+  showbutton?: boolean;
   setSelectedOption?: any;
   isImageThere?:boolean;
   imageSrc?:any;
@@ -154,7 +154,7 @@ const PopupComponent = (props: PopupComponentProps) => {
     paddingStyle,
     width,
     backdropWidth,
-    showButton = true,
+    showbutton = true,
     setShowbutton,
     projectId,
     setSelectedOption,
@@ -200,7 +200,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         height={props.height}
         paddingStyle={props.paddingStyle}
         backdropWidth={props.backdropWidth}
-        showButton={props.showButton}
+        showbutton={props.showbutton}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
@@ -235,10 +235,10 @@ const PopupComponent = (props: PopupComponentProps) => {
         </DialogContent>
         <DialogActions
           sx={
-            showButton ? { height: "70px", paddingTop: "13px" } : { padding: 0 }
+            showbutton ? { height: "70px", paddingTop: "13px" } : { padding: 0 }
           }
         >
-          {showButton ? (
+          {showbutton ? (
             <ButtonDiv className="flex justify-evenly w-full">
              {SecondaryButtonlabel!=="" ?(   
               <Button
