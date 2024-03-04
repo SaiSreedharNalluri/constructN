@@ -15,7 +15,7 @@ export const CloseIcon = styled(Image)({
 });
 
 export const BootstrapDialog = styled(Dialog)(
-  ({ theme, width, height, paddingStyle, backdropWidth, showbutton }: any) => ({
+  ({ theme, width, height, paddingStyle, backdropwidth, showbutton }: any) => ({
     fontWeight: "900",
     fontFamily: "Open Sans",
 
@@ -40,7 +40,7 @@ export const BootstrapDialog = styled(Dialog)(
       height: "calc(100% - 60px)",
       top: "auto !important",
       width:
-        paddingStyle || backdropWidth
+        paddingStyle || backdropwidth
           ? "calc(100%) !important"
           : "calc(100% -59px)",
       right: "0 !important",
@@ -70,7 +70,7 @@ export interface PopupComponentProps {
   width?: string;
   height?: string;
   paddingStyle?: boolean;
-  backdropWidth?: boolean;
+  backdropwidth?: boolean;
   showbutton?: boolean;
   setSelectedOption?: any;
   isImageThere?:boolean;
@@ -153,7 +153,7 @@ const PopupComponent = (props: PopupComponentProps) => {
     hideButtons = false,
     paddingStyle,
     width,
-    backdropWidth,
+    backdropwidth,
     showbutton = true,
     setShowbutton,
     projectId,
@@ -199,7 +199,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         width={props.width}
         height={props.height}
         paddingStyle={props.paddingStyle}
-        backdropWidth={props.backdropWidth}
+        backdropwidth={props.backdropwidth}
         showbutton={props.showbutton}
       >
         <BootstrapDialogTitle
