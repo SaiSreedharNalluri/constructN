@@ -51,6 +51,7 @@ import {
 } from "../../../services/comments";
 import PopupComponent from "../../popupComponent/PopupComponent";
 import { Comments } from "../../../models/IComments";
+import CircularProgress from '@mui/material/CircularProgress';
 interface IProps{
   backendComments:Comments[],
   getComments: (entityId: string) => Promise<void>
@@ -60,6 +61,7 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
   const [commentsData, setCommentsData] = useState(backendComments);
   const [autofocusState, setAutoFocusState] = useState(false);
   const [replyToText, setReplyToText] = useState("");
+  const[isLoading,setIsLoading] =useState<boolean>(false)
   const [commentInputData, setCommentInputData] = useState({
     isReply: false,
     isEdit: false,
@@ -160,6 +162,7 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
   };
   const saveRepliedComments = async (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       createCommentReply(
         router.query.projectId as string,
         { reply: commentObj.data?.text },
@@ -169,13 +172,17 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
           CustomToast("Reply added successfully","success");
           getComments(commentsData[0]?.entity);
           setReplyToText("");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
 
   const saveEditRepliedComments = async (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       editCommentReply(
         router.query.projectId as string,
         { reply: commentObj.data?.text },
@@ -186,13 +193,17 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
           CustomToast("Reply updated successfully","success");
           getComments(commentsData[0]?.entity);
           setReplyToText("");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
 
   const saveEditComment = (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       editComment(
         router.query.projectId as string,
         commentObj?.data?.commentId,
@@ -203,13 +214,17 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
         if (response.success === true) {
           CustomToast("Comment updated successfully","success");
           getComments(commentsData[0]?.entity);
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
 
   const saveAddedComments = async (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       createComment(router.query.projectId as string, {
         comment: commentObj.data?.text,
         entity: commentsData[0]?.entity,
@@ -220,7 +235,10 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
           setBackendComments(structuredClone(commentsList))
           setAdding(true)
           CustomToast("Comment added successfully","success");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
@@ -750,6 +768,7 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
           {/* {replyToText ? replyToText : ""} */}
           <AddCommentContainerSecond>
             <StyledInput
+              disabled={isLoading}
               id="standard-basic"
               variant="standard"
               placeholder={replyToText ? "Add Reply" : "Add Comment"}
@@ -802,38 +821,41 @@ const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendCom
                 }
               }}
             />
-            <AddCommentButtonContainer>
-              <SendButton
-                onClick={() => {
-                  let commentText = commentInputData?.data?.text?.trim();
-                  let newObj = { ...commentInputData };
-                  setCommentInputData({
-                    isReply: false,
-                    isEdit: false,
-                    isEditReply: false,
-                    data: {
-                      text: "",
-                      attachments: "",
-                      commentId: "",
-                      replyId: "",
-                    },
-                  });
-                  if (commentText) {
-                    if (commentInputData?.isReply) {
-                      saveRepliedComments(newObj);
-                    } else if (commentInputData?.isEdit) {
-                      saveEditComment(newObj);
-                    } else if (commentInputData?.isEditReply) {
-                      saveEditRepliedComments(newObj);
-                    } else {
-                      saveAddedComments(newObj);
-                    }
-                  }
-                }}
-              >
-                <ImageErrorIcon src={Send} alt="" />
-              </SendButton>
-            </AddCommentButtonContainer>
+            {
+               isLoading ? <CircularProgress color="warning" size={25} className="mr-3" thickness={7}/>  :  <AddCommentButtonContainer>
+               <SendButton
+                 onClick={() => {
+                   let commentText = commentInputData?.data?.text?.trim();
+                   let newObj = { ...commentInputData };
+                   setCommentInputData({
+                     isReply: false,
+                     isEdit: false,
+                     isEditReply: false,
+                     data: {
+                       text: "",
+                       attachments: "",
+                       commentId: "",
+                       replyId: "",
+                     },
+                   });
+                   if (commentText) {
+                     if (commentInputData?.isReply) {
+                       saveRepliedComments(newObj);
+                     } else if (commentInputData?.isEdit) {
+                       saveEditComment(newObj);
+                     } else if (commentInputData?.isEditReply) {
+                       saveEditRepliedComments(newObj);
+                     } else {
+                       saveAddedComments(newObj);
+                     }
+                   }
+                 }}
+               >
+                 <ImageErrorIcon src={Send} alt="" />
+               </SendButton>
+             </AddCommentButtonContainer>
+            }
+           
           </AddCommentContainerSecond>
         </>
       ) : (

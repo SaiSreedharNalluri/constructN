@@ -136,7 +136,7 @@ import procore from "../../../public/divami_icons/procore.svg";
 import LinktoProcore from "../../container/LinktoProcore";
 import { isProcoreEnabled } from "../../../utils/constants";
 import { Comments } from "../../../models/IComments";
-
+import CircularProgress from '@mui/material/CircularProgress';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -205,6 +205,7 @@ function BasicTabs(props: any) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const router = useRouter();
   const [showPreview,setShowPreview]=useState(false)
+  const[isLoading,setIsLoading] =useState<boolean>(false)
   const[attachment,setAttachment]=useState<{
     name: string;
     url: string;
@@ -319,6 +320,7 @@ useEffect(()=>{
 
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
+      setIsLoading(true)
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
@@ -328,7 +330,10 @@ useEffect(()=>{
           commentsList.push(response.result)
           setBackendComments(structuredClone(commentsList))
           CustomToast("Comment added successfully","success");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
       setComments("");
     }
@@ -857,6 +862,7 @@ useEffect(()=>{
                 <>
                   <AddCommentContainerSecond>
                     <StyledInput
+                      disabled={isLoading}
                       id="standard-basic"
                       variant="standard"
                       placeholder="Add Comment"
@@ -876,7 +882,8 @@ useEffect(()=>{
                         }
                       }}
                     />
-                    <AddCommentButtonContainer>
+                    {
+                      isLoading ? <CircularProgress color="warning" size={25} className="mr-3" thickness={7}/> : <AddCommentButtonContainer>
                       <SendButton
                         onClick={() => {
                           addComment(comments, taskState?.TabOne?.id);
@@ -886,6 +893,8 @@ useEffect(()=>{
                         <ImageErrorIcon src={Send} alt="" />
                       </SendButton>
                     </AddCommentButtonContainer>
+                    }
+                    
                   </AddCommentContainerSecond>
                 </>
               )}
