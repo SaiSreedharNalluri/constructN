@@ -53,6 +53,21 @@ export const procorerefreshToken = () => {
       throw error.response.data;
     });
 };
+
+export const LinkToProcore =(projectId:string,procore:object)=>{
+  return instance
+  .post(`${API.BASE_URL}/projects/${projectId}/link-to-procore`,procore,
+  {
+      headers: authHeader.authHeader(),
+  }
+  ).then((response)=>{
+    console.log('dharani api response',response.data)
+    return response.data
+  }).catch((error)=>{
+    throw error
+  })
+}
+
 /**RFI API's */
 export const getRfiManager = (projectId:number | undefined) => {
   return procoreinstance

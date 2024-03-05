@@ -102,6 +102,7 @@ interface IProps {
   screenshot?:any
   attachment:any
   toolClicked?: (toolAction: IToolbarAction) => void;
+  handleSpaceInField: (e: string) => boolean;
 }
 const LinkNewRFI : React.FC<IProps> = ({
     handleInstance,
@@ -124,7 +125,8 @@ const LinkNewRFI : React.FC<IProps> = ({
     weburl,
     screenshot,
     attachment,
-    toolClicked
+    toolClicked,
+    handleSpaceInField,
   }) => {
 
   const [footerState, SetFooterState] = useState(true);
@@ -137,7 +139,6 @@ const LinkNewRFI : React.FC<IProps> = ({
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const [files, setFiles] = useState<File[]>();
   const formikRef = useRef<FormikProps<any>>(null);
-  const removeSpaces = (value:any) => value.trim(/^\s+|\s+$/g, '');
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(prevFiles => {
       if (!prevFiles) {
@@ -234,6 +235,8 @@ const LinkNewRFI : React.FC<IProps> = ({
     setCostImpact(selectedValue);
     if (selectedValue === "yes_known") {
     setShowInput(selectedValue === 'yes_known');
+    }else{
+      setShowInput(false)
     }
   };
 
@@ -242,6 +245,8 @@ const LinkNewRFI : React.FC<IProps> = ({
      setScheduleImpact(selectedValue);
       if(selectedValue === "yes_known"){
       setshowValueInput(selectedValue === 'yes_known');
+    }else{
+      setshowValueInput(false)
     }
   
   };
@@ -386,11 +391,17 @@ const LinkNewRFI : React.FC<IProps> = ({
 
   }
   const validationSchema = Yup.object().shape({
-    subject: Yup.string().transform(removeSpaces).required('Subject is required'),
-    rfi_manager_id: Yup.number().required('Select RFI manager'),
+    subject: Yup.string().matches(
+      /[A-Za-z0-9\-']+$/,
+      'Spaces are not allowed'
+    ).required('Subject is required'),
+    rfi_manager_id: Yup.number().nullable().required('Select RFI manager'),
     received_from_login_information_id: Yup.number().nullable().required('Select Received From'),
     question: Yup.object().shape({
-      body: Yup.string().trim().required('Question is required'),
+      body: Yup.string().matches(
+        /[A-Za-z0-9\-']+$/,
+        'Spaces are not allowed'
+      ).required('Question is required'),
       attachment: Yup.array(),
     }),
     'cost_impact.value': Yup.number().when('cost_impact.status', {
@@ -424,10 +435,10 @@ const LinkNewRFI : React.FC<IProps> = ({
             {({ setFieldValue,errors, touched ,values }) => {
             const isAllFieldsTrue = Object.values(values).every(value => {
               if (
-                  values.subject !== "" &&
+                  values.subject !== "" && handleSpaceInField (values.subject) &&
                   values.rfi_manager_id !== undefined && values.rfi_manager_id !== null  &&
                   values.received_from_login_information_id !== undefined && values.received_from_login_information_id !== null &&
-                  values.question.body !== "" &&
+                  values.question.body !== "" &&handleSpaceInField (values.question.body)&&
                   (values.cost_impact.status !== "yes_known" ||
                       (values.cost_impact.status === "yes_known" &&
                           values.cost_impact.value !== undefined &&

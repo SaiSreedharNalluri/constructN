@@ -43,6 +43,7 @@ interface IProps{
   issue:any
   task:any
   handleCloseProcore:any
+  handleSpaceInField: (e: string) => boolean;
   getIssues?:(s:string)=>{} | undefined;
   getTasks?:(s:string)=>{} | undefined;
   toolClicked?: (toolAction: IToolbarAction) => void;
@@ -67,7 +68,8 @@ const LinkNewObservation : React.FC<IProps> = ({
     specSection,
     getIssues,
     getTasks,
-    toolClicked
+    toolClicked,
+    handleSpaceInField
   }) => {
 
   const userObj=localStorage.getItem('userCredentials')
@@ -253,10 +255,16 @@ createObservation(formData)
 });
   };
   const validationSchema = Yup.object().shape({
-    name: Yup.string().trim().required('Title is required'),
+    name: Yup.string().matches(
+      /[A-Za-z0-9\-']+$/,
+      'Spaces are not allowed'
+    ).required('Title is required'),
     type_id: Yup.number().nullable().required('Type is not selected'),
     status: Yup.string().trim().required('status is not selected'),
-    description:Yup.string().trim().required('Description is required'),
+    description:Yup.string().matches(
+      /[A-Za-z0-9\-']+$/,
+      'Spaces are not allowed'
+    ).required('Description is required'),
    
   });
   
@@ -282,7 +290,7 @@ createObservation(formData)
             {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue =
                Object.values(values).every((value) =>{
-                if(values.name!=="" && values.type_id!==null && values.type_id !== undefined && values.status!=="" && values.description!==""){
+                if(values.name!==""  && handleSpaceInField(values.name)&& values.type_id!==null && values.type_id !== undefined && values.status!=="" && values.description!=="" &&handleSpaceInField(values.description)){
                    return true;
                 }else{
                   return false;
