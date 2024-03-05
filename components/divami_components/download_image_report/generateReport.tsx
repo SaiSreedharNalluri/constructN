@@ -4,6 +4,8 @@ import { Address, IProjects } from '../../../models/IProjects';
 import { IStructure } from '../../../models/IStructure';
 import { ISnapshot } from '../../../models/ISnapshot';
 import moment from 'moment';
+import { IReportData } from '../../../models/IReportDownload';
+import { useAppContext } from '../../../state/appState/context';
 
 const styles = StyleSheet.create({
   container: {
@@ -103,15 +105,11 @@ const styles = StyleSheet.create({
 });
 
 interface IProps {
-  project: IProjects,
-  imageSrc: string,
-  structure: IStructure
-  snapshot: ISnapshot
-  logedInUser:string,
-  miniMapImg:string,
+  downloadReportData?:IReportData
 }
 
-const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapshot,logedInUser,miniMapImg }) => {
+const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
+  const { state: appState, appContextAction } = useAppContext();
   const formatAddress = (address: Address) => {
     const sanitizeValue = (value: string | undefined) => {
         return value !== undefined ? value : '';
@@ -132,52 +130,52 @@ const GenerateReport: React.FC<IProps> = ({ project, imageSrc, structure, snapsh
             </View>
             <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width:'100%',marginBottom:'15px'}}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>Report for {structure.name} on {moment(snapshot.date).format('MMMM Do YYYY')}</Text>
+              <Text style={styles.title}>Report for {downloadReportData?.structure?.name} on {moment(downloadReportData?.snapshot?.date).format('MMMM Do YYYY')}</Text>
             </View>
             <View style={styles.linkContainer}>
-              <Link style={styles.link} src={window.location.href}>View this location in ConstructN </Link>
+             {downloadReportData && <Link style={styles.link} src={`${window.location.href}&context=${encodeURIComponent(downloadReportData?.context)}`}>View this location in ConstructN </Link>}
             </View>
             </View>
           </View>
         <View style={styles.section2}>
-            <Image style={styles.image} src={imageSrc} />
+            {downloadReportData&&<Image style={styles.image} src={downloadReportData.screenshot} />}
           </View>
           <View style={styles.section3}>
           <View style={styles.column}>
               <Text style={styles.heading}>Project Details</Text>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Name:</Text>
-                <Text style={styles.value}>{project.name}</Text>
+               { downloadReportData && <Text style={styles.value}>{downloadReportData?.project?.name}</Text>}
               </View>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Created:</Text>
-                <Text style={styles.value}>{moment(project.createdAt).format('MMMM Do YYYY')}</Text>
+                { downloadReportData && <Text style={styles.value}>{moment(downloadReportData?.project?.createdAt).format('MMMM Do YYYY')}</Text>}
               </View>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Location:</Text>
-                <Text style={styles.value}>{project.address ? formatAddress(project.address) : '-'}</Text>
+                { downloadReportData && <Text style={styles.value}>{downloadReportData?.project?.address ? formatAddress(downloadReportData.project.address) : '-'}</Text>}
               </View>
             </View>
             <View style={styles.column}>
               <Text style={styles.heading}>Capture Details</Text>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Capture Date:</Text>
-                <Text style={styles.value}>{moment(snapshot.date).format('MMMM Do YYYY')}</Text>
+                <Text style={styles.value}>{moment(downloadReportData?.snapshot?.date).format('MMMM Do YYYY')}</Text>
               </View>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Floor:</Text>
-                <Text style={styles.value}>{structure.name}</Text>
+                <Text style={styles.value}>{downloadReportData?.structure?.name}</Text>
               </View>
             </View>
             <View style={styles.column}>
-            <Image style={styles.image} src={miniMapImg} />
+           {downloadReportData?.miniMapscreenshot ?<Image style={styles.image} src={downloadReportData.miniMapscreenshot}/>:(<></>)}
             </View>
           </View>
           <View style={styles.section4}>
             <View style={styles.noteContainer}>
             <Text style={styles.heading1}>Notes</Text>
             </View>
-          <Text style={{bottom:0,position:'absolute',fontSize:12,textAlign:'center',marginBottom: '3px',marginLeft:'10px'}}>Exported by {logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
+          <Text style={{bottom:0,position:'absolute',fontSize:12,textAlign:'center',marginBottom: '3px',marginLeft:'10px'}}>Exported by {downloadReportData?.logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
           </View>
         </View>
       </Page>

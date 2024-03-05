@@ -73,6 +73,7 @@ import DownloadImageReport from "../../../../../components/divami_components/dow
 import html2canvas from "html2canvas";
 import { pdf } from "@react-pdf/renderer";
 import GenerateReport from "../../../../../components/divami_components/download_image_report/generateReport";
+import { IReportData } from "../../../../../models/IReportDownload";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -229,9 +230,17 @@ const Index: React.FC<IProps> = () => {
   const [taskStatusList, setTaskStatusList] = useState<any>(null);
   const [issueTagStatus, setIssueTagStatus] = useState<string[]>([]);
   const [TaskTagStatus, setTaskTagStatus] = useState<[string]>();
-  const imgRef = useRef<string>('')
-  const miniMapImg = useRef<string>('')
   const [logedInUser,setLogedInUser] =useState<string>('')
+  const downloadReportData = useRef<IReportData|undefined>({
+    screenshot: '',
+    miniMapscreenshot: '',
+    type: '',
+    context: '',
+    structure: {} as IStructure, 
+    snapshot:{} as ISnapshot,
+    project: {} as IProjects, 
+    logedInUser: ''
+  });
   useEffect(()=>{
     setLogedInUser(localStorage.getItem('userInfo') as string)
    },[])
@@ -963,8 +972,8 @@ const Index: React.FC<IProps> = () => {
         CustomToast('The downloading of the image has started.it will take some time to complete...','success')  
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getViewerScreenshot", "data": ""}`);
       break
-      case 'getReport':
-        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getReport", "data": ""}`);
+      case 'downloadReportData':
+        conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "downloadReportData", "data": ""}`);
         break;
       default:
         break;
@@ -1747,6 +1756,13 @@ const Index: React.FC<IProps> = () => {
             vData.isTaskFiltered=false;
             vData.projectUTM=appState.currentProjectData?.project?.utm || undefined ;
             vData.projectLocation = appState.currentProjectData?.project?.location || undefined ;
+            if(router.query && router.query.context) {
+            const contextObj = decodeURIComponent(router.query?.context?.toString());
+            vData.viewerContext = JSON.parse(contextObj)
+            delete router.query.context
+            router.push(router)
+            } 
+            
             setInintData(vData);
             // if(initData && router.query.iss || router.query.tsk){
 
@@ -2000,12 +2016,11 @@ const Index: React.FC<IProps> = () => {
       conn.unSubscribeTopic(MqttConnector.getMultiverseHandShakeString());
     }
   }, [])
-
+ 
 
   const receiveMessage = (event:any) => {
     console.log("event in multiverse",event);
-    
-    if (event.origin === MULTIVERSE.ORIGIN_URL) {
+   if (event.origin === MULTIVERSE.ORIGIN_URL) {      
       if(event.data.type === "createScreenshot" && event.data.screenshot)
         setScreenShot(event.data)
       if(event.data.type === "getViewerScreenshot")
@@ -2019,15 +2034,24 @@ const Index: React.FC<IProps> = () => {
           document.body.removeChild(link);
           URL.revokeObjectURL(link.href);
       }  
-      if(event.data.type === "getReport"){
-        imgRef.current = event.data.screenshot
-        miniMapImg.current = event.data.miniMapscreenshot
-        downloadPdfReport()
+      if(event.data.type === "downloadReportData"){
+        if(downloadReportData.current){
+        downloadReportData.current.screenshot = event.data.screenshot
+        downloadReportData.current.miniMapscreenshot = event.data.miniMapscreenshot
+        downloadReportData.current.structure = event.data.structure
+        downloadReportData.current.context = event.data.context
+        downloadReportData.current.snapshot = event.data.snapshot
+        downloadReportData.current.type = event.data.type
+        downloadReportData.current.project = appState.currentProjectData?.project
+        downloadReportData.current.logedInUser = logedInUser  
+        downloadPdfReport(downloadReportData.current) 
+        downloadReportData.current = undefined;
       }
     }
-  }
+  }  
+}
   const captureCanvas = async () => {
-    let typeChangeToolAction: IToolbarAction = { type: "getReport", data: "" };
+    let typeChangeToolAction: IToolbarAction = { type: "downloadReportData", data: "" };
     toolClicked(typeChangeToolAction)
     CustomToast('The report generation is started.it will take some time to complete and download...','success')
   //   await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
@@ -2051,21 +2075,23 @@ useEffect(()=>{
   return () => {
     window.removeEventListener('message', receiveMessage);
   };
-},[])
+},[appState])
 const download360Image = () =>{
   let typeChangeToolAction: IToolbarAction = { type: "getViewerScreenshot", data: "" };
   toolClicked(typeChangeToolAction)
   }
-  const downloadPdfReport = async () => {
-    const url = URL.createObjectURL(await pdf(<GenerateReport project={appState.currentProjectData?.project as IProjects} structure ={initData?.structure as IStructure} snapshot={initData?.currentSnapshotBase as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
+  const downloadPdfReport = async (downloadReportData:IReportData) => {
+    if(downloadReportData){
+    const url = URL.createObjectURL(await pdf(<GenerateReport downloadReportData={downloadReportData as IReportData}/>).toBlob());
     const a = document.createElement('a');
     a.href = url;
-    a.download = `report_${initData?.currentSnapshotBase?.date}.pdf`;
+    a.download = `report_${downloadReportData?.snapshot?.date}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+  }
   return (
     <ApiDataContextProvider  
     initialTypes={issueTypesList}
