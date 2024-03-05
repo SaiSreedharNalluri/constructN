@@ -624,7 +624,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
       </TableCell>
     
         </TableRow>
-      )): <div className="flex justify-center p-2"> <p> No User found</p></div>}
+      )): <TableRow><TableCell  className="flex justify-center p-2"> <p> No User found</p></TableCell></TableRow>}
     </TableBody>
   </Table>
 </TableContainer>:<CustomLoader />}

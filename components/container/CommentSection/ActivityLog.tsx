@@ -50,12 +50,18 @@ import {
   deleteCommentReply,
 } from "../../../services/comments";
 import PopupComponent from "../../popupComponent/PopupComponent";
-
-const ActivityLog = (props: any) => {
-  const { ActivityLog, comments, getComments,setIsAdding } = props;
-  const [commentsData, setCommentsData] = useState(comments);
+import { Comments } from "../../../models/IComments";
+import CircularProgress from '@mui/material/CircularProgress';
+interface IProps{
+  backendComments:Comments[],
+  getComments: (entityId: string) => Promise<void>
+  setBackendComments: React.Dispatch<React.SetStateAction<Comments[]>>
+}
+const ActivityLog:React.FC<IProps> = ({backendComments,getComments,setBackendComments}) => {
+  const [commentsData, setCommentsData] = useState(backendComments);
   const [autofocusState, setAutoFocusState] = useState(false);
   const [replyToText, setReplyToText] = useState("");
+  const[isLoading,setIsLoading] =useState<boolean>(false)
   const [commentInputData, setCommentInputData] = useState({
     isReply: false,
     isEdit: false,
@@ -67,16 +73,12 @@ const ActivityLog = (props: any) => {
       replyId: "",
     },
   });
-  const [searchingOn, setSearchingOn] = useState(false);
   const [searchingOnnew, setSearchingOnnew] = useState(false);
   const [currentCommentId, setCurrentCommentId] = useState("");
   const [commentId, setCommentId] = useState("");
-
   const [commentPopUp, setCommentPopup] = useState(false);
   const [commentReplyPopUp, setcommentReplyPopup] = useState(false);
-
-  const [isSaving, setIsSaving] = useState(false);
-
+  const [adding,setAdding] =useState(false)
   function sayHello(name: string) {
     setCurrentCommentId(name);
     // setSearchingOn(!searchingOn);
@@ -90,22 +92,6 @@ const ActivityLog = (props: any) => {
     const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
     const diffMinutes = Math.ceil(diffTime / (1000 * 60));
     const diffSec = Math.ceil(diffTime / 1000);
-
-    // if (diffDays > 1) {
-    //   text = `${diffDays} days ago`;
-    // } else {
-    //   if (diffMinutes > 59) {
-    //     text = `${diffHours} hours ago`;
-    //   } else {
-    //     console.log(diffMinutes + " minutes");
-    //     if (diffSec > 59) {
-    //       text = `${diffMinutes} minutes ago`;
-    //     } else {
-    //       text = `few seconds ago`;
-    //     }
-    //   }
-    // }
-
     if (diffSec < 60) {
       text = `few seconds ago`;
     } else if (diffMinutes < 60) {
@@ -118,10 +104,9 @@ const ActivityLog = (props: any) => {
     return text;
   };
   useEffect(() => {
-    // setCommentsData(comments);
     const localStorageData = localStorage.getItem("userInfo");
     let userName = localStorageData ? localStorageData : "";
-    const commentsList = comments.map((each: any) => {
+    const commentsList = backendComments.map((each: any) => {
       return {
         ...each,
         updatedTimeText: getTimeText(each.createdAt),
@@ -145,9 +130,22 @@ const ActivityLog = (props: any) => {
         }),
       };
     });
-
     setCommentsData(commentsList);
-  }, [comments]);
+  if(adding === true)
+  {
+    console.log('caliigjhdsjk')
+    const fileInput = document.getElementById(
+      "DetailsWindow"
+    ) as HTMLInputElement;
+    if (fileInput) {
+      setTimeout(()=>{
+        fileInput.scrollTo (0,fileInput.scrollHeight);
+      },100)
+      
+    }
+  }
+   
+  }, [backendComments]);
 
   const cancelComment = () => {
     setCommentInputData({
@@ -164,6 +162,7 @@ const ActivityLog = (props: any) => {
   };
   const saveRepliedComments = async (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       createCommentReply(
         router.query.projectId as string,
         { reply: commentObj.data?.text },
@@ -173,13 +172,17 @@ const ActivityLog = (props: any) => {
           CustomToast("Reply added successfully","success");
           getComments(commentsData[0]?.entity);
           setReplyToText("");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
 
   const saveEditRepliedComments = async (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       editCommentReply(
         router.query.projectId as string,
         { reply: commentObj.data?.text },
@@ -190,13 +193,17 @@ const ActivityLog = (props: any) => {
           CustomToast("Reply updated successfully","success");
           getComments(commentsData[0]?.entity);
           setReplyToText("");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
 
   const saveEditComment = (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       editComment(
         router.query.projectId as string,
         commentObj?.data?.commentId,
@@ -207,22 +214,31 @@ const ActivityLog = (props: any) => {
         if (response.success === true) {
           CustomToast("Comment updated successfully","success");
           getComments(commentsData[0]?.entity);
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
 
   const saveAddedComments = async (commentObj: any) => {
     if (commentsData?.length && commentObj?.data?.text) {
+      setIsLoading(true)
       createComment(router.query.projectId as string, {
         comment: commentObj.data?.text,
         entity: commentsData[0]?.entity,
       }).then((response: any) => {
         if (response.success === true) {
-          setIsAdding(true)
+          let commentsList:any = backendComments
+          commentsList.push(response.result)
+          setBackendComments(structuredClone(commentsList))
+          setAdding(true)
           CustomToast("Comment added successfully","success");
-          getComments(commentsData[0]?.entity);
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
     }
   };
@@ -752,6 +768,7 @@ const ActivityLog = (props: any) => {
           {/* {replyToText ? replyToText : ""} */}
           <AddCommentContainerSecond>
             <StyledInput
+              disabled={isLoading}
               id="standard-basic"
               variant="standard"
               placeholder={replyToText ? "Add Reply" : "Add Comment"}
@@ -804,38 +821,41 @@ const ActivityLog = (props: any) => {
                 }
               }}
             />
-            <AddCommentButtonContainer>
-              <SendButton
-                onClick={() => {
-                  let commentText = commentInputData?.data?.text?.trim();
-                  let newObj = { ...commentInputData };
-                  setCommentInputData({
-                    isReply: false,
-                    isEdit: false,
-                    isEditReply: false,
-                    data: {
-                      text: "",
-                      attachments: "",
-                      commentId: "",
-                      replyId: "",
-                    },
-                  });
-                  if (commentText) {
-                    if (commentInputData?.isReply) {
-                      saveRepliedComments(newObj);
-                    } else if (commentInputData?.isEdit) {
-                      saveEditComment(newObj);
-                    } else if (commentInputData?.isEditReply) {
-                      saveEditRepliedComments(newObj);
-                    } else {
-                      saveAddedComments(newObj);
-                    }
-                  }
-                }}
-              >
-                <ImageErrorIcon src={Send} alt="" />
-              </SendButton>
-            </AddCommentButtonContainer>
+            {
+               isLoading ? <CircularProgress color="warning" size={25} className="mr-3" thickness={7}/>  :  <AddCommentButtonContainer>
+               <SendButton
+                 onClick={() => {
+                   let commentText = commentInputData?.data?.text?.trim();
+                   let newObj = { ...commentInputData };
+                   setCommentInputData({
+                     isReply: false,
+                     isEdit: false,
+                     isEditReply: false,
+                     data: {
+                       text: "",
+                       attachments: "",
+                       commentId: "",
+                       replyId: "",
+                     },
+                   });
+                   if (commentText) {
+                     if (commentInputData?.isReply) {
+                       saveRepliedComments(newObj);
+                     } else if (commentInputData?.isEdit) {
+                       saveEditComment(newObj);
+                     } else if (commentInputData?.isEditReply) {
+                       saveEditRepliedComments(newObj);
+                     } else {
+                       saveAddedComments(newObj);
+                     }
+                   }
+                 }}
+               >
+                 <ImageErrorIcon src={Send} alt="" />
+               </SendButton>
+             </AddCommentButtonContainer>
+            }
+           
           </AddCommentContainerSecond>
         </>
       ) : (

@@ -135,7 +135,8 @@ import { ProcoreLogo } from "../../divami_components/issue_detail/IssueDetailSty
 import procore from "../../../public/divami_icons/procore.svg";
 import LinktoProcore from "../../container/LinktoProcore";
 import { isProcoreEnabled } from "../../../utils/constants";
-
+import { Comments } from "../../../models/IComments";
+import CircularProgress from '@mui/material/CircularProgress';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -181,15 +182,9 @@ function a11yProps(index: number) {
 function BasicTabs(props: any) {
   const {
       taskState,
-      formHandler,
-      taskType,
-      taskPriority,
-      taskStatus,
-      projectUsers,
       issueUpdate,
       deleteTheAttachment,
       handleFooter,
-      setTaskState,
   } = props;
   const { initialStatus , initialProjectUsersList } = useApiDataContext();
   const [value, setValue] = React.useState(0);
@@ -203,17 +198,14 @@ function BasicTabs(props: any) {
   const [assigneeEditState, setAssigneeEditState] = useState(false);
   const [progressOptionsState, setProgressOptionsState] = useState<any>([{}]);
   const [assigneeOptionsState, setAssigneeOptionsState] = useState([]);
-  const [formConfig, setFormConfig] = useState(ISSUE_FORM_CONFIG);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [list, setList] = useState<any>();
   const [comments, setComments] = useState("");
-  const [backendComments, setBackendComments] = useState<any>([]);
+  const [backendComments, setBackendComments] = useState<Comments[]>([]);
   const [file, setFile] = useState<File>();
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const[isAdding,setIsAdding]=useState(false)
   const router = useRouter();
   const [showPreview,setShowPreview]=useState(false)
+  const[isLoading,setIsLoading] =useState<boolean>(false)
   const[attachment,setAttachment]=useState<{
     name: string;
     url: string;
@@ -228,7 +220,9 @@ let credential=null;
 if(userCredentials) 
   credential=JSON.parse(userCredentials);
 const providerType=credential.provider;
+useEffect(()=>{
 
+},[backendComments])
   useEffect(() => {
     let temp = initialStatus?.map((task: any) => {
       return {
@@ -311,18 +305,6 @@ const providerType=credential.provider;
       .then((response) => {
         if (response.success === true) {
           setBackendComments(response.result);
-          if(isAdding)
-          {
-            const fileInput = document.getElementById(
-              "issueDetailsWindow"
-            ) as HTMLInputElement;
-            if (fileInput) {
-              setTimeout(()=>{
-                fileInput.scrollTo (0,fileInput.scrollHeight);
-              },100)
-              
-            }
-          }
         }
       })
       .catch((error) => {
@@ -334,19 +316,24 @@ const providerType=credential.provider;
     if (taskState?.TabOne?.id) {
       getComments(taskState?.TabOne?.id);
     }
-  }, [taskState,isAdding]);
+  }, [taskState]);
 
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
+      setIsLoading(true)
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
       }).then((response) => {
         if (response.success === true) {
-          setIsAdding(true)
-          getComments(entityId);
+          let commentsList:Comments[] = backendComments
+          commentsList.push(response.result)
+          setBackendComments(structuredClone(commentsList))
           CustomToast("Comment added successfully","success");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
       setComments("");
     }
@@ -865,10 +852,9 @@ const providerType=credential.provider;
           ) : (
             <ActivityLogContainer>
               <ActivityLog
-                ActivityLog={taskState.TabTwo}
-                comments={backendComments}
+                backendComments={backendComments}
                 getComments={getComments}
-                setIsAdding={setIsAdding}
+                setBackendComments={setBackendComments}
               />
               {backendComments?.length ? (
                 <></>
@@ -876,6 +862,7 @@ const providerType=credential.provider;
                 <>
                   <AddCommentContainerSecond>
                     <StyledInput
+                      disabled={isLoading}
                       id="standard-basic"
                       variant="standard"
                       placeholder="Add Comment"
@@ -895,11 +882,8 @@ const providerType=credential.provider;
                         }
                       }}
                     />
-                    <AddCommentButtonContainer>
-                      {/* <AttachButton>
-                    <ImageErrorIcon src={Clip} alt="" />
-                    <input type="file" onChange={handleFileChange} />
-                  </AttachButton> */}
+                    {
+                      isLoading ? <CircularProgress color="warning" size={25} className="mr-3" thickness={7}/> : <AddCommentButtonContainer>
                       <SendButton
                         onClick={() => {
                           addComment(comments, taskState?.TabOne?.id);
@@ -909,6 +893,8 @@ const providerType=credential.provider;
                         <ImageErrorIcon src={Send} alt="" />
                       </SendButton>
                     </AddCommentButtonContainer>
+                    }
+                    
                   </AddCommentContainerSecond>
                 </>
               )}
@@ -919,32 +905,6 @@ const providerType=credential.provider;
       <CustomTabPanel value={value} index={1}>        
         <ProcoreExist selected={taskState.TabOne.integration}></ProcoreExist>
       </CustomTabPanel>
-      {/* <>
-        <AddCommentContainerSecond>
-          <StyledInput
-            id="standard-basic"
-            variant="standard"
-            placeholder="Add Comment"
-            value={comments}
-            onChange={(e) => {
-              setComments(e.target.value);
-            }}
-          />
-          <AddCommentButtonContainer>
-            <AttachButton>
-              <ImageErrorIcon src={Clip} alt="" />
-              <input type="file" onChange={handleFileChange} />
-            </AttachButton>
-            <SendButton
-              onClick={() => {
-                addComment(comments, taskState?.TabOne?.id);
-              }}
-            >
-              <ImageErrorIcon src={Send} alt="" />
-            </SendButton>
-          </AddCommentButtonContainer>
-        </AddCommentContainerSecond>
-      </> */}
     </Box>
   );
 }
@@ -1492,7 +1452,7 @@ const convertObjectToPdf = () => {
           </div>
         ) : (
           <>
-            <BodyContainer footerState={footerState} id="issueDetailsWindow">          
+            <BodyContainer footerState={footerState} id="DetailsWindow">          
               <BasicTabs
                 taskType={issueType}
                 taskPriority={issuePriority}
