@@ -38,6 +38,15 @@ export interface MetaDetails {
 export interface Procore{
   projectId?:number | undefined
   companyId?:number |undefined
+  folder?:Folder
+}
+
+export interface Folder{
+  _id?:number | undefined
+  name?:string
+  parent_id?: number | undefined
+  private?: boolean
+  name_with_path?: string
 }
 export interface Contact {
   code: string;

@@ -44,6 +44,7 @@ interface IProps{
    screenshot:any
    attachment:any
    weburl:any
+   handleSpaceInField: (e: string) => boolean;
    toolClicked?: (toolAction: IToolbarAction) => void;
 }
 const NewLinkSubmittal  : React.FC<IProps> = ({
@@ -65,6 +66,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
      attachment,
      weburl,
      toolClicked,
+     handleSpaceInField
     }) => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [footerState, setfooterState] = useState(true);
@@ -81,6 +83,7 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
   const [showError, setShowError] = useState(false);
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreFolderId = procoreProjectDetails?.procore?.folder?._id;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber;
 
 useEffect(()=>{
@@ -257,6 +260,7 @@ const handleDelete = (indexToRemove:number) => {
                     const formdata = new FormData();
                     formdata.append(`file[upload_uuid]`, id);
                     formdata.append(`file[name]`, filename);
+                    formdata.append(`file[parent_id]`,String(procoreFolderId));
     
                     const projectFileResponse = await projectFile(procoreProjectId, formdata);
                     if (projectFileResponse) {
@@ -386,7 +390,10 @@ setLoading(false)
     handleInstance("CloseSubmittal");
   };
   const validationSchema = Yup.object().shape({
-    number: Yup.string().trim().required('Number is required'), 
+    number: Yup.string().matches(
+     /[A-Za-z0-9\-']+$/,
+      'Spaces are not allowed'
+    ).required('Number is required'), 
   });
   return (
     <>
@@ -404,7 +411,7 @@ setLoading(false)
           >
              {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue = Object.values(values).every((value) => {
-                if (values.number !== "") {
+                if (values.number !== "" && handleSpaceInField(values.number)) {
                   
                   if(receivedId !==null && responsibleContractorValues.length>0 && responsibleContractorId !== null){
                     setShowError(false)

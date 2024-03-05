@@ -181,6 +181,16 @@ const ProcoreLink = (props: any) => {
     }
   }, [userPermission]);
 
+const handleSpaceInField =(e:string) =>{
+    console.log('checking',e)
+    const regex =  /[A-Za-z0-9\-']+$/;
+    if(regex.test(e)){
+      return true
+    }else{
+      return false
+    }
+  }
+  
   const handleInstanceClick = (componentType:string) => {
     switch (componentType) {
       case "RFI":
@@ -207,6 +217,7 @@ const ProcoreLink = (props: any) => {
             location={location}
             handleCloseProcore={handleCloseProcore}
             toolClicked={toolClicked}
+            handleSpaceInField={handleSpaceInField}
           />
         );
         break;
@@ -255,6 +266,7 @@ const ProcoreLink = (props: any) => {
             location={location}
             specSection={specSectionn}
             toolClicked={toolClicked}
+            handleSpaceInField={handleSpaceInField}
           ></LinkNewObservation>
         );
         break;
@@ -293,6 +305,7 @@ const ProcoreLink = (props: any) => {
             location={location}
             handleInstance={handleInstanceClick}
             toolClicked={toolClicked}
+            handleSpaceInField={handleSpaceInField}
           ></NewLinkSubmittal>
         );
         break;
