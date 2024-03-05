@@ -50,7 +50,7 @@ export const AWS = {
 
 export const PROCORE = {
 
-    LOGIN_URL : "https://login-sandbox.procore.com",
+    LOGIN_URL : 'https://login-sandbox.procore.com',
 
     SANDBOX_URL : 'https://sandbox.procore.com',
 
@@ -62,5 +62,16 @@ export const PROCORE = {
 }
 
 export const MULTIVERSE ={
+
     ORIGIN_URL : "http://localhost:3001"
+    
+}
+export const MQTT = {
+
+    HOSTNAME:'e15f0a91.ala.asia-southeast1.emqxsl.com',
+    
+    USER:'shivram',
+    
+    PASSWORD:';bigWig8',
+    
 }

@@ -4,9 +4,18 @@ import { ChildrenEntity, IStructure } from "../../models/IStructure";
 
 
 export enum ProjectLocalStorageKey {
-    ProjectDataListKey = "projectDataList"
+    ProjectDataListKey = "projectDataList",
+    InProgressUploadsKey = "InProgressPendingUploads"
 }
 
+export interface InProgressProjectUploads {
+    projectName: string
+    inProgressUploads: IJobs[]
+}
+
+export interface InProgressProjectUploadMap {
+    [key:string]: InProgressProjectUploads
+}
 
 export interface ProjectData {
     project: IProjects,
@@ -18,11 +27,13 @@ export interface AppState {
     currentProjectData?: ProjectData
     projectDataList: ProjectData[]
     inProgressPendingUploads: IJobs[]
+    inProgressProjectUploadMap: InProgressProjectUploadMap
     isLoading: boolean
 }
 
 export const initialAppState: AppState = {
     projectDataList: [],
     inProgressPendingUploads: [],
+    inProgressProjectUploadMap: {},
     isLoading: false,
 }

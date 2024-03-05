@@ -73,6 +73,7 @@ import DownloadImageReport from "../../../../../components/divami_components/dow
 import html2canvas from "html2canvas";
 import { pdf } from "@react-pdf/renderer";
 import GenerateReport from "../../../../../components/divami_components/download_image_report/generateReport";
+import { isDownloadsEnabled } from "../../../../../utils/constants";
 import { IReportData } from "../../../../../models/IReportDownload";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
@@ -142,6 +143,7 @@ export type toolBarHandle = {
   issueFilterState:(handleMenuInstance:any)=>void;
   taskFilterState:(taskFilterState:any)=>void;
   projectUsersAndStatus:(projectUsers:any,issueStatusList:any,tasksStatusList:any)=>void;
+  deleteInstance:(deleteItem:string)=>void;
 };
 type multiverseViewerStatusTypes = "NotAvailable" | "Waiting" | "Connected";
 
@@ -828,6 +830,7 @@ const Index: React.FC<IProps> = () => {
           if (issueDetelteStatus) {
             let issueId = (toolInstance.data as { _id: any })._id;
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(issueId) + '}')
+            ref.current?.deleteInstance("deletedIssue")
           }
         })();
         break;
@@ -904,6 +907,7 @@ const Index: React.FC<IProps> = () => {
           if (TaskDetelteStatus) {
             let taskId = (toolInstance.data as { _id: any })._id;
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(taskId) + '}')
+            ref.current?.deleteInstance("deletedTask")
           }
         })();
         // setClickedTool(toolInstance);
@@ -1749,9 +1753,15 @@ const Index: React.FC<IProps> = () => {
               if(urlSnap)
                 vData.currentSnapshotBase=urlSnap;
             }
+            let stageLayer : ILayer | undefined=
+            vData.currentLayersList?.find((layer:ILayer)=>{
+              if(layer.name==='Stages')
+                return true
+            })
             vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
-            vData.taskShow=true;
-            vData.issueShow=true;
+            stageLayer && vData.currentLayersList.push(stageLayer);
+            vData.taskShow=initData?initData.taskShow:true;
+            vData.issueShow=initData?initData.issueShow:true;
             vData.isIssueFiltered=false;
             vData.isTaskFiltered=false;
             vData.projectUTM=appState.currentProjectData?.project?.utm || undefined ;
@@ -1864,7 +1874,13 @@ const Index: React.FC<IProps> = () => {
               }
              
             }
+            let stageLayer : ILayer | undefined=
+            vData.currentLayersList?.find((layer:ILayer)=>{
+              if(layer.name==='Stages')
+                return true
+            })
                 vData.currentLayersList = Object.values(getRealityLayersList(vData?.currentSnapshotBase)) as ILayer[];
+                stageLayer && vData.currentLayersList.push(stageLayer);
                 vData.taskShow=true;
                 vData.issueShow=true;
                 vData.isIssueFiltered=false;
@@ -2240,9 +2256,10 @@ const download360Image = () =>{
                 
                 : <></>}
             </div></div></div>
+
         <div>
         {
-        currentViewMode === 'Reality' && initData?.currentViewType==='pointCloud' &&
+        isDownloadsEnabled && currentViewMode === 'Reality' && initData?.currentViewType==='pointCloud' &&
           <div className="absolute top-[1rem] right-3">
             <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
           </div>

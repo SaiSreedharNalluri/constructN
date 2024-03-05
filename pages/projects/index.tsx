@@ -653,6 +653,8 @@ const Index: React.FC<any> = () => {
                   </Tooltip>
                 )}
                 {isGridView ? (
+                   <Tooltip title={"Sort"}>
+                  <div>
                  <CustomMenu
                     width={24}
                     height={24}
@@ -660,6 +662,8 @@ const Index: React.FC<any> = () => {
                     imageSrc={sortIcon}
                     menuOptions={sortMenuOptions}
                   />
+                  </div>
+                  </Tooltip>
                 ) : (
                   <></>
                 )}
@@ -712,8 +716,8 @@ const Index: React.FC<any> = () => {
               </HeaderActions>
             </ProjectsHeader>
            {showLoading ? (
-            <></>
-              // <CustomLoader />
+            //<></>
+              <CustomLoader />
             ) : showWelcomMessage ? (
             <ProjectCardsContainer>
               <div className="flex justify-center items-center calc-h146 mx-auto">

@@ -21,6 +21,9 @@ import {
 } from "./ToolBarStyles";
 import CustomLoggerClass from "../../divami_components/custom_logger/CustomLoggerClass";
 import { ILayer } from "../../../models/IReality";
+import phoneImage from "../../../public/divami_icons/phoneImage.svg";
+import videoWalk from "../../../public/divami_icons/videoWalk.svg";
+import capture360Image from "../../../public/divami_icons/capture360Image.svg";
 export interface ShowImageDisplay {
   item1: boolean;
   item2: boolean;
@@ -34,19 +37,19 @@ const LayerIcons = ({iconsList}:any)=>{
           if (label.name === "Phone Image" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
-                <CameraIcon src={hexagonIcon} alt="Arrow" />
+                <CameraIcon src={phoneImage} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label.name === "360 Image" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
-                <CameraIcon src={cameraIcon} alt="Arrow" />
+                <CameraIcon src={capture360Image} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label.name === "360 Video" && label.isSelected) {
             return (
               <LayerSecondSectionCamImg key={label.name + index}>
-                <CameraIcon src={videoRecorderIcon} alt="Arrow" />
+                <CameraIcon src={videoWalk} alt="Arrow" />
               </LayerSecondSectionCamImg>
             );
           } else if (label.name === "Drone Image" && label.isSelected) {
@@ -96,7 +99,7 @@ const Layers = ({
       setAnchorEl(event.currentTarget);
     }
     else {
-      // setAnchorEl(null);
+      setAnchorEl(null);
     }
   };
   const handleClose = (e:any) => {

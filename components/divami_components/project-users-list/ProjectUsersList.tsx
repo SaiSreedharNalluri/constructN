@@ -94,6 +94,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
 
   const [showPopUp, setshowPopUp] = useState(false);
   const [emailId, setEmailId] = useState<any>();
+  const [isApplying, setIsApplying] = useState(false);
   const [taskFilterState, setTaskFilterState] = useState({
     isFilterApplied: false,
     filterData: {},
@@ -373,15 +374,21 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
       role: selectedRole,
       email: rowData.email,
     };
-    updateProjectUserRole(projectInfo, router.query.projectId as string || projectId)
+    if(!isApplying){
+      setIsApplying(true)
+      updateProjectUserRole(projectInfo, router.query.projectId as string || projectId)
       .then((res: any) => {
+        setIsApplying(false);
         CustomToast("User Role updated", "success");
         setShowEdit(false);
         getUsersList();
       })
       .catch((err) => {
+        setIsApplying(false);
         CustomToast("You don't have permission. Contact Admin.","error");
       });
+    }
+
   };
 
   const [isSearching, setIsSearching] = useState(false);

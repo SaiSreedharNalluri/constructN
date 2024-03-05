@@ -16,6 +16,7 @@ export interface PopupData {
     modalMessage: string,
     primaryButtonLabel: string,
     secondaryButtonlabel: string,
+    thirdButtonLabel?:string
 } 
 
 export type PopupVisibility = showPopup<PopupType> | hidePopup

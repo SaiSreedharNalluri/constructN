@@ -6,6 +6,7 @@ import  { MqttClient } from "mqtt"
 
 import mqtt from "mqtt"
 import path from "path";
+import { MQTT } from "../config/config";
 export type OnMessageCallbak = (msg:Buffer,packet:any)=>void;
 interface TopicCB{
   topic:string;
@@ -32,7 +33,7 @@ export class MqttConnector{
 
   //  constructor(url:string='ws://localhost:9001/mqtt',opt:mqtt.IClientOptions={hostname:'localhost',port:9001,path:'/mqtt',clean:true,clientId:'mqtt-asad',protocol:'ws'}){
     
-   constructor(url:string='wss://e15f0a91.ala.asia-southeast1.emqxsl.com:8084/mqtt',opt:mqtt.IClientOptions={hostname:'e15f0a91.ala.asia-southeast1.emqxsl.com',port:8084,path:'/mqtt',clean:true,clientId:'mqtt-'+Math.random().toString(36).slice(-8),protocol:'wss',username:'shivram',password:';bigWig8',protocolVersion:5}){
+   constructor(url:string='wss://e15f0a91.ala.asia-southeast1.emqxsl.com:8084/mqtt',opt:mqtt.IClientOptions={hostname:MQTT.HOSTNAME,port:8084,path:'/mqtt',clean:true,clientId:'mqtt-'+Math.random().toString(36).slice(-8),protocol:'wss',username:MQTT.USER,password:MQTT.PASSWORD,protocolVersion:5}){
     this.options = opt;
     this._connection= mqtt.connect(opt);
     this._connection.on("connect", () => {

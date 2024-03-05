@@ -1395,7 +1395,7 @@ const convertObjectToPdf = () => {
               <div>
               {appState.currentProjectData?.project?.metaDetails?.procore?.projectId !== undefined ?(
                 <div className="p-[6px] hover:bg-[#E7E7E7] ">
-              <Tooltip title={'Procore icon'}>
+              <Tooltip title={ selectedIssue?.integration ? 'Procore Linked' : 'Link To Procore' }>
                 <ProcoreLogo
                   src={procore}
                   alt="logo"

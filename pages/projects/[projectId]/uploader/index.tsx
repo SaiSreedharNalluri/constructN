@@ -84,7 +84,7 @@ const Index: React.FC<IProps> = () => {
     }
     if (appState.currentProjectData !== undefined) {
       uploaderAction.setProject(appState.currentProjectData.project);
-      refreshJobs(appState.currentProjectData.project._id)
+      refreshJobs(appState.currentProjectData.project?._id)
     } else {
       uploaderAction.setIsLoading(true)
     }
@@ -301,7 +301,13 @@ const Index: React.FC<IProps> = () => {
       if(response.success===true)
       {
         let captureJobs = uploaderState.pendingProcessJobs.concat(uploaderState.pendingUploadJobs)
-          captureJobs.unshift(job)
+        captureJobs.forEach((jobObject) => {
+          if (jobObject._id === job._id) {
+            jobObject.status = job.status
+          }
+        })
+        uploaderAction.setCaptureJobs(captureJobs)
+        uploaderAction.setSelectedJob(job)
         uploaderAction.setCurrentUploadFiles(getUploadRetryFiles(response.result, job))
         appAction.addCaptureUpload(job)
         CustomToast(`Started retry files uploading ${rawImagesIds?.length} file(s)`,'success')
@@ -354,10 +360,13 @@ const Index: React.FC<IProps> = () => {
   }
 
   const handleOnWorkerCompletion = (captureId:string) => {
-    let job = appState.inProgressPendingUploads.find((job) => {
-      return getCaptureIdFromModelOrString(job.captures[0]) === captureId
-    })
-    if(job) {
+    let job;
+    for (const [key, value] of Object.entries(appState.inProgressProjectUploadMap)) {
+      job = value.inProgressUploads.find((job) => {
+        return getCaptureIdFromModelOrString(job.captures[0]) === captureId
+      })
+    }
+    if(job !== undefined) {
       updateUploadCompletionStatus(job, captureId)
     } else {
       console.log("TestingUploader handlWorkerCompletionStatus no job in appState: ")
@@ -515,7 +524,7 @@ const Index: React.FC<IProps> = () => {
         setIsShowPopUp(false)
       }}
     /> */}
-    { uploaderState.currentPopup && (<PopupComponent
+    { uploaderState.currentPopup && uploaderState.isLoading !== true && (<PopupComponent
       open={uploaderState.isShowPopup}
       setShowPopUp={(value) => {
         if (!value) {
@@ -526,9 +535,12 @@ const Index: React.FC<IProps> = () => {
       modalmessage={uploaderState.currentPopup.modalMessage}
       primaryButtonLabel={uploaderState.currentPopup.primaryButtonLabel}
       SecondaryButtonlabel={uploaderState.currentPopup.secondaryButtonlabel}
+      thirdButtonLable={uploaderState.currentPopup.thirdButtonLabel}
       isShowWarningText={uploaderState.currentPopup.type === UploaderPopups.deleteJob ? true : false}
       isCancelCallBack={true}
-      callBackvalue={() => {
+      isThirdButton={uploaderState.currentPopup.thirdButtonLabel?true:false}
+      width={uploaderState.currentPopup.thirdButtonLabel?"65%":""}
+      callBackvalue={(value: string) => {
         switch (uploaderState.currentPopup?.type) {
           case UploaderPopups.deleteJob:
             // setIsDelete(false)
@@ -536,7 +548,20 @@ const Index: React.FC<IProps> = () => {
             uploaderAction.setIsShowPopup({isShowPopup: false})
             return
           case UploaderPopups.completedWithError:
-            updateJobStatusBasedOnAction(false)
+            if (value === "Retry") {
+              let selectedCaptureId;    
+              if (uploaderState.selectedJob && uploaderState.selectedJob.captures && uploaderState.selectedJob.captures.length > 0) {
+                selectedCaptureId = getCaptureIdFromModelOrString(uploaderState.selectedJob.captures[0]);
+                let filesList = uploaderState.inProgressWorkers && uploaderState.inProgressWorkers[selectedCaptureId]
+                if(filesList != undefined) {
+                  uploaderAction.retryJobUploading(uploaderState.selectedJob)
+                } else {
+                  CustomToast(`You don't have sufficient data to complete these operation`,'error')
+                }
+              }
+            } else {
+              updateJobStatusBasedOnAction(false)
+            }
             uploaderAction.setIsShowPopup({isShowPopup: false})
             return
           case UploaderPopups.discard:

@@ -45,12 +45,13 @@ export type taskToolHandle = {
   handleTaskInstance: (tasktoolInstance: any) => void;
   taskFilterState:(taskFilterState:any)=>void;
   projectUsersAndStatus:(projectUsers:any,tasksStatusList:any)=>void;
+  DeletedTask:(deletedItem:string)=>void;
   
 };
 function Task({
   rightMenuClickHandler,
   tasksList,
-  setTasksList,
+  // setTasksList,
   currentProject,
   currentSnapshot,
   currentStructure,
@@ -86,6 +87,7 @@ function Task({
   const customLogger = new CustomLoggerClass();
   const {screenshot} = useApiDataContext();
   const router = useRouter();
+  const taskRef = React.useRef<taskToolHandle>(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [rightNav, setRighttNav] = useState(false);
   const [myProject, setMyProject] = useState(currentProject);
@@ -160,6 +162,10 @@ function Task({
       projectUsersAndStatus(projectUsers:any,tasksStatusList:any){
         setProjectUsers(projectUsers)
         setTaskStatusList(tasksStatusList)
+      },
+      DeletedTask(deletedItem:string){
+        if(deletedItem === "deletedTask"){ setOpenTaskDetail(false)
+          taskRef.current?.DeletedTask(deletedItem)}
       }
       
     }},[router.isReady,initData])
@@ -453,16 +459,16 @@ function Task({
           anchor={"right"}
           open={openDrawer}
           onClose={() => {
-            setTasksList([
-              ...tasksList.sort((a: any, b: any) => {
-                return (
-                  new Date(b.createdAt).valueOf() -
-                  new Date(a.createdAt).valueOf()
-                );
-              }),
-            ]);
-
             setOpenDrawer((prev: any) => !prev);
+            // setTasksList([
+            //   ...tasksList.sort((a: any, b: any) => {
+            //     return (
+            //       new Date(b.createdAt).valueOf() -
+            //       new Date(a.createdAt).valueOf()
+            //     );
+            //   }),
+            // ]);
+
           }}
         >
           <TaskList
@@ -488,6 +494,7 @@ function Task({
             taskContext={taskContext} // taskContext
             toolClicked={toolClicked}
             initData={initData}
+            ref={taskRef}
           />
         </Drawer>
       )}

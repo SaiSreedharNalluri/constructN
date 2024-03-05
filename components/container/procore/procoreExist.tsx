@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { showObservationDetails, showRfiDetails, showSubmittalDetails } from "../../../services/procore";
 import { PROCORE } from "../../../config/config";
 import { PopupIcon, PriorityStatus, PriorityTitle, ProcoreLogo, SecondBodyDiv, SecondContPrior, TabOneDiv } from "../../divami_components/issue_detail/IssueDetailStyles";
-import popup from "../../../public/divami_icons/popup.svg"
+import ExternalLinkIcon from "../../../public/divami_icons/ExternalLinkIcon.svg"
 import styled from "@emotion/styled";
 import { useAppContext } from "../../../state/appState/context";
 import CustomLoader from "../../divami_components/custom_loader/CustomLoader";
@@ -12,12 +12,19 @@ interface ProcoreExistProps {
   selected: any;
 }
 export const ProcoreSectionIcon = styled.div({
-  borderRadius: '10px',
-  padding: '6px',
+  marginTop:'30px',
+  borderRadius: '8px',
+  padding: '10px 20px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   background: '#F1742E',
+  color:  '#ffffff',
+fontFamily: "Open Sans",
+fontStyle: "normal",
+fontWeight: "380",
+fontSize: "14px",
+lineHeight: "16px",
   '&:hover': {
     cursor: 'pointer',
     background: '#F1742E',
@@ -149,8 +156,8 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
           <SecondBodyDiv>
           <ProcoreSectionIcon>
           <PopupIcon
-          src={popup}
-          alt={"link"}></PopupIcon>
+          src={ExternalLinkIcon}
+          alt={"link"}></PopupIcon>&nbsp;
            <a href={details.link} target="_blank" rel="noopener noreferrer" style={{color:"white"}}>
            View {type === 'rfi' ? type.toUpperCase() : type.charAt(0).toUpperCase() + type.slice(1)} in Procore</a> 
        </ProcoreSectionIcon>

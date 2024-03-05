@@ -33,7 +33,7 @@ const Typebar = ({
       setAnchorEl(event.currentTarget);
     }
     else {
-      // setAnchorEl(null);
+      setAnchorEl(null);
     }
   };
 

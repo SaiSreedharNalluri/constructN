@@ -60,7 +60,6 @@ export const CustomMenu = ({
     });
   };
   return (
-    <Tooltip title={"Sort"}>
     <MenuWrapper className={`${id} ${isActive ? "active" : ""} cursor-pointer`}>
       <Image
         src={imageSrc}
@@ -150,6 +149,5 @@ export const CustomMenu = ({
         })}
       </Menu>
     </MenuWrapper>
-    </Tooltip>
   );
 };

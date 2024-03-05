@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { Divider, InputAdornment, ListItemText, Menu, MenuList,styled } from "@mui/material";
+import { Divider, InputAdornment, ListItemText, Menu, MenuItem, MenuList,styled } from "@mui/material";
 import { SetStateAction, useEffect, useState } from "react";
 import { SelectLayerContainer } from "../selectLayer/StyledComponents";
 import { SelectLayerProps } from "../selectLayer/Type";
@@ -110,8 +110,8 @@ setFilteredItems(result)
       >
 
         {/* <MenuItem onClick={handleClick}> */}
-        <SelectTypeContainer openselectlayer={anchorEl}>
-        <DrawerBox>
+        {/* <SelectTypeContainer openselectlayer={anchorEl}> */}
+        {/* <DrawerBox> */}
 <DrawerHeader>
           <DrawerHeaderTitle>{title} </DrawerHeaderTitle>
           <CloseIcon
@@ -127,6 +127,9 @@ setFilteredItems(result)
             variant="outlined"
             // value={searchTerm}
             // onChange={handleSearch}
+            onClick={(e: any) => {
+              e.stopPropagation();
+            }}
             onChange={(e: any) => {
               onSearchChange(e);
             }}
@@ -166,8 +169,8 @@ setFilteredItems(result)
             ))}
         </ListStyled>
     
-        </DrawerBox>
-        </SelectTypeContainer>
+        {/* </DrawerBox> */}
+        {/* </SelectTypeContainer> */}
         {/* </MenuItem> */}
         </StyledMenu>
   );

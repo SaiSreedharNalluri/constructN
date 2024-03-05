@@ -265,7 +265,7 @@ const AssetDetails: React.FC<{ assetId: string, snapshotBase: any, onChange?: (a
                         {selectedTab === 'metrics' && supportUser && <div className='px-4'><Metrics stages={stages} assetId={assetId} metrics={metrics} refetchAssets={refetchAssets} asset={asset} onChange={onChange} /></div>}
 
                         {(selectedTab !== 'asset-timeline' && supportUser) ? <div className='absolute bottom-3 right-4'>
-                            <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase().date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
+                            <EmailButton projectId ={params['projectId'] as string} assetId={assetId} assetName={actualName} structure={LightBoxInstance?.viewerData()?.structure?.name} captureDate={moment(new Date(LightBoxInstance?.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} category={actualCategoryName} />
                         </div>: null}
 
                     </div>

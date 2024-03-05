@@ -1371,20 +1371,21 @@ const handleScreenShotAndAttachment =() =>{
               </SpanTile>
             </LeftTitleCont>
             <RightTitleCont>
-            {isProcoreEnabled ? (
-            <div className="mr-[10px]">
+            {isProcoreEnabled?(
+              <div className="mr-[10px]">
             {providerType === 'procore' ? ( 
               <div>
-              {appState.currentProjectData?.project.metaDetails?.procore?.projectId !== undefined ? (
+              {appState.currentProjectData?.project?.metaDetails?.procore?.projectId !== undefined ?(
                 <div className="p-[6px] hover:bg-[#E7E7E7] ">
-
+              <Tooltip title={ selectedTask?.integration ? 'Procore Linked' : 'Link To Procore' }>
                 <ProcoreLogo
                   src={procore}
                   alt="logo"
-                  style={{ cursor: selectedTask.integration ? 'not-allowed' : 'pointer' }}
+                  style={{ cursor: selectedTask?.integration ? 'not-allowed' : 'pointer' }}
               onClick={()=>{
           if(!selectedTask.integration){ handleProcoreLinks()}}}
                 />
+                </Tooltip>
               </div>
               ):(<div>
                 <Tooltip title={'Link project to procore'}>
