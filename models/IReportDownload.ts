@@ -1,3 +1,4 @@
+import { IProjects } from "./IProjects";
 import { ISnapshot } from "./ISnapshot";
 import { IStructure } from "./IStructure";
 import { IContext } from "./ITools";
@@ -9,6 +10,6 @@ export interface IReportData {
     context: string;
     structure?: IStructure;
     snapshot?: ISnapshot;
-    project?: string;
+    project?: IProjects;
     logedInUser:string
   }

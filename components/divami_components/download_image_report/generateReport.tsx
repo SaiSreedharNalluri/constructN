@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 });
 
 interface IProps {
-  downloadReportData:IReportData
+  downloadReportData?:IReportData
 }
 
 const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
@@ -138,22 +138,22 @@ const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
             </View>
           </View>
         <View style={styles.section2}>
-            <Image style={styles.image} src={downloadReportData.screenshot} />
+            {downloadReportData&&<Image style={styles.image} src={downloadReportData.screenshot} />}
           </View>
           <View style={styles.section3}>
           <View style={styles.column}>
               <Text style={styles.heading}>Project Details</Text>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Name:</Text>
-                <Text style={styles.value}>{appState.currentProjectData?.project.name}</Text>
+               { downloadReportData && <Text style={styles.value}>{downloadReportData?.project?.name}</Text>}
               </View>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Created:</Text>
-                <Text style={styles.value}>{moment(appState.currentProjectData?.project.createdAt).format('MMMM Do YYYY')}</Text>
+                { downloadReportData && <Text style={styles.value}>{moment(downloadReportData?.project?.createdAt).format('MMMM Do YYYY')}</Text>}
               </View>
               <View style={styles.keyValueContainer}>
                 <Text style={styles.key}>Location:</Text>
-                <Text style={styles.value}>{appState.currentProjectData?.project.address ? formatAddress(appState.currentProjectData?.project.address) : '-'}</Text>
+                { downloadReportData && <Text style={styles.value}>{downloadReportData?.project?.address ? formatAddress(downloadReportData.project.address) : '-'}</Text>}
               </View>
             </View>
             <View style={styles.column}>
@@ -168,7 +168,7 @@ const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
               </View>
             </View>
             <View style={styles.column}>
-            <Image style={styles.image} src={downloadReportData.miniMapscreenshot} />
+           {downloadReportData?.miniMapscreenshot ?<Image style={styles.image} src={downloadReportData.miniMapscreenshot}/>:(<></>)}
             </View>
           </View>
           <View style={styles.section4}>

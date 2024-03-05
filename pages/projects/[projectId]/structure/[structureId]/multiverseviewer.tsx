@@ -231,14 +231,14 @@ const Index: React.FC<IProps> = () => {
   const [issueTagStatus, setIssueTagStatus] = useState<string[]>([]);
   const [TaskTagStatus, setTaskTagStatus] = useState<[string]>();
   const [logedInUser,setLogedInUser] =useState<string>('')
-  const downloadReportData = useRef<IReportData>({
+  const downloadReportData = useRef<IReportData|undefined>({
     screenshot: '',
     miniMapscreenshot: '',
     type: '',
     context: '',
     structure: {} as IStructure, 
     snapshot:{} as ISnapshot,
-    project: '',
+    project: {} as IProjects, 
     logedInUser: ''
   });
   useEffect(()=>{
@@ -499,7 +499,6 @@ const Index: React.FC<IProps> = () => {
         if (user?._id) {
           isSupportUser.current = user?.isSupportUser;
           SetLoggedInUserId(user._id);
-          downloadReportData.current.logedInUser = user.fullName
         }
       }
       if (router.query.type !== null) {
@@ -2036,18 +2035,21 @@ const Index: React.FC<IProps> = () => {
           URL.revokeObjectURL(link.href);
       }  
       if(event.data.type === "downloadReportData"){
+        if(downloadReportData.current){
         downloadReportData.current.screenshot = event.data.screenshot
         downloadReportData.current.miniMapscreenshot = event.data.miniMapscreenshot
-        downloadReportData.current.project = event.data.project
         downloadReportData.current.structure = event.data.structure
         downloadReportData.current.context = event.data.context
         downloadReportData.current.snapshot = event.data.snapshot
         downloadReportData.current.type = event.data.type
-        downloadReportData.current.logedInUser = logedInUser
-        }
-        downloadPdfReport(downloadReportData.current)
-      }  
-  }
+        downloadReportData.current.project = appState.currentProjectData?.project
+        downloadReportData.current.logedInUser = logedInUser  
+        downloadPdfReport(downloadReportData.current) 
+        downloadReportData.current = undefined;
+      }
+    }
+  }  
+}
   const captureCanvas = async () => {
     let typeChangeToolAction: IToolbarAction = { type: "downloadReportData", data: "" };
     toolClicked(typeChangeToolAction)
@@ -2073,7 +2075,7 @@ useEffect(()=>{
   return () => {
     window.removeEventListener('message', receiveMessage);
   };
-},[])
+},[appState])
 const download360Image = () =>{
   let typeChangeToolAction: IToolbarAction = { type: "getViewerScreenshot", data: "" };
   toolClicked(typeChangeToolAction)
@@ -2083,7 +2085,7 @@ const download360Image = () =>{
     const url = URL.createObjectURL(await pdf(<GenerateReport downloadReportData={downloadReportData as IReportData}/>).toBlob());
     const a = document.createElement('a');
     a.href = url;
-    a.download = `report_${initData?.currentSnapshotBase?.date}.pdf`;
+    a.download = `report_${downloadReportData?.snapshot?.date}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
