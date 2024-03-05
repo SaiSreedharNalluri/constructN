@@ -115,7 +115,7 @@ export const EditRoleOverlay = ({
       </EditRoleBody>
 
       <EditRoleFooter>
-        <ButtonsContainer noPaddingLeftRight>
+        <ButtonsContainer nopaddingleftright>
           <CustomButton
             type="outlined"
             label="Cancel"
