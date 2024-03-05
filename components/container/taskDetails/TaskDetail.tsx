@@ -133,6 +133,7 @@ import ProcoreLink from "../procore/procoreLinks";
 import LinktoProcore from "../LinktoProcore";
 import { isProcoreEnabled } from "../../../utils/constants";
 import { Comments } from "../../../models/IComments";
+import CircularProgress from '@mui/material/CircularProgress';
 interface ContainerProps {
   footerState: boolean;
 }
@@ -216,7 +217,7 @@ function BasicTabs(props: any) {
     _id: string;
 }>()
 const [delAttachment,setDelAttachment] = useState();
-
+const[isLoading,setIsLoading] =useState<boolean>(false)
 const userCredentials = localStorage.getItem('userCredentials');
 let credential=null;
 if(userCredentials) 
@@ -293,6 +294,7 @@ const providerType=credential.provider;
 
   const addComment = (text: string, entityId: string) => {
     if (text !== "") {
+      setIsLoading(true)
       createComment(router.query.projectId as string, {
         comment: text,
         entity: entityId,
@@ -302,7 +304,10 @@ const providerType=credential.provider;
           commentsList.push(response.result)
           setBackendComments(structuredClone(commentsList))
           CustomToast("Comment added successfully","success");
+          setIsLoading(false)
         }
+      }).finally(()=>{
+        setIsLoading(false)
       });
       setComments("");
     }
@@ -847,16 +852,19 @@ const providerType=credential.provider;
                         }
                       }}
                     />
-                    <AddCommentButtonContainer>
-                      <SendButton
-                        onClick={() => {
-                          addComment(comments, taskState?.TabOne?.id);
-                        }}
-                        data-testid="issue-comment-send-button"
-                      >
-                        <ImageErrorIcon src={Send} alt="" />
-                      </SendButton>
-                    </AddCommentButtonContainer>
+                    {
+                       isLoading ? <CircularProgress color="warning" size={25} className="mr-3" thickness={7}/> : <AddCommentButtonContainer>
+                       <SendButton
+                         onClick={() => {
+                           addComment(comments, taskState?.TabOne?.id);
+                         }}
+                         data-testid="issue-comment-send-button"
+                       >
+                         <ImageErrorIcon src={Send} alt="" />
+                       </SendButton>
+                     </AddCommentButtonContainer>
+                    }
+                    
                   </AddCommentContainerSecond>
                 </>
               )}
