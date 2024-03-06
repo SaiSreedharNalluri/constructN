@@ -15,7 +15,6 @@ import { toast } from 'react-toastify'
 import { API } from '../../config/config'
 
 import authHeader from '../../services/auth-header'
-import EmailButton from './send-email'
 import { useParams } from 'next/navigation'
 import { LightBoxInstance } from '../../services/light-box-service'
 import moment from 'moment'
