@@ -24,18 +24,19 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
     <React.Fragment>
   <div className="pointer text-center py-[7px] border border-solid border-gray-300 border-r-0 ">
   <Button
-    className="bg-white w-[1rem] hover:bg-white "
+    className="bg-white w-[1rem] hover:bg-white"
     aria-controls={open ? 'basic-menu' : undefined}
     aria-haspopup="true"
     aria-expanded={open ? 'true' : undefined}
     onClick={handleMenuClick}
   >
-    <Image src={downloadIcon} alt={""} className=" w-[1.2rem] h-[1.2rem] ml-2"/>
+    <Image src={downloadIcon} alt={""} className=" w-[1rem] h-[1.2rem] ml-2"/>
   
-    {open ? <KeyboardArrowUpIcon className="text-[#101F4C] opacity-[0.8] mx-1.5" fontSize="medium"/> : <KeyboardArrowDownIcon className="text-[#101F4C] opacity-[0.8] mx-1.5 " fontSize="medium"/>}
+    {open ? <KeyboardArrowUpIcon className="text-[#101F4C] opacity-[0.8] mx-1.25" fontSize="small"/> : <KeyboardArrowDownIcon className="text-[#101F4C] opacity-[0.8] mx-1.25 " fontSize="small"/>}
   </Button>
   <Menu
     id="basic-menu"
+    className="my-2"
     anchorEl={anchorEl}
     open={open}
     onClose={handleMenuClose}
@@ -59,7 +60,7 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
       handleMenuClose();
     }}>
       <Image src={pngIcon} alt={""} className="w-[0.75rem] h-[1rem]" />
-      <label className='text-[#101F4C] opacity-[0.8] text-[10px] text-center ml-3 font-sans'>
+      <label className='text-[#101F4C] opacity-[0.8] text-[12px] text-center ml-3 font-sans'>
       360 Image
       </label>
     </MenuItem>
@@ -68,7 +69,7 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
       handleMenuClose();
     }}>
        <Image src={pdfIcon} alt={""} className="w-[0.75rem] h-[1rem]" />
-      <label className='text-[#101F4C] opacity-[0.8] text-[10px] text-center ml-3 font-sans'>
+      <label className='text-[#101F4C] opacity-[0.8] text-[12px] text-center ml-3 font-sans'>
         PDF Report
       </label>
     </MenuItem>
