@@ -77,7 +77,7 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
             if (inProgressProjectsBeforeRemoveJob.length > 0 && inProgressProjectsBeforeRemoveJob.includes(removeProjectId)) {
                 if (state.inProgressProjectUploadMap[removeProjectId].inProgressUploads.length > 1) {
                     let inProgressUploads = state.inProgressProjectUploadMap[removeProjectId].inProgressUploads.filter((job, index) => {
-                        return job._id !== removeProjectId
+                        return job._id !== removeJob._id
                     })
                     let inProgressProjectUpload: InProgressProjectUploads = {
                         ...state.inProgressProjectUploadMap[removeProjectId],
