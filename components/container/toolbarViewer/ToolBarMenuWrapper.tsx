@@ -12,6 +12,7 @@ import { IGenData } from "../../../models/IGenData";
 import { ILayer } from "../../../models/IReality";
 import { RenderTree } from "../selectLayer/Type";
 import DownloadImageReport from "../../divami_components/download_image_report/downloadImageReport";
+import { isDownloadsEnabled } from "../../../utils/constants";
 
 
 interface toolProps {
@@ -345,7 +346,7 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate,download360Image
           /> : <></>
         }
         {
-          initData.currentViewType === "pointCloud" && <DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
+          initData.currentViewType === "pointCloud" && isDownloadsEnabled &&<DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
 
         }
 

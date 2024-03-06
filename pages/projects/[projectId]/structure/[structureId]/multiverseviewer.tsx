@@ -2054,12 +2054,6 @@ const download360Image = () =>{
             </div></div></div>
 
         <div>
-        {
-        isDownloadsEnabled && currentViewMode === 'Reality' && initData?.currentViewType==='pointCloud' &&
-          <div className="absolute top-[1rem] right-3">
-            <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
-          </div>
-          }
         </div>
         <div>
         {initData && 
