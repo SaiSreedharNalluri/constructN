@@ -846,7 +846,7 @@ const Index: React.FC<IProps> = () => {
         closeFilterOverlay()
         break;
       case "sortIssue":
-        handleOnIssueSort(toolInstance.data)
+        // handleOnIssueSort(toolInstance.data)
         break;
       case "deleteIssueAttachment":
         deleteTheAttachment(toolInstance.data,"issue")
@@ -921,7 +921,7 @@ const Index: React.FC<IProps> = () => {
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break; 
       case 'sortTask':
-        handleOnTasksSort(toolInstance.data)
+        // handleOnTasksSort(toolInstance.data)
         break;
       case "setViewLayers":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
