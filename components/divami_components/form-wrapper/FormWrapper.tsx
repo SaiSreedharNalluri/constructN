@@ -389,7 +389,7 @@ const FormWrapper = (props: any) => {
                 // Remove duplicate values based on label property
                 return (
                   array.findIndex(
-                    (elem: any) => elem.label === selected.label
+                    (elem: any) => elem.label === selected.label && elem.value === selected.value
                   ) === index
                 );
               })
