@@ -2251,6 +2251,8 @@ const download360Image = () =>{
                   toolClicked={toolClicked}
                   toolUpdate={toolUpdate}
                   ref={ref}
+                  download360Image={download360Image}
+                  downloadPdfReport={captureCanvas}
                 ></ToolBarMenuWrapper>
 
                 

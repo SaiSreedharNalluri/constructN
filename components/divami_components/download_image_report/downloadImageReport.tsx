@@ -22,18 +22,16 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
     };
     return(
     <React.Fragment>
-  <div className="absolute top-[11rem] right-0 pointer text-center">
+  <div className="pointer text-center py-[7px] border border-solid border-gray-300 border-r-0 ">
   <Button
-    className="bg-white w-[8.75rem] hover:bg-white "
+    className="bg-white w-[1rem] hover:bg-white "
     aria-controls={open ? 'basic-menu' : undefined}
     aria-haspopup="true"
     aria-expanded={open ? 'true' : undefined}
     onClick={handleMenuClick}
   >
     <Image src={downloadIcon} alt={""} className=" w-[1.2rem] h-[1.2rem] ml-2"/>
-    <label className='text-[#101F4C] opacity-[0.8]  text-[10px] text-center ml-2 font-sans'>
-      Download
-    </label>
+  
     {open ? <KeyboardArrowUpIcon className="text-[#101F4C] opacity-[0.8] mx-1.5" fontSize="medium"/> : <KeyboardArrowDownIcon className="text-[#101F4C] opacity-[0.8] mx-1.5 " fontSize="medium"/>}
   </Button>
   <Menu
