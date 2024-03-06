@@ -103,6 +103,9 @@ export default function Metrics({
     }>>,
 	onSave: ()=>void;
 }) {
+	
+    const numberFormatter = new Intl.NumberFormat('en-US',{ maximumFractionDigits: 1 });
+
 	const formatStageData = stages.map((stage) => ({
 		...stage,
 		measurementFactor: +(metrics[stage._id] as { measurementFactor: number })?.measurementFactor || 1
@@ -189,7 +192,7 @@ export default function Metrics({
 										align="left"
 										className="w-1/3 p-0"
 									>
-										{getMetric(row.measurement)* (row.measurementFactor || 1)}
+										{numberFormatter.format(+getMetric(row.measurement)* (row.measurementFactor || 1))}
 									</TableCell>
 									<TableCell
 										align="center"
