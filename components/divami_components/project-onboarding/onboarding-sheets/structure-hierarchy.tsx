@@ -70,7 +70,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
         setShowPopUp={(state: boolean) =>{ addSheetPopup.value = state;fileToUpload.value?fileToUpload.value=undefined:""}} modalTitle={'Add Drawing'}
         modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} modalContent={addSheetFormJSX}
-        backdropWidth={true} showButton={false}
+        backdropwidth={true} showbutton={false}
     /> : <></>)
 
     const addStructureFormJSX = useComputed(() => renderAddStructureForm(addStructurePopup, currentStructure.value?._id, newStructureName, onAdd))
@@ -79,7 +79,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
         setShowPopUp={(state: boolean) => deleteSheetPopup.value = state} modalTitle={'Delete sheet'}
         modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} modalContent={deleteSheetFormJSX}
-        backdropWidth={true} showButton={false}
+        backdropwidth={true} showbutton={false}
     /> : <></>)
 
     const deleteSheetFormJSX = useComputed(() => renderDeleteSheetForm(deleteSheetPopup, currentDesign.value!, onSheetDeleted))
@@ -88,7 +88,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
         setShowPopUp={(state: boolean) => addStructurePopup.value = state}
         modalTitle={`Add sublevel for ${currentStructure.value?.name}`}
         modalmessage={''} primaryButtonLabel={'Save'} SecondaryButtonlabel={'Discard'}
-        callBackvalue={() => { }} width={'60%'} backdropWidth={true} showButton={false}
+        callBackvalue={() => { }} width={'60%'} backdropwidth={true} showbutton={false}
         modalContent={addStructureFormJSX}
     /> : <></>)
 
@@ -98,7 +98,7 @@ const StructureHierarchy = ({ projectId, hierarchy, onAdd, onDelete, onSheetAdde
         setShowPopUp={(state: boolean) => removeStructurePopup.value = state} modalTitle={'Delete level'}
         modalmessage={''} primaryButtonLabel={'Delete'} SecondaryButtonlabel={'Discard'}
         callBackvalue={() => { }} modalContent={removeStructureFormJSX}
-        backdropWidth={true} showButton={false}
+        backdropwidth={true} showbutton={false}
     /> : <></>)
 
     return (

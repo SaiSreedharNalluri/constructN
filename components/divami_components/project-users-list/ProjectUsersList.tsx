@@ -702,8 +702,8 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
               }
         }
         width={"458px"}
-        backdropWidth={true}
-        showButton={true}
+        backdropwidth={true}
+        showbutton={true}
       />:""
       }
        {openDrawer ?

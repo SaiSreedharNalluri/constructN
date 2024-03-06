@@ -771,7 +771,7 @@ const Index: React.FC<any> = () => {
                 open={showPopUp}
                 width={"585px"}
                 // height={"360px"}
-                paddingStyle={true}
+                paddingstyle={true}
                 setShowPopUp={setshowPopUp}
                 modalTitle={"Project Configuration"}
                 modalContent={
@@ -790,7 +790,7 @@ const Index: React.FC<any> = () => {
                 SecondaryButtonlabel={"Cancel"}
                 callBackvalue={handleSubmit}
                 projectId={projectId}
-                showButton={showButton}
+                showbutton={showButton}
                 setShowbutton={setShowbutton}
                 setSelectedOption={setSelectedOption}
               />
@@ -830,8 +830,8 @@ const Index: React.FC<any> = () => {
                 }
           }
           width={"458px"}
-          backdropWidth={true}
-          showButton={showAddUser ? false : true}
+          backdropwidth={true}
+          showbutton={showAddUser ? false : true}
         />
       ) : (
         <></>

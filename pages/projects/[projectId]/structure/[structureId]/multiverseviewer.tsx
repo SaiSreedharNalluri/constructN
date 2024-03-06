@@ -1836,7 +1836,8 @@ const Index: React.FC<IProps> = () => {
       if(event.data.type === "getViewerScreenshot")
       {
           var link = document.createElement("a");
-          link.download = `img_${initData?.currentSnapshotBase?.date}.png`;
+          let d = new Date();
+          link.download = `img_${d.toISOString()}.png`;
           link.href = URL.createObjectURL(event.data.screenshot as Blob);
           link.hidden = true; 
           document.body.appendChild(link);
@@ -1895,7 +1896,8 @@ const download360Image = () =>{
     const url = URL.createObjectURL(await pdf(<GenerateReport downloadReportData={downloadReportData as IReportData}/>).toBlob());
     const a = document.createElement('a');
     a.href = url;
-    a.download = `report_${downloadReportData?.snapshot?.date}.pdf`;
+    let d = new Date();
+    a.download = `report_${d.toISOString()}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

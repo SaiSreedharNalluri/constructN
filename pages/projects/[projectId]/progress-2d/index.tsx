@@ -1015,7 +1015,7 @@ const Progress2DPage: React.FC<any> = () => {
         </div>
         {showPopup && <PopupComponent
         
-            showButton={false}
+            showbutton={false}
 
             open={showPopup} 
 
@@ -1052,7 +1052,7 @@ const Progress2DPage: React.FC<any> = () => {
                 </div>
             </>}
             
-            width={'458px'} backdropWidth={true}
+            width={'458px'} backdropwidth={true}
             
             />}
         </>)

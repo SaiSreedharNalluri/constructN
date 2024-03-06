@@ -2089,6 +2089,8 @@ useEffect(()=>{
                   initData={initData}
                   toolClicked={toolClicked}
                   toolUpdate={toolUpdate}
+                  download360Image={()=>{}}
+                  downloadPdfReport={()=>{}}
                   ref={ref}
                 ></ToolBarMenuWrapper>
 
