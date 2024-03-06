@@ -132,6 +132,7 @@ import { useAppContext } from "../../../state/appState/context";
 import ProcoreLink from "../procore/procoreLinks";
 import LinktoProcore from "../LinktoProcore";
 import { isProcoreEnabled } from "../../../utils/constants";
+import CustomSearch from "../../divami_components/custom-search/CustomSearch";
 import { Comments } from "../../../models/IComments";
 import CircularProgress from '@mui/material/CircularProgress';
 interface ContainerProps {
@@ -194,6 +195,7 @@ function BasicTabs(props: any) {
   const { taskinitialStatus , initialProjectUsersList } = useApiDataContext();
   const [value, setValue] = React.useState(0);
   const [formState, setFormState] = useState({
+    id:"assignedTo",
     selectedValue: "",
     selectedProgress: null,
     selectedUser: taskState?.assignessList || taskState?.TabOne?.assignessList,
@@ -333,6 +335,45 @@ const providerType=credential.provider;
   const handleSortMenuClose = () => {
     setIsSortMenuOpen(false);
     setAnchorEl(null);
+  };
+const data:any ={
+  id: "assignedTo",
+  listOfEntries: initialProjectUsersList?.map((eachUser: any) => {
+    return {
+      ...eachUser,
+      label: eachUser?.user?.fullName,
+      value: eachUser?.user?._id,
+    };
+    
+  }),
+  selectedName:formState.selectedUser,
+  isMultiSelect:true,
+  isreadOnly:false,
+};
+
+  const handleSearchResult = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    value: []
+  ) => {
+    let newSelectedUser:any = [];
+    if (value) {
+      newSelectedUser = value.filter(
+        (selected: any, index: number, array: any[]) => {
+             // Remove duplicate values based on label property
+          return (
+            array.findIndex(
+              (elem: any) =>
+                elem.label === selected.label  && elem.value === selected.value
+            ) === index
+          );
+        }
+      );
+    }
+    setFormState({
+      ...formState,
+      selectedUser: newSelectedUser,
+    });
+    return formState
   };
   return (
     <Box sx={{ width: "100%" }}>
@@ -587,83 +628,15 @@ const providerType=credential.provider;
           {assigneeEditState && (
             <AssignEditSearchContainer>
               {/* <AssignedLabel>Assigned to</AssignedLabel> */}
+               <CustomSearch
+              data={data}
+              handleSearchResult={(e:React.ChangeEvent<HTMLInputElement>, value: []) => {
+                handleSearchResult(e, value);
+              }}
+              selectedName={data.selectedName}
+              setFormConfig={setFormState}
+            />
 
-              <Autocomplete
-                data-testid="assignee-options"
-                disablePortal
-                id="combo-box-demo"
-                options={initialProjectUsersList.map((each: any) => {
-                  return {
-                    ...each,
-                    label: each.user?.fullName,
-                  };
-                })}
-                disableClearable
-                sx={{
-                  width: 300,
-                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid #F1742E !important",
-                  },
-                }}
-                renderTags={() => null}
-                // defaultValue={formState.selectedUser[0]?.user?.fullName}
-                renderInput={(params) => <TextField {...params} />}
-                onChange={(event, value: any) => {
-                  const newSelectedUser = value
-                    ? value.filter(
-                        (selected: any, index: number, array: any[]) => {
-                          // Remove duplicate values based on label property
-                          return (
-                            array.findIndex(
-                              (elem: any) => elem.label === selected.label
-                            ) === index
-                          );
-                        }
-                      )
-                    : [];
-                  setFormState({
-                    ...formState,
-                    selectedUser: newSelectedUser,
-                  });
-                }}
-                value={formState.selectedUser}
-                multiple={true}
-                // InputProps={{
-                //   startAdornment: (
-                //     <InputAdornment position="start">
-                //       <SearchIcon />
-                //     </InputAdornment>
-                //   ),
-                // }}
-              />
-              <ValueContainer>
-                {formState.selectedUser.map((v: any) =>
-                  v?.label ? (
-                    <Chip
-                      key={v?.label}
-                      label={v?.label}
-                      variant="outlined"
-                      style={{ marginTop: "10px" }}
-                      deleteIcon={
-                        <CloseIcon
-                          src={closeIcon}
-                          alt=""
-                          style={{ marginLeft: "5px", marginRight: "12px" }}
-                        />
-                      }
-                      onDelete={() => {
-                        const newSelectedUser = formState.selectedUser.filter(
-                          (selected: any) => selected?.label !== v?.label
-                        );
-                        setFormState({
-                          ...formState,
-                          selectedUser: newSelectedUser,
-                        });
-                      }}
-                    />
-                  ) : null
-                )}
-              </ValueContainer>
             </AssignEditSearchContainer>
           )}
 

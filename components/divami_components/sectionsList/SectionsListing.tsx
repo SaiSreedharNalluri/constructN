@@ -886,7 +886,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           {searchingOn ? (
             <SearchAreaContainer>
               <CustomSearchField
-                placeholder="Search"
+                placeholder="Search for Levels"
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {

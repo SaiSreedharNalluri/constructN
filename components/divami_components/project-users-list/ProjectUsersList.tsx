@@ -435,7 +435,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
           {isSearching ? (
             <SearchAreaContainer marginRight>
               <CustomSearchField
-                placeholder="Search"
+                placeholder="Search for Users"
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e: any) => {

@@ -109,13 +109,15 @@ interface IProps {
   issueFilterState?: any;
   setIssueFilterState?: any;
   getIssues?: any;
-  handleOnIssueSort?: any;
+  // handleOnIssueSort?: any;
   deleteTheAttachment?: any;
   openIssueCreateFn?: any;
   issueMenuClicked?: any;
   projectUsers?: any;
   issueContext: any;
   initData:any;
+  sortOrder:string;
+  setSortOrder: (sortMethod:string) => void;
 }
 
 export interface IFilterProps {
@@ -156,14 +158,16 @@ function CustomIssueListDrawer({
   issueFilterState,
   setIssueFilterState,
   getIssues,
-  handleOnIssueSort,
+  // handleOnIssueSort,
   deleteTheAttachment,
   openIssueCreateFn,
   issueMenuClicked,
   projectUsers,
   issueContext,
   toolClicked,
-  initData
+  initData,
+  sortOrder,
+  setSortOrder
 
 }:IProps,ref:Ref<IssueToolHandle>) {
 
@@ -185,7 +189,6 @@ function CustomIssueListDrawer({
       ]);
   };
   let issueMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
-  const [sortOrder, setSortOrder] = useState("asc");
   const [openDrawer, setOpenDrawer] = useState(false);
   const [listOverlay, setListOverlay] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
@@ -259,6 +262,57 @@ function CustomIssueListDrawer({
       method: "Asc DueDate",
     },
   ];
+  const handleOnIssueSort = (sortMethod: string, issueList: Issue[]) => {
+    let sortedList = [...issueList]; 
+    setSortOrder(sortMethod)
+    switch (sortMethod) {
+      case "Last Updated":
+        sortedList.sort((a: any, b: any) => {
+          return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
+        });
+        break;
+      case "First Updated":
+        sortedList.sort((a: any, b: any) => {
+          return new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf();
+        });
+        break;
+      case "Asc DueDate":
+        sortedList.sort((a: any, b: any) => {
+          return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+        });
+        break;
+      case "Dsc DueDate":
+        sortedList.sort((a: any, b: any) => {
+          return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+        });
+        break;
+      case "Asc Priority":
+        sortedList.sort((a: any, b: any) => {
+          return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
+        });
+        break;
+      case "Dsc Priority":
+        sortedList.sort((a: any, b: any) => {
+          return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
+        });
+        break;
+      case "status_asc":
+        sortedList.sort((a: any, b: any) => {
+          return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
+        });
+        break;
+      case "status_desc":
+        sortedList.sort((a: any, b: any) => {
+          return b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase());
+        });
+        break;
+      default:
+        break;
+    }
+  
+    return sortedList;
+  };
+  
 
   const handleSortClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -275,8 +329,7 @@ function CustomIssueListDrawer({
   };
 
   const handleSortMenuClick = (sortMethod: string) => {
-    let handleOnSort: IToolbarAction = { type: "sortIssue", data: sortMethod };
-    toolClicked(handleOnSort);
+    setIssueList(handleOnIssueSort(sortMethod,issueList))
     //   setFilteredIssuesList(
     //     filteredIssuesList.sort((a: any, b: any) => {
     //       if (a.dueDate > b.dueDate) {
@@ -295,7 +348,8 @@ function CustomIssueListDrawer({
   const [errorShow, setErrorShow] = useState<any>(issueList);
 
   useEffect(() => {
-    setIssueList(issuesList);
+    
+    setIssueList(handleOnIssueSort(sortOrder,issuesList));
     setDownloadList(issuesList);
     
   }, [issuesList]);
@@ -389,9 +443,9 @@ function CustomIssueListDrawer({
       }
     });
     setOpenIssueDetail(true);
-    // issueMenuInstance.type = "selectIssue";
-    // issueMenuInstance.data = issue
-    // issueMenuClicked(issueMenuInstance);
+    issueMenuInstance.type = "selectIssue";
+    issueMenuInstance.data = issue
+    issueMenuClicked(issueMenuInstance);
   };
 
   useEffect(() => { }, [issueFilterState]);

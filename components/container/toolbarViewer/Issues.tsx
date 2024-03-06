@@ -113,6 +113,7 @@ function Issues({
   })
   const [projectUser,setProjectUsers] = useState([])
   const [issueStatusList,setIssueStatusList] = useState([])
+  const [sortOrder, setSortOrder] = useState("status_asc");
   useEffect(()=>{
    setImage(screenshot?.screenshot as Blob)
   },[screenshot])
@@ -461,7 +462,6 @@ function Issues({
             issueFilterState={filterState}
             setIssueFilterState={setIssueFilterState}
             getIssues={getIssues}
-            handleOnIssueSort={handleOnIssueSort}
             deleteTheAttachment={deleteTheAttachment}
             openIssueCreateFn={openIssueCreateFn}
             issueMenuClicked={issueMenuClicked}
@@ -470,6 +470,8 @@ function Issues({
             toolClicked={toolClicked}
             initData={initData.currentIssueList}
             ref={issRef}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
            
 
           />

@@ -596,7 +596,7 @@ const Index: React.FC<any> = () => {
                 {isSearching ? (
                   <SearchAreaContainer marginRight>
                     <CustomSearchField
-                      placeholder="Search"
+                      placeholder="Search for Projects"
                       variant="outlined"
                       value={searchTerm}
                       autoFocus={true}
