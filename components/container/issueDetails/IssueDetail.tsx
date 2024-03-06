@@ -371,7 +371,7 @@ const handleSearchResult = (
         return (
           array.findIndex(
             (elem: any) =>
-              elem.label  === selected.label  && elem._id === selected._id
+              elem.label  === selected.label  && elem.value === selected.value
           ) === index
         );
       }
