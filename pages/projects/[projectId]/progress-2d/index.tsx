@@ -810,6 +810,8 @@ const Progress2DPage: React.FC<any> = () => {
                     
                 }, 500)
 
+                setShowNotStarted(true);
+
             }
 
         }).catch(e => {
@@ -899,6 +901,8 @@ const Progress2DPage: React.FC<any> = () => {
                 setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
                 setComparisionAssets(result)
+
+                setShowNotStarted(true)
 
             }
 
@@ -1348,7 +1352,7 @@ const Progress2DPage: React.FC<any> = () => {
                                             </div>}
                                             
                                             {!selectedAsset && selectedCategory && isSupportUser &&
-                                                <div className='flex justify-end items-center'> 
+                                                <div className='flex justify-start items-center'> 
                                                 <Checkbox sx={{
                                                     '&.Mui-checked': {
                                                         color: '#F1742E',
@@ -1415,7 +1419,7 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 onChange={_onAssetDetailsChange}/>}
 
-                                            {!selectedAsset && isSupportUser ? <div className='flex py-1'>
+                                            {!selectedAsset && !isSupportUser ? <div className='flex py-1 px-2'>
                                                 <EmailButton projectId ={params['projectId'] as string} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} structure={LightBoxInstance?.viewerData()?.structure?.name} category={selectedCategory?.name} />
                                             </div>: null}
 

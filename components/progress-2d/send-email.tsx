@@ -15,10 +15,9 @@ interface Props {
 };
 
 const EmailButton = ({ projectId, assetId , structure, captureDate, category, assetName }: Props) => {
-    const [openInBrowser, setOpenInBrowser] = useState(false);
     const projectInfo = getCookie('projectData') || '[]';
     const projectName = JSON.parse(projectInfo as string)?.find((each: any) => each._id === projectId)?.name;
-    const sendEmail = () => {
+    const sendEmail = (openInBrowser = true) => {
         const subject = encodeURIComponent(`Discrepancy in ${projectName} - ${structure} in Category: '${category}'`);
         const subjectWithAssetDetails = encodeURIComponent(`Discrepancy in ${projectName} - ${structure} and Asset Name: '${assetName}' with Id: '${assetId}' in Category: '${category}'`)
         const body = encodeURIComponent(`Hi,
@@ -66,20 +65,14 @@ const EmailButton = ({ projectId, assetId , structure, captureDate, category, as
     };
 
     return (
-        <div className="flex justify-end w-full">
-            <div className="flex pl-4 p-1 items-center">
-                <Checkbox 
-                className="p-0 m-0" 
-                sx={{
-						'&.Mui-checked': {
-						color: '#F1742E',
-						},
-					}} onChange={(e:any)=> setOpenInBrowser(e.target.checked)} checked={openInBrowser} />
-                <div className="text-[12px] font-[400]">Open in Browser</div>
+        <div className="flex justify-between w-full items-center">
+            <div className='normal-case text-black text-[12px]' >
+                Report Discrepancy <MailOutlineIcon className='ml-1 text-[14px]' />
             </div>
-            <Button onClick={sendEmail} className='normal-case text-black text-[12px]' >
-                Report Discrepancy <MailOutlineIcon className='mx-2 text-[14px]' />
-            </Button>
+            <div>
+            <a className="underline text-[#F1742E] text-[12px] mr-2 hover:text-[#F1742E] cursor-pointer" onClick={()=>sendEmail(false)}>Open Email</a>
+            <a className="underline text-[#F1742E] text-[12px] hover:text-[#F1742E] cursor-pointer" onClick={()=>sendEmail(true)}>Open in Browser</a>
+            </div>
         </div>
     );
 };
