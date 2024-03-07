@@ -64,6 +64,8 @@ export const ToolTipText = styled("div")({
 const CustomFileInput = ({ handleFileUpload, data }: any) => {
   const inputRef = useRef<any>(null);
   const handleFileChange = (event: any) => {
+    console.log("handleFile event",event);
+    
     handleFileUpload(event);
   };
 
@@ -87,7 +89,7 @@ const CustomFileInput = ({ handleFileUpload, data }: any) => {
             type="file"
             multiple
             accept=".jpeg, .jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .mp3, .mp4"
-            onChange={handleFileChange}
+            onChange={handleFileUpload}
             ref={inputRef}
             value={data.defaultValue}
           />
