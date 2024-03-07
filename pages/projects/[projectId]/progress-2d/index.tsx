@@ -28,7 +28,7 @@ import { updateQueryParam } from '../../../../utils/router-utils'
 
 import AssetDetails from '../../../../components/progress-2d/asset-details'
 
-import { Button, Divider, IconButton, Typography, Tab, Tabs } from '@mui/material'
+import { Button, Divider, IconButton, Typography, Tab, Tabs, Switch, Checkbox } from '@mui/material'
 
 import { API } from '../../../../config/config'
 
@@ -197,11 +197,13 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [stages, setStages] = useState<({ assets: Partial<IAsset>[], assetsCompare: Partial<IAsset>[] } & Partial<IAssetStage> & { visible: boolean })[]>()
 
+    const [assetsDrawnOver , setAssetsDrawn] = useState(false);
+
     const [selectedCategory, setSelectedCategory] = useState<IAssetCategory>()
 
     const [selectedLayers, setSelectedLayers] = useState<string[]>()
 
-    const [showMessage, setShowMessage] = useState(false);
+    const [showNotStarted, setShowNotStarted] = useState(true);
 
     const [realityDate, setRealityDate] = useState('')
 
@@ -221,13 +223,14 @@ const Progress2DPage: React.FC<any> = () => {
 
     const [snapsLoading, setSnapsLoading] =  useState(false)
 
-    const _currentDrawing = useRef<string>('Plan Drawings')
+    const _currentDrawing = useRef<string>('')
 
     const [selectedDrawing, setSelectedDrawing] = useState<string>(_currentDrawing.current)
 
     const [clipValue, setClipValue] = useState(50);
 
     const [projectUsers, setProjectUsers] =  useState<[] | { name: string; role: string; user: { _id: string }; }[] | []>([]);
+
 
 
     const structId = searchParams.get('structId')
@@ -275,22 +278,27 @@ const Progress2DPage: React.FC<any> = () => {
         
         fetchAssetCategories(projId!).then((response) => {
             if (response.data.result) {
+                
                 const catSelected = response.data.result.find((cate: {_id: string})=>(cate._id === (selectedCategory ? selectedCategory :response.data.result[1])._id))
+                
+                setAssetCategories(response.data.result);
                 if(catSelected){
                     _onCategorySelected(catSelected);
                 }
-                setAssetCategories(response.data.result);
-                _loadAssetsForCategory(catSelected);
             }
             setShowProgress(false);
         })
     }
+
+    const assetsDrawnCompleted = (e: any) =>(setAssetsDrawn(e.detail))
 
     const refetch = () => {
 
         const projId = params && params['projectId'] as string
 
         const snapshotId = searchParams.get('snapshotId')
+
+        const categoryId = searchParams.get('categoryId')
 
         if (projId && !projectId.current) {
 
@@ -316,7 +324,11 @@ const Progress2DPage: React.FC<any> = () => {
 
                     setAssetCategories(response[1].data.result)
 
-                    if(response[1].data.result.length > 0) _onCategorySelected(response[1].data.result[0])
+                    let mCategory = null
+
+                    if(categoryId) mCategory = response[1].data.result.find((item: IAssetCategory) => item._id === categoryId)
+
+                    if(response[1].data.result.length > 0) _onCategorySelected(mCategory ?? response[1].data.result[0])
 
                 }
 
@@ -339,6 +351,7 @@ const Progress2DPage: React.FC<any> = () => {
             setAssets([])
 
             _assetMap.current = {}
+
 
             fetchViewerData(projId!, structId!).then(async data => {
 
@@ -471,6 +484,8 @@ const Progress2DPage: React.FC<any> = () => {
 
         subscribe('update-2d-shape', _onUpdateShape)
 
+        subscribe("assets-drawn",assetsDrawnCompleted);
+
         subscribe('select-2d-shape', _onSelectShape)
 
         subscribe('sync-viewer', _syncViewer)
@@ -491,6 +506,8 @@ const Progress2DPage: React.FC<any> = () => {
             unsubscribe('update-2d-shape', _onUpdateShape)
 
             unsubscribe('select-2d-shape', _onSelectShape)
+
+            unsubscribe("assets-drawn",assetsDrawnCompleted);
 
             unsubscribe('sync-viewer', _syncViewer)
 
@@ -753,6 +770,10 @@ const Progress2DPage: React.FC<any> = () => {
 
         if (category !== undefined) {
 
+            const queryParams = updateQueryParam(new URLSearchParams(Array.from(searchParams.entries())), 'categoryId', category._id)
+
+            router.replace(`${window.location.pathname}?${queryParams}`)
+
             _loadAssetsForCategory(category)
 
         }
@@ -788,6 +809,8 @@ const Progress2DPage: React.FC<any> = () => {
                     publish('select-shape', currentAsset)
                     
                 }, 500)
+
+                setShowNotStarted(true);
 
             }
 
@@ -879,6 +902,8 @@ const Progress2DPage: React.FC<any> = () => {
 
                 setComparisionAssets(result)
 
+                setShowNotStarted(true)
+
             }
 
         }).catch(e => {
@@ -927,6 +952,27 @@ const Progress2DPage: React.FC<any> = () => {
 
         setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
 
+        setShowNotStarted(checked);
+
+    }
+
+    const _toggleNotStartedSelection = (checked: boolean) => {
+
+        const notStarted = Object.values(_assetMap.current).find((aset)=>(aset.name ==='NOT STARTED'));
+
+        if(notStarted){
+
+            setStages([]);
+
+            notStarted.visible = checked;
+
+            publish('visibility-change', { assets: assets, stageMap: _assetMap.current })
+
+            setStages(Object.values(_assetMap.current).sort((a, b) => a.sequence! - b.sequence!))
+
+        }
+
+
     }
 
     const _onRealityItemClick = (event: Event) => {
@@ -949,6 +995,9 @@ const Progress2DPage: React.FC<any> = () => {
     const _onSnapshotBaseChange = (date: Date, snapshot: any) => _extractBaseSnapshot(snapshot)
 
     const _onSnapshotCompareChange = (date: Date, snapshot: any) => _extractCompareSnapshot(snapshot)
+
+    const assetsDrawn = (_forge?.current?.getExtension("Autodesk.Edit2D") as any)?.defaultContext?.layer?.shapes;
+
 
     const _renderTitle = () => {
 
@@ -1112,7 +1161,7 @@ const Progress2DPage: React.FC<any> = () => {
                                                         clipPath: `polygon(${clipValue}% 0%, 100% 0%, 100% 100%, ${clipValue}% 100%)`,
                                                         } : {} }>
 
-                                                {!snapsLoading ? <Progress2DComponent
+                                                {!snapsLoading && selectedDrawing ? <Progress2DComponent
 
                                                     id={'left-container'}
 
@@ -1301,8 +1350,23 @@ const Progress2DPage: React.FC<any> = () => {
                                                 </Button>
 
                                             </div>}
+                                            
+                                            {!selectedAsset && selectedCategory && isSupportUser &&
+                                                <div className='flex justify-start items-center'> 
+                                                <Checkbox sx={{
+                                                    '&.Mui-checked': {
+                                                        color: '#F1742E',
+                                                    },
+                                                }} 
+                                                checked={showNotStarted}  onChange={(e: any)=>{
+                                                    setShowNotStarted(e.target.checked);
+                                                    _toggleNotStartedSelection(e.target.checked);
+                                                    }} />
+                                                    <span className='text-[11px] text-[#F1742E]'>SHOW NOT STARTED ASSETS</span>
+                                                </div>}
 
-                                                {loading ? [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))
+
+                                                {(loading || !assetsDrawnOver) ? [1, 2, 3, 4, 5].map(val => _renderStageShimmer(val))
                                                 : <Progress2DStages stages={stages} compare={isCompare} assets={assets} structId={structId || ''}
                                                 
                                                 snapShotDate={snapshotBase?.date}
@@ -1315,7 +1379,11 @@ const Progress2DPage: React.FC<any> = () => {
                                                 
                                                 loading={loading}
 
+                                                assetContext={(_forge?.current?.getExtension("Autodesk.Edit2D") as any)?.defaultContext}
+
                                                 projectUsers={projectUsers}
+
+                                                drawnAssets={assetsDrawn}
                                                 
                                                 refetch={()=>{ _loadAssetsForCategory(selectedCategory as IAssetCategory, selectedAsset) }}
                                                 
@@ -1341,13 +1409,17 @@ const Progress2DPage: React.FC<any> = () => {
 
                                                 assetId={selectedAsset}
 
+                                                assetContext={(_forge?.current?.getExtension("Autodesk.Edit2D") as any)?.defaultContext}
+
                                                 snapshotBase={selectedCompare? snapshotCompare: snapshotBase}
 
                                                 supportUser={isSupportUser}
 
+                                                selectedCategory={selectedCategory}
+
                                                 onChange={_onAssetDetailsChange}/>}
 
-                                            {!selectedAsset && isSupportUser ? <div className='flex py-1'>
+                                            {!selectedAsset && !isSupportUser ? <div className='flex py-1 px-2'>
                                                 <EmailButton projectId ={params['projectId'] as string} captureDate={moment(new Date(LightBoxInstance.getSnapshotBase()?.date)).format('DD-MMM-yyyy')} structure={LightBoxInstance?.viewerData()?.structure?.name} category={selectedCategory?.name} />
                                             </div>: null}
 

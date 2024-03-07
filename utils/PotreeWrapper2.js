@@ -1031,9 +1031,9 @@ export const PotreeViewerUtils = () => {
     }
 
     const loadMeasurements =(points = [])=>{
-        clearAllMeasurements();
-        _viewer.setLengthUnit('ft');
-        points.forEach((point)=>{
+            clearAllMeasurements();
+            _viewer.setLengthUnit('ft');
+            points.forEach((point)=>{
             let measure = new Potree.Measure();
             if(point.type ==='Distance'){
                 measure.closed = false;
@@ -1061,20 +1061,20 @@ export const PotreeViewerUtils = () => {
             measure.name = point.name;
             measure.mtype = point.type;
             measure._id = point._id;
+            // measure.categoryId = point.categoryId; 
             measure.context = point.context;
             point.data.forEach((position)=>{
                 measure.addMarker(new THREE.Vector3(position.x, position.y, position.z));
             });
             _viewer?.scene?.addMeasurement(measure);
-        });
-        _viewer?.scene?.measurements.forEach((measurement)=>{
-            measurement?.spheres?.forEach((sphere) => {
-                if(!sphere.hasEventListener("drop", (eve)=>{measurementMoved(eve, measurement)})){
-                    sphere.addEventListener("drop", (eve)=>{measurementMoved(eve, measurement)});
-                }
             });
-        })
-        
+            _viewer?.scene?.measurements.forEach((measurement)=>{
+                measurement?.spheres?.forEach((sphere) => {
+                    if(!sphere.hasEventListener("drop", (eve)=>{measurementMoved(eve, measurement)})){
+                        sphere.addEventListener("drop", (eve)=>{measurementMoved(eve, measurement)});
+                    }
+                });
+            })
     }
 
     const removeMeasurement=(measurement)=>{
@@ -1129,9 +1129,9 @@ export const PotreeViewerUtils = () => {
 
 
     const myevent = (e) => {
-        publish('setactive-measurement', { measure: e.measurement })
-        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_removed', markeremoved)
-        _viewer?.propertiesPanel?.addVolatileListener(e.measurement, 'marker_dropped', markerdropped)
+        publish('setactive-measurement', { measure: e.measurement });
+        e?.measurement?.addEventListener('marker_removed', markeremoved);
+        e?.measurement?.addEventListener('marker_dropped', markerdropped);
     }
 
     const clearAllMeasurements= () =>{

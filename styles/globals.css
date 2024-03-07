@@ -790,3 +790,11 @@ td {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.mui-select-fillavailable {
+  .MuiBox-root {
+    .MuiOutlinedInput-root {
+      width: -webkit-fill-available;
+    }
+  }
+}

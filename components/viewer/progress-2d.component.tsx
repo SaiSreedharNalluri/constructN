@@ -20,6 +20,10 @@ import moment from 'moment'
 
 import DrawingsPicker from '../progress-2d/drawings-picker'
 
+import LockIcon from '@mui/icons-material/Lock';
+
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+
 interface _ViewerProps {
 
     id: string,
@@ -78,6 +82,8 @@ function Progress2DComponent(props: _ViewerProps) {
     const _currentStructure = useRef<string>()
 
     const _currentDrawing = useRef<string>(props.drawing ?? 'Plan Drawings')
+
+    const [editable, setEditable] = useState(props.isSupportUser);
 
     const [selectedDrawing, setSelectedDrawing] = useState<string>(props.drawing ?? _currentDrawing.current)
 
@@ -197,10 +203,14 @@ function Progress2DComponent(props: _ViewerProps) {
 
     const __reloadDrawing = () => {
 
+
         if (LightBoxInstance.getViewTypes().indexOf(_currentDrawing.current) > -1) {
 
             setModelsData(LightBoxInstance.viewerData()['modelData']?.[_currentDrawing.current])
             
+        }else{
+
+            setModelsData(LightBoxInstance.viewerData()['modelData']?.['Plan Drawings'])
         }
 
     }
@@ -330,14 +340,22 @@ function Progress2DComponent(props: _ViewerProps) {
         let mTm = _tm.current
         if(_currentStructure.current === 'STR940183') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
+        } else if(_currentStructure.current === 'STR886181-DEP') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.0625)
+            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), -0.035)
         } else if(_currentStructure.current === 'STR967653') {
             mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.06)
-        } else if(_currentStructure.current === 'STR886181') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.015)
-        } else if (_currentStructure.current === 'STR823522') {
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.118)
-            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
-        }
+        } else if(_currentStructure.current === 'STR886181-DEP') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.07)
+        } else if (_currentStructure.current === 'STR823522-DEP') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.11)
+            // mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), 0.028)
+        } else if(_currentStructure.current === 'STR572565-DEP') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.02)
+        }  else if(_currentStructure.current === 'STR495107') {
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 0, 1), 0.02)
+            mTm = applyRotationTm(mTm!, new THREE.Vector3(0, 1, 0), -0.285)
+        } 
 
         return mTm!
     }
@@ -347,16 +365,18 @@ function Progress2DComponent(props: _ViewerProps) {
         let mOffset = _offset.current
         if(_currentStructure.current === 'STR940183') {
             mOffset = [1.2, -0.85, 0]
-        } else if(_currentStructure.current === 'STR886181') {
-            mOffset = [0.31, -0.225, 0]
+        } else if(_currentStructure.current === 'STR886181-DEP') {
+            mOffset = [2.0, -2.3, 0]
         } else if(_currentStructure.current === 'STR967653') {
             mOffset = [1.375, -0.7, 0]
-        } else if(_currentStructure.current === 'STR719122') {
-            mOffset = [0.075, -0.9, 0]
         } else if(_currentStructure.current === 'STR709859') {
             mOffset = [0.075, -0.9, 0]
-        } else if(_currentStructure.current === 'STR823522') {
-            mOffset = [0.5, -0.875, 0]
+        } else if(_currentStructure.current === 'STR823522-DEP') {
+            mOffset = [0.825, -1.6, 0]
+        } else if(_currentStructure.current === 'STR572565-DEP') {
+            mOffset = [0.125, -0.61, 0]
+        } else if(_currentStructure.current === 'STR495107') {
+            mOffset = [-4.325, -0.3, 0]
         }
 
         return mOffset!
@@ -412,13 +432,27 @@ function Progress2DComponent(props: _ViewerProps) {
             </div>: null}
             
 
-            {!props.compare ? <div className='flex absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
+            {!props.compare ? <div className='flex flex-col absolute right-2 w-fit h-fit mt-1' style={{ zIndex: 5 }}>
 
                 { props.category && props.isSupportUser && <Paper className='ml-3' elevation={1}>
 
                     <ClickTypesPicker />
 
                 </Paper> }
+
+                {props.isSupportUser? <div className='ml-4 mt-4 cursor-pointer'>
+                    {editable ?  <LockOpenIcon onClick={()=>{
+                        if(_edit2dUtils.current){
+                            _edit2dUtils.current._locked = true;
+                            setEditable(false);
+                        }
+                    }} />: <LockIcon onClick={()=>{
+                        if(_edit2dUtils.current){
+                            _edit2dUtils.current._locked = false;
+                            setEditable(true);
+                        }
+                    }} />}
+                </div>: null}
 
             </div>: null}
 

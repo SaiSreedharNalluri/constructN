@@ -54224,6 +54224,21 @@
 			
 		// }
 
+		customFloor(number) {
+			// Check if the number is already an integer
+			if (Number.isInteger(number)) {
+				return number;
+			}
+		
+			// If the number is negative, subtract 1 before converting to an integer
+			if (number < 0) {
+				return parseInt(number.toString().split('.')[0]) - 1;
+			}
+		
+			// If the number is positive, simply convert to an integer
+			return parseInt(number.toString().split('.')[0]);
+		}
+
 		getFractionFromDecimal(fraction){
 			const gcd = function(a, b) {
 				if (b < 0.0000001) return a;               
@@ -54338,12 +54353,14 @@
 					}
 
 					let txtLength = Utils.addCommas(distance.toFixed(2));
-					edgeLabel.setText(`${txtLength} ${suffix}`);
+					// edgeLabel.setText(`${txtLength} ${suffix}`);
 					if(this.lengthUnit && this.lengthUnit.code === 'ft'){
 						//convertion of ft to ft-inches
 						var feet = Math.floor(distance);
 						var inches = (distance - feet) * 12;
 						edgeLabel.setText(`${feet}' ${this.getFractionFromDecimal(inches.toFixed(1))}''`);
+					}else{
+						edgeLabel.setText(`${txtLength} ${suffix}`);
 					}
 					edgeLabel.visible = this.showDistances && (index < lastIndex || this.closed) && this.points.length >= 2 && distance > 0;
 				}
@@ -54414,13 +54431,14 @@
 
 					let txtHeight = Utils.addCommas(height.toFixed(2));
 					let msg = `${txtHeight} ${suffix}`;
-					this.heightLabel.setText(msg);
+					// this.heightLabel.setText(msg);
 					if(this.lengthUnit && this.lengthUnit.code === 'ft'){
-						console.log(Math.floor((height - feet) * 12 * 16),'nsksnkns')
 						//convertion of ft to ft-inches
 						var feet = Math.floor(height);
 						var inches = (height - feet) * 12;
 						this.heightLabel.setText(`${feet}' ${this.getFractionFromDecimal(inches.toFixed(1))}''`);
+					}else{
+						this.heightLabel.setText(msg);
 					}
 				}
 			}
@@ -79490,11 +79508,11 @@ ENDSEC
 					$('#menu_measurements').next().slideDown();
 					let measurement = this.measuringTool.startInsertion({
 						showDistances: false,
-						showAngles: true,
 						showArea: false,
-						closed: true,
-						maxMarkers: 3,
-						name: 'Angle'});
+						closed: false,
+						showAngles: true,
+						name: 'Angle'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79516,7 +79534,8 @@ ENDSEC
 						showArea: false,
 						closed: true,
 						maxMarkers: 1,
-						name: 'Point'});
+						name: 'Point'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79535,7 +79554,8 @@ ENDSEC
 						showDistances: true,
 						showArea: false,
 						closed: false,
-						name: 'Distance'});
+						name: 'Distance'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79556,7 +79576,8 @@ ENDSEC
 						showArea: false,
 						closed: false,
 						maxMarkers: 2,
-						name: 'Height'});
+						name: 'Height'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -79620,9 +79641,11 @@ ENDSEC
 					$('#menu_measurements').next().slideDown();
 					let measurement = this.measuringTool.startInsertion({
 						showDistances: true,
+						showHeight: false,
 						showArea: true,
 						closed: true,
-						name: 'Area'});
+						name: 'Area'
+					});
 
 					let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 					let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
@@ -88552,7 +88575,6 @@ ENDSEC
 			this.measuringTool = new MeasuringTool(this);
 			this.profileTool = new ProfileTool(this);
 			this.volumeTool = new VolumeTool(this);
-			this.propertiesPanel = new PropertiesPanel({}, this);
 
 			}catch(e){
 				this.onCrash(e);
@@ -89437,118 +89459,75 @@ ENDSEC
 			}
 
 			let viewer = this;
-			// let sidebarContainer = $('#potree_sidebar_container');
-			// sidebarContainer.load(new URL(Potree.scriptPath + '/sidebar.html').href, () => {
-			// 	sidebarContainer.css('width', '300px');
-			// 	sidebarContainer.css('height', '100%');
+			if($('#potree_sidebar_container').get(0)){
+				let sidebarContainer = $('#potree_sidebar_container');
+				sidebarContainer.load(new URL(Potree.scriptPath + '/sidebar.html').href, () => {
+					sidebarContainer.css('width', '300px');
+					sidebarContainer.css('height', '100%');
+	
+					let imgMenuToggle = document.createElement('img');
+					imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+					imgMenuToggle.onclick = this.toggleSidebar;
+					imgMenuToggle.classList.add('potree_menu_toggle');
+					imgMenuToggle.setAttribute("id","menu_toggle_icon");
 
-			// 	let imgMenuToggle = document.createElement('img');
-			// 	imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
-			// 	imgMenuToggle.onclick = this.toggleSidebar;
-			// 	imgMenuToggle.classList.add('potree_menu_toggle');
-
-			// 	let imgMapToggle = document.createElement('img');
-			// 	imgMapToggle.src = new URL(Potree.resourcePath + '/icons/map_icon.png').href;
-			// 	imgMapToggle.style.display = 'none';
-			// 	imgMapToggle.onclick = e => { this.toggleMap(); };
-			// 	imgMapToggle.id = 'potree_map_toggle';
-
-				
-
-			// 	let elButtons = $("#potree_quick_buttons").get(0);
-
-			// 	elButtons.append(imgMenuToggle);
-			// 	elButtons.append(imgMapToggle);
+					let elButtons = $("#potree_quick_buttons").get(0);
+					if(!$("#menu_toggle_icon").get(0)){
+						elButtons.append(imgMenuToggle);
+					}
 
 
-			// 	VRButton.createButton(this.renderer).then(vrButton => {
+				this.mapView = new MapView(this);
+				this.mapView.init();
 
-			// 		if(vrButton == null){
-			// 			console.log("VR not supported or active.");
+				i18n.init({
+					lng: 'en',
+					resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
+					preload: ['en', 'fr', 'de', 'jp', 'se', 'es'],
+					getAsync: true,
+					debug: false
+				}, function (t) {
+					// Start translation once everything is loaded
+					$('body').i18n();
+				});
 
-			// 			return;
-			// 		}
+				$(() => {
+					//initSidebar(this);
+					let sidebar = new Sidebar(this);
+					sidebar.init();
 
-			// 		this.renderer.xr.enabled = true;
+					this.sidebar = sidebar;
 
-			// 		let element = vrButton.element;
+					//if (callback) {
+					//	$(callback);
+					//}
 
-			// 		element.style.position = "";
-			// 		element.style.bottom = "";
-			// 		element.style.left = "";
-			// 		element.style.margin = "4px";
-			// 		element.style.fontSize = "100%";
-			// 		element.style.width = "2.5em";
-			// 		element.style.height = "2.5em";
-			// 		element.style.padding = "0";
-			// 		element.style.textShadow = "black 2px 2px 2px";
-			// 		element.style.display = "block";
+					let elProfile = $('<div>').load(new URL(Potree.scriptPath + '/profile.html').href, () => {
+						$(document.body).append(elProfile.children());
+						this.profileWindow = new ProfileWindow(this);
+						this.profileWindowController = new ProfileWindowController(this);
 
-			// 		elButtons.append(element);
-
-			// 		vrButton.onStart(() => {
-			// 			this.dispatchEvent({type: "vr_start"});
-			// 		});
-
-			// 		vrButton.onEnd(() => {
-			// 			this.dispatchEvent({type: "vr_end"});
-			// 		});
-			// 	});
-
-			// 	this.mapView = new MapView(this);
-			// 	this.mapView.init();
-
-			// 	i18n.init({
-			// 		lng: 'en',
-			// 		resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
-			// 		preload: ['en', 'fr', 'de', 'jp', 'se', 'es'],
-			// 		getAsync: true,
-			// 		debug: false
-			// 	}, function (t) {
-			// 		// Start translation once everything is loaded
-			// 		$('body').i18n();
-			// 	});
-
-			// 	$(() => {
-			// 		//initSidebar(this);
-			// 		let sidebar = new Sidebar(this);
-			// 		sidebar.init();
-
-			// 		this.sidebar = sidebar;
-
-			// 		//if (callback) {
-			// 		//	$(callback);
-			// 		//}
-
-			// 		let elProfile = $('<div>').load(new URL(Potree.scriptPath + '/profile.html').href, () => {
-			// 			$(document.body).append(elProfile.children());
-			// 			this.profileWindow = new ProfileWindow(this);
-			// 			this.profileWindowController = new ProfileWindowController(this);
-
-			// 			$('#profile_window').draggable({
-			// 				handle: $('#profile_titlebar'),
-			// 				containment: $(document.body)
-			// 			});
-			// 			$('#profile_window').resizable({
-			// 				containment: $(document.body),
-			// 				handles: 'n, e, s, w'
-			// 			});
-
-			// 			$(() => {
-							this.guiLoaded = true;
-							for(let task of this.guiLoadTasks){
-								task();
-							}
-
-			// 			});
-			// 		});
+						$('#profile_window').draggable({
+							handle: $('#profile_titlebar'),
+							containment: $(document.body)
+						});
+						$('#profile_window').resizable({
+							containment: $(document.body),
+							handles: 'n, e, s, w'
+						});
+					});
 
 					
 
-			// 	});
+				});
 
 				
-			// });
+			});
+		}
+			this.guiLoaded = true;
+			for(let task of this.guiLoadTasks){
+				task();
+			}
 
 			return this.promiseGuiLoaded();
 		}
