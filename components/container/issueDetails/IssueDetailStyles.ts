@@ -458,31 +458,6 @@ export const ProgressEditStateButtonsContainer = styled("div")`
   width: 90%;
 `;
 
-export const AssignEditSearchContainer = styled("div")({
-  minHeight: "40px",
-  marginTop: "20px",
-  "& .MuiAutocomplete-root": {
-    height: "100%",
-    width: "100%",
-  },
-  "& .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-wb57ya-MuiFormControl-root-MuiTextField-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
-  "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root":
-    {
-      height: "100%",
-      width: "100%",
-    },
-  "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input": {
-    marginTop: "-8px",
-  },
-  "& .MuiAutocomplete-root fieldset": {
-    borderColor: "#36415D !important",
-  },
-});
-
 export const CustomTabPanel = styled(TabPanel)`
   padding: none;
 `;

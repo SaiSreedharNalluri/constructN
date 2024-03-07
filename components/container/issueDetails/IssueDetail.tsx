@@ -43,7 +43,6 @@ import {
 } from "../../../services/attachments";
 import {
   ArrowIcon,
-  AssignEditSearchContainer,
   AttachedImageDiv,
   AttachedImageIcon,
   AttachedImageTitle,
@@ -664,18 +663,14 @@ const handleSearchResult = (
           
           </ParentFourthContMoreText> */}
           {assigneeEditState && (
-            <AssignEditSearchContainer>
-              {/* <AssignedLabel>Assigned to</AssignedLabel> */}
-
-        <CustomSearch
-              data={data}
-              handleSearchResult={(e:React.ChangeEvent<HTMLInputElement>, value: []) => {
-                handleSearchResult(e, value);
-              }}
-              selectedName={data.selectedName}
-              setFormConfig={setFormState}
-            />
-          </AssignEditSearchContainer>
+             <CustomSearch
+             data={data}
+             handleSearchResult={(e:React.ChangeEvent<HTMLInputElement>, value: []) => {
+               handleSearchResult(e, value);
+             }}
+             selectedName={data.selectedName}
+             setFormConfig={setFormState}
+           />
           )}
 
           {progressEditState ? (
