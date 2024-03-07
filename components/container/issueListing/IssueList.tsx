@@ -444,7 +444,7 @@ function CustomIssueListDrawer({
     });
     setOpenIssueDetail(true);
     issueMenuInstance.type = "selectIssue";
-    issueMenuInstance.data = issue
+    issueMenuInstance.data = issue.context
     issueMenuClicked(issueMenuInstance);
   };
 

@@ -359,7 +359,7 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
     });
     setOpenTaskDetail(true);
     taskMenuInstance.type = "selectTask";
-    taskMenuInstance.data = task;
+    taskMenuInstance.data = task.context;
     taskMenuClicked(taskMenuInstance);
   };
 
