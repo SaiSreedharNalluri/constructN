@@ -45,7 +45,6 @@ import {
   AddCommentContainer,
   AddCommentContainerSecond,
   ArrowIcon,
-  AssignEditSearchContainer,
   AssignedLabel,
   AssigneeList,
   AttachButton,
@@ -626,9 +625,7 @@ const data:any ={
           </SecondBodyDiv>
 
           {assigneeEditState && (
-            <AssignEditSearchContainer>
-              {/* <AssignedLabel>Assigned to</AssignedLabel> */}
-               <CustomSearch
+            <CustomSearch
               data={data}
               handleSearchResult={(e:React.ChangeEvent<HTMLInputElement>, value: []) => {
                 handleSearchResult(e, value);
@@ -636,8 +633,6 @@ const data:any ={
               selectedName={data.selectedName}
               setFormConfig={setFormState}
             />
-
-            </AssignEditSearchContainer>
           )}
 
           {progressEditState ? (
