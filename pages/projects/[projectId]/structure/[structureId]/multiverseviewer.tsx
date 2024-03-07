@@ -967,7 +967,7 @@ const Index: React.FC<IProps> = () => {
       }
         break;
       case 'getViewerScreenshot':
-        CustomToast('The downloading of the image has started.it will take some time to complete...','success')  
+        CustomToast('Image download has started.','success')  
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getViewerScreenshot", "data": ""}`);
       break
       case 'downloadReportData':
@@ -1873,7 +1873,7 @@ const Index: React.FC<IProps> = () => {
   const captureCanvas = async () => {
     let typeChangeToolAction: IToolbarAction = { type: "downloadReportData", data: "" };
     toolClicked(typeChangeToolAction)
-    CustomToast('The report generation is started.it will take some time to complete and download...','success')
+    CustomToast('PDF Report download has started.','success')
  };
 
  
