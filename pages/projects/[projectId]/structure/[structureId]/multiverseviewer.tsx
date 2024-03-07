@@ -1856,7 +1856,16 @@ const Index: React.FC<IProps> = () => {
         downloadReportData.current.project = appState.currentProjectData?.project
         downloadReportData.current.logedInUser = logedInUser  
         downloadPdfReport(downloadReportData.current) 
-        downloadReportData.current = undefined;
+        downloadReportData.current = {
+          screenshot: '',
+          miniMapscreenshot: '',
+          type: '',
+          context: '',
+          structure: {} as IStructure, 
+          snapshot:{} as ISnapshot,
+          project: {} as IProjects, 
+          logedInUser: ''
+        };
       }
     }
   }  
@@ -1865,19 +1874,6 @@ const Index: React.FC<IProps> = () => {
     let typeChangeToolAction: IToolbarAction = { type: "downloadReportData", data: "" };
     toolClicked(typeChangeToolAction)
     CustomToast('The report generation is started.it will take some time to complete and download...','success')
-  //   await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
-  //      const dataURL = canvas.toDataURL();
-  //      imgRef.current = dataURL
-  //    }).catch(error => {
-  //      console.error('Error capturing canvas:', error);
-  //  });
-  //   await html2canvas(document.getElementById("minimap-1") || document.body).then(canvas => {
-  //        const dataURL = canvas.toDataURL();
-  //        miniMapImg.current = dataURL
-  //    }).catch(error => {
-  //        console.error('Error capturing canvas:', error);
-  //    });
-    //  downloadPdfReport()
  };
 
  
