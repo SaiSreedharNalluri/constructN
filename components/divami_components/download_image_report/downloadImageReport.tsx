@@ -58,18 +58,17 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
     <MenuItem onClick={() => {
       download360Image();
       handleMenuClose();
-    }}>
-      <Image src={pngIcon} alt={""} className="w-[0.75rem] h-[1rem]" />
-      <label className='text-[#101F4C] opacity-[0.8] text-[12px] text-center ml-3 font-sans'>
+    }} className="h-[2.1rem] hover:bg-[#fff2eb]  hover:text-[#f1742e]">
+      <label className='text-[#101F4C]  text-[14px] text-center ml-3 font-sans hover:text-[#f1742e] hover:cursor-pointer'>
       360 Image
       </label>
     </MenuItem>
     <MenuItem onClick={() => {
       downloadPdfReport();
       handleMenuClose();
-    }}>
-       <Image src={pdfIcon} alt={""} className="w-[0.75rem] h-[1rem]" />
-      <label className='text-[#101F4C] opacity-[0.8] text-[12px] text-center ml-3 font-sans'>
+    }} className="h-[2.1rem] hover:bg-[#fff2eb]">
+       
+      <label className='text-[#101F4C] text-[14px] text-center ml-3 font-sans hover:text-[#f1742e] hover:cursor-pointer'>
         PDF Report
       </label>
     </MenuItem>
