@@ -1,4 +1,5 @@
 import { Button, Menu, MenuItem } from "@mui/material"
+import Tooltip from "@mui/material/Tooltip";
 import React from "react"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -23,6 +24,7 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
     return(
     <React.Fragment>
   <div className="pointer text-center py-[7px] border border-solid border-gray-300 border-r-0 ">
+  <Tooltip title='Download'> 
   <Button
     className="bg-white w-[1rem] hover:bg-white"
     aria-controls={open ? 'basic-menu' : undefined}
@@ -34,6 +36,7 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
   
     {open ? <KeyboardArrowUpIcon className="text-[#101F4C] opacity-[0.8] mx-1.25" fontSize="small"/> : <KeyboardArrowDownIcon className="text-[#101F4C] opacity-[0.8] mx-1.25 " fontSize="small"/>}
   </Button>
+  </Tooltip> 
   <Menu
     id="basic-menu"
     className="my-2"
