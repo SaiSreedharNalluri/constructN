@@ -63,7 +63,7 @@ const DownloadImageReport:React.FC<IProps> =({download360Image,downloadPdfReport
       handleMenuClose();
     }} className="h-[2.1rem] hover:bg-[#fff2eb]  hover:text-[#f1742e]">
       <label className='text-[#101F4C]  text-[14px] text-center ml-3 font-sans hover:text-[#f1742e] hover:cursor-pointer'>
-      360 Image
+      Current Screen 
       </label>
     </MenuItem>
     <MenuItem onClick={() => {
