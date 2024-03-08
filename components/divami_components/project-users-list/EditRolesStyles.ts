@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import { styled } from "@mui/system";
 import Image from "next/image";
 
@@ -48,3 +49,11 @@ export const AssignedValue = styled("div")({
   fontSize: "14px",
   marginBottom: "20px",
 });
+export const ButtonsContainer = styled(Box)(() => ({
+  paddingLeft:"0.3rem",
+   height: "80px",
+   display: "flex",
+   justifyContent: "space-between",
+   alignItems: "center",
+   gap:'1rem'
+}));
