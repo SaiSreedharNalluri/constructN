@@ -5,7 +5,6 @@ import {
   HeaderLeftSectionText,
   HeaderRightSection,
   CloseIcon,
-  ButtonsContainer,
   FilterCommonHeader,
 } from "../hotspot-filter-common/HotspotFilterStyled";
 import {
@@ -18,6 +17,7 @@ import {
   UserName,
   AssignedLabel,
   AssignedValue,
+  ButtonsContainer
 } from "./EditRolesStyles";
 import closeWithCircle from "../../../public/divami_icons/closeWithCircle.svg";
 import {
@@ -115,7 +115,7 @@ export const EditRoleOverlay = ({
       </EditRoleBody>
 
       <EditRoleFooter>
-        <ButtonsContainer nopaddingleftright>
+        <ButtonsContainer>
           <CustomButton
             type="outlined"
             label="Cancel"
