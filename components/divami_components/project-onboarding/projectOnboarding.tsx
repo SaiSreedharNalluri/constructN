@@ -17,6 +17,7 @@ import { useRouter } from 'next/router'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { IStructure } from '../../../models/IStructure'
 import CustomLoader from '../custom_loader/CustomLoader'
+import { CustomToast } from '../custom-toaster/CustomToast'
 
 export type IOnboardingProps = {
   step: Signal<number>
@@ -47,12 +48,25 @@ const ProjectOnboarding = () => {
       getProjectDetails(router.query.id as string).then((res) => {
         const result = res.data.result;
         delete result.users
-        projectDetails.value = result
+        if(result.status==="PendingApproval"){
+          showLoader.value=true
+          CustomToast("Project Onboarding completed","success")
+          router.push("/projects")
+       
+        }
+        else if(result.status==="Approved"){
+          showLoader.value=true
+          router.push(`/projects/${router.query.id}/sections`)
+        }
+     else{
+      showLoader.value=false
+      projectDetails.value = result
+     } 
       })
     }
   }, [router.query])
 
-  const renderLoader = useComputed(() => showLoader.value == true ? <CustomLoader/> : <></>)
+  const renderLoader = useComputed(() => showLoader.value == true  || projectDetails.status==="PendingApproval" || projectDetails.status==="Approved"? <CustomLoader/> : <></>)
 
   const mainContent = useComputed(() => {
 
