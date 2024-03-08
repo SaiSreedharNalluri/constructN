@@ -1,4 +1,4 @@
-import React, { useEffect, useImperativeHandle, useState, Ref, forwardRef } from "react";
+import React, { useEffect, useImperativeHandle, useState, Ref, forwardRef, useRef } from "react";
 // import styles from '../toolbar/toolbar.module.css'
 import Image from "next/image";
 import eyeOffIcon from "../../../public/public/divami_icons/eyeOffIcon.svg";
@@ -41,6 +41,7 @@ const CompareView = ({
   const [isDesignAvailable, setDesignAvailable] = useState(false)
   const [compareMode,setCompareMode] = useState("")
   const [active, setActive] = useState("hideCompare");
+  const activeRef =  useRef<string>();
   useEffect(() => {
     setActive("hideCompare");
   }, [selectedType]);
@@ -72,7 +73,8 @@ const CompareView = ({
     return {
       handleDesignRef(initData: any) {
         console.log("comp ref",initData) 
-      compareModeUpdate(initData)
+      compareModeUpdate(initData);
+      activeRef.current = initData.currentCompareMode;
 
 
       }
@@ -135,10 +137,13 @@ const CompareView = ({
         <Tooltip title="Compare Reality">
           <RealityCompareViewIcon
             id="compareReality"
-            onClick={(e: any) => { 
-              let IssuetoolInstance: IToolbarAction = { type:"setCompareMode", data:"compareReality"}
-              issueMenuClicked(IssuetoolInstance)
-              customLogger.logInfo("ToolBar - Compare Reality"); 
+            onClick={(e: any) => {
+              if(activeRef.current !== 'compareReality'){
+                activeRef.current = 'compareReality';
+                let IssuetoolInstance: IToolbarAction = { type:"setCompareMode", data:"compareReality"}
+                issueMenuClicked(IssuetoolInstance)
+                customLogger.logInfo("ToolBar - Compare Reality"); 
+              }
               // rightMenuClickHandler(e) 
             }}
             active={active}
