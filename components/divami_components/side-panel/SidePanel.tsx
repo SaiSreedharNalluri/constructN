@@ -164,7 +164,9 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
   // const currentUrl = window.location.href;
   // const urlString = currentUrl.split("/")[5];
   // console.log(currentUrl);
-
+  const userObj: any = getCookie('user');
+  
+	const userId :any= JSON.parse(userObj || "{}");
   const {
     boot,
     shutdown,
@@ -281,12 +283,12 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     setActive(router.pathname.split("/").pop());
     Mixpanel.track({
       name: iconClicked,
-      project_id: "unknown",
+      project_id: router.query.projectId,
       company_id: "unknown",
-      screen_name: "projects_list_page",
-      event_category: "sort",
+      screen_name: "views_page ",
+      event_category: "views_list",
       event_action: iconClicked,
-      user_id: "unknown",
+      user_id: userId._id,
     });
   };
   function openChat(): void {

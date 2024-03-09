@@ -95,7 +95,7 @@ useEffect(()=>{
     debug:true,
     ignore_dnt:true
   });
-  Mixpanel.track( {name: router.pathname==="/login"?"login_page_loaded":router.pathname==="/signup"?"signup_page_loaded":"",project_id:"unknown",company_id:"unknown",screen_name: router.pathname==="/login"?"login_page":"signup_page",event_category:router.pathname==="/login"?"login":"signup",event_action:router.pathname==="/login"?"login_page_loaded":"signup_page_loaded ",user_id:"unknown"})
+  Mixpanel.track( {name: router.pathname==="/login"?"login_page_loaded":router.pathname==="/signup"?"signup_page_loaded":"",project_id:"unknown",company_id:"unknown",screen_name: router.pathname==="/login"?"login_page":"signup_page",event_category:router.pathname==="/login"?"login":"signup",event_action:router.pathname==="/login"?"login_page_loaded":"signup_page_loaded ",user_id:""})
   
 },[])
   return (
