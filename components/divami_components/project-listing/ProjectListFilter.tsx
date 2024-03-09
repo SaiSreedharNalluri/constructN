@@ -41,6 +41,8 @@ const ProjectListFilter: React.FC<any> = ({
   setTaskFilterState,
   setIsFilterApplied,
   setSearchTerm,
+  user
+
 }) => {
   const [formState, setFormState] = useState<any>({});
   const [formConfig, setFormConfig] = useState<any>(projectConfig);
@@ -223,12 +225,14 @@ const numberOfMembersField = formConfig.find((each: any) => each.id === "numberO
             type="outlined"
             label="Cancel"
             formHandler={formHandler}
+            userId={user._id}
           />
           <CustomButton
             type="contained"
             formHandler={formHandler}
             label="Apply"
             disabledButton={isDisabled}
+            userId={user._id}
           />
         </ButtonsContainer>
       </FilterFooter>

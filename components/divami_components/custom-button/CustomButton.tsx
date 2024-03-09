@@ -111,7 +111,7 @@ const createMixpanelEventData = (label:string, isButton:string, projectId:string
       event_action = isButton === "addUser" ? "back_clicked" : "";
       break;
     case "Cancel":
-      name = isButton === "ManageUsers" ? "close_clicked" : "close_clicked";
+      name = isButton === "ManageUsers" ? "close_clicked" : "cancel_clicked";
       screen_name = isButton === "ManageUsers" ? "manage_users_page" : "projects_list_page";
       event_category = isButton === "ManageUsers" ? "filters" : "filers";
       event_action = isButton === "ManageUsers" ? "close_clicked" : "close_clicked";

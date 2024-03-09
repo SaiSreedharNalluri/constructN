@@ -244,7 +244,7 @@ const Body = ({
           key={notificationObj.id}
           onClick={() => {
             filterNotificationData(notificationObj.id);
-          Mixpanel.track( {name: notificationObj.id.toLowerCase()+ ""+"_tapped",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"notifications_actions",event_action:notificationObj.id.toLowerCase()+ ""+"_tapped",user_id:userId,notifications_count:notificationCount}) 
+          Mixpanel.track( {name: notificationObj.name.toLowerCase()+ ""+"_tapped",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"notifications_actions",event_action:notificationObj.name.toLowerCase()+ ""+"_tapped",user_id:userId,notifications_count:notificationCount}) 
           }}
         >
 <div className={`${
