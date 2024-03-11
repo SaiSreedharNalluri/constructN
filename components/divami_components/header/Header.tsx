@@ -653,7 +653,8 @@ const Header: React.FC<any> = ({
                       handleNotificationClose={handleNotificationClose}
                       userId={userId}
                       notificationCount={notificationCount}
-                    ></Notifications>
+                      setOpenNotication ={setOpenNotication}
+                    />
                   </div>
 
                   <div></div>
