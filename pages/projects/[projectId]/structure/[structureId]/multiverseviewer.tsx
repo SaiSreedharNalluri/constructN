@@ -1878,7 +1878,7 @@ const Index: React.FC<IProps> = () => {
   const captureCanvas = async () => {
     let typeChangeToolAction: IToolbarAction = { type: "downloadReportData", data: "" };
     toolClicked(typeChangeToolAction)
-    CustomToast('The report generation is started.it will take some time to complete and download...','success')
+    CustomToast('PDF Report download has started.','success')
  };
 
  
