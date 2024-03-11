@@ -15,7 +15,7 @@ const Notifications = ({
     notifications,
     loadMoreData,
     updateNotifications,
-    handleNotificationClose,filterValue,filterNotificationData,userId,notificationCount
+    handleNotificationClose,filterValue,filterNotificationData,userId,notificationCount,setOpenNotication
 }:any) => {
   const [formData, setFormData] = useState<any>(null);
   const [validate, setValidate] = useState(false);
@@ -71,6 +71,7 @@ const Notifications = ({
       filterValue={filterValue}
       userId={userId}
       notificationCount={notificationCount}
+      setOpenNotication={setOpenNotication}
       />
       {showPopUp && (
         <PopupComponent

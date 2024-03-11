@@ -14,7 +14,7 @@ import { Mixpanel } from "../../../analytics/mixpanel";
 const Body = ({
   notifications,
   loadMoreData,
-  updateNotifications,getNotifiCationTime,filterNotificationData,filterValue,userId,notificationCount
+  updateNotifications,getNotifiCationTime,filterNotificationData,filterValue,userId,notificationCount,setOpenNotication
 }: any) => { 
   const router = useRouter(); 
   const notificationsContRef = useRef<any>(null);
@@ -102,6 +102,13 @@ const Body = ({
           //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
         break; 
       }
+      setOpenNotication(false)
+      if(router.query.projectId === notificationObj?.configuration?.project )
+      {
+        setTimeout(()=>{
+          router.reload()
+      },300)
+      }
   }
   const generateTaskRedirectUrl=(notificationObj:IUserNotification)=>{
     switch (notificationObj.title)
@@ -126,6 +133,13 @@ const Body = ({
           router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,tsk:notificationObj?.configuration?.task}})
           //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
         break; 
+      }
+      setOpenNotication(false)
+      if(router.query.projectId === notificationObj?.configuration?.project )
+      {
+        setTimeout(()=>{
+          router.reload()
+      },300)
       }
   }
   const generateStructureRedirectUrl=(notificationObj:IUserNotification)=>{
@@ -170,6 +184,13 @@ const Body = ({
           //router.push(`/projects/${notificationObj?.configuration?.project}/structure?structId=${notificationObj?.configuration?.structure}&tsk=${notificationObj?.configuration?.task}`);
       break;
     }
+    setOpenNotication(false)
+    if(router.query.projectId === notificationObj?.configuration?.project )
+    {
+      setTimeout(()=>{
+        router.reload()
+    },300)
+    }
   }
   const generateIssueCommentRedirectUrl=(notificationObj:IUserNotification)=>{
     switch (notificationObj.title)
@@ -182,6 +203,13 @@ const Body = ({
           router.push({pathname:"/projects/[projectId]/structure/[structureId]/multiverseviewer",query:{projectId:notificationObj?.configuration?.project,structureId:notificationObj?.configuration?.structure,iss:notificationObj?.configuration?.issue}})
           //router.push(`/projects/${notificationObj?.configuration?.project}structure?structId=${notificationObj?.configuration?.structure}&iss=${notificationObj?.configuration?.issue}`);
         break; 
+    }
+    setOpenNotication(false)
+    if(router.query.projectId === notificationObj?.configuration?.project )
+    {
+      setTimeout(()=>{
+        router.reload()
+    },300)
     }
   }
   return (

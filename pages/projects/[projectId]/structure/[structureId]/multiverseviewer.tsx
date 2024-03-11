@@ -589,7 +589,6 @@ const Index: React.FC<IProps> = () => {
       router.push({pathname:router.pathname,query:{...router.query,structureId:structure._id as string}})
     }
   }, [structure, project]);
-
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
     let currentStructure = structuresList.find((e) => {
       if (e._id === structure._id) {
@@ -1376,15 +1375,17 @@ const Index: React.FC<IProps> = () => {
         }
       }
       else {
-        delete router.query.iss
+        if(router.query.snap === initData?.currentSnapshotBase._id)
+        {
+          delete router.query.iss
+        }
       }
-
     }
 
   }, [router.query.iss, router.query.snap,multiverseIsReady]);
 
   useEffect(() => {
-    if (router.query.tsk != null) {
+    if (router.query.tsk != null && initData) {
       let sel_tsk: ITasks | undefined = initData?.currentTaskList.find((t) => t._id === router.query.tsk)
       console.log("sel_tsk",sel_tsk);
       
@@ -1395,9 +1396,13 @@ const Index: React.FC<IProps> = () => {
           ref.current?.RouterIssueRef(handleMenuInstance)
         }
       }
-
+      else {
+        if(router.query.snap === initData?.currentSnapshotBase._id)
+        {
+          delete router.query.tsk
+        }
+      }
     }
-
   }, [router.query.tsk, router.query.snap,multiverseIsReady]);
 
 
@@ -1873,7 +1878,7 @@ const Index: React.FC<IProps> = () => {
   const captureCanvas = async () => {
     let typeChangeToolAction: IToolbarAction = { type: "downloadReportData", data: "" };
     toolClicked(typeChangeToolAction)
-    CustomToast('PDF Report download has started.','success')
+    CustomToast('The report generation is started.it will take some time to complete and download...','success')
  };
 
  
