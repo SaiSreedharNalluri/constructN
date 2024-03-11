@@ -162,6 +162,7 @@ const Index: React.FC<IProps> = () => {
   const [showTaskMarkups, setShowTaskMarkups] = useState(true);
   const [isRealityAvailable, setRealityAvailable] = useState(false);
   const [isDesignAvailable, setDesignAvailable] = useState(false);
+  const [showLoader, setShowLoader] = useState();
 
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
@@ -1868,6 +1869,10 @@ const Index: React.FC<IProps> = () => {
         };
       }
     }
+
+    if(event.data.type === "loader"){
+      setShowLoader(event.data.data)
+    }
   }  
 }
   const captureCanvas = async () => {
@@ -2059,7 +2064,7 @@ const download360Image = () =>{
      <Iframe isFullScreen={isFullScreen} />
       </Suspense>
 }
-      {!multiverseIsReady && <CustomLoader />}
+      {!multiverseIsReady || showLoader && <CustomLoader />}
         </div>
 
       </div>
