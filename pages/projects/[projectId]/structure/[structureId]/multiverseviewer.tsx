@@ -1376,7 +1376,7 @@ const Index: React.FC<IProps> = () => {
         }
       }
       else {
-        if(router.query.snap === initData?.currentSnapshotBase._id)
+        if(router.query.snap === initData?.currentSnapshotBase?._id)
         {
           delete router.query.iss
         }
@@ -1398,7 +1398,7 @@ const Index: React.FC<IProps> = () => {
         }
       }
       else {
-        if(router.query.snap === initData?.currentSnapshotBase._id)
+        if(router.query.snap === initData?.currentSnapshotBase?._id)
         {
           delete router.query.tsk
         }
