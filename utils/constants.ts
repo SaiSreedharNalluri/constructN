@@ -26,4 +26,4 @@ export const userNotificationData = [
 //export const viewerPagePath = "/projects/[projectId]/structure/[structureId]/multiverseviewer";
 export const isMultiverseEnabled = true;
 export const isDownloadsEnabled = true;
-export const isProcoreEnabled = false;
+export const isProcoreEnabled = true;
