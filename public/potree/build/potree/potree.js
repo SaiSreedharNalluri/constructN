@@ -89412,8 +89412,8 @@ ENDSEC
 
 		};
 
-		toggleSidebar () {
-			let renderArea = $('#potree_render_area');
+		toggleSidebar (id) {
+			let renderArea = $(`#${id}`);
 			let isVisible = renderArea.css('left') !== '0px';
 
 			if (isVisible) {
@@ -89467,7 +89467,7 @@ ENDSEC
 	
 					let imgMenuToggle = document.createElement('img');
 					imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
-					imgMenuToggle.onclick = this.toggleSidebar;
+					imgMenuToggle.onclick = () => this.toggleSidebar(viewer.renderArea.id);
 					imgMenuToggle.classList.add('potree_menu_toggle');
 					imgMenuToggle.setAttribute("id","menu_toggle_icon");
 
