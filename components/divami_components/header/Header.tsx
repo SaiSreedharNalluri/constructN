@@ -67,8 +67,8 @@ import { isMultiverseEnabled } from "../../../utils/constants";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
-  marginLeft: "15px",
-  marginRight: "15px",
+  marginLeft: "1px",
+  marginRight: "1px",
 });
 
 const Header: React.FC<any> = ({
@@ -549,9 +549,9 @@ const Header: React.FC<any> = ({
           <HeaderProfileImageContainer>
             {avatar ? (
               <TooltipText title="My Profile">
-                <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
+                <div   onClick={onProfilePicClick} className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
                   <ProfileImgIcon
-                    onClick={onProfilePicClick}
+                  
                     src={avatar}
                     alt="Profile Image Icon"
                     width={34}
