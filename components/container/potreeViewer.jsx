@@ -139,9 +139,7 @@ function PotreeViewer(props) {
     return (
       <React.Fragment>
         <div className="relative w-full h-full z-5">
-        <div id="potree_render_area">
-          <div id={viewerId} className="relative w-full h-full z-6"></div>
-        </div>
+        <div id={viewerId} className="relative w-full h-full z-6"></div>
        {isSupportUser ? <div id="potree_sidebar_container"></div>: null}
 
           <div
@@ -159,7 +157,7 @@ function PotreeViewer(props) {
           </div>
           {!isMobile()?
           <>
-              {!isCompareViewer ? <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans']`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
+              {!isCompareViewer ? <div className={`flex-column absolute right-[12px] top-[70px] h-auto rounded w-auto bg-white font-['Open_Sans'] z-10`} style={{ boxShadow:'0px 2px 1px rgba(0, 0, 0, 0.25)' }}>
                   {getButton()}
                 </div>: null}
               {showPointCloud.view && !showHidden && show ? <div className='flex justify-center mt-2'>

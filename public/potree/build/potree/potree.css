@@ -163,7 +163,20 @@
 	margin:			4px;
 }
 
-#potree_render_area{
+#potreeViewer_1{
+	position: 	absolute;
+	/*background: linear-gradient(-90deg, red, yellow);*/
+	top: 		0px;
+	bottom: 	0px;
+	left: 		0px;
+	right: 		0px;
+	overflow: 	hidden;
+	z-index: 	1;
+	-webkit-transition: left .35s;
+	transition: left .35s;
+}
+
+#potreeViewer_2{
 	position: 	absolute;
 	/*background: linear-gradient(-90deg, red, yellow);*/
 	top: 		0px;

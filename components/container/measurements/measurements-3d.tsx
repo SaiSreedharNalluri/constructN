@@ -685,11 +685,11 @@ const _onCategorySelected = (category: IAssetCategory | undefined) => {
 
     <>
     
-    {rightClickNeeded.includes((activeMeasure as {name: string}).name) ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8]'>Right Click to Save or Cancel</div> : null}
+    {rightClickNeeded.includes((activeMeasure as {name: string}).name) ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8] z-10'>Right Click to Save or Cancel</div> : null}
 
-    {measurementType === 'Undo' ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8]'>Please click <SaveIcon /> to save the changes</div> : null}
+    {measurementType === 'Undo' ? <div className='bg-gray-500 text-white absolute top-10 right-40 p-4 text-[14px] opacity-[0.8] z-10'>Please click <SaveIcon /> to save the changes</div> : null}
 
-    <div className={`flex-column absolute right-[60px] bottom-0 rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans']`} >
+    <div className={`flex-column absolute right-[60px] bottom-0 rounded-t-md select-none h-auto rounded w-auto bg-white font-['Open_Sans'] z-10`} >
 
       <div
 
