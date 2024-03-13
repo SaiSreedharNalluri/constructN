@@ -61,6 +61,7 @@ import html2canvas from "html2canvas";
 import DownloadImageReport from "../../../../components/divami_components/download_image_report/downloadImageReport";
 import GenerateReport from "../../../../components/divami_components/download_image_report/generateReport";
 import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import { IReportData } from "../../../../models/IReportDownload";
 interface IProps {}
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
   position: "fixed",
@@ -1701,7 +1702,16 @@ const Index: React.FC<IProps> = () => {
 }
     const downloadPdfReport = async () => {
       CustomToast('The report generation is started.it will take some time to complete and download...','success')
-      const url = URL.createObjectURL(await pdf(<GenerateReport project={project as IProjects} structure ={structure as IStructure} snapshot={snapshot as ISnapshot}imageSrc={imgRef.current} logedInUser={logedInUser as string} miniMapImg={miniMapImg.current}/>).toBlob());
+      let downloadReportData:IReportData = {screenshot: "",
+        miniMapscreenshot: "",
+        type: "",
+        context: "",
+        // structure?: IStructure;
+        // snapshot?: ISnapshot;
+        // project?: IProjects;
+        logedInUser:"",
+      }
+      const url = URL.createObjectURL(await pdf(<GenerateReport downloadReportData={downloadReportData as IReportData}/>).toBlob());
       const a = document.createElement('a');
       a.href = url;
       a.download = `report_${snapshot?.date}.pdf`;
@@ -1887,7 +1897,7 @@ const Index: React.FC<IProps> = () => {
             <div
               ref={rightOverlayRef}
               id="bg-color"
-              className={`fixed drop-shadow toolbarWidth  ${"visible"} `}
+              className={`fixed drop-shadow toolbarWidth  ${"visible"} mt-[20px]`}
             >
               {isDesignAvailable||isRealityAvailable?
               <ToolBarMenuWrapper

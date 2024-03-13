@@ -140,7 +140,7 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
     deleteTheTask,
     taskFilterState,
     getTasks,
-    handleOnTasksSort,
+    // handleOnTasksSort,
     deleteTheAttachment,
     openTaskCreateFn,
     projectUsers,
@@ -148,7 +148,9 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
     taskStatus,
     taskContext,
     initData,
-    toolClicked
+    toolClicked,
+    sortOrder,
+    setSortOrder
   } = props;
   const [taskType, setTaskType] = useState<[string]>();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -156,11 +158,10 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
   const [openTaskDetail, setOpenTaskDetail] = useState(false);
   const [searchingOn, setSearchingOn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [taskList, setTaskList] = useState<any>([]);
+  const [taskList, setTaskList] = useState<ITasks[]>([]);
   const [filteredTaskList, setFilteredTaskList] = useState(
     taskList.slice(0, 10)
   );
-  const [sortOrder, setSortOrder] = useState("asc");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [remainingTasks, setRemainingtasks] = useState(taskList?.length);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -200,6 +201,75 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
       method: "Asc DueDate",
     },
   ];
+  const handleOnTasksSort = (sortMethod:string,tasksList:ITasks[]) => {
+    setSortOrder(sortMethod)
+    let sortedCurrentTaskList: ITasks[] = []; 
+  
+    switch (sortMethod) {
+      case "Last Updated":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
+          });
+        }
+        break;
+      case "First Updated":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(a.updatedAt).valueOf() - new Date(b.updatedAt).valueOf();
+          });
+        }
+        break;
+      case "Asc DueDate":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
+          });
+        }
+        break;
+      case "Dsc DueDate":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
+          });
+        }
+        break;
+      case "Asc Priority":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
+          });
+        }
+        break;
+      case "Dsc Priority":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
+          });
+        }
+        break;
+      case "status_asc":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
+          });
+        }
+        break;
+      case "status_desc":
+        if (initData) {
+          sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
+            return b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase());
+          });
+        }
+        break;
+      default:
+        break;
+    }
+  
+    return sortedCurrentTaskList;
+  };
+  
+
   const [errorShow, setErrorShow] = useState<any>(tasksList);
   useImperativeHandle(ref, () => {
     return{
@@ -208,7 +278,7 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
       }
     }},[])
   useEffect(() => {
-    setTaskList(tasksList);
+    setTaskList(handleOnTasksSort(sortOrder,tasksList));
     setDownloadList(tasksList);
   }, [tasksList]);
 
@@ -235,8 +305,7 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
   };
 
   const handleSortMenuClick = (sortMethod: string) =>{
-  let handleOnTaskSort: IToolbarAction = { type: "sortTask", data:sortMethod };
-  toolClicked(handleOnTaskSort)
+    setTaskList(handleOnTasksSort(sortMethod,taskList))
   }
   const handleViewTaskList = () => {
     setOpenDrawer(true);
@@ -290,7 +359,7 @@ const CustomTaskListDrawer = (props: any,ref:Ref<taskToolHandle>) => {
     });
     setOpenTaskDetail(true);
     taskMenuInstance.type = "selectTask";
-    taskMenuInstance.data = task;
+    taskMenuInstance.data = task.context;
     taskMenuClicked(taskMenuInstance);
   };
 

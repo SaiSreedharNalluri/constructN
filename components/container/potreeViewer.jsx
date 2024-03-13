@@ -23,7 +23,9 @@ function PotreeViewer(props) {
     const [showPointCloud, setShowPointCloud] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
     const [showHidden, setShowHidden] = useState(false);
-    const isSupportUser = useRef(props.isSupportUser ? props.isSupportUser : false);
+    const useObj = getCookie("user");
+    const user = JSON.parse(useObj|| "{}");
+    const isSupportUser = user?.isSupportUser;
     const viewerId = `potreeViewer_${viewerCount}`;
     const containerId = `fpContainer_${viewerCount}`;
     const canvasId = `floormap_${viewerCount}`
@@ -53,6 +55,17 @@ function PotreeViewer(props) {
     useEffect(() => {
         initViewer();
      },[viewerCount]);
+
+     useEffect(()=>{
+      const ele = document.getElementById('potree_quick_buttons')
+      if(!isSupportUser){
+        ele.style.width ="0px";
+        ele.style.height ="0px";
+      }else{
+        ele.style.width ="";
+        ele.style.height ="";
+      }
+     },[isSupportUser])
 
      useEffect(()=>{
       let clearTimer;
@@ -126,7 +139,10 @@ function PotreeViewer(props) {
     return (
       <React.Fragment>
         <div className="relative w-full h-full z-5">
+        <div id="potree_render_area">
           <div id={viewerId} className="relative w-full h-full z-6"></div>
+        </div>
+       {isSupportUser ? <div id="potree_sidebar_container"></div>: null}
 
           <div
             id={containerId}

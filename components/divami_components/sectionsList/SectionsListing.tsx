@@ -47,7 +47,7 @@ import info from "../../../public/divami_icons/infoIcon.svg"
 
 import projectHierIcon from "../../../public/divami_icons/projectHierIcon.svg";
 
-import LaserIcon from "../../../public/icons/LaserIcon.svg";
+import LaserIcon from "../../../public/icons/LaserIconBlack.svg";
 
 
 import Image from "next/image";
@@ -886,7 +886,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
           {searchingOn ? (
             <SearchAreaContainer>
               <CustomSearchField
-                placeholder="Search"
+                placeholder="Search for Levels"
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {

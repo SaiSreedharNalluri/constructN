@@ -12,7 +12,7 @@ let actions = {
   alias: (id: string) => {
     mixpanel.alias(id);
   },
-  track: (trackDetails:{name: any,project_id:any,company_id:string,screen_name:string,event_category:string,event_action:string ,user_id:string,error_message?:string,layout?:string,notifications_count?:number,sorting_type?:any,parent?:any}) => {
+  track: (trackDetails:{name: any,project_id:any,company_id:string,screen_name:string,event_category:string,event_action:string ,user_id:string,error_message?:string,layout?:string,notifications_count?:number,sorting_type?:any,parent?:any,projects_count?:number,users_count?:number}) => {
     mixpanel.track(trackDetails.name, { 
     "platform": "web",
     "app": "rahman",
@@ -28,7 +28,9 @@ let actions = {
     "notifications_count":trackDetails.notifications_count,
     "sorting_type":trackDetails.sorting_type,
     "user_id" : trackDetails.user_id,
-    "parent":trackDetails.parent
+    "parent":trackDetails.parent,
+    "projects_count":trackDetails.projects_count,
+    "users_count":trackDetails.users_count
   });
   },
   people: {

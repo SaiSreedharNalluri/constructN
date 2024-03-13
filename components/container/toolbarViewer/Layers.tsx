@@ -93,13 +93,8 @@ const Layers = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-   
     if(anchorEl === null ) {
-      console.log("eventClick",event);
       setAnchorEl(event.currentTarget);
-    }
-    else {
-      setAnchorEl(null);
     }
   };
   const handleClose = (e:any) => {
@@ -162,7 +157,6 @@ const Layers = ({
       </>
     );
   };
-
   return (
     <div>
     <ClickAwayListener

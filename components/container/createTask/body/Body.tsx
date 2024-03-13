@@ -393,6 +393,7 @@ const Body = ({
           deleteTheAttachment={deleteTheAttachment}
           setFormData={setFormData}
           formConfig={formConfig}
+          setFormConfig={setFormConfig}
         />
         <div className="my-[10px]">*Mandatory fields</div>
       </FormElementContainer>

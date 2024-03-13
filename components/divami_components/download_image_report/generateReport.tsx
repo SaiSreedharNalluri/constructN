@@ -1,11 +1,8 @@
 import React from 'react';
 import { Document, Page, Text, StyleSheet, Image, View, Link } from '@react-pdf/renderer';
-import { Address, IProjects } from '../../../models/IProjects';
-import { IStructure } from '../../../models/IStructure';
-import { ISnapshot } from '../../../models/ISnapshot';
+import { Address } from '../../../models/IProjects';
 import moment from 'moment';
 import { IReportData } from '../../../models/IReportDownload';
-import { useAppContext } from '../../../state/appState/context';
 
 const styles = StyleSheet.create({
   container: {
@@ -109,7 +106,6 @@ interface IProps {
 }
 
 const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
-  const { state: appState, appContextAction } = useAppContext();
   const formatAddress = (address: Address) => {
     const sanitizeValue = (value: string | undefined) => {
         return value !== undefined ? value : '';

@@ -40,6 +40,7 @@ import CustomButton from "../custom-button/CustomButton";
 import TaskFilterFormWrapper from "../task-filter-common/TaskFilterWrapper";
 import moment from "moment";
 import { Mixpanel } from "../../analytics/mixpanel";
+import { getCookie } from "cookies-next";
 
 const CloseIcon = styled(Image)({
   cursor: "pointer",
@@ -65,6 +66,9 @@ const UsersFilter: React.FC<any> = ({
 }) => {
   const [startDate, setStartData] = useState(DATE_PICKER_DATA);
   const [dueDate, setDueData] = useState(DATE_PICKER_DATA);
+  const userObj: any = getCookie('user');
+  
+	const userIds :any= JSON.parse(userObj || "{}");
 
   const Filters = [
     {
@@ -343,7 +347,6 @@ const UsersFilter: React.FC<any> = ({
             </HeaderLeftSection>
             <HeaderRightSection
               onClick={() => {
-    Mixpanel.track( {name:"reset_clicked",project_id:selectedProjectId,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"reset_clicked",user_id:userId._id})                         
                 onReset();
               }}
             >
@@ -352,6 +355,7 @@ const UsersFilter: React.FC<any> = ({
               </HeaderRightSectionResetIcon>
               <HeaderRightSectionResetText
                 onClick={() => {
+                  Mixpanel.track( {name:"reset_clicked",project_id:selectedProjectId,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"reset_clicked",user_id:userIds._id})                         
                   onReset();
                 }}
               >
@@ -360,7 +364,7 @@ const UsersFilter: React.FC<any> = ({
               <HeaderRightSectionCloseIcon>
               <CloseIcon
                 onClick={() => {
-    Mixpanel.track( {name:"cross_button_clicked",project_id:selectedProjectId,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"cross_button_clicked",user_id:userId._id})                         
+    Mixpanel.track( {name:"cross_button_clicked",project_id:selectedProjectId,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"cross_button_clicked",user_id:userIds._id})                         
                   handleClose();
                 }}
                 data-testid="filter-close"

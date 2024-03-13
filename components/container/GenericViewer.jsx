@@ -716,7 +716,7 @@ function GenericViewer(props) {
           }
           break;
         case 'sync':
-          // console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId))
+          // console.log("Inside sync event: ", currentIsCompare.current, isRealityViewer(viewerId));
           if (currentIsCompare.current == true) {
             if (isRealityViewer(viewerId)) {
               syncPotreeEvent.current = true;
@@ -848,7 +848,7 @@ function GenericViewer(props) {
     if (potreeCompareUtils.current !== undefined) {
       potreeCompareUtils.current.loadMeasurements(points);
     }
-
+    
     if (potreeUtils.current !== undefined) {
       potreeUtils.current.loadMeasurements(points);
     }

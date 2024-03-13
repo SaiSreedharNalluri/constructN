@@ -309,7 +309,7 @@ const Index: React.FC<IProps> = () => {
         uploaderAction.setCaptureJobs(captureJobs)
         uploaderAction.setSelectedJob(job)
         uploaderAction.setCurrentUploadFiles(getUploadRetryFiles(response.result, job))
-        appAction.addCaptureUpload(job)
+        // appAction.addCaptureUpload(job)
         CustomToast(`Started retry files uploading ${rawImagesIds?.length} file(s)`,'success')
       }
     }).catch((error)=>{
@@ -396,7 +396,7 @@ const Index: React.FC<IProps> = () => {
       if(axiosError && axiosError.response?.status === 422) {
         // let job = axiosError.response.data.result
         job.status = JobStatus.uploadFailed
-        appAction.removeCaptureUpload(job)
+        // appAction.removeCaptureUpload(job)
         uploaderAction.updateJobStatus(job)
         if (jobProject) {
           CustomToast(`Upload completed with ERRORS for the ${getPathToRoot(getStructureIdFromModelOrString(job.structure),jobProject.hierarchy[0])} on ${moment(job.date).format("MMM DD YYYY")}`,'success', false) 
@@ -426,6 +426,7 @@ const Index: React.FC<IProps> = () => {
         uploaderAction.setIsLoading(false);
         if (response.data.success === true) {
           let updatedJob = response.data.result
+          appAction.removeCaptureUpload(updatedJob)
           let captureJobs = uploaderState.pendingProcessJobs.concat(
             uploaderState.pendingUploadJobs
           );

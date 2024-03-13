@@ -11,6 +11,8 @@ import CompareView from "./CompareView";
 import { IGenData } from "../../../models/IGenData";
 import { ILayer } from "../../../models/IReality";
 import { RenderTree } from "../selectLayer/Type";
+import DownloadImageReport from "../../divami_components/download_image_report/downloadImageReport";
+import { isDownloadsEnabled } from "../../../utils/constants";
 
 
 interface toolProps {
@@ -18,6 +20,8 @@ interface toolProps {
   initData: IGenData | undefined;
   toolClicked: (toolAction: IToolbarAction) => void;
   toolUpdate: IToolbarAction | undefined;
+  download360Image:() => void,
+  downloadPdfReport:()=> void
 }
 
 export type toolBarHandle = {
@@ -51,7 +55,7 @@ export type designToolHandle = {
 
 
 
-function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, ref: Ref<toolBarHandle>) {
+function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate,download360Image,downloadPdfReport }: toolProps, ref: Ref<toolBarHandle>) {
   const issueRef = React.useRef<IssueToolHandle>(null);
   const taskRef = React.useRef<taskToolHandle>(null);
   const designRef = React.useRef<any>(null);
@@ -341,10 +345,12 @@ function ToolBarMenuWrapper({ initData, toolClicked, toolUpdate }: toolProps, re
 
           /> : <></>
         }
+        {
+          initData.currentViewType === "pointCloud" && isDownloadsEnabled &&<DownloadImageReport download360Image={download360Image} downloadPdfReport={downloadPdfReport}/>
 
+        }
 
-
-        {/* <Hotspot /> */}
+       {/* <Hotspot /> */}
       </ToolbarContainer>
     </SectionToolBar>
 

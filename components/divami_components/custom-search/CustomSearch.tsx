@@ -72,9 +72,10 @@ const CustomSearch = (props: any) => {
     cursor: pointer;
   `;
 
-  const { data, handleSearchResult, setFormConfig } = props;
+  const { data, handleSearchResult, setFormConfig,isUpdate } = props;
   const { isMultiSelect = false } = props.data;
   const [val, setVal] = React.useState<any>([]);
+  
 
   React.useEffect(() => {
     if (isMultiSelect) {
@@ -84,6 +85,8 @@ const CustomSearch = (props: any) => {
             return {
               ...each,
               label: each.fullName || each.user?.fullName,
+              value: each._id || each.user?._id
+
             };
           })
         );
@@ -216,17 +219,23 @@ const CustomSearch = (props: any) => {
                   }
                   onDelete={(id: string) => {
                     const newSelectedUser = val.filter(
-                      (selected: any) => selected?.label !== v?.label
+                      (selected: any) => selected?.value !== v?.value
                     );
                     setVal(newSelectedUser);
-                    setFormConfig((prev: any) =>
-                      prev.map((item: any) => {
-                        if (item.id === data.id) {
-                          return { ...item, selectedName: newSelectedUser };
-                        }
-                        return item;
-                      })
-                    );
+                  
+                    setFormConfig((prev: any) => {
+                      if (Array.isArray(prev)) {
+                        return prev.map((item: any) => {
+                          if (item.id === data.id) {
+                            return { ...item, selectedName: newSelectedUser };
+                          }
+                          return item;
+                        });
+                      } else if (typeof prev === 'object' && prev.id === data.id) {
+                        return { ...prev, selectedUser: newSelectedUser };
+                      }
+                      return prev;
+                    });
                   }}
                 />
               ) : null

@@ -240,7 +240,7 @@ const CustomCalender = (props: any) => {
             hideTextField
               ? (params) => (
                 <div ref={customInputRef}>
-                  <TextField style={{ opacity: 0, width: 0, height: 0 }} {...params} /> 
+                  <TextField style={{ opacity: 0, width: 0, height: 0, zIndex:-1 }} {...params} /> 
                   <IconButton onClick={() => {setIsOpen(!isOpen);}}><CalenderICon/></IconButton>
                   </div>
               )

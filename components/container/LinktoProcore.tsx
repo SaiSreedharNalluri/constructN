@@ -15,6 +15,8 @@ import { CustomToast } from "../divami_components/custom-toaster/CustomToast";
 import { updateProjectInfo } from "../../services/project";
 import { ProjectData } from "../../state/appState/state";
 import { IProjects } from "../../models/IProjects";
+import { LinkToProcore } from "../../services/procore";
+import CustomLoader from "../divami_components/custom_loader/CustomLoader";
 
 const getProjects = ({
 	setProjectsList,
@@ -121,6 +123,8 @@ const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Pr
     
     const [providerType, setProviderType] = useState('');
 
+	const [loading, setLoading] = useState(false);
+
 	const router = useRouter();
 
 	const projectDetail= projectsList?.find((proj: { id: string; name: string })=>(proj.id===project));
@@ -141,6 +145,10 @@ const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Pr
         },[company, providerType])
 
 	return (
+		<>
+		{loading?(<div>
+			<CustomLoader></CustomLoader>
+		  </div>):(<div>
 		<div className="absolute top-[0px] shadow-md right-0 z-10 bg-[#F3F3F3] border-b mx-0.5 border-[#F3F3F3] pb-4">
 			<div className="flex px-4 py-2 text-lg w-[25vw] justify-between border-b-[0.5px] border-[#666]">
 				Link Project to Procore{" "}
@@ -245,19 +253,22 @@ const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Pr
 								<Button
 									className="bg-[#F1742E] cursor-pointer normal-case hover:bg-[#F1742E] text-[#fff] font-sans"
 									onClick={async () => {
-										const resp = await updateProjectInfo(
-											{
-												metaDetails: {
-													procore: {
-														projectId: project,
-														companyId: company,
-														name: projectDetail?.name
-													},
-												},
-											},
-											router.query.projectId as string
-										);
-										CustomToast("Project Linked Successfull!","success")
+										setLoading(true)
+										const procore ={
+											projectId: project,
+											companyId: company,
+											name: projectDetail?.name
+										};
+										const resp = await LinkToProcore(router.query.projectId as string,procore)
+										.then((response)=>{
+											
+											CustomToast("Project Linked Successfull!","success")
+											setLoading(false)
+										}).catch((error)=>{
+											console.log('error',error)
+											setLoading(false)
+										})
+										
 										refetchProject();
 										setShowLink(false);
 									}}
@@ -270,6 +281,8 @@ const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Pr
 				</>
 			) : null}
 		</div>
+		</div>)}
+		</>
 	);
 };
 

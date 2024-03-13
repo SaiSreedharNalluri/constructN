@@ -50,7 +50,7 @@ function createAxiosResponseInterceptor() {
       console.log("Axios Caught Error", error);
       console.log("config error, retry ", originalConfig);
 
-      if (error.response.status===401) {
+      if (error) {
         procoreinstance.interceptors.response.eject(interceptor);
         console.log("401 My Old Refresh token is", getLocalRefreshToken());
         if (isRefreshing) {

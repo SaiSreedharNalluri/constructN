@@ -321,6 +321,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
     getProjectUsers(router.query.projectId as string || projectId)
       .then((response: any) => {              
         if (response.success) {
+      Mixpanel.track( {name: "manage_users_page_loaded",project_id:router.query.projectId?router.query.projectId:"unknown" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"manage_users",event_action:"manage_users_page_loaded",user_id:user?._id,users_count:response.result.length>0?response.result.length:0})
           if(onBoardScreen==="onBoarding"){
           usersCount.value=response.result.length
           }          
@@ -344,10 +345,9 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
       setDataLoaded(false);
       getUsersList();
     }
-  };
+  };  
   useEffect(() => {
     if (router.isReady && router.query.projectId || projectId) {
-      Mixpanel.track( {name: "manage_users_page_loaded",project_id:router.query.projectId?router.query.projectId:"unknown" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"manage_users",event_action:"manage_users_page_loaded",user_id:user?._id})
       getUsersList();
       getUserRoles().then((res: any) => {
         const rolesData = res.result.map((each: any) => {
@@ -435,7 +435,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
           {isSearching ? (
             <SearchAreaContainer marginRight>
               <CustomSearchField
-                placeholder="Search"
+                placeholder="Search for Users"
                 variant="outlined"
                 value={searchTerm}
                 onChange={(e: any) => {
@@ -499,7 +499,7 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
             width={24}
             height={24}
             onClick={() => {
-      Mixpanel.track( {name: "filter_clicked",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"filter_clicked",user_id:user?._id})          
+      Mixpanel.track( {name: "filters_clicked",project_id:router.query.projectId?router.query.projectId:"" ,company_id:"unknown",screen_name:"manage_users_page",event_category:"filters",event_action:"filters_clicked",user_id:user?._id})          
               setOpenFilter(true);
             }}
           />}       
@@ -702,8 +702,8 @@ export const ProjectUsersList = ( {projectId,onBoardScreen,usersCount}: any) => 
               }
         }
         width={"458px"}
-        backdropWidth={true}
-        showButton={true}
+        backdropwidth={true}
+        showbutton={true}
       />:""
       }
        {openDrawer ?

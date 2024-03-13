@@ -162,6 +162,7 @@ const Index: React.FC<IProps> = () => {
   const [showTaskMarkups, setShowTaskMarkups] = useState(true);
   const [isRealityAvailable, setRealityAvailable] = useState(false);
   const [isDesignAvailable, setDesignAvailable] = useState(false);
+  const [showLoader, setShowLoader] = useState();
 
   const [structure, setStructure] = useState<IStructure>();
   const [snapshot, setSnapshot] = useState<ISnapshot>();
@@ -589,7 +590,6 @@ const Index: React.FC<IProps> = () => {
       router.push({pathname:router.pathname,query:{...router.query,structureId:structure._id as string}})
     }
   }, [structure, project]);
-
   const getCurrentStructureFromStructureList = (structure: ChildrenEntity) => {
     let currentStructure = structuresList.find((e) => {
       if (e._id === structure._id) {
@@ -845,9 +845,6 @@ const Index: React.FC<IProps> = () => {
       case 'closeFilterOverlay':
         closeFilterOverlay()
         break;
-      case "sortIssue":
-        handleOnIssueSort(toolInstance.data)
-        break;
       case "deleteIssueAttachment":
         deleteTheAttachment(toolInstance.data,"issue")
         break;
@@ -920,9 +917,6 @@ const Index: React.FC<IProps> = () => {
       case 'setFilteredTaskList':
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break; 
-      case 'sortTask':
-        handleOnTasksSort(toolInstance.data)
-        break;
       case "setViewLayers":
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"' + toolInstance.type + '","data":' + JSON.stringify(toolInstance.data) + '}');
         break;
@@ -973,7 +967,7 @@ const Index: React.FC<IProps> = () => {
       }
         break;
       case 'getViewerScreenshot':
-        CustomToast('The downloading of the image has started.it will take some time to complete...','success')  
+        CustomToast('Image download has started.','success')  
         conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(),  `{"type": "getViewerScreenshot", "data": ""}`);
       break
       case 'downloadReportData':
@@ -1027,206 +1021,6 @@ const Index: React.FC<IProps> = () => {
   //   }
   // };
 
-  const handleOnIssueSort = (sortMethod: any) => {
-    switch (sortMethod) {
-      case "Last Updated":
-        if (initData) {
-          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
-            if (a.dueDate > b.dueDate) {
-              return 1;
-            } else if (b.dueDate > a.dueDate) {
-              return -1;
-            }
-            return 0;
-          });
-        
-          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
-          setInintData(updatedInitData);
-        }
-        
-        break;
-      case "First Updated":
-        if (initData) {
-          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
-            if (a.updatedAt > b.updatedAt) {
-              return -1;
-            } else if (b.updatedAt > a.updatedAt) {
-              return 1;
-            }
-            return 0;
-          });
-          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
-          setInintData(updatedInitData);
-        }
-        
-      case "Asc DueDate":
-        if (initData) {
-          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
-            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-          });
-        
-          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
-          setInintData(updatedInitData);
-        }
-        
-        break;
-      case "Dsc DueDate":
-        if (initData) {
-          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
-            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-          });
-        
-          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
-          setInintData(updatedInitData);
-        }        
-        break;
-      case "Asc Priority":
-        if (initData) {
-          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
-            return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
-          });
-          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
-          setInintData(updatedInitData);
-        }
-        
-        break;
-      case "Dsc Priority":
-        if (initData) {
-          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
-            return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
-          });
-          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
-          setInintData(updatedInitData);
-        }
-        
-        break;
-      case "status_asc":
-        if (initData) {
-          const sortedCurrentIssueList = [...initData.currentIssueList].sort((a: any, b: any) => {
-            return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
-          });
-          const updatedInitData = { ...initData, currentIssueList: sortedCurrentIssueList };
-          setInintData(updatedInitData);
-        }
-        
-
-        break;
-      case "status_desc":
-        if (initData) {
-          const sortedData = [...initData.currentIssueList].sort((a: any, b: any) =>
-            b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase())
-          );
-          const updatedInitData = { ...initData, currentIssueList: sortedData };
-          setInintData(updatedInitData);
-        }
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleOnTasksSort = (sortMethod: any) => {
-
-    switch (sortMethod) {
-      case "Last Updated":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            if (a.updatedAt > b.updatedAt) {
-              return 1;
-            } else if (b.updatedAt > a.updatedAt) {
-              return -1;
-            }
-            return 0;
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }
-        
-        break;
-      case "First Updated":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            if (a.updatedAt > b.updatedAt) {
-              return -1;
-            } else if (b.updatedAt > a.updatedAt) {
-              return 1;
-            }
-            return 0;
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }
-        
-      case "Asc DueDate":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            return new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf();
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }        
-        break;
-      case "Dsc DueDate":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            return new Date(b.dueDate).valueOf() - new Date(a.dueDate).valueOf();
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }
-        
-        break;
-      case "Asc Priority":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            return a.priority.trim().toLowerCase().localeCompare(b.priority.trim().toLowerCase());
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }        
-        break;
-      case "Dsc Priority":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            return b.priority.trim().toLowerCase().localeCompare(a.priority.trim().toLowerCase());
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }        
-        break;
-      case "status_asc":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            return a.status.trim().toLowerCase().localeCompare(b.status.trim().toLowerCase());
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }        
-
-        break;
-      case "status_desc":
-        if (initData) {
-          const sortedCurrentTaskList = [...initData.currentTaskList].sort((a: any, b: any) => {
-            return b.status.trim().toLowerCase().localeCompare(a.status.trim().toLowerCase());
-          });
-        
-          const updatedInitData = { ...initData, currentTaskList: sortedCurrentTaskList };
-          setInintData(updatedInitData);
-        }
-        
-
-        break;
-      default:
-        break;
-    }
-  };
 
   const handleOnIssueFilter = (formData: any) => {
     const result = issueFilterList.filter(
@@ -1582,15 +1376,17 @@ const Index: React.FC<IProps> = () => {
         }
       }
       else {
-        delete router.query.iss
+        if(router.query.snap === initData?.currentSnapshotBase._id)
+        {
+          delete router.query.iss
+        }
       }
-
     }
 
   }, [router.query.iss, router.query.snap,multiverseIsReady]);
 
   useEffect(() => {
-    if (router.query.tsk != null) {
+    if (router.query.tsk != null && initData) {
       let sel_tsk: ITasks | undefined = initData?.currentTaskList.find((t) => t._id === router.query.tsk)
       console.log("sel_tsk",sel_tsk);
       
@@ -1601,9 +1397,13 @@ const Index: React.FC<IProps> = () => {
           ref.current?.RouterIssueRef(handleMenuInstance)
         }
       }
-
+      else {
+        if(router.query.snap === initData?.currentSnapshotBase._id)
+        {
+          delete router.query.tsk
+        }
+      }
     }
-
   }, [router.query.tsk, router.query.snap,multiverseIsReady]);
 
 
@@ -2042,7 +1842,8 @@ const Index: React.FC<IProps> = () => {
       if(event.data.type === "getViewerScreenshot")
       {
           var link = document.createElement("a");
-          link.download = `img_${initData?.currentSnapshotBase?.date}.png`;
+          let d = new Date();
+          link.download = `img_${d.toISOString()}.png`;
           link.href = URL.createObjectURL(event.data.screenshot as Blob);
           link.hidden = true; 
           document.body.appendChild(link);
@@ -2061,28 +1862,28 @@ const Index: React.FC<IProps> = () => {
         downloadReportData.current.project = appState.currentProjectData?.project
         downloadReportData.current.logedInUser = logedInUser  
         downloadPdfReport(downloadReportData.current) 
-        downloadReportData.current = undefined;
+        downloadReportData.current = {
+          screenshot: '',
+          miniMapscreenshot: '',
+          type: '',
+          context: '',
+          structure: {} as IStructure, 
+          snapshot:{} as ISnapshot,
+          project: {} as IProjects, 
+          logedInUser: ''
+        };
       }
+    }
+
+    if(event.data.type === "loader"){
+      setShowLoader(event.data.data)
     }
   }  
 }
   const captureCanvas = async () => {
     let typeChangeToolAction: IToolbarAction = { type: "downloadReportData", data: "" };
     toolClicked(typeChangeToolAction)
-    CustomToast('The report generation is started.it will take some time to complete and download...','success')
-  //   await html2canvas(document.getElementById("potreeViewer_1") || document.body).then(canvas => {
-  //      const dataURL = canvas.toDataURL();
-  //      imgRef.current = dataURL
-  //    }).catch(error => {
-  //      console.error('Error capturing canvas:', error);
-  //  });
-  //   await html2canvas(document.getElementById("minimap-1") || document.body).then(canvas => {
-  //        const dataURL = canvas.toDataURL();
-  //        miniMapImg.current = dataURL
-  //    }).catch(error => {
-  //        console.error('Error capturing canvas:', error);
-  //    });
-    //  downloadPdfReport()
+    CustomToast('PDF Report download has started.','success')
  };
 
  
@@ -2101,7 +1902,8 @@ const download360Image = () =>{
     const url = URL.createObjectURL(await pdf(<GenerateReport downloadReportData={downloadReportData as IReportData}/>).toBlob());
     const a = document.createElement('a');
     a.href = url;
-    a.download = `report_${downloadReportData?.snapshot?.date}.pdf`;
+    let d = new Date();
+    a.download = `report_${d.toISOString()}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -2251,6 +2053,8 @@ const download360Image = () =>{
                   toolClicked={toolClicked}
                   toolUpdate={toolUpdate}
                   ref={ref}
+                  download360Image={download360Image}
+                  downloadPdfReport={captureCanvas}
                 ></ToolBarMenuWrapper>
 
                 
@@ -2258,12 +2062,6 @@ const download360Image = () =>{
             </div></div></div>
 
         <div>
-        {
-        isDownloadsEnabled && currentViewMode === 'Reality' && initData?.currentViewType==='pointCloud' &&
-          <div className="absolute top-[1rem] right-3">
-            <DownloadImageReport download360Image={download360Image} downloadPdfReport={captureCanvas}/>
-          </div>
-          }
         </div>
         <div>
         {initData && 
@@ -2271,7 +2069,7 @@ const download360Image = () =>{
      <Iframe isFullScreen={isFullScreen} />
       </Suspense>
 }
-      {!multiverseIsReady && <CustomLoader />}
+      {!multiverseIsReady || showLoader && <CustomLoader />}
         </div>
 
       </div>

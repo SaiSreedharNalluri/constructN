@@ -111,6 +111,7 @@ function Task({
   const [projectUsers,setProjectUsers] = useState([])
   const [taskStatusList,setTaskStatusList] = useState([])
   const [taskList,setTaskList] = useState(initData?.currentTaskList);
+  const [sortOrder, setSortOrder] = useState("status_asc");
   useEffect(()=>{
     setTaskList(initData.currentTaskList)
   },[initData])
@@ -495,6 +496,8 @@ function Task({
             toolClicked={toolClicked}
             initData={initData}
             ref={taskRef}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
           />
         </Drawer>
       )}

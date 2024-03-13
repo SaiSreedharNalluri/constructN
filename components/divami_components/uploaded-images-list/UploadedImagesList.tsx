@@ -41,13 +41,14 @@ const UploadedImagesList = ({
   deleteTheAttachment,
   formConfig,
   setFormData,
-}: any) => {
+  setFormConfig
+}: any) => {  
   const [attachmentPopup, setAttachmentPopup] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>();
   const handleDeleteAttachment = (eachSelectedFile: any) => {
     if (eachSelectedFile?._id) {
       deleteTheAttachment(eachSelectedFile?._id, "issue");
-      setFormData((prev: any) =>
+      setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (item.id === "file-upload") {
             return {
@@ -61,7 +62,7 @@ const UploadedImagesList = ({
         })
       );
     } else {
-      setFormData((prev: any) =>
+      setFormConfig((prev: any) =>
         prev.map((item: any) => {
           if (item.id === "file-upload") {
             return {
@@ -77,8 +78,8 @@ const UploadedImagesList = ({
     }
   };
   return (<React.Fragment>
-{formData && formData.length
-    ? formData
+{formConfig && formConfig.length
+    ? formConfig
         .filter((item: any) => item.id === "file-upload")[0]
         ?.selectedFile?.map((eachSelectedFile: any, index: number) => {
           return (

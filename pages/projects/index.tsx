@@ -351,7 +351,11 @@ const Index: React.FC<any> = () => {
       getProjectsList()
         .then(async (response) => {
           if (response?.data?.success === true) {
-    Mixpanel.track( {name: "projects_list_page_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"projects_list_page_loaded",user_id:userId._id})           
+            console.log(response,"dataaaa");
+            
+    // Mixpanel.track( {name: "projects_list_page_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"projects_list_page_loaded",user_id:userId._id,projects_count:projects.length,layout:"grid"})           
+    Mixpanel.track( {name: "projects_list_page_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"projects_list_page_loaded",user_id:userId._id,projects_count:response?.data?.result?.length,layout:"grid"})           
+
             if (response?.data?.result.length == 0) {
               setShowWelcomeMessage(true);
             }
@@ -590,13 +594,13 @@ const Index: React.FC<any> = () => {
               <HeaderLabel>Project(s) </HeaderLabel>
               <HeaderActions>
               <Button onClick={()=>{
-    Mixpanel.track( {name: "create_new_project_clicked",project_id:"unknown",company_id:"unknown",screen_name:"onboarding_page",event_category:"create_new_project_clicked",event_action:"create_new_project_clicked",user_id:userId._id})
+    Mixpanel.track( {name: "create_new_project_clicked",project_id:"unknown",company_id:"unknown",screen_name:"onboarding_page",event_category:"create_new_project",event_action:"create_new_project_clicked",user_id:userId._id})
                 router.push("project-onboarding")
                 }} style={{backgroundColor:"#FF853E",marginRight:"22px",color:"white"}}>+ Create New Project</Button>
                 {isSearching ? (
                   <SearchAreaContainer marginRight>
                     <CustomSearchField
-                      placeholder="Search"
+                      placeholder="Search for Projects"
                       variant="outlined"
                       value={searchTerm}
                       autoFocus={true}
@@ -624,7 +628,7 @@ const Index: React.FC<any> = () => {
                             <CloseIcon
                               onClick={() => {
                                 handleSearchWindow();
-    Mixpanel.track( {name: "search_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"search_closed",event_action:"search_clicked",user_id:userId._id})
+    Mixpanel.track( {name: "search_closed",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"search_flow",event_action:"search_closed",user_id:userId._id})
                               }}
                               src={CrossIcon}
                               alt={"close icon"}
@@ -685,7 +689,7 @@ const Index: React.FC<any> = () => {
                     <GridViewButton
                       onClick={() => {
                         setIsGridView(true);
-            Mixpanel.track( {name: "grid_view_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"grid_view_clicked",user_id:userId._id,layout:"grid"})
+            Mixpanel.track( {name: "grid_view_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"grid_view_clicked",user_id:userId._id,layout:"grid",projects_count:projects.length})
                       }}
                       toggleStatus={isGridView}
                       data-testid="design-button"
@@ -701,7 +705,7 @@ const Index: React.FC<any> = () => {
                     <GridViewButtonRight
                       onClick={() => {
                         setIsGridView(false);
-            Mixpanel.track( {name: "list_view_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"list_view_clicked",user_id:userId._id,layout:"list"})
+            Mixpanel.track( {name: "list_view_clicked",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"projects_list",event_action:"list_view_clicked",user_id:userId._id,layout:"list",projects_count:projects.length})
                       }}
                       toggleStatus={!isGridView}
                       data-testid="design-button"
@@ -771,7 +775,7 @@ const Index: React.FC<any> = () => {
                 open={showPopUp}
                 width={"585px"}
                 // height={"360px"}
-                paddingStyle={true}
+                paddingstyle={true}
                 setShowPopUp={setshowPopUp}
                 modalTitle={"Project Configuration"}
                 modalContent={
@@ -790,7 +794,7 @@ const Index: React.FC<any> = () => {
                 SecondaryButtonlabel={"Cancel"}
                 callBackvalue={handleSubmit}
                 projectId={projectId}
-                showButton={showButton}
+                showbutton={showButton}
                 setShowbutton={setShowbutton}
                 setSelectedOption={setSelectedOption}
               />
@@ -830,8 +834,8 @@ const Index: React.FC<any> = () => {
                 }
           }
           width={"458px"}
-          backdropWidth={true}
-          showButton={showAddUser ? false : true}
+          backdropwidth={true}
+          showbutton={showAddUser ? false : true}
         />
       ) : (
         <></>

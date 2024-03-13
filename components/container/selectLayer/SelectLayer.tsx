@@ -1,11 +1,8 @@
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import { InputAdornment } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import closeIcon from "../../../public/divami_icons/closeIcon.svg";
 import { CustomSearchField } from "../selectType/StyledComponents";
-import { CheckBox, CheckBoxChecked } from "./IconStore";
 import {
   CloseIcon,
   HeaderLabel,
@@ -19,7 +16,6 @@ import {
   TreeLabelContainer,
   TreeViewContainer,
 } from "./StyledComponents";
-import type { RenderTree, SelectLayerProps } from "./Type";
 import {
   getSelectedLayers,
   getTreeViewDataForLayers,
@@ -29,20 +25,16 @@ import Image from "next/image";
 import CheckedIcon from "../../../public/divami_icons/checked.svg";
 import UnCheckedIcon from "../../../public/divami_icons/unchecked.svg";
 import SearchBoxIcon from "../../../public/divami_icons/search.svg";
-import { MqttConnector } from "../../../utils/MqttConnector";
 import { ILayer } from "../../../models/IReality";
 
 const SelectLayer = ({
   title,
-  openselectlayer,
-  onCloseHandler,
   optionsList,
   onSelect,
   initData,
   layersUpdated,
   anchorEl,
   open,
-  handleClick,
   handleClose,
 }: any) => {
   const [treeViewData, setTreeViewData] = useState(
@@ -53,14 +45,6 @@ const SelectLayer = ({
   const [filtedViewData, setFilteredViewData] = useState(initData.currentLayersList);
   const [selectedLayers, setSelectedLayers] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [conn, setConn] = useState<MqttConnector>(MqttConnector.getConnection());
-  // const LayerUpdate=(currentLayersList:any)=>{
-    
-  //     console.log("node_name",JSON.stringify(initData.currentLayersList))
-  //     const timeoutId = setTimeout(() => {
-  //     conn?.publishMessage("abc", `{"type": "setViewLayers", "data": ${JSON.stringify(initData.currentLayersList)}}`);
-  //     },4000)
-  // }
   const onselecting =(e:any, name:any, node:any)=>{
     const setValue=filtedViewData.find((item:any)=>{
       if(item.name===name){
@@ -88,88 +72,9 @@ const SelectLayer = ({
         size="small"
         onClick={(e)=>e.stopPropagation()}
         onChange={(e) => {
-          // const arr = handleSelection(treeViewData, node.id);
-          // setTreeViewData([...arr]);
-          // let obj: any = {};
-          // for (const key in optionsList) { 
-          //   obj = optionsList;
-          //   if (optionsList[key]?.name == node.name) {
-          //     obj[key] = {
-          //       ...obj[key],
-          //       isSelected: !obj[key].isSelected,
-          //       children: obj[key].children?.length
-          //         ? obj[key]?.children.map((each: any) => {
-          //             return {
-          //               ...each,
-          //               isSelected: !obj[key].isSelected,
-          //             };
-          //           })
-          //         : [],
-          //     };
-          //   } else if (optionsList[key].children?.length) {
-          //     obj[key] = {
-          //       ...obj[key],
-          //       children: obj[key]?.children.map((each: any) => {
-          //         if (each.name === node.name) {
-          //           return {
-          //             ...each,
-          //             isSelected: !each.isSelected,
-          //           };
-          //         } else {
-          //           return each;
-          //         }
-          //       }),
-          //     };
-          //   }
-          // }
-          // console.log(obj, "dfsfdsactiveRealityMap");
-          // setActiveRealityMap({});
-          // setTreeViewData((prev: any) => {
-          //   const newTreeViewData = prev.map((item: any) => {
-          //     console.log(node, "kjlkjk", item);
-
-          //     if (item.id == node.id) {
-          //       return {
-          //         ...item,
-          //         isSelected: !item.isSelected,
-          //         children: item.children?.length
-          //           ? item.children.map((each: any) => {
-          //               return {
-          //                 ...each,
-          //                 isSelected: !item.isSelected,
-          //               };
-          //             })
-          //           : [],
-          //       };
-          //     } else if (item.children?.length) {
-          //       return {
-          //         ...item,
-          //         children: item.children.map((each: any) => {
-          //           console.log(each.id == node.id, "boolval");
-          //           if (each.id == node.id) {
-          //             return {
-          //               ...each,
-          //               isSelected: !each.isSelected,
-          //             };
-          //           } else {
-          //             return each;
-          //           }
-          //         }),
-          //       };
-          //     } else {
-          //       return item;
-          //     }
-          //   });
-          //   console.log(newTreeViewData, "newtrrreeview");
-          //   return newTreeViewData;
-          // });
         onSelect(e, node.name, node);
         onselecting(e,node.name,node);
-         
-          // LayerUpdate(initData.currentLayersList)
-         
         setChecked(!checked)
-         
         }}
         checked={
           node.isSelected
@@ -177,12 +82,10 @@ const SelectLayer = ({
         
         
       />
-      <TreeLabelContainer onClick={(e)=>e.stopPropagation()}>{node.name}</TreeLabelContainer>
+      <TreeLabelContainer>{node.name}</TreeLabelContainer>
     </TreeItemLabelContainer>
   );
   const renderTree = (nodes: ILayer,index:number) => {
-    //console.log("nodes",nodes);
-    
     return (
       <StyledTreeItem
         key={index+nodes.name}
@@ -223,8 +126,6 @@ const SelectLayer = ({
     open={open}
     onClose={handleClose}
   >
-    {/* <MenuItem onClick={handleClick}> */}
-    {/* <SelectLayerContainer openselectlayer={anchorEl}> */}
       <HeaderLabelContainer>
         <HeaderLabel>{title}</HeaderLabel>
         <CloseIcon
@@ -234,7 +135,6 @@ const SelectLayer = ({
         />
       </HeaderLabelContainer>
       <SearchContainer>
-        {/* <CustomSearch data={treeViewData} handleSearchResult={handleSearchResult} /> */}
         <CustomSearchField
           placeholder="Search"
           variant="outlined"
@@ -251,20 +151,14 @@ const SelectLayer = ({
           }}
         />
       </SearchContainer>
-     
       <TreeViewContainer>
         <StyledTreeView
           aria-label="rich object"
-          //defaultCollapseIcon={<RemoveIcon />}
-          //defaultExpandIcon={<AddIcon />}
         >
-
-          {filtedViewData?.map((eachNode:ILayer,index:number) => {
+        {filtedViewData?.map((eachNode:ILayer,index:number) => {
             return renderTree(eachNode,index)})}
         </StyledTreeView>
       </TreeViewContainer>
-    {/* </SelectLayerContainer> */}
-    {/* </MenuItem> */}
       </StyledMenu>
   );
 };
