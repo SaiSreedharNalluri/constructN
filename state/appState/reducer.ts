@@ -103,6 +103,11 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
             } else {
                 return state
             }
+        case AppActionType.removeAllCaptureUploads:
+            return {
+                ...state,
+                inProgressProjectUploadMap: {}
+            }
         case AppActionType.setIsLoading:
             return {
                 ...state,

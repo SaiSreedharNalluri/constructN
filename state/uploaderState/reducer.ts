@@ -263,6 +263,11 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 }
             }
             return state
+        case UploaderActionType.removeAllWorkers:
+            return {
+                ...state,
+                inProgressWorkers:{}
+            }
         // case UploaderActionType.setErrorCount:
         //     return{
         //         ...state,

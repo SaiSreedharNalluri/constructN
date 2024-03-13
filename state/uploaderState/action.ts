@@ -37,6 +37,7 @@ export enum UploaderActionType {
     updateWorkerStatus,
     updateJobStatus,
     removeWorker,
+    removeAllWorkers,
     refreshJobs,
     setErrorCount,
     setResetUploaderState,
@@ -195,6 +196,10 @@ export interface removeWoker {
     payload: {captureId: string}
 }
 
+export interface removeAllWokers {
+  type: UploaderActionType.removeAllWorkers
+}
+
 export interface setErrorCount{
   type:UploaderActionType.setErrorCount,
   payload:{errorCount:number}
@@ -318,6 +323,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         removeWorker:(captureId: string) => {
             dispatch({type:UploaderActionType.removeWorker, payload:{ captureId: captureId}})
         },
+        removeAllWorkers:() => {
+          dispatch({type:UploaderActionType.removeAllWorkers})
+      },
         // setErrorCount:(errorCount:number)=>{
         //   dispatch({type:UploaderActionType.setErrorCount,payload:{errorCount:errorCount}})
         // },
@@ -372,6 +380,7 @@ export type UploaderActions =
   | updateWorkerStatus
   | updateJobStatus
   | removeWoker
+  | removeAllWokers
   | refreshJobs
   | setErrorCount
   | setResetUploaderState

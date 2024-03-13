@@ -102,9 +102,10 @@ const Header: React.FC<any> = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [projectName, setProjectName] = useState('')
   const [notificationCount, setNotificationCount] = useState(0);
-  const { state: uploaderState } = useUploaderContext();
+  const { state: uploaderState, uploaderContextAction } = useUploaderContext();
   const { state: appState, appContextAction } = useAppContext();
   const { appAction } = appContextAction;
+  const { uploaderAction } = uploaderContextAction;
   let [userId, setUserId] = useState<string>("");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -263,6 +264,19 @@ const Header: React.FC<any> = ({
     deleteCookie('isProjectTimeZone');
     localStorage.removeItem('uploaededData')
     localStorage.removeItem(ProjectLocalStorageKey.InProgressUploadsKey)
+    //navigator.serviceWorker.getRegistrations().then((registrations)=>{registrations.map((r)=>r.unregister())})
+    let allWorkers = WorkerManager.getWorker();
+   
+   if(Object.keys(allWorkers).length>0)
+    {
+      for(let key of Object.keys(allWorkers)) {
+        allWorkers[key].terminate();
+        WorkerManager.removeWorker(key);
+      }
+      
+    }
+    uploaderAction.removeAllWorkers();
+    appAction.removeAllCaptureUploads();
     // router.push("/login");
     router.push("/login?logOut=successful");
   };
@@ -722,7 +736,7 @@ const Header: React.FC<any> = ({
                 open={showPopUp}
                 setShowPopUp={setshowPopUp}
                 modalTitle={"Sign Out"}
-                modalmessage={`Are you sure you want to 'Sign Out'?`}
+                modalmessage={(Object.keys(appState.inProgressProjectUploadMap).length > 0) ?`You have unsaved changes. 'Sign out' action will result in loss of current data, Are you sure you want to Sign Out?`:`Are you sure you want to 'Sign Out'?`}
                 primaryButtonLabel={"Yes"}
                 SecondaryButtonlabel={"No"}
                 callBackvalue={userLogOut}
