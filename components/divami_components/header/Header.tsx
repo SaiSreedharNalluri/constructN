@@ -67,8 +67,8 @@ import { isMultiverseEnabled } from "../../../utils/constants";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
-  marginLeft: "1px",
-  marginRight: "1px",
+  marginLeft: "15px",
+  marginRight: "15px",
 });
 
 const Header: React.FC<any> = ({
