@@ -135,7 +135,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       case JobStatus.pendingUpload:
         return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
       case JobStatus.uploadFailed:
-    let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
+        let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
         if (getRawImagesStatus(job)) {
           return (
           <div className="flex justify-center w-full">

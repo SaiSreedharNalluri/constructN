@@ -28,6 +28,7 @@ export interface AppState {
     projectDataList: ProjectData[]
     inProgressPendingUploads: IJobs[]
     inProgressProjectUploadMap: InProgressProjectUploadMap
+    inProgressWorkerCount: number
     isLoading: boolean
 }
 
@@ -35,5 +36,6 @@ export const initialAppState: AppState = {
     projectDataList: [],
     inProgressPendingUploads: [],
     inProgressProjectUploadMap: {},
+    inProgressWorkerCount: 0,
     isLoading: false,
 }
