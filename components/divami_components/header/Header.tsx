@@ -61,9 +61,10 @@ import { InProgressProjectUploadMap, ProjectData, ProjectLocalStorageKey } from 
 import { useAppContext } from "../../../state/appState/context";
 import UploaderProjects from "../uploader_details/uploaderProjects";
 import { ProjectCounts } from "../../../models/IUtils";
-import { IJobs } from "../../../models/IJobs";
+import { IJobs, JobStatus } from "../../../models/IJobs";
 import { Mixpanel } from "../../analytics/mixpanel";
 import { isMultiverseEnabled } from "../../../utils/constants";
+import { updateMultipleJobStatus } from "../../../services/jobs";
 export const DividerIcon = styled(Image)({
   cursor: "pointer",
   height: "20px",
@@ -254,6 +255,7 @@ const Header: React.FC<any> = ({
   }
 
   const userLogOut = () => {
+    uploaderCleanUpBeforeLogout();
     customLogger.logActivity("null");
     Mixpanel.track( {name: "signout_successful",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"signout",event_action:"signout_successful",user_id:userId})
     Sentry.setTag("ProjectName", null);
@@ -262,21 +264,6 @@ const Header: React.FC<any> = ({
     deleteCookie("user");
     deleteCookie('projectData');
     deleteCookie('isProjectTimeZone');
-    localStorage.removeItem('uploaededData')
-    localStorage.removeItem(ProjectLocalStorageKey.InProgressUploadsKey)
-    //navigator.serviceWorker.getRegistrations().then((registrations)=>{registrations.map((r)=>r.unregister())})
-    let allWorkers = WorkerManager.getWorker();
-   
-   if(Object.keys(allWorkers).length>0)
-    {
-      for(let key of Object.keys(allWorkers)) {
-        allWorkers[key].terminate();
-        WorkerManager.removeWorker(key);
-      }
-      
-    }
-    uploaderAction.removeAllWorkers();
-    appAction.removeAllCaptureUploads();
     // router.push("/login");
     router.push("/login?logOut=successful");
   };
@@ -456,6 +443,37 @@ const Header: React.FC<any> = ({
     let inProgressProjectUploadMap: InProgressProjectUploadMap = inProgressProjectUploadsString ? JSON.parse(inProgressProjectUploadsString) as InProgressProjectUploadMap : {}
     appAction.setInProgressProjectUpload(inProgressProjectUploadMap)
   };
+
+  const updateInProgressJobsToFailed = async () => {
+    await Promise.all(Object.keys(appState.inProgressProjectUploadMap).map((projectId) => {
+      const jobDetails = appState.inProgressProjectUploadMap[projectId].inProgressUploads.map((job) => ({
+        status: JobStatus.uploadFailed,
+        jobId: job._id,
+      }));
+      return updateMultipleJobStatus(projectId, jobDetails);
+    }))
+  }
+
+  const uploaderCleanUpBeforeLogout = () => {
+    updateInProgressJobsToFailed();
+
+    localStorage.removeItem('uploaededData')
+    localStorage.removeItem(ProjectLocalStorageKey.InProgressUploadsKey)
+    //navigator.serviceWorker.getRegistrations().then((registrations)=>{registrations.map((r)=>r.unregister())})
+    let allWorkers = WorkerManager.getWorker();
+   
+   if(Object.keys(allWorkers).length>0)
+    {
+      for(let key of Object.keys(allWorkers)) {
+        allWorkers[key].terminate();
+        WorkerManager.removeWorker(key);
+      }
+      
+    }
+    uploaderAction.removeAllWorkers();
+    appAction.removeAllCaptureUploads();
+  }
+
   return (
     <>
       <HeaderContainer ref={headerRef} >
@@ -736,7 +754,7 @@ const Header: React.FC<any> = ({
                 open={showPopUp}
                 setShowPopUp={setshowPopUp}
                 modalTitle={"Sign Out"}
-                modalmessage={(Object.keys(appState.inProgressProjectUploadMap).length > 0) ?`You have unsaved changes. 'Sign out' action will result in loss of current data, Are you sure you want to Sign Out?`:`Are you sure you want to 'Sign Out'?`}
+                modalmessage={(appState.inProgressWorkerCount > 0) ?`You have unsaved changes. 'Sign out' action will result in loss of current data, Are you sure you want to Sign Out?`:`Are you sure you want to 'Sign Out'?`}
                 primaryButtonLabel={"Yes"}
                 SecondaryButtonlabel={"No"}
                 callBackvalue={userLogOut}
