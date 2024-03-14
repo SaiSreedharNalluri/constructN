@@ -36,6 +36,7 @@ import  uploadIcon from "../../../public/divami_icons/uploadIcon.svg";
 import projectDetailsHighlighted from "../../../public/divami_icons/projectDetailsHighlighted.svg";
 import { useUploaderContext } from "../../../state/uploaderState/context";
 import { UploaderStep } from "../../../state/uploaderState/state";
+import { is2DEnabled } from "../../../utils/constants";
 
 import {
   HighlightedSytledImage,
@@ -358,6 +359,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
     <SideMenuContainer data-testid="const-custom-sidepanel">
       {config.map((item, index) => (
         <SideMenuOptionContainer key={index}>
+           {(is2DEnabled || item.id !== "progress-2d") && (
           <Link href={`/projects/${router.query.projectId}/${item.id}${queryParams}`}>
           <SideMenuOption
           // onClick={() =>
@@ -386,6 +388,7 @@ const SidePanelMenu: React.FC<IProps> = ({ onChangeData }) => {
             </TooltipText>
           </SideMenuOption>
           </Link>
+      )}
         </SideMenuOptionContainer>
       ))}
       {supportItemsConfig.map((item, index) => (

@@ -27,3 +27,4 @@ export const userNotificationData = [
 export const isMultiverseEnabled = true;
 export const isDownloadsEnabled = true;
 export const isProcoreEnabled = true;
+export const is2DEnabled = true;
