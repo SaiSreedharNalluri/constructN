@@ -49,13 +49,15 @@ const Header = ({ closeEditProject,id }: any) => {
     <HeaderContainer>
       <TitleContiner>
         <span>{getTitle(id)}</span>
-        <div className="rounded-full p-[6px] hover:bg-[#E7E7E7]">
+        
+        <div onClick={closeEditProject} className="rounded-full p-[6px] hover:bg-[#E7E7E7] cursor-pointer">
        {id==="ChangePassword"?"":<CloseIcon
-          onClick={closeEditProject}
+          
          src={closeIconCircle}
           alt={"close icon"}
         />}
         </div>
+        
       </TitleContiner>
     </HeaderContainer>
   );

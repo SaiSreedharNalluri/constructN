@@ -549,9 +549,9 @@ const Header: React.FC<any> = ({
           <HeaderProfileImageContainer>
             {avatar ? (
               <TooltipText title="My Profile">
-                <div className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
+                <div   onClick={onProfilePicClick} className="hover:bg-[#E7E7E7] p-[4px] rounded-full">
                   <ProfileImgIcon
-                    onClick={onProfilePicClick}
+                  
                     src={avatar}
                     alt="Profile Image Icon"
                     width={34}
