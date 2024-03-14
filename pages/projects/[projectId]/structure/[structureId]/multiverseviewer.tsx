@@ -223,7 +223,9 @@ const Index: React.FC<IProps> = () => {
 
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
- 
+
+  const lastVisitedDesign = useRef<string|undefined>();
+  const lastVisitedReality = useRef<string|undefined>();
   const [issueTypesList, setIssueTypesList] = useState<any>(null);
   const [issuePriorityList, setIssuePriorityList] = useState<any>(null);
   const [issueStatusList, setIssueStatusList] = useState<any>(null);
@@ -734,15 +736,19 @@ const Index: React.FC<IProps> = () => {
         router.push(router);
         switch (toolInstance.data) {
           case "Plan Drawings":
+            lastVisitedDesign.current="Plan Drawings";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
             break;
           case "BIM":
+            lastVisitedDesign.current="BIM";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
             break;
           case "pointCloud":
+            lastVisitedReality.current="pointCloud";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
             break;
           case "orthoPhoto":
+            lastVisitedReality.current="orthoPhoto";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "orthoPhoto"}`);
             break;
         }
@@ -774,6 +780,10 @@ const Index: React.FC<IProps> = () => {
       case "setViewMode":
         switch (toolInstance.data) {
           case "Design":
+            if(lastVisitedDesign.current!==undefined){
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data":"'+lastVisitedDesign.current+'"}');
+              break;
+            }
             if(initData?.structure.designs&& initData?.structure.designs.length >= 1){
               if(initData?.structure.designs.find((des:any)=>{
                 if(des.type==="Plan Drawings"){
@@ -795,6 +805,10 @@ const Index: React.FC<IProps> = () => {
 
             break;
           case "Reality":
+            if(lastVisitedReality.current!==undefined){
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data":"'+lastVisitedReality.current+'"}');
+              break;
+            }
             if(initData&& initData.currentViewType==='orthoPhoto')
               conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"orthoPhoto"}');
             else
