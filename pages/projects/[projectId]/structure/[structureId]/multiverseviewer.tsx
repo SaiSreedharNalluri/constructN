@@ -950,6 +950,7 @@ const Index: React.FC<IProps> = () => {
           const updatedList = [...initData.currentIssueList];  
           updatedList[foundIndex] = result;  
           setInintData({ ...initData, currentIssueList: updatedList });
+          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"issueMetaDataUpdate","data":' + JSON.stringify(updatedList) + '}');         
         }
       }
         break;
@@ -963,6 +964,8 @@ const Index: React.FC<IProps> = () => {
           const updatedList = [...initData.currentTaskList];  
           updatedList[foundIndexValue] = result;  
           setInintData({ ...initData, currentTaskList: updatedList });
+          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"taskMetaDataUpdate","data":' + JSON.stringify(updatedList) + '}');  
+          
         }
       }
         break;
