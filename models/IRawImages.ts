@@ -29,7 +29,8 @@ type type = "point";
 export enum RawImageStatus {
   initiated = "Initiated",
   uploaded = "Uploaded",
-  failedTimedOut ='FailedTimedOut'
+  started = "Started",
+  failedTimedOut = "FailedTimedOut"
 }
 
 

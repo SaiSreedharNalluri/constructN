@@ -123,7 +123,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const getRawImagesStatus = (job: IJobs) => {
     let rawImages = uploaderState.rawImagesMap[getCaptureIdFromModelOrString(job.captures[0])]
     let rawImagesStatus = rawImages ? rawImages.reduce<boolean>((prevValue, currentValue): boolean => {
-      return prevValue = prevValue || currentValue.status === RawImageStatus.initiated
+      return prevValue = prevValue || (currentValue.status === RawImageStatus.initiated || currentValue.status === RawImageStatus.started)
     }, false) : false
     return rawImagesStatus
   }

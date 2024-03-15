@@ -123,7 +123,7 @@ export interface setIsNextEnabled{
 
 export interface appendFiles {
   type: UploaderActionType.appendFiles;
-  payload: { files: fileWithExif[] };
+  payload: { files: fileWithExif[], batchOver: boolean };
 }
 
 export interface changeUploadinitiate {
@@ -272,10 +272,10 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setStructure: (structure:IStructure) => {
           dispatch({ type: UploaderActionType.setStructure, payload:{structure: structure}});
         },
-        appendFiles: (files: fileWithExif[]) => {
+        appendFiles: (files: fileWithExif[], batchOver: boolean = false) => {
           dispatch({
               type: UploaderActionType.appendFiles,
-              payload: {files: files}
+              payload: {files: files, batchOver: batchOver}
           })
         },
         setExtractedFileValue: (extractedFileValue:any) => {

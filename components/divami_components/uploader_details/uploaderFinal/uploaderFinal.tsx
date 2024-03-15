@@ -10,6 +10,7 @@ import { useAppContext } from "../../../../state/appState/context";
 import { UploadStatus } from "../../../../models/IUploader";
 import CircularProgress from '@mui/material/CircularProgress';
 import { UploaderPopups } from "../../../../state/uploaderState/state";
+import { RawImageStatus } from "../../../../models/IRawImages";
 interface fileData {
   status: UploadStatus;
   fileName: string;
@@ -40,14 +41,18 @@ const UploaderFinal: React.FC = () => {
 
       switch(rawImageStatus)
       {
-        case 'Uploaded':
-        return UploadStatus.success
-        case 'Initiated':
+        case RawImageStatus.uploaded:
+          return UploadStatus.success
+
+        case RawImageStatus.initiated,
+          RawImageStatus.started:
           return UploadStatus.inProgress
-        case 'FailedTimedOut':
+
+        case RawImageStatus.failedTimedOut:
           return UploadStatus.failed 
+          
         default:
-            return UploadStatus.inProgress; 
+          return UploadStatus.inProgress; 
       }
     }
   useEffect(() => {

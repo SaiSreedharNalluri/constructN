@@ -29,6 +29,7 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                     currentInvalidEXIFFiles: [],
                     currentDuplicateFiles: [],
                 },
+                batchOver: true,
                 filesDropped: false,
                 gcpType: GCPType.LONGLAT,
                 gcpList: getInitialGCPList(false), // default is LONGLAT
@@ -111,11 +112,12 @@ export const uploaderReducer = (state: UploaderState, action: UploaderActions): 
                 isAppendingCapture:action.payload.isAppendingCapture
             }
         case UploaderActionType.appendFiles:
-            let updatedList = getUpdatedFileList(state, action.payload.files);
+            let updatedList = getUpdatedFileList(state, action.payload.files, action.payload.batchOver);
             return {
                 ...state,
                 choosenFiles: updatedList,
                 filesDropped: true,
+                batchOver: action.payload.batchOver,
                 isNextEnabled: updatedList.validFiles.length >= UploadRange.Minimum
             }
         case UploaderActionType.setExtractedFileValue:
@@ -443,7 +445,7 @@ const isNext = (state: UploaderState, step: UploaderStep): boolean => {
     }
 }
 
-const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choosenFileObject => {
+const getUpdatedFileList = (state: UploaderState, files: fileWithExif[], batchOver: boolean): choosenFileObject => {
     let choosenFiles = state.choosenFiles;
     let invalidEXIFFiles: File[] = [];
     let duplicateEXIFFiles: uploadImage[] = [];
@@ -508,8 +510,8 @@ const getUpdatedFileList = (state: UploaderState, files: fileWithExif[],): choos
         validFiles: validEXIFFiles.concat(...choosenFiles.validFiles),
         invalidEXIFFiles: invalidEXIFFiles.concat(...choosenFiles.invalidEXIFFiles),
         duplicateFiles: duplicateEXIFFiles.concat(...choosenFiles.duplicateFiles),
-        currentDuplicateFiles:duplicateEXIFFiles,
-        currentInvalidEXIFFiles:invalidEXIFFiles,
+        currentDuplicateFiles: (batchOver !== state.batchOver && state.batchOver === false) ? duplicateEXIFFiles.concat(...choosenFiles.currentDuplicateFiles) : duplicateEXIFFiles,
+        currentInvalidEXIFFiles: (batchOver !== state.batchOver && state.batchOver === false) ? invalidEXIFFiles.concat(...choosenFiles.currentInvalidEXIFFiles) : invalidEXIFFiles,
     }
 }
 

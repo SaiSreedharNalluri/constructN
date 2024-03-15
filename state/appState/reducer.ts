@@ -33,7 +33,7 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
         case AppActionType.setInProgressProjectUpload:
             let workerCount = 0
             for (const [key, value] of Object.entries(action.payload.inProgressProjectUploadMap)) {
-                workerCount += value.inProgressUploads.filter((job) => {job.status === JobStatus.pendingUpload}).length
+                workerCount += value.inProgressUploads.filter((job) => { return job.status === JobStatus.pendingUpload}).length
             }
             return {
                 ...state,
@@ -98,7 +98,7 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                     return {
                         ...state,
                         inProgressProjectUploadMap: newProjectUploadMap,
-                        inProgressWorkerCount: state.inProgressWorkerCount - 1
+                        inProgressWorkerCount: state.inProgressWorkerCount !== 0 ? state.inProgressWorkerCount - 1 : 0
                     }
                 } else {
                     let {[removeProjectId]: _, ...newInProgressProjectUploadMap} = state.inProgressProjectUploadMap
@@ -116,7 +116,7 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                     return {
                         ...state,
                         inProgressProjectUploadMap: newInProgressProjectUploadMap,
-                        inProgressWorkerCount: state.inProgressWorkerCount - 1
+                        inProgressWorkerCount: state.inProgressWorkerCount !== 0 ? state.inProgressWorkerCount - 1 : 0
                     }
                 }
             } else {
