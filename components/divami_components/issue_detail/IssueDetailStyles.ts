@@ -458,10 +458,10 @@ export const StyledLabel = styled(Typography)`
 
 export const CustomTaskProcoreLinks = styled("div")((props: any) => ({
   width: "438px",
-  height: "calc(100vh - 60px)",
+  height: "calc(100vh - 55px)",
 
-  paddingLeft: "20px",
-  paddingRight: "20px",
+  paddingLeft: "15px",
+  paddingRight: "10px",
   // border: "2px solid blue",
 
   // overflowY: !props.loader ? "scroll" : "hidden",
