@@ -7,6 +7,7 @@ const ProcoreFooter = (props:any) => {
     
     const ButtonsContainer = styled(Box)({
         padding: "5px",
+        paddingTop:"20px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",

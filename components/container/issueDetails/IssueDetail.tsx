@@ -1240,8 +1240,8 @@ const  handleCloseProcore=()=>{
   fetch(screenUrl)
       .then(response => response.blob())
       .then(blob => {
-          // const screenshotFile = new File([blob], `(#${selectedIssue.sequenceNumber})ScreenShot.png`, { type: 'image/png' });
-          // setscreenshot(screenshotFile);
+          const screenshotFile = new File([blob], `(#${selectedIssue.sequenceNumber})ScreenShot.png`, { type: 'image/png' });
+          setscreenshot(screenshotFile);
       })
       .catch(error => {
         setscreenshot(undefined)
