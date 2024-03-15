@@ -17,6 +17,7 @@ import { ProjectData } from "../../state/appState/state";
 import { IProjects } from "../../models/IProjects";
 import { LinkToProcore } from "../../services/procore";
 import CustomLoader from "../divami_components/custom_loader/CustomLoader";
+import { useAppContext } from "../../state/appState/context";
 
 const getProjects = ({
 	setProjectsList,
@@ -45,6 +46,7 @@ const getProjects = ({
 								"Bearer " +
 								response?.data?.result?.metadata?.procore
 									?.accessToken,
+									"Procore-Company-Id":companyId,
 						},
 					}
 				)
@@ -109,6 +111,8 @@ interface Props {
 }
 
 const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Props ) => {
+	const { state: appState, appContextAction } = useAppContext();
+	const { appAction } = appContextAction;
 	const [projectsList, setProjectsList] = useState<{ id: string; name: string }[] | []>([]);
 
 	const [companyList, setCompanyList] = useState([]);
@@ -261,11 +265,15 @@ const LinktoProcore = ({ setShowLink = () => {}, refetchProject = () => {} }: Pr
 										};
 										const resp = await LinkToProcore(router.query.projectId as string,procore)
 										.then((response)=>{
-											
+											const currentProjectData = appState.currentProjectData;
+          if (currentProjectData) {
+            currentProjectData.project = response.result;
+            appAction.setCurrentProjectData(currentProjectData);
+          } 
 											CustomToast("Project Linked Successfull!","success")
 											setLoading(false)
 										}).catch((error)=>{
-											console.log('error',error)
+											CustomToast('Linking Project to Procore is Failed',"error")
 											setLoading(false)
 										})
 										
