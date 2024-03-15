@@ -21,6 +21,8 @@ import { AttachedImageDiv } from "../newRFI/linkNewRfi";
 import { AttachedImageTitle, DeleteIcon } from "../../issueDetails/IssueDetailStyles";
 import { truncateString } from "../../../../pages/projects";
 import Delete from "../../../../public/divami_icons/delete.svg";
+import CustomFileInput from "../../../divami_components/custom-file-input/CustomFileInput";
+import ProcoreUploadFile from "../procoreUploadFile";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -83,13 +85,14 @@ const NewLinkSubmittal  : React.FC<IProps> = ({
   const [showError, setShowError] = useState(false);
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId=procoreProjectDetails?.procore?.companyId;
   const procoreFolderId = procoreProjectDetails?.procore?.folder?._id;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber;
 
 useEffect(()=>{
   
   setDropDownLoading(true)
-  getSubmittalReceivedFrom(procoreProjectId,responsibleContractorId).then((response:any)=>{
+  getSubmittalReceivedFrom(procoreProjectId,responsibleContractorId,procoreCompanyId).then((response:any)=>{
     
      if(response){
       setReceived(response)
@@ -100,7 +103,7 @@ useEffect(()=>{
 
   useEffect(()=>{
     setDropDownLoading(true)
-    getSubmittalResponsibleContractor(procoreProjectId,receivedId).then((response:any)=>{
+    getSubmittalResponsibleContractor(procoreProjectId,receivedId,procoreCompanyId).then((response:any)=>{
       if(response){
         setResponsibleContractorValues(response)
         setDropDownLoading(false)
@@ -172,7 +175,13 @@ const handleDelete = (indexToRemove:number) => {
     attachments:[],
     description: issue?.description || task?.description || "",
   };
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const handleFile = (e:any) => {
+    let acceptedFiles : File []=[]
+
+    for (let i =0; i< e.target.files.length; i++){
+      const file = e.target.files[i];
+      acceptedFiles.push(file)
+    }
     setFiles(prevFiles => {
       if (!prevFiles) {
         prevFiles = [];
@@ -180,7 +189,7 @@ const handleDelete = (indexToRemove:number) => {
   
       const updatedFiles = [
         ...prevFiles,
-        ...acceptedFiles.map(file => {
+        ...acceptedFiles.map((file:File) => {
           const fileNameParts = file.name.split('.');
           const extension = fileNameParts.pop();
           const originalFileName = fileNameParts.join('.');
@@ -193,8 +202,8 @@ const handleDelete = (indexToRemove:number) => {
       ];
       return updatedFiles;
     });
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+    
+  };
   const handleExternalSubmit = () => {
     if (formikRef.current) {
       formikRef.current.submitForm();
@@ -218,7 +227,7 @@ const handleDelete = (indexToRemove:number) => {
                 };
     
                 if (generatedpdf && screenshot) {
-                    const response = await filesUpload(procoreProjectId, formattedData);
+                    const response = await filesUpload(procoreProjectId, formattedData,procoreCompanyId);
                     uploadResponses.push(response);
                 }
             }
@@ -262,7 +271,7 @@ const handleDelete = (indexToRemove:number) => {
                     formdata.append(`file[name]`, filename);
                     formdata.append(`file[parent_id]`,String(procoreFolderId));
     
-                    const projectFileResponse = await projectFile(procoreProjectId, formdata);
+                    const projectFileResponse = await projectFile(procoreProjectId, formdata,procoreCompanyId);
                     if (projectFileResponse) {
                         const fileVersions = projectFileResponse.file_versions;
     
@@ -306,11 +315,12 @@ const handleDelete = (indexToRemove:number) => {
     description: string;
     attachments:Blob[]
   }) => {
- 
+    if(screenshot !==undefined){
 try{
+ 
   setLoading(true)
   const prostoreFileIds:any =await fileUploads();
-    formData.description= formData.description + `<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>`
+    formData.description= formData.description + `<a href=\"${weburl()}\" target="_blank">#${sequenceNumber}( View in ConstructN)</a>`
     formData.received_from_id = receivedId
     formData.responsible_contractor_id = responsibleContractorId
     const formdata = new FormData()
@@ -327,7 +337,7 @@ if (prostoreFileIds && prostoreFileIds.length > 0) {
       formdata.append(`submittal[prostore_file_ids][]`, prostoreFileIds[i]);
   }
 }
-    createSubmittal(formdata,procoreProjectId)
+    createSubmittal(formdata,procoreProjectId,procoreCompanyId)
     .then((response) => {
       if (response) {
         if (issue) {
@@ -385,13 +395,16 @@ if (prostoreFileIds && prostoreFileIds.length > 0) {
     CustomToast("Linking Submittal failed", 'error');
 }
 setLoading(false)
+  }else{
+    CustomToast('Something went wrong!','error');
+  }
   };
   const handleBack = () => {
     handleInstance("CloseSubmittal");
   };
   const validationSchema = Yup.object().shape({
     number: Yup.string().matches(
-     /[A-Za-z0-9\-']+$/,
+      /^(?!^\s+)(?!.*\s+$)[A-Za-z0-9@\-_'!#$%^&*()+=<>?,.:;{}|~\s]+$/,
       'Spaces are not allowed'
     ).required('Number is required'), 
   });
@@ -853,50 +866,17 @@ setLoading(false)
                   <Grid container className="pt-[5px] mb-[20px]">
                   <Grid item xs={15}>
                   <CustomLabel label={"Attachments"}></CustomLabel>
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()}
-                    type="file"
-                    name="attachments" />
-                    {
-                      isDragActive ? (
-                        <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
-                      ) : (
-                        <div className="flex justify-center border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500">
-                          <UploaderIcon
-                            src={uploaderIcon}
-                            alt="upload"
-                          ></UploaderIcon>
-                        </div>
-                      )
-                      // <p>Drop the files here ...</p> :
-                      // <p>Drag 'n' drop some files here, or click to select files</p>
-                    }
-                  </div>
+                  <CustomFileInput
+              handleFileUpload={(e: any) => handleFile(e)}
+              data={true}
+              />
+                
                   </Grid>
                   </Grid>
                   <>
-                  {files&&files.length > 0 && (
-                        <div>
-                         {files.map((file: File, index: number) => {
-                                return(
-                              <AttachedImageDiv className={`detailsImageDiv`} key={index}>
-                              <div className="w-[50%]">
-                                <Tooltip title={file?.name?.length > 20 ? file?.name : ""}>
-                                  <AttachedImageTitle>{truncateString(file?.name, 20)}</AttachedImageTitle>
-                                </Tooltip>
-                                </div>
-                                <DeleteIcon
-                                  src={Delete}
-                                  alt={"delete icon"}
-                                  onClick={() => {
-                                    handleDelete(index)
-                                  } } />
-                              
-                              </AttachedImageDiv>
-                               )})}
-                          
-                        </div>
-                      )}
+                  <ProcoreUploadFile
+                  files={files}
+                  setFiles={setFiles}></ProcoreUploadFile>
                       </>
                 </div>
               </Form>

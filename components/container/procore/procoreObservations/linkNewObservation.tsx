@@ -20,6 +20,8 @@ import { AttachedImageDiv } from "../newRFI/linkNewRfi";
 import { AttachedImageTitle, DeleteIcon } from "../../issueDetails/IssueDetailStyles";
 import { truncateString } from "../../../../pages/projects";
 import Delete from "../../../../public/divami_icons/delete.svg";
+import CustomFileInput from "../../../divami_components/custom-file-input/CustomFileInput";
+import ProcoreUploadFile from "../procoreUploadFile";
 export const UploaderIcon = styled(Image)({
   cursor: "pointer",
   height: "40px",
@@ -48,6 +50,7 @@ interface IProps{
   getTasks?:(s:string)=>{} | undefined;
   toolClicked?: (toolAction: IToolbarAction) => void;
 }
+
 const LinkNewObservation : React.FC<IProps> = ({
     attachment,
     screenshot,
@@ -71,7 +74,6 @@ const LinkNewObservation : React.FC<IProps> = ({
     toolClicked,
     handleSpaceInField
   }) => {
-
   const userObj=localStorage.getItem('userCredentials')
   const procoreAssigneeId=()=>{
     if (userObj) {
@@ -89,6 +91,7 @@ const LinkNewObservation : React.FC<IProps> = ({
     const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const initialValues: {
     assignee_id: number | null;
     contributing_behavior_id: number | null;
@@ -106,6 +109,7 @@ const LinkNewObservation : React.FC<IProps> = ({
     location_id: number | null;
     name: string;
     number: string;
+    attachments: Blob[]
   } = {
     assignee_id: procoreAssigneeId(),
     contributing_behavior_id: null,
@@ -123,6 +127,7 @@ const LinkNewObservation : React.FC<IProps> = ({
     location_id: null,
     name: issue?.title|| task.title,
     number: "",
+    attachments: [],
   };
   const [footerState, setfooterState] = useState(true);
   const formikRef = useRef<FormikProps<any>>(null);
@@ -131,7 +136,13 @@ const LinkNewObservation : React.FC<IProps> = ({
   const [files, setFiles] = useState<File[]>();
   const [loading, setLoading] = useState(false)
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const handleFile = (e:any) => {
+    let acceptedFiles : File []=[]
+
+    for (let i =0; i< e.target.files.length; i++){
+      const file = e.target.files[i];
+      acceptedFiles.push(file)
+    }
     setFiles(prevFiles => {
       if (!prevFiles) {
         prevFiles = [];
@@ -139,7 +150,7 @@ const LinkNewObservation : React.FC<IProps> = ({
   
       const updatedFiles = [
         ...prevFiles,
-        ...acceptedFiles.map(file => {
+        ...acceptedFiles.map((file:File) => {
           const fileNameParts = file.name.split('.');
           const extension = fileNameParts.pop();
           const originalFileName = fileNameParts.join('.');
@@ -152,8 +163,8 @@ const LinkNewObservation : React.FC<IProps> = ({
       ];
       return updatedFiles;
     });
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+    
+  };
  
   const handleExternalSubmit = () => {
     formikRef.current?.submitForm();
@@ -175,9 +186,11 @@ const LinkNewObservation : React.FC<IProps> = ({
     location_id: number | null;
     name: string;
     number: string;
+    attachments: Blob[]
    }
 
   const handleSubmit = (observation: observation) => {
+    if(screenshot!==undefined){
     setLoading(true)
     const project_id = procoreProjectId?.toString();
     observation.description = observation.description + `<a href=\"${weburl()}\" target="_blank">#${sequenceNumber}( View in ConstructN)</a>`;
@@ -202,7 +215,7 @@ const LinkNewObservation : React.FC<IProps> = ({
                }
                 
          });
-createObservation(formData)
+createObservation(formData,procoreCompanyId)
     .then((response) => {
       if (response) {       
            if (issue) {
@@ -253,18 +266,18 @@ createObservation(formData)
     setLoading(false)
   }
 });
-  };
+  }else{
+    CustomToast('Something went wrong!','error');
+  }
+};
   const validationSchema = Yup.object().shape({
     name: Yup.string().matches(
-      /[A-Za-z0-9\-']+$/,
+      /^(?!^\s+)(?!.*\s+$)[A-Za-z0-9@\-_'!#$%^&*()+=<>?,.:;{}|~\s]+$/,
       'Spaces are not allowed'
     ).required('Title is required'),
     type_id: Yup.number().nullable().required('Type is not selected'),
     status: Yup.string().trim().required('status is not selected'),
-    description:Yup.string().matches(
-      /[A-Za-z0-9\-']+$/,
-      'Spaces are not allowed'
-    ).required('Description is required'),
+    description:Yup.string().trim().required('Description is required'),
    
   });
   
@@ -290,7 +303,7 @@ createObservation(formData)
             {({ setFieldValue,errors, touched ,values }) => {
               const allFieldsTrue =
                Object.values(values).every((value) =>{
-                if(values.name!==""  && handleSpaceInField(values.name)&& values.type_id!==null && values.type_id !== undefined && values.status!=="" && values.description!=="" &&handleSpaceInField(values.description)){
+                if(values.name!==""  && handleSpaceInField(values.name)&& values.type_id!==null && values.type_id !== undefined && values.status!=="" && values.description!==""){
                    return true;
                 }else{
                   return false;
@@ -654,49 +667,17 @@ createObservation(formData)
                   <Grid container className="pt-[5px] mb-[20px]">
                   <Grid item xs={15}>
                   <CustomLabel label={"Attachments"}></CustomLabel>
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()} />
-                   
-                    {
-                      isDragActive ? (
-                        <div className="border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"></div>
-                      ) : (
-                        <div className="flex justify-center border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500">
-                          <UploaderIcon
-                            src={uploaderIcon}
-                            alt="upload"
-                          ></UploaderIcon>
-                        </div>
-                      )
-                      // <p>Drop the files here ...</p> :
-                      // <p>Drag 'n' drop some files here, or click to select files</p>
-                    }
-                  </div>
+                  <CustomFileInput
+              handleFileUpload={(e: any) => handleFile(e)}
+              data={true}
+              />
+                  
                   </Grid>
                   </Grid>
                   <>
-                  {files&&files.length > 0 && (
-                        <div>
-                         {files.map((file: File, index: number) => {
-                                return(
-                              <AttachedImageDiv className={`detailsImageDiv`} key={index}>
-                              <div className="w-[50%]">
-                                <Tooltip title={file?.name?.length > 20 ? file?.name : ""}>
-                                  <AttachedImageTitle>{truncateString(file?.name, 20)}</AttachedImageTitle>
-                                </Tooltip>
-                                </div>
-                                <DeleteIcon
-                                  src={Delete}
-                                  alt={"delete icon"}
-                                  onClick={() => {
-                                    handleDelete(index)
-                                  } } />
-                              
-                              </AttachedImageDiv>
-                               )})}
-                          
-                        </div>
-                      )}
+                  <ProcoreUploadFile
+                  files={files}
+                  setFiles={setFiles}></ProcoreUploadFile>
                       </>
                 </div>
               </Form>

@@ -4,7 +4,7 @@ import {
 } from "../../../divami_components/issue_detail/IssueDetailStyles";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { Box, MenuItem, Select, TextField, Tooltip } from "@mui/material";
-import { ChangeEvent,  useRef, useState } from "react";
+import { ChangeEvent,  useEffect,  useRef, useState } from "react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import uploaderIcon from "../../../../public/divami_icons/Upload_graphics.svg";
@@ -22,6 +22,8 @@ import CustomLabel from "../../../divami_components/custom-label/CustomLabel";
 import {  AttachedImageTitle, DeleteIcon } from "../../issueDetails/IssueDetailStyles";
 import { truncateString } from "../../../../pages/projects";
 import Delete from "../../../../public/divami_icons/delete.svg";
+import CustomFileInput from "../../../divami_components/custom-file-input/CustomFileInput";
+import ProcoreUploadFile from "../procoreUploadFile";
 
 export const LabelContainer=styled('div')({
      fontFamily:'sans-serif',
@@ -32,7 +34,7 @@ export const AttachedImageDiv = styled("div")`
  // justify-content:  space-around;
   align-items: center;
   padding-top: 15px;
-  padding-bottom: 15px;
+  padding-bottom: 2px;
 `;
 
 const StyledMenuItem = styled(MenuItem)({
@@ -70,6 +72,10 @@ export const StyledSelect = styled(Select) ({
   "& .Mui-focused": {
     border: "none",
   },
+});
+
+const ElementContainer = styled("div")({
+  marginTop: "8px",
 });
 
 export const UploaderIcon = styled(Image)({
@@ -139,7 +145,13 @@ const LinkNewRFI : React.FC<IProps> = ({
   const [isAllFieldsTrue, setIsAllFieldsTrue] = useState(false);
   const [files, setFiles] = useState<File[]>();
   const formikRef = useRef<FormikProps<any>>(null);
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const handleFile = (e:any) => {
+    let acceptedFiles : File []=[]
+
+    for (let i =0; i< e.target.files.length; i++){
+      const file = e.target.files[i];
+      acceptedFiles.push(file)
+    }
     setFiles(prevFiles => {
       if (!prevFiles) {
         prevFiles = [];
@@ -147,7 +159,7 @@ const LinkNewRFI : React.FC<IProps> = ({
   
       const updatedFiles = [
         ...prevFiles,
-        ...acceptedFiles.map(file => {
+        ...acceptedFiles.map((file:File) => {
           const fileNameParts = file.name.split('.');
           const extension = fileNameParts.pop();
           const originalFileName = fileNameParts.join('.');
@@ -160,11 +172,13 @@ const LinkNewRFI : React.FC<IProps> = ({
       ];
       return updatedFiles;
     });
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+    
+  };
+  
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const [loading, setLoading] = useState(false)
   const userObj=localStorage.getItem('userCredentials')
@@ -289,6 +303,7 @@ const LinkNewRFI : React.FC<IProps> = ({
     assignee_id: number | null;
     draft: boolean;
   }) => {
+    if(screenshot !==undefined){
     setLoading(true)
     rfi.question.body= rfi.question.body +`<a href=\"${weburl()}\">#${sequenceNumber}( View in ConstructN)</a>` ;
     if(scheduleImpact !==''){
@@ -333,7 +348,7 @@ const LinkNewRFI : React.FC<IProps> = ({
     });
     
 
-    createRfi(formdata,procoreProjectId)
+    createRfi(formdata,procoreProjectId,procoreCompanyId)
   .then((response) => {
     if (response) {
       if (issue) {
@@ -388,20 +403,19 @@ const LinkNewRFI : React.FC<IProps> = ({
       setLoading(false);
     }
   });
-
+    }else{
+      CustomToast('Something went wrong!','error');
+    }
   }
   const validationSchema = Yup.object().shape({
     subject: Yup.string().matches(
-      /[A-Za-z0-9\-']+$/,
-      'Spaces are not allowed'
-    ).required('Subject is required'),
+      /^(?!^\s+)(?!.*\s+$)[A-Za-z0-9@\-_'!#$%^&*()+=<>?,.:;{}|~\s]+$/,
+      { message: 'Spaces are not allowed', excludeEmptyString: true }
+  ).required('Subject is required'),
     rfi_manager_id: Yup.number().nullable().required('Select RFI manager'),
     received_from_login_information_id: Yup.number().nullable().required('Select Received From'),
     question: Yup.object().shape({
-      body: Yup.string().matches(
-        /[A-Za-z0-9\-']+$/,
-        'Spaces are not allowed'
-      ).required('Question is required'),
+      body: Yup.string().required('Question is required'),
       attachment: Yup.array(),
     }),
     'cost_impact.value': Yup.number().when('cost_impact.status', {
@@ -438,7 +452,7 @@ const LinkNewRFI : React.FC<IProps> = ({
                   values.subject !== "" && handleSpaceInField (values.subject) &&
                   values.rfi_manager_id !== undefined && values.rfi_manager_id !== null  &&
                   values.received_from_login_information_id !== undefined && values.received_from_login_information_id !== null &&
-                  values.question.body !== "" &&handleSpaceInField (values.question.body)&&
+                  values.question.body !== ""&&
                   (values.cost_impact.status !== "yes_known" ||
                       (values.cost_impact.status === "yes_known" &&
                           values.cost_impact.value !== undefined &&
@@ -594,15 +608,15 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className=" border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                           name="specification_section_id"
                           as="select"
-                          onClick={(e: any) => {
+                          onCLick={(e: any) => {
+                            const selectedValue = parseFloat(e.target.value);
                             setFieldValue(
-                              "specification_section_id",
-                              parseFloat(e.target.value)
+                              "specification_section_id", isNaN(selectedValue) ? undefined : selectedValue
                             );
                           }}
                         >
                           
-                          <option value="">Select a Spec Section</option>
+                          <option value={undefined}>Select a Spec Section</option>
                           {specSection.length === 0 && (
                           <option value="" disabled>
                              No options available
@@ -618,14 +632,14 @@ const LinkNewRFI : React.FC<IProps> = ({
                           className=" border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500"
                           name="location_id"
                           as="select"
-                          onClick={(e: any) => {
+                          onCLick={(e: any) => {
+                            const selectedValue = parseFloat(e.target.value);
                             setFieldValue(
-                              "location_id",
-                              parseFloat(e.target.value)
+                              "location_id", isNaN(selectedValue) ? undefined : selectedValue
                             );
                           }}
                         >
-                          <option value="">Select a Location</option>
+                          <option value={undefined}>Select a Location</option>
                           {location.length === 0 && (
                           <option value="" disabled>
                              No options available
@@ -790,51 +804,17 @@ const LinkNewRFI : React.FC<IProps> = ({
                       )}
                     </div>
                   </div>
-                  
-                  <div className="mt-3" >
+                  <div className="mt-3">
                   <CustomLabel label={"Attachments"}></CustomLabel>
-                  <div {...getRootProps()}>
-                    <input  {...getInputProps()} />
-                    
-                    {
-                      isDragActive ? (
-                        <div className="border-grey focus:outline-orange-300 w-full  p-2 rounded hover:border-grey-500"></div>
-                      ) : (
-                        <div className="flex justify-center  border border-solid border-border-dropDown focus:outline-none focus:border-border-yellow w-full  p-2 rounded hover:border-grey-500">
-                          <UploaderIcon
-                            src={uploaderIcon}
-                            alt="upload"
-                          ></UploaderIcon>
-                        </div>
-                      )
-                     
-                      
-                    }
-                    </div>
+                  <CustomFileInput
+              handleFileUpload={(e: any) => handleFile(e)}
+              data={true}
+              />
                   </div>
                   <>
-                  {files&&files.length > 0 && (
-                        <div>
-                         {files.map((file: File, index: number) => {
-                                return(
-                              <AttachedImageDiv className={`detailsImageDiv`} key={index}>
-                              <div className="w-[50%]">
-                                <Tooltip title={file?.name?.length > 20 ? file?.name : ""}>
-                                  <AttachedImageTitle>{truncateString(file?.name, 20)}</AttachedImageTitle>
-                                </Tooltip>
-                                </div>
-                                <DeleteIcon
-                                  src={Delete}
-                                  alt={"delete icon"}
-                                  onClick={() => {
-                                    handleDelete(index)
-                                  } } />
-                              
-                              </AttachedImageDiv>
-                               )})}
-                          
-                        </div>
-                      )}
+                  <ProcoreUploadFile
+                  files={files}
+                  setFiles={setFiles}></ProcoreUploadFile>
                       </>
                 </div>
               </Form>
