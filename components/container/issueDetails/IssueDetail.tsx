@@ -1219,29 +1219,32 @@ const  handleCloseProcore=()=>{
 
   const attachment = selectedIssue.attachments;
   if (attachment) {
-      attachment.forEach((attachment:any, index:any) => {
-          const attachmentUrl = attachment.url;
-           fetch(attachmentUrl)
-              .then(response => response.blob())
-              .then(blob => {
-                  const imageFile = new File([blob], `(#${selectedIssue.sequenceNumber})Attachment_${index}.png`, { type: 'image/png' });
-                  imageFiles.push(imageFile);
-                  setAttachment(imageFiles);
-              })
-              .catch(error => {
-                  console.error('Error fetching attachment:', error);
-              });
-      });
-  }
+    attachment.forEach((attachment:any, index:any) => {
+        const attachmentUrl = attachment.url;
+        fetch(attachmentUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                const fileName = `(#${selectedIssue.sequenceNumber})Attachment_${index}.${attachmentUrl.split('.').pop()}`;
+                const fileType = blob.type;
+                const file = new File([blob], fileName, { type: fileType });
+                imageFiles.push(file);
+                setAttachment(imageFiles);
+            })
+            .catch(error => {
+                console.error('Error fetching attachment:', error);
+            });
+    });
+}
   const screenUrl = selectedIssue.screenshot;
-
+  
   fetch(screenUrl)
       .then(response => response.blob())
       .then(blob => {
-          const screenshotFile = new File([blob], `(#${selectedIssue.sequenceNumber})ScreenShot.png`, { type: 'image/png' });
-          setscreenshot(screenshotFile);
+          // const screenshotFile = new File([blob], `(#${selectedIssue.sequenceNumber})ScreenShot.png`, { type: 'image/png' });
+          // setscreenshot(screenshotFile);
       })
       .catch(error => {
+        setscreenshot(undefined)
           console.log("ScreenShot is not fetched");
       });
  }
@@ -1323,16 +1326,13 @@ const convertObjectToPdf = () => {
   if(userCredentials) credential=JSON.parse(userCredentials);
    const providerType =credential.provider;
 
-  
-   const procoreProjectDetails=appState.currentProjectData?.project?.metaDetails
-   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
-   const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
    console.log("Appstate",appState);
    
   return (
     <>
     
-      {procorePopup && <ProcoreLink  issue={selectedIssue} generatedpdf={generatedpdf} screenshot={screenshot}  attachment={attachment}handleCloseProcore={handleCloseProcore} getIssues={getIssues} toolClicked={toolClicked}></ProcoreLink>}
+      {procorePopup && (
+       <ProcoreLink  issue={selectedIssue} generatedpdf={generatedpdf} screenshot={screenshot}  attachment={attachment}handleCloseProcore={handleCloseProcore} getIssues={getIssues} toolClicked={toolClicked}></ProcoreLink>)}
       {issueDetail && 
       <CustomTaskDrawerContainer issueLoader={issueLoader}>
         <HeaderContainer>

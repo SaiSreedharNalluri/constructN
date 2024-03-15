@@ -1205,21 +1205,22 @@ const handleScreenShotAndAttachment =() =>{
   
     const attachment = selectedTask.attachments;
     if (attachment) {
-        attachment.forEach((attachment:any, index:any) => {
-            const attachmentUrl = attachment.url;
-  
-            fetch(attachmentUrl)
-                .then(response => response.blob())
-                .then(blob => {
-                    const imageFile = new File([blob], `(#${selectedTask.sequenceNumber})Attachment_${index}.png`, { type: 'image/png' });
-                    imageFiles.push(imageFile);
-                    setAttachment(imageFiles);
-                })
-                .catch(error => {
-                    console.error('Error fetching attachment:', error);
-                });
-        });
-    }
+      attachment.forEach((attachment:any, index:any) => {
+          const attachmentUrl = attachment.url;
+          fetch(attachmentUrl)
+              .then(response => response.blob())
+              .then(blob => {
+                  const fileName = `(#${selectedTask.sequenceNumber})Attachment_${index}.${attachmentUrl.split('.').pop()}`;
+                  const fileType = blob.type;
+                  const file = new File([blob], fileName, { type: fileType });
+                  imageFiles.push(file);
+                  setAttachment(imageFiles);
+              })
+              .catch(error => {
+                  console.error('Error fetching attachment:', error);
+              });
+      });
+  }
     const screenUrl = selectedTask.screenshot;
   
     fetch(screenUrl)
@@ -1229,6 +1230,7 @@ const handleScreenShotAndAttachment =() =>{
             setscreenshot(screenshotFile);
         })
         .catch(error => {
+          setscreenshot(undefined)
             console.error('Error fetching screenshot:', error);
         });
    }
