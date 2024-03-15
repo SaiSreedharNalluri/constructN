@@ -5,7 +5,7 @@ export const projectConfig = [
     isReadOnly: false,
     fields: [
       {
-        id: "startDate",
+        id: "start-date",
         type: "datePicker",
         defaultValue: "",
         label: "MM/DD/YYYY",
@@ -15,7 +15,7 @@ export const projectConfig = [
         fromFilters: true,
       },
       {
-        id: "dueDate",
+        id: "due-date",
         type: "datePicker",
         defaultValue: "",
         label: "MM/DD/YYYY",

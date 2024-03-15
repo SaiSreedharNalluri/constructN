@@ -93,12 +93,12 @@ const numberOfMembersField = formConfig.find((each: any) => each.id === "numberO
       startDate:
         formConfig
           .find((each: any) => each.id == "dates")
-          ?.fields.find((each: any) => each.id == "startDate").defaultValue ||
+          ?.fields.find((each: any) => each.id == "start-date").defaultValue ||
         "",
       dueDate:
         formConfig
           .find((each: any) => each.id == "dates")
-          ?.fields.find((each: any) => each.id == "dueDate").defaultValue || "",
+          ?.fields.find((each: any) => each.id == "due-date").defaultValue || "",
       compareText:
         formConfig
           .find((each: any) => each.id == "numberOfMembersField")
@@ -135,12 +135,12 @@ const numberOfMembersField = formConfig.find((each: any) => each.id === "numberO
           return {
             ...each,
             fields: each.fields.map((item: any) => {
-              if (item.id === "startDate") {
+              if (item.id === "start-date") {
                 return {
                   ...item,
                   defaultValue: taskFilterState.startDate || "",
                 };
-              } else if (item.id == "dueDate") {
+              } else if (item.id == "due-date") {
                 return {
                   ...item,
                   defaultValue: taskFilterState.dueDate || "",
