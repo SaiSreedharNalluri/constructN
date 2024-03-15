@@ -158,19 +158,24 @@ const Body = ({
   const generateSnapshotRedirectUrl=(notificationObj:IUserNotification)=>{
     switch (notificationObj.title)
     {
-       case 'Snapshot Added':
+      case 'Snapshot Added':
         router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
         //router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
           break;
-        case 'Snapshot Updated': 
+      case 'Snapshot Status Update':
+        router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
+          router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
+            break;
+      case 'Snapshot Updated': 
         router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
         //router.push(`/projects/${notificationObj?.configuration?.project}/sections`);
           break;
-        case 'Snapshot Disabled':
+      case 'Snapshot Disabled':
           router.push({pathname:"/projects/[projectId]/sections",query:{projectId:notificationObj?.configuration?.project}})
           //router.push(`/projects/${notificationObj?.configuration?.project}/sections`); 
           break;
     }
+    setOpenNotication(false)
   }
   const generateTaskCommentRedirectUrl=(notificationObj:IUserNotification)=>{
     switch (notificationObj.title)
