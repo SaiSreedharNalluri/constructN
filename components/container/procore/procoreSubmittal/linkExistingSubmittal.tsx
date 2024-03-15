@@ -84,7 +84,7 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
                 };
     
                 if (generatedpdf && screenshot) {
-                    const response = await filesUpload(procoreProjectId, formattedData);
+                    const response = await filesUpload(procoreProjectId, formattedData,procoreCompanyId);
                     uploadResponses.push(response);
                 }
             }
@@ -128,7 +128,7 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
                     formdata.append(`file[upload_uuid]`, id);
                     formdata.append(`file[name]`, filename);
     
-                    const projectFileResponse = await projectFile(procoreProjectId, formdata);
+                    const projectFileResponse = await projectFile(procoreProjectId, formdata,procoreCompanyId);
                     if (projectFileResponse) {
                         const fileVersions = projectFileResponse.file_versions;
     
@@ -151,9 +151,10 @@ const LinkExistingSubmittal : React.FC<IProps> = ({
 
 
 const handleLink = async () => {
+  if(screenshot !==undefined){
   try {
     setLoading(true)
-    const description =await showSubmittalDetails(selectedItem,procoreProjectId)
+    const description =await showSubmittalDetails(selectedItem,procoreProjectId,procoreCompanyId)
  
       const prostoreFileIds:any = await fileUploads();
 
@@ -173,11 +174,11 @@ const handleLink = async () => {
   
       formData.append(`submittal[number]`, submittalNumber)
     
-      formData.append(`submittal[description]`, `${description?.rich_text_description}<a href="${weburl()}"> (#${sequenceNumber} View in ConstructN)</a>`)
+      formData.append(`submittal[description]`, `${description?.rich_text_description}<a href=\"${weburl()}\" target="_blank"> (#${sequenceNumber} View in ConstructN)</a>`)
       
      
 
-      const response = await updateAttachmentsExistSubmittal(procoreProjectId, selectedItem, formData);
+      const response = await updateAttachmentsExistSubmittal(procoreProjectId, selectedItem, formData,procoreCompanyId);
       if (response) {
           CustomToast("submittal linked successfully", 'success');
           handleCloseProcore();
@@ -205,19 +206,28 @@ const handleLink = async () => {
       CustomToast("Linking Submittal failed", 'error');
   }
   setLoading(false)
+}else{
+  CustomToast('Something went wrong!','error');
+}
 };
 
 
 
   useEffect(() => {
     setLoading(true)
-    listSubmittal(procoreProjectId)
+    listSubmittal(procoreProjectId,procoreCompanyId)
     .then((response) => {
       if (response?.data && response?.data.length > 0) {
-        setSubmittalData(response?.data);
-      } else {
-        setShowPopup(true)
+        const sortedData = response.data.sort((a:any, b:any) => {
+          const dateA = new Date(a.created_at);
+          const dateB = new Date(b.created_at);
+        
+          return dateB.getTime() - dateA.getTime();
+        });
 
+        setSubmittalData(sortedData);
+      } else {
+        setShowPopup(true);
       }
       setLoading(false);
     })
