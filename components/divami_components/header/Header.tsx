@@ -1,6 +1,6 @@
 import { Badge, Menu, MenuItem } from "@mui/material";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import constructnLogo from "../../../public/divami_icons/logo-yellow.svg";
 import hamburgerMenu from "../../../public/divami_icons/hamburgerMenu.svg";
 import helpIcon from "../../../public/divami_icons/Help.svg";
@@ -473,10 +473,22 @@ const Header: React.FC<any> = ({
     uploaderAction.removeAllWorkers();
     appAction.removeAllCaptureUploads();
   }
-
+const HandleCloseTheDrawer =()=> {
+  switch (true) {
+    case openNotification:
+      setOpenNotication(false);
+      break;
+    case openUploader:
+      setOpenUploader(false);
+      break;
+    case openProfile:
+      setOpenProfile(false);
+      break;
+  }
+}
   return (
     <>
-      <HeaderContainer ref={headerRef} >
+      <HeaderContainer ref={headerRef} onClick={HandleCloseTheDrawer}>
         {!hideSidePanel && (
           <div
             style={{
@@ -568,16 +580,7 @@ const Header: React.FC<any> = ({
                 </Badge>
               </div>
             </TooltipText>
-
-            {openUploader && (
-              <div>
-                 <CustomDrawer onClose={handleUploaderClose}>
-             { Mixpanel.track( {name: "uploader_notification_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"uploader_notifications",event_action:"uploader_notification_window_loaded",user_id:userId,notifications_count:getUploaderCount()})}
-                 <div><UploaderProjects handleUploaderClose={handleUploaderClose} projectUplMap={appState.inProgressProjectUploadMap}/></div>
-                </CustomDrawer>
-              </div>
-            )}
-          </HeaderUploaderImageContainer>
+        </HeaderUploaderImageContainer>
           <HeaderProfileImageContainer>
             {avatar ? (
               <TooltipText title="My Profile">
@@ -603,18 +606,6 @@ const Header: React.FC<any> = ({
                   />
                 </div>
               </TooltipText>
-            )}
-            {openProfile ? (
-              <CustomDrawer onClose={handleProfileClose}>
-             { Mixpanel.track( {name: "profile_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"profile",event_action:"profile_window_loaded",user_id:userId})}
-                <div>
-                  <UserProfile
-                    handleProfileClose={handleProfileClose}
-                  ></UserProfile>
-                </div>
-              </CustomDrawer>
-            ) : (
-              ""
             )}
           </HeaderProfileImageContainer>
           <HeaderSupportImageContainer>
@@ -645,7 +636,7 @@ const Header: React.FC<any> = ({
           </HeaderSupportImageContainer>
 
           <HeaderNotificationImageContainer>
-            <TooltipText title="Notifications" onClick={() => {
+            <TooltipText title="Notifications" onClick={(event) => {
               if (openNotification) {
                 setOpenNotication(false);
                 customLogger.logInfo("Notifications Hide")
@@ -669,30 +660,6 @@ const Header: React.FC<any> = ({
                 </Badge>
               </div>
             </TooltipText>
-
-            {openNotification && (
-              <div>
-                <CustomDrawer onClose={handleNotificationClose}>
-    {Mixpanel.track( {name: "notifications_window_loaded",project_id:"unknown",company_id:"unknown",screen_name:"projects_list_page",event_category:"notifications",event_action:"notifications_window_loaded",user_id:userId,notifications_count:notificationCount})}
-                  
-                  <div>
-                    <Notifications
-                      notifications={notifications}
-                      loadMoreData={loadMoreData}
-                      updateNotifications={updateNotifications}
-                      filterValue={filterValue}
-                      filterNotificationData={filterNotificationData}
-                      handleNotificationClose={handleNotificationClose}
-                      userId={userId}
-                      notificationCount={notificationCount}
-                      setOpenNotication ={setOpenNotication}
-                    />
-                  </div>
-
-                  <div></div>
-                </CustomDrawer>
-              </div>
-            )}
           </HeaderNotificationImageContainer>
           <HeaderMenuImageContainer onClick={(event) => {
                     if (anchorEl === null) {
@@ -759,7 +726,45 @@ const Header: React.FC<any> = ({
                 SecondaryButtonlabel={"No"}
                 callBackvalue={userLogOut}
               />
-            )}
+      )}
+      {
+      (openProfile || openUploader || openNotification) &&  <CustomDrawer onClose={HandleCloseTheDrawer} open={openProfile || openUploader || openNotification}>
+          {openProfile && (
+            <>
+              {Mixpanel.track({name: "profile_window_loaded", project_id: "unknown", company_id: "unknown", screen_name: "projects_list_page", event_category: "profile", event_action: "profile_window_loaded", user_id: userId})}
+              <div>
+                <UserProfile handleProfileClose={handleProfileClose} />
+              </div>
+            </>
+          )}
+          {openUploader && (
+            <>
+              {Mixpanel.track({name: "uploader_notification_window_loaded", project_id: "unknown", company_id: "unknown", screen_name: "projects_list_page", event_category: "uploader_notifications", event_action: "uploader_notification_window_loaded", user_id: userId, notifications_count: getUploaderCount()})}
+              <div>
+                <UploaderProjects handleUploaderClose={handleUploaderClose} projectUplMap={appState.inProgressProjectUploadMap} />
+              </div>
+            </>
+          )}
+          {openNotification && (
+            <>
+              {Mixpanel.track({name: "notifications_window_loaded", project_id: "unknown", company_id: "unknown", screen_name: "projects_list_page", event_category: "notifications", event_action: "notifications_window_loaded", user_id: userId, notifications_count: notificationCount})}
+              <div>
+                <Notifications
+                  notifications={notifications}
+                  loadMoreData={loadMoreData}
+                  updateNotifications={updateNotifications}
+                  filterValue={filterValue}
+                  filterNotificationData={filterNotificationData}
+                  handleNotificationClose={handleNotificationClose}
+                  userId={userId}
+                  notificationCount={notificationCount}
+                  setOpenNotication={setOpenNotication}
+                />
+              </div>
+            </>
+          )}
+        </CustomDrawer>  
+      }
     </>
   );
 };
