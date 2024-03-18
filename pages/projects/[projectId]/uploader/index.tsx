@@ -62,6 +62,7 @@ const Index: React.FC<IProps> = () => {
       console.log("TestingUploader: getJobs", response.data.result)
       let jobs: IJobs[] = response.data.result;
       uploaderAction.setCaptureJobs(jobs)
+      appAction.verifyExistingJobsForProject(projectId, jobs)
     }).catch((error)=>{
       console.log("TestingUploader: Error: ", error)
       uploaderAction.setIsLoading(false)
