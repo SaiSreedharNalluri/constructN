@@ -128,6 +128,40 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 inProgressProjectUploadMap: {},
                 inProgressWorkerCount: 0
             }
+        case AppActionType.verifyExistingJobsForProject:
+            let jobsToVerify = action.payload.jobs
+            let projectToVerify = action.payload.projectId
+            if (state.inProgressProjectUploadMap[projectToVerify] !== undefined) {
+                let existingJobsInProject = state.inProgressProjectUploadMap[projectToVerify].inProgressUploads.filter((job, index) => {
+                    let verifiedJob = jobsToVerify.find((newJob) => {
+                        return newJob._id === job._id
+                    })
+                    return verifiedJob !== undefined && ((verifiedJob.status === JobStatus.pendingUpload) || (verifiedJob.status === JobStatus.uploadFailed))
+                })
+                if (existingJobsInProject.length > 0) {
+                    let inProgressProjectUpload: InProgressProjectUploads = {
+                        ...state.inProgressProjectUploadMap[projectToVerify],
+                        inProgressUploads: existingJobsInProject
+                    }
+                    let newProjectUploadMap: InProgressProjectUploadMap = {
+                        ...state.inProgressProjectUploadMap,
+                        [projectToVerify as string]: inProgressProjectUpload
+                    }
+                    localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
+                    return {
+                        ...state,
+                        inProgressProjectUploadMap: newProjectUploadMap,
+                    }
+                } else {
+                    let {[projectToVerify]: _, ...newInProgressProjectUploadMap} = state.inProgressProjectUploadMap
+                    localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newInProgressProjectUploadMap))
+                    return {
+                        ...state,
+                        inProgressProjectUploadMap: newInProgressProjectUploadMap,
+                    }
+                }
+            }
+            return state
         case AppActionType.setIsLoading:
             return {
                 ...state,
