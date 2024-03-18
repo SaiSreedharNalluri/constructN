@@ -7,97 +7,135 @@ import { IReportData } from '../../../models/IReportDownload';
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    width: '100%',
-    height: '100%',
+    width: '95%',
+    height: '98%',
     fontWeight:'medium',
     fontSize: 8,
+    marginTop:'2px',
+    marginLeft:'13px',
   },
   section1: {
     flex: 0.1,
-    border: '1px solid black',
-    padding: '5px',
-    flexDirection: 'column',
+    flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width:'100%',
+    maxHeight:'50px'
   },
   titleContainer: {
-    marginRight:'auto',
+    backgroundColor:'#f1742e',
+    height:'60px',
+    flexDirection: 'row',
+    paddingTop:'15px',
+    paddingLeft:'8px'
   },
   title: {
-    marginBottom: '5px',
-    fontSize: 12,
+    fontSize: 16,
     textAlign: 'left',
-    marginRight:'auto'
+    marginRight:'auto',
+    paddingLeft:'10px',
+    paddingTop:'15px',
+    color:'#FFFFFF'
+  },
+  date:{
+    fontSize: 12,
+    color:'#FFFFFF',
+    marginRight:'280px',
+    paddingTop:'18px',
   },
   linkContainer: {
     marginLeft: 'auto',
   },
   link: {
     color: 'rgba(255, 132, 63, 1)',
-    marginBottom: '2px',
     textAlign: 'right',
     marginLeft: 'auto'
   },
   section2: {
     flex: 0.5,
-    border: '1px solid black',
+    flexDirection: 'row',
+    marginBottom:'2px',
+    maxHeight:'255px',
+    marginTop:'3px',
+    border:'1px solid #FFECE2'
   },
   section3: {
     flex: 0.2,
-    border: '1px solid black',
     flexDirection: 'row',
-    backgroundColor:'#F3F3F3'
+    backgroundColor:'#FFFFFF',
+    marginBottom:'1px',
+    marginTop:'4px',  
+    maxHeight:'150px',  
   },
   section4: {
     flex: 0.2,
-    border: '1px solid black',
     flexDirection: 'column',
+    border: '1px solid #FFECE2',
+    marginTop:'4px',
+    marginBottom:'4px'
+
+  },
+  section5:{
+    flexDirection: 'row',
+    justifyContent:'center'
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
     objectFit:'contain',
   },
-  image: {
-    width: '100%',
-    height: '100%',
+  image1: {
+    width: '',
+     height: "252px",
+  },
+  image2:{
+    width: '',
+    height: "250px",
   },
   heading1: {
     fontWeight: 'bold',
-    marginBottom: '2px',
     fontSize:12,
-    marginLeft:'10px',
+    paddingLeft: '12px',
+    fontStyle:'Open Sans',
+    paddingTop:'5px'
   },
   noteContainer:{
-    backgroundColor:"rgba(109, 109, 109, 0.2)",
+    backgroundColor:"#FFECE2",
+    height:'30px',
   },
   keyValue: {
     marginBottom: '3px',
   },
   column: {
     flexDirection: 'column',
-    width: '100%',
-    padding: '5px',
+    width: '80%',
+    border: '1px solid #FFECE2',
   },
   heading: {
     fontWeight: 'bold',
-    marginBottom: '2px',
-    padding:'4px',
-    backgroundColor: "rgba(109, 109, 109, 0.2)",
-    fontSize: 10,
-    textAlign: 'center',
+    backgroundColor: '#FFECE2',
+    fontSize: 12,
+    textAlign: 'left',
     width: '100%',
+    fontStyle:'Open Sans',
+    height:'30px',
+    paddingTop:'5px',
+    paddingLeft: '12px'
   },
   keyValueContainer: {
     flexDirection: 'row',
     width: '100%',
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingHorizontal: 10,
   },
   key: {
     width: '40%',
-    fontWeight: 'bold',
+    fontSize:10,
+    color:'#888888',
+    paddingLeft: '8px',
+    fontStyle:'Open Sans'
   },
   value: {
     width: '60%',
+    fontSize:10,
+    fontStyle:'Open Sans'
   },
 });
 
@@ -110,12 +148,16 @@ const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
     const sanitizeValue = (value: string | undefined) => {
         return value !== undefined ? value : '';
     };
-    return sanitizeValue(address.line1) + ', ' +
-           sanitizeValue(address.zipcode) + ', ' +
-           sanitizeValue(address.city) + ', ' +
-           sanitizeValue(address.state) + ', ' +
-           sanitizeValue(address.country);
+    
+    const line1 = sanitizeValue(address.line1);
+    const zipcode = sanitizeValue(address.zipcode);
+    const city = sanitizeValue(address.city);
+    const state = sanitizeValue(address.state);
+    const country = sanitizeValue(address.country);
+    const parts = [line1, city, state, country].filter(part => part !== '');
+    return parts.join(', ') + (zipcode !== '' ? ', ' + zipcode : '');
 };
+
   return (
     <Document>
       <Page size="A4">
@@ -124,18 +166,18 @@ const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
             <View>
             <Image style={styles.logo} src="https://constructn-attachments-us.s3.us-west-2.amazonaws.com/defaults/Full-Yellow.png" />
             </View>
-            <View style={{ flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width:'100%',marginBottom:'15px'}}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>Report for {downloadReportData?.structure?.name} on {moment(downloadReportData?.snapshot?.date).format('MMMM Do YYYY')}</Text>
-            </View>
             <View style={styles.linkContainer}>
              {downloadReportData && <Link style={styles.link} src={`${window.location.href}&context=${encodeURIComponent(downloadReportData?.context)}`}>View this location in ConstructN </Link>}
             </View>
             </View>
-          </View>
-        <View style={styles.section2}>
-            {downloadReportData&&<Image style={styles.image} src={downloadReportData.screenshot} />}
-          </View>
+            <View style={styles.titleContainer}>  
+            <Text style={{bottom:0,fontSize:16,fontStyle:'Open Sans',color:'#FFFFFF'}}>REPORT FOR {downloadReportData?.structure?.name.toUpperCase()} </Text> <Text style={{bottom:0,fontSize:12,fontStyle:'Open Sans',color:'#FFFFFF'}}>{`(${moment(downloadReportData?.snapshot?.date).format('MMMM Do YYYY')})`}</Text>
+            </View>
+            <View style={styles.section2}>
+            {downloadReportData&&<Image style={styles.image1} src={downloadReportData.screenshot} />}
+         
+           {downloadReportData?.miniMapscreenshot ?<Image style={styles.image2} src={downloadReportData.miniMapscreenshot}/>:(<></>)}
+            </View>
           <View style={styles.section3}>
           <View style={styles.column}>
               <Text style={styles.heading}>Project Details</Text>
@@ -159,20 +201,19 @@ const GenerateReport: React.FC<IProps> = ({ downloadReportData}) => {
                 <Text style={styles.value}>{moment(downloadReportData?.snapshot?.date).format('MMMM Do YYYY')}</Text>
               </View>
               <View style={styles.keyValueContainer}>
-                <Text style={styles.key}>Floor:</Text>
-                <Text style={styles.value}>{downloadReportData?.structure?.name}</Text>
+                <Text style={styles.key}>Level:</Text>
+               {downloadReportData?.hierarchy && <Text style={styles.value}>{downloadReportData?.hierarchy}</Text>}
               </View>
-            </View>
-            <View style={styles.column}>
-           {downloadReportData?.miniMapscreenshot ?<Image style={styles.image} src={downloadReportData.miniMapscreenshot}/>:(<></>)}
-            </View>
+            </View>         
           </View>
           <View style={styles.section4}>
             <View style={styles.noteContainer}>
             <Text style={styles.heading1}>Notes</Text>
             </View>
-          <Text style={{bottom:0,position:'absolute',fontSize:12,textAlign:'center',marginBottom: '3px',marginLeft:'10px'}}>Exported by {downloadReportData?.logedInUser},{moment().format('MMMM Do YYYY, h:mm:ss a')} </Text>
           </View>
+        </View>
+        <View style={styles.section5}>
+        <Text style={{bottom:0,fontSize:12,fontStyle:'Open Sans',color:'#888888'}}>Export Details: </Text> <Text style={{bottom:0,fontSize:12,fontStyle:'Open Sans'}}>{downloadReportData?.logedInUser}, {moment().format('MMMM Do YYYY, h:mm:ss a')}</Text>
         </View>
       </Page>
    </Document>
