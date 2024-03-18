@@ -75,6 +75,7 @@ import { pdf } from "@react-pdf/renderer";
 import GenerateReport from "../../../../../components/divami_components/download_image_report/generateReport";
 import { isDownloadsEnabled } from "../../../../../utils/constants";
 import { IReportData } from "../../../../../models/IReportDownload";
+import { getPathToRoot, getStructureIdFromModelOrString } from "../../../../../utils/utils";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -244,7 +245,8 @@ const Index: React.FC<IProps> = () => {
     structure: {} as IStructure, 
     snapshot:{} as ISnapshot,
     project: {} as IProjects, 
-    logedInUser: ''
+    logedInUser: '',
+    hierarchy:''
   });
   useEffect(()=>{
     setLogedInUser(localStorage.getItem('userInfo') as string)
@@ -1849,6 +1851,15 @@ const Index: React.FC<IProps> = () => {
       conn.unSubscribeTopic(MqttConnector.getMultiverseHandShakeString());
     }
   }, [])
+  const gethierarchyPath = (structure: string | IStructure): string => {
+    let structureId = getStructureIdFromModelOrString(structure)
+
+    if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
+      return getPathToRoot(structureId, appState.currentProjectData.hierarchy[0]);
+    } else {
+      return "";
+    }
+  };
  
 
   const receiveMessage = (event:any) => {
@@ -1873,6 +1884,7 @@ const Index: React.FC<IProps> = () => {
         downloadReportData.current.screenshot = event.data.screenshot
         downloadReportData.current.miniMapscreenshot = event.data.miniMapscreenshot
         downloadReportData.current.structure = event.data.structure
+        downloadReportData.current.hierarchy = gethierarchyPath(event.data.structure)
         downloadReportData.current.context = event.data.context
         downloadReportData.current.snapshot = event.data.snapshot
         downloadReportData.current.type = event.data.type
@@ -1887,7 +1899,8 @@ const Index: React.FC<IProps> = () => {
           structure: {} as IStructure, 
           snapshot:{} as ISnapshot,
           project: {} as IProjects, 
-          logedInUser: ''
+          logedInUser: '',
+          hierarchy:''
         };
       }
     }
