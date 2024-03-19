@@ -58,7 +58,11 @@ const UploaderFiles = () => {
           break;
         }
         const fileBatch = acceptedFiles.slice(i, i + batchSize);
-        uploaderAction.appendFiles(await processFileBatch(fileBatch));
+        if ((i + batchSize) >= acceptedFiles.length) {
+          uploaderAction.appendFiles(await processFileBatch(fileBatch), true);
+        } else {
+          uploaderAction.appendFiles(await processFileBatch(fileBatch));
+        }
       }
       uploaderAction.chageIsReading(false)
      }

@@ -93,6 +93,7 @@ import { CustomToast } from "../custom-toaster/CustomToast";
 import { getCookie } from "cookies-next";
 import { Mixpanel } from "../../analytics/mixpanel";
 import { isMultiverseEnabled } from "../../../utils/constants";
+import { is2DEnabled } from "../../../utils/constants";
 // import { ISections } from "../../../models/ISections";
 
 const headers = {headers: authHeader.authHeader()}
@@ -836,7 +837,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
 
 
     {
-      title: "Progress 2D",
+      title: is2DEnabled ? 'Progress 2D' : '',
       field: "has2dProgress",
       sorting: false,
       headerStyle: {
@@ -853,8 +854,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
       render: (rowData: any) => {
 
         const planeDrawingsAvailable = rowData.designs.find((design: {type: string})=>(design.type === 'Plan Drawings'));
-        
-        return (planeDrawingsAvailable) ? <div className="cursor-pointer">{
+        return (planeDrawingsAvailable) ? <div className={`cursor-pointer ${is2DEnabled ? '' : 'hidden'}`}>{
           <TooltipText title="2D Progress">
             <div className="flex justify-center">
               <Progress2DImageIcon
@@ -872,7 +872,7 @@ const handleDeleteNewChip = (chipIds:any,structureId:any) => {
               ></Progress2DImageIcon>
             </div>
           </TooltipText>
-          }</div> : 'Not Available';
+          }</div> : <div className={`${is2DEnabled ? '' : 'hidden'}`}>Not Available</div>
       },
     },
   ];

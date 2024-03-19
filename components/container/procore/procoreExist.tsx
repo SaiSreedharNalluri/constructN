@@ -45,6 +45,10 @@ export const MessageDivShowErr = styled("div")({
   marginLeft: "12px",
 });
 
+export const SecondBody = styled("div")`
+  //   display: flex;
+  margin-top: 22px;
+`;
 
 
 const ProcoreExist: React.FC<ProcoreExistProps> = ({
@@ -57,6 +61,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
   const [loading , setLoading] = useState<boolean>(false);
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
 
   const generateLink = (type: string, id: string) => {
     if(type === "observation"){
@@ -71,7 +76,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
   
     if (type === "rfi") {
       setLoading(true)
-      showRfiDetails(id,procoreProjectId).then((response) => {
+      showRfiDetails(id,procoreProjectId,procoreCompanyId).then((response) => {
         if (response) {
           let statusText = response.status;
 
@@ -89,7 +94,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
       });
     } else if (type === "observation") {
       setLoading(true)
-      showObservationDetails(id,procoreProjectId).then((response)=>{
+      showObservationDetails(id,procoreProjectId,procoreCompanyId).then((response)=>{
         
         if(response){
           let statusText = response.status;
@@ -116,7 +121,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
       });
     }else if ( type === "submittal"){
       setLoading(true)
-      showSubmittalDetails(id,procoreProjectId).then((response)=>{
+      showSubmittalDetails(id,procoreProjectId,procoreCompanyId).then((response)=>{
         
         if(response){
 
@@ -134,7 +139,7 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
   const fullDetails = [
     {label:"ID", value: details?.id},
     {label:"Full Number", value: details?.full_number || details?.number || "NA"},
-    {label:"Assignee", value: details?.assignee?.name || "NA"},
+    {label:"Assignee", value: details?.assignee?.name || details?.submittal_manager?.name || "NA"},
     {label:"Type", value: type?.toUpperCase()},
     {label:"Title", value: details?.title || details?.name},
     {label:"Status", value: type === 'submittal' ? details?.status?.name : details?.status},
@@ -147,12 +152,12 @@ const ProcoreExist: React.FC<ProcoreExistProps> = ({
       </div>):(<div>
         {details && details ? (
       <TabOneDiv>
-        {fullDetails.map((detail)=>(<SecondBodyDiv key={detail.label}>
+        {fullDetails.map((detail)=>(<SecondBody key={detail.label}>
             <SecondContPrior>
               <PriorityTitle>{detail.label}</PriorityTitle>
               <PriorityStatus>{detail.value}</PriorityStatus>
             </SecondContPrior>
-          </SecondBodyDiv>))}
+          </SecondBody>))}
           <SecondBodyDiv>
           <ProcoreSectionIcon>
           <PopupIcon

@@ -1276,7 +1276,7 @@ const NewGenViewer: React.FC<IProps> = ({ data, updateData,tmcBase,tmcCompare })
     
     return (<Rnd
       ref={c => { count == 1 ? _minimap = c : _minimapCompare = c }}
-      style={{ top:count == 1 ? '0px' : '0px'   }}
+      style={{ top:count == 1 ? '0px' : '0px', zIndex:(showMinimap && ((count == 1 && getViewerTypefromViewType(currentViewerData.currentViewType || '') === "Potree") || (count == 2 && getViewerTypefromViewType(viewerData.current?.currentCompareMode||'') === "Potree"))) ? 10 : -1  }}
       minWidth={320}
       minHeight={28}
       maxWidth={'99%'}

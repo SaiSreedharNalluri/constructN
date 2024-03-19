@@ -109,22 +109,22 @@ const ProcoreLink = (props: any) => {
         typeData,
         
       ] = await Promise.all([
-        permissions(procoreProjectId),
-        getRfiManager(procoreProjectId),
-        getReceivedFrom(procoreProjectId),
-        getResponsibleContractor(procoreProjectId),
-        potentialDistributionMembers(procoreProjectId),
-        specSection(procoreProjectId),
-        getLocation(procoreProjectId),
-        getcoastCode(procoreProjectId),
+        permissions(procoreProjectId,procoreCompanyId),
+        getRfiManager(procoreProjectId,procoreCompanyId),
+        getReceivedFrom(procoreProjectId,procoreCompanyId),
+        getResponsibleContractor(procoreProjectId,procoreCompanyId),
+        potentialDistributionMembers(procoreProjectId,procoreCompanyId),
+        specSection(procoreProjectId,procoreCompanyId),
+        getLocation(procoreProjectId,procoreCompanyId),
+        getcoastCode(procoreProjectId,procoreCompanyId),
         getRfiStage(procoreProjectId,procoreCompanyId),
-        scheduleImpact(procoreProjectId),
-        costImpact(procoreProjectId),
+        scheduleImpact(procoreProjectId,procoreCompanyId),
+        costImpact(procoreProjectId,procoreCompanyId),
         tradeList(procoreCompanyId),
         contributingBehaviorList(procoreCompanyId),
         contributingConditionsList(procoreCompanyId),
         hazardList(procoreCompanyId),
-        typesList(procoreProjectId),      
+        typesList(procoreProjectId,procoreCompanyId),      
 ]);
       setUserPermission(userPermissionData.tools);
       setRfiManager(rfiManagerData);
@@ -181,15 +181,14 @@ const ProcoreLink = (props: any) => {
     }
   }, [userPermission]);
 
-const handleSpaceInField =(e:string) =>{
-    console.log('checking',e)
-    const regex =  /[A-Za-z0-9\-']+$/;
-    if(regex.test(e)){
-      return true
-    }else{
-      return false
+  const handleSpaceInField = (e: string) => {
+    const regex =  /^(?!^\s+)(?!.*\s+$)[A-Za-z0-9@\-_'!#$%^&*()+=<>?,.:;{}|~\s]+$/;
+    if (regex.test(e.trim())) {
+        return true;
+    } else {
+        return false;
     }
-  }
+}
   
   const handleInstanceClick = (componentType:string) => {
     switch (componentType) {
@@ -340,11 +339,9 @@ const handleSpaceInField =(e:string) =>{
 
   return (
     
-    <div className="">
-      {loading?(<div>
-        <CustomLoader></CustomLoader>
-      </div>):(<div>
-      <CustomTaskProcoreLinks id="targetElementId">
+    <CustomTaskProcoreLinks id="targetElementId">
+     {loading&&<CustomLoader></CustomLoader>}
+      
         <HeaderContainer>
           <TitleContainer>
             <LeftTitleCont>
@@ -469,9 +466,9 @@ const handleSpaceInField =(e:string) =>{
             </SpanCont>
           </LabelContainer>
         </BodyContainer>
+    
+      
       </CustomTaskProcoreLinks>
-      </div>)}
-    </div>
   );
 };
 

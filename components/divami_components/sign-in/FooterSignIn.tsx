@@ -25,7 +25,7 @@ const FooterSignIn = ({
       label={customLabel ? "Create Account" : "Sign In"}
       formHandler={formHandler}
       setButtonClicked={setButtonClicked}
-      loginField={loginField}
+      loginfield={loginField}
       ref={ref}
     />
   );
