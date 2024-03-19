@@ -1,4 +1,4 @@
-import { IJobs } from "../../models/IJobs";
+import { IJobs, JobStatus } from "../../models/IJobs";
 import { getJobIdFromModelOrString, getProjectIdFromModelOrString, getStructureIdFromModelOrString } from "../../utils/utils";
 import { AppActionType, AppActions } from "./action";
 import { AppState, InProgressProjectUploadMap, InProgressProjectUploads, ProjectLocalStorageKey } from "./state";
@@ -31,9 +31,14 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 currentProjectData: action.payload.projectData
             }
         case AppActionType.setInProgressProjectUpload:
+            let workerCount = 0
+            for (const [key, value] of Object.entries(action.payload.inProgressProjectUploadMap)) {
+                workerCount += value.inProgressUploads.filter((job) => { return job.status === JobStatus.pendingUpload}).length
+            }
             return {
                 ...state,
-                inProgressProjectUploadMap: action.payload.inProgressProjectUploadMap
+                inProgressProjectUploadMap: action.payload.inProgressProjectUploadMap,
+                inProgressWorkerCount: workerCount
             }
         case AppActionType.addCaptureUpload:
             let job  = action.payload.job
@@ -53,7 +58,8 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
                 return {
                     ...state,
-                    inProgressProjectUploadMap: newProjectUploadMap
+                    inProgressProjectUploadMap: newProjectUploadMap,
+                    inProgressWorkerCount: state.inProgressWorkerCount + 1
                 }
             } else {
                 let inProgressProjectUpload: InProgressProjectUploads = {
@@ -67,7 +73,8 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                 localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
                 return {
                     ...state,
-                    inProgressProjectUploadMap: newProjectUploadMap
+                    inProgressProjectUploadMap: newProjectUploadMap,
+                    inProgressWorkerCount: state.inProgressWorkerCount + 1
                 }
             }
         case AppActionType.removeCaptureUpload:
@@ -81,7 +88,7 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                     })
                     let inProgressProjectUpload: InProgressProjectUploads = {
                         ...state.inProgressProjectUploadMap[removeProjectId],
-                        inProgressUploads: inProgressUploads
+                        inProgressUploads: (removeJob.status === JobStatus.uploadFailed) ? [...inProgressUploads, removeJob] : inProgressUploads
                     }
                     let newProjectUploadMap: InProgressProjectUploadMap = {
                         ...state.inProgressProjectUploadMap,
@@ -90,19 +97,71 @@ export const appReducer = (state: AppState, action: AppActions): AppState => {
                     localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
                     return {
                         ...state,
-                        inProgressProjectUploadMap: newProjectUploadMap
+                        inProgressProjectUploadMap: newProjectUploadMap,
+                        inProgressWorkerCount: state.inProgressWorkerCount !== 0 ? state.inProgressWorkerCount - 1 : 0
                     }
                 } else {
                     let {[removeProjectId]: _, ...newInProgressProjectUploadMap} = state.inProgressProjectUploadMap
+                    if (removeJob.status === JobStatus.uploadFailed) {
+                        let inProgressProjectUpload: InProgressProjectUploads = {
+                            ...state.inProgressProjectUploadMap[removeProjectId],
+                            inProgressUploads: [removeJob]
+                        }
+                        newInProgressProjectUploadMap = {
+                            ...newInProgressProjectUploadMap,
+                            [removeProjectId as string]: inProgressProjectUpload
+                        }
+                    }
                     localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newInProgressProjectUploadMap))
                     return {
                         ...state,
-                        inProgressProjectUploadMap: newInProgressProjectUploadMap
+                        inProgressProjectUploadMap: newInProgressProjectUploadMap,
+                        inProgressWorkerCount: state.inProgressWorkerCount !== 0 ? state.inProgressWorkerCount - 1 : 0
                     }
                 }
             } else {
                 return state
             }
+        case AppActionType.removeAllCaptureUploads:
+            return {
+                ...state,
+                inProgressProjectUploadMap: {},
+                inProgressWorkerCount: 0
+            }
+        case AppActionType.verifyExistingJobsForProject:
+            let jobsToVerify = action.payload.jobs
+            let projectToVerify = action.payload.projectId
+            if (state.inProgressProjectUploadMap[projectToVerify] !== undefined) {
+                let existingJobsInProject = state.inProgressProjectUploadMap[projectToVerify].inProgressUploads.filter((job, index) => {
+                    let verifiedJob = jobsToVerify.find((newJob) => {
+                        return newJob._id === job._id
+                    })
+                    return verifiedJob !== undefined && ((verifiedJob.status === JobStatus.pendingUpload) || (verifiedJob.status === JobStatus.uploadFailed))
+                })
+                if (existingJobsInProject.length > 0) {
+                    let inProgressProjectUpload: InProgressProjectUploads = {
+                        ...state.inProgressProjectUploadMap[projectToVerify],
+                        inProgressUploads: existingJobsInProject
+                    }
+                    let newProjectUploadMap: InProgressProjectUploadMap = {
+                        ...state.inProgressProjectUploadMap,
+                        [projectToVerify as string]: inProgressProjectUpload
+                    }
+                    localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newProjectUploadMap))
+                    return {
+                        ...state,
+                        inProgressProjectUploadMap: newProjectUploadMap,
+                    }
+                } else {
+                    let {[projectToVerify]: _, ...newInProgressProjectUploadMap} = state.inProgressProjectUploadMap
+                    localStorage.setItem(ProjectLocalStorageKey.InProgressUploadsKey, stringifySafe(newInProgressProjectUploadMap))
+                    return {
+                        ...state,
+                        inProgressProjectUploadMap: newInProgressProjectUploadMap,
+                    }
+                }
+            }
+            return state
         case AppActionType.setIsLoading:
             return {
                 ...state,

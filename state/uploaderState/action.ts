@@ -37,6 +37,7 @@ export enum UploaderActionType {
     updateWorkerStatus,
     updateJobStatus,
     removeWorker,
+    removeAllWorkers,
     refreshJobs,
     setErrorCount,
     setResetUploaderState,
@@ -122,7 +123,7 @@ export interface setIsNextEnabled{
 
 export interface appendFiles {
   type: UploaderActionType.appendFiles;
-  payload: { files: fileWithExif[] };
+  payload: { files: fileWithExif[], batchOver: boolean };
 }
 
 export interface changeUploadinitiate {
@@ -193,6 +194,10 @@ export interface updateJobStatus {
 export interface removeWoker {
     type: UploaderActionType.removeWorker
     payload: {captureId: string}
+}
+
+export interface removeAllWokers {
+  type: UploaderActionType.removeAllWorkers
 }
 
 export interface setErrorCount{
@@ -267,10 +272,10 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         setStructure: (structure:IStructure) => {
           dispatch({ type: UploaderActionType.setStructure, payload:{structure: structure}});
         },
-        appendFiles: (files: fileWithExif[]) => {
+        appendFiles: (files: fileWithExif[], batchOver: boolean = false) => {
           dispatch({
               type: UploaderActionType.appendFiles,
-              payload: {files: files}
+              payload: {files: files, batchOver: batchOver}
           })
         },
         setExtractedFileValue: (extractedFileValue:any) => {
@@ -318,6 +323,9 @@ export const uploaderContextActions = (dispatch: React.Dispatch<UploaderActions>
         removeWorker:(captureId: string) => {
             dispatch({type:UploaderActionType.removeWorker, payload:{ captureId: captureId}})
         },
+        removeAllWorkers:() => {
+          dispatch({type:UploaderActionType.removeAllWorkers})
+      },
         // setErrorCount:(errorCount:number)=>{
         //   dispatch({type:UploaderActionType.setErrorCount,payload:{errorCount:errorCount}})
         // },
@@ -372,6 +380,7 @@ export type UploaderActions =
   | updateWorkerStatus
   | updateJobStatus
   | removeWoker
+  | removeAllWokers
   | refreshJobs
   | setErrorCount
   | setResetUploaderState

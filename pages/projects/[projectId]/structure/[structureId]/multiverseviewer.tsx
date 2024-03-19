@@ -75,6 +75,7 @@ import { pdf } from "@react-pdf/renderer";
 import GenerateReport from "../../../../../components/divami_components/download_image_report/generateReport";
 import { isDownloadsEnabled } from "../../../../../utils/constants";
 import { IReportData } from "../../../../../models/IReportDownload";
+import { getPathToRoot, getStructureIdFromModelOrString } from "../../../../../utils/utils";
 interface IProps { }
 const Iframe = memo(React.lazy(() => import('../../../../../components/container/Iframe')));
 const OpenMenuButton = styled("div")(({ onClick, isFullScreen }: any) => ({
@@ -223,7 +224,9 @@ const Index: React.FC<IProps> = () => {
 
   let handleMenuInstance: IToolbarAction = { data: "", type: "selectIssue" };
   let isSupportUser = useRef(false);
- 
+
+  const lastVisitedDesign = useRef<string|undefined>();
+  const lastVisitedReality = useRef<string|undefined>();
   const [issueTypesList, setIssueTypesList] = useState<any>(null);
   const [issuePriorityList, setIssuePriorityList] = useState<any>(null);
   const [issueStatusList, setIssueStatusList] = useState<any>(null);
@@ -242,7 +245,8 @@ const Index: React.FC<IProps> = () => {
     structure: {} as IStructure, 
     snapshot:{} as ISnapshot,
     project: {} as IProjects, 
-    logedInUser: ''
+    logedInUser: '',
+    hierarchy:''
   });
   useEffect(()=>{
     setLogedInUser(localStorage.getItem('userInfo') as string)
@@ -734,15 +738,19 @@ const Index: React.FC<IProps> = () => {
         router.push(router);
         switch (toolInstance.data) {
           case "Plan Drawings":
+            lastVisitedDesign.current="Plan Drawings";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "Plan Drawings"}`);
             break;
           case "BIM":
+            lastVisitedDesign.current="BIM";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "BIM"}`);
             break;
           case "pointCloud":
+            lastVisitedReality.current="pointCloud";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "pointCloud"}`);
             break;
           case "orthoPhoto":
+            lastVisitedReality.current="orthoPhoto";
             conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), `{"type": "setViewType", "data": "orthoPhoto"}`);
             break;
         }
@@ -774,6 +782,10 @@ const Index: React.FC<IProps> = () => {
       case "setViewMode":
         switch (toolInstance.data) {
           case "Design":
+            if(lastVisitedDesign.current!==undefined){
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data":"'+lastVisitedDesign.current+'"}');
+              break;
+            }
             if(initData?.structure.designs&& initData?.structure.designs.length >= 1){
               if(initData?.structure.designs.find((des:any)=>{
                 if(des.type==="Plan Drawings"){
@@ -795,6 +807,10 @@ const Index: React.FC<IProps> = () => {
 
             break;
           case "Reality":
+            if(lastVisitedReality.current!==undefined){
+              conn.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type": "setViewType", "data":"'+lastVisitedReality.current+'"}');
+              break;
+            }
             if(initData&& initData.currentViewType==='orthoPhoto')
               conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"setViewType", "data":"orthoPhoto"}');
             else
@@ -950,6 +966,7 @@ const Index: React.FC<IProps> = () => {
           const updatedList = [...initData.currentIssueList];  
           updatedList[foundIndex] = result;  
           setInintData({ ...initData, currentIssueList: updatedList });
+          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"issueMetaDataUpdate","data":' + JSON.stringify(updatedList) + '}');         
         }
       }
         break;
@@ -963,6 +980,8 @@ const Index: React.FC<IProps> = () => {
           const updatedList = [...initData.currentTaskList];  
           updatedList[foundIndexValue] = result;  
           setInintData({ ...initData, currentTaskList: updatedList });
+          conn?.publishMessage(MqttConnector.getMultiverseSendTopicString(), '{"type":"taskMetaDataUpdate","data":' + JSON.stringify(updatedList) + '}');  
+          
         }
       }
         break;
@@ -1376,7 +1395,7 @@ const Index: React.FC<IProps> = () => {
         }
       }
       else {
-        if(router.query.snap === initData?.currentSnapshotBase._id)
+        if(router.query.snap === initData?.currentSnapshotBase?._id)
         {
           delete router.query.iss
         }
@@ -1398,7 +1417,7 @@ const Index: React.FC<IProps> = () => {
         }
       }
       else {
-        if(router.query.snap === initData?.currentSnapshotBase._id)
+        if(router.query.snap === initData?.currentSnapshotBase?._id)
         {
           delete router.query.tsk
         }
@@ -1832,6 +1851,15 @@ const Index: React.FC<IProps> = () => {
       conn.unSubscribeTopic(MqttConnector.getMultiverseHandShakeString());
     }
   }, [])
+  const gethierarchyPath = (structure: string | IStructure): string => {
+    let structureId = getStructureIdFromModelOrString(structure)
+
+    if (appState.currentProjectData && appState.currentProjectData.hierarchy) {
+      return getPathToRoot(structureId, appState.currentProjectData.hierarchy[0]);
+    } else {
+      return "";
+    }
+  };
  
 
   const receiveMessage = (event:any) => {
@@ -1856,6 +1884,7 @@ const Index: React.FC<IProps> = () => {
         downloadReportData.current.screenshot = event.data.screenshot
         downloadReportData.current.miniMapscreenshot = event.data.miniMapscreenshot
         downloadReportData.current.structure = event.data.structure
+        downloadReportData.current.hierarchy = gethierarchyPath(event.data.structure)
         downloadReportData.current.context = event.data.context
         downloadReportData.current.snapshot = event.data.snapshot
         downloadReportData.current.type = event.data.type
@@ -1870,7 +1899,8 @@ const Index: React.FC<IProps> = () => {
           structure: {} as IStructure, 
           snapshot:{} as ISnapshot,
           project: {} as IProjects, 
-          logedInUser: ''
+          logedInUser: '',
+          hierarchy:''
         };
       }
     }

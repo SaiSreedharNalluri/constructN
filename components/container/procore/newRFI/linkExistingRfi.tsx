@@ -47,6 +47,7 @@ const LinkExistingRfi: React.FC<IProps> = ({
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const handleBack = () => {
     handleInstance('closeRFI');
@@ -76,7 +77,7 @@ const LinkExistingRfi: React.FC<IProps> = ({
  },[selectedItem])
 
   const handleLink = async () => {
-    
+    if(screenshot !==undefined){
  const formData:any=new FormData()
     formData.append(`rfi[question][body]`,`${questionBody} <a href=\"${weburl()}\"> #${sequenceNumber}( View in ConstructN)</a>`)
    formData.append(`rfi[question][attachments][${generatedpdf.name}]`,generatedpdf);
@@ -87,7 +88,7 @@ const LinkExistingRfi: React.FC<IProps> = ({
   }
    formData.append(`rfi[question][attachments][ScreenShot]`,screenshot);
     try{
-     await updateAttachmentsExistRfi(procoreProjectId,selectedItem,formData).then((response)=>{
+     await updateAttachmentsExistRfi(procoreProjectId,selectedItem,formData,procoreCompanyId).then((response)=>{
         if(response){
           CustomToast("RFI linked successfully", 'success');
           handleCloseProcore();
@@ -118,11 +119,15 @@ const LinkExistingRfi: React.FC<IProps> = ({
     handleCloseProcore()
      CustomToast("Linking RFI failed", 'error');
   }
+}else{
+    CustomToast('Something went wrong!','error');
+  }
+
   };
 
   useEffect(() => {
     setLoading(true)
-    ListRfi(procoreProjectId)
+    ListRfi(procoreProjectId,procoreCompanyId)
       .then((response) => {
       if (response.data && response.data.length > 0) {
           setRfiData(response.data);

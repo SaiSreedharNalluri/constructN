@@ -46,6 +46,7 @@ const LinkExistingObservation: React.FC<IProps> = ({
   const { state: appState} = useAppContext();
   const procoreProjectDetails=appState.currentProjectData?.project.metaDetails
   const procoreProjectId =procoreProjectDetails?.procore?.projectId;
+  const procoreCompanyId = procoreProjectDetails?.procore?.companyId;
   const sequenceNumber= issue?.sequenceNumber || task?.sequenceNumber
   const handleBack = () => {
     handleInstance('CloseObservation');
@@ -61,6 +62,7 @@ const LinkExistingObservation: React.FC<IProps> = ({
   };
 
   const handleLink = async () => {
+    if(screenshot!==undefined){
     const selectedObservation:any = observationData.find((item:any) => item.id === selectedItem);
     const observationObject = {
       name: selectedObservation.name,
@@ -81,7 +83,7 @@ const LinkExistingObservation: React.FC<IProps> = ({
     formData.append(`attachments[${generatedpdf.name}]`, generatedpdf );
     formData.append(`attachments[screenShot]`,screenshot)
     try{
-    await  updateAttachmentsExistObservation(selectedItem,formData)
+    await  updateAttachmentsExistObservation(selectedItem,formData,procoreCompanyId)
       .then((response)=>{
         if(response){
               CustomToast("Observation linked successfully", 'success');
@@ -114,11 +116,14 @@ const LinkExistingObservation: React.FC<IProps> = ({
     handleCloseProcore();
    CustomToast("Linking Observation failed", 'error');
  }
+}else{
+  CustomToast('Something went wrong!','error');
+}
   };
 
   useEffect(() => {
     setLoading(true)
-    listObservation(procoreProjectId)
+    listObservation(procoreProjectId,procoreCompanyId)
       .then((response) => {
       
       //   const sortedObservations = response.data.sort((a: any, b: any) => {

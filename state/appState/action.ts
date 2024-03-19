@@ -11,6 +11,8 @@ export enum AppActionType {
     // updateCaptureUploadStatus,
     setInProgressProjectUpload,
     removeCaptureUpload,
+    removeAllCaptureUploads,
+    verifyExistingJobsForProject,
     setIsLoading
 }
 
@@ -46,6 +48,15 @@ export interface setInProgressProjectUpload {
 export interface removeCaptureUpload {
   type: AppActionType.removeCaptureUpload;
   payload: { job: IJobs}
+}
+
+export interface removeAllCaptureUploads {
+  type: AppActionType.removeAllCaptureUploads;
+}
+
+export interface verifyExistingJobsForProject {
+  type: AppActionType.verifyExistingJobsForProject;
+  payload: { projectId: string, jobs: IJobs[]}
 }
 
 export interface setIsLoading {
@@ -97,6 +108,17 @@ export const appContextActions = (dispatch: React.Dispatch<AppActions>) => {
           payload: { job: job }
         })
       },
+      removeAllCaptureUploads: () => {
+        dispatch({
+          type: AppActionType.removeAllCaptureUploads
+        })
+      },
+      verifyExistingJobsForProject: (projectId: string, jobs: IJobs[]) => {
+        dispatch({
+          type: AppActionType.verifyExistingJobsForProject,
+          payload: { projectId: projectId, jobs: jobs}
+        })
+      },
       setIsLoading: (isLoading:boolean) => {
         dispatch({ type: AppActionType.setIsLoading, payload:{isLoading: isLoading}});
     },
@@ -111,4 +133,6 @@ export type AppActions = projectListViewLoaded
  | setInProgressProjectUpload
 //  | updateCaptureUploadStatus
  | removeCaptureUpload
+ | removeAllCaptureUploads
+ | verifyExistingJobsForProject
  | setIsLoading

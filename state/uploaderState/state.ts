@@ -54,6 +54,7 @@ export interface UploaderState {
     captureMode: CaptureMode,
     captureType: CaptureType,
     choosenFiles: choosenFileObject,
+    batchOver: boolean,
     filesDropped: boolean,
     skipGCP: boolean,
     gcpType: UTMType | LONGLATType, 
@@ -120,6 +121,7 @@ export const initialUploaderState: UploaderState = {
         currentInvalidEXIFFiles: [],
         currentDuplicateFiles: [],
     },
+    batchOver: true,
     filesDropped: false,
     gcpType: GCPType.LONGLAT,
     gcpList: getInitialGCPList(false), // default is LONGLAT

@@ -123,7 +123,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
   const getRawImagesStatus = (job: IJobs) => {
     let rawImages = uploaderState.rawImagesMap[getCaptureIdFromModelOrString(job.captures[0])]
     let rawImagesStatus = rawImages ? rawImages.reduce<boolean>((prevValue, currentValue): boolean => {
-      return prevValue = prevValue || currentValue.status === RawImageStatus.initiated
+      return prevValue = prevValue || (currentValue.status === RawImageStatus.initiated || currentValue.status === RawImageStatus.started)
     }, false) : false
     return rawImagesStatus
   }
@@ -135,7 +135,7 @@ const CaptureUploadingStatus: React.FC<Iprops> = ({
       case JobStatus.pendingUpload:
         return (<CircularProgress color="warning" size={"24px"} thickness={5}/>)
       case JobStatus.uploadFailed:
-    let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
+        let selectedCaptureId = getCaptureIdFromModelOrString(job.captures[0])
         if (getRawImagesStatus(job)) {
           return (
           <div className="flex justify-center w-full">

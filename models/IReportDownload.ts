@@ -11,5 +11,6 @@ export interface IReportData {
     structure?: IStructure;
     snapshot?: ISnapshot;
     project?: IProjects;
-    logedInUser:string
+    logedInUser:string;
+    hierarchy:string
   }

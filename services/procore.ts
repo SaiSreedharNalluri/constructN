@@ -5,19 +5,17 @@ import procoreinstance from "./procoreInstance";
 import { CustomToast } from "../components/divami_components/custom-toaster/CustomToast";
 
 
-const accesstoken = (isMultipartFormData=false) => {
+const accesstoken = (companyId:number|undefined) => {
   try {
     const userObj: any = localStorage.getItem("userCredentials");
     let user = null;
-
+    
     if (userObj) user = JSON.parse(userObj);
     const procoreToken = user.metadata.procore;
 
     if (user && procoreToken.accessToken) {
-      if(isMultipartFormData){
-        return { Authorization: "Bearer " + procoreToken.accessToken,"content-type": "multipart/form-data" }
-      }
-      return { Authorization: "Bearer " + procoreToken.accessToken };
+      return { Authorization: "Bearer " + procoreToken.accessToken,
+      "Procore-Company-Id":companyId };
     } else {
       return { Authorization: "" };
     }
@@ -61,7 +59,6 @@ export const LinkToProcore =(projectId:string,procore:object)=>{
       headers: authHeader.authHeader(),
   }
   ).then((response)=>{
-    console.log('dharani api response',response.data)
     return response.data
   }).catch((error)=>{
     throw error
@@ -69,12 +66,12 @@ export const LinkToProcore =(projectId:string,procore:object)=>{
 }
 
 /**RFI API's */
-export const getRfiManager = (projectId:number | undefined) => {
+export const getRfiManager = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_rfi_managers`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -85,12 +82,12 @@ export const getRfiManager = (projectId:number | undefined) => {
     });
 };
 
-export const getReceivedFrom = (projectId:number | undefined) => {
+export const getReceivedFrom = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_received_froms`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -101,12 +98,12 @@ export const getReceivedFrom = (projectId:number | undefined) => {
     });
 };
 
-export const getResponsibleContractor = (projectId:number | undefined) => {
+export const getResponsibleContractor = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_responsible_contractors`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -117,12 +114,12 @@ export const getResponsibleContractor = (projectId:number | undefined) => {
     });
 };
 
-export const potentialDistributionMembers = (projectId:number | undefined) => {
+export const potentialDistributionMembers = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_distribution_members`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -132,12 +129,12 @@ export const potentialDistributionMembers = (projectId:number | undefined) => {
       throw error;
     });
 };
-export const specSection = (projectId:number | undefined) => {
+export const specSection = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/specification_sections?project_id=${projectId}`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -148,10 +145,10 @@ export const specSection = (projectId:number | undefined) => {
     });
 };
 
-export const getLocation = (projectId:number | undefined) => {
+export const getLocation = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/locations`, {
-      headers: accesstoken(),
+      headers: accesstoken(companyId),
     })
     .then((response) => {
       return response.data;
@@ -160,10 +157,10 @@ export const getLocation = (projectId:number | undefined) => {
       throw error;
     });
 };
-export const getcoastCode = (projectId:number | undefined) => {
+export const getcoastCode = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/cost_codes?project_id=${projectId}`, {
-      headers: accesstoken(),
+      headers: accesstoken(companyId),
     })
     .then((response) => {
       return response.data;
@@ -177,7 +174,7 @@ export const getRfiStage = (projectId:number | undefined,companyId:number | unde
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/project_stages?project_id=${projectId}`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -188,12 +185,12 @@ export const getRfiStage = (projectId:number | undefined,companyId:number | unde
     });
 };
 
-export const costImpact = (projectId:number | undefined) => {
+export const costImpact = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_cost_impacts`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -204,12 +201,12 @@ export const costImpact = (projectId:number | undefined) => {
     });
 };
 
-export const scheduleImpact = (projectId:number | undefined) => {
+export const scheduleImpact = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis/potential_schedule_impacts`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -220,13 +217,13 @@ export const scheduleImpact = (projectId:number | undefined) => {
     });
 };
 
-export const createRfi = (formData: any,projectId:number | undefined) => {
+export const createRfi = (formData: any,projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .post(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis`,
       formData,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -238,12 +235,12 @@ export const createRfi = (formData: any,projectId:number | undefined) => {
 };
 
 
-export const ListRfi = (projectId:number | undefined) => {
+export const ListRfi = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/rfis?filters[status][]=draft&filters[status][]=open`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -294,10 +291,10 @@ export const linkTaskRfi = (
     });
 };
 
-export const showRfiDetails = (id: number,projectId:number | undefined) => {
+export const showRfiDetails = (id: number,projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/rfis/${id}`, {
-      headers: accesstoken(),
+      headers: accesstoken(companyId),
     })
     .then((response) => {
       return response?.data;
@@ -307,10 +304,10 @@ export const showRfiDetails = (id: number,projectId:number | undefined) => {
     });
 };
 
-export const updateAttachmentsExistRfi =(projectId:number| undefined,rfiId:number | null,formData:any)=>{
+export const updateAttachmentsExistRfi =(projectId:number| undefined,rfiId:number | null,formData:any,companyId:number | undefined)=>{
   return procoreinstance
   .put(`${PROCORE.SANDBOX_URL}/rest/v1.0/projects/${projectId}/rfis/${rfiId}`,formData,{
-  headers: accesstoken(),
+  headers: accesstoken(companyId),
    })
    .then((response)=>{
     return response.data
@@ -325,7 +322,7 @@ export const updateAttachmentsExistRfi =(projectId:number| undefined,rfiId:numbe
 export const tradeList = (companyId:number | undefined) => {
   return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/trades`, {
-      headers: accesstoken(),
+      headers: accesstoken(companyId),
     })
     .then((response) => {
       return response.data;
@@ -335,12 +332,12 @@ export const tradeList = (companyId:number | undefined) => {
     });
 };
 
-export const typesList = (projectId:number | undefined) => {
+export const typesList = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/types?project_id=${projectId}`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -356,7 +353,7 @@ export const contributingConditionsList = (companyId:number | undefined) => {
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/contributing_conditions`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -372,7 +369,7 @@ export const contributingBehaviorList = (companyId:number | undefined) => {
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/contributing_behaviors`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -386,7 +383,7 @@ export const contributingBehaviorList = (companyId:number | undefined) => {
 export const hazardList = (companyId:number | undefined) => {
   return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/companies/${companyId}/hazards`, {
-      headers: accesstoken(),
+      headers: accesstoken(companyId),
     })
     .then((response) => {
       return response.data;
@@ -396,14 +393,14 @@ export const hazardList = (companyId:number | undefined) => {
     });
 };
 
-export const createObservation = (formData: any) => {
+export const createObservation = (formData: any,companyId:number | undefined) => {
   
   return procoreinstance
     .post(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items`,
       formData,
       {
-        headers: accesstoken(true),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -415,12 +412,12 @@ export const createObservation = (formData: any) => {
     });
 };
 
-export const listObservation = (projectId:number | undefined) => {
+export const listObservation = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items?project_id=${projectId}`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -471,10 +468,10 @@ export const linkTaskObservation = (
     });
 };
 
-export const showObservationDetails = (id: number,projectId:number | undefined) => {
+export const showObservationDetails = (id: number,projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items/${id}?project_id=${projectId}`, {
-      headers: accesstoken(),
+      headers: accesstoken(companyId),
     })
     .then((response) => {
       return response.data;
@@ -484,10 +481,10 @@ export const showObservationDetails = (id: number,projectId:number | undefined) 
     });
 };
 
-export const updateAttachmentsExistObservation =(observationId:number | null,formData:object)=>{
+export const updateAttachmentsExistObservation =(observationId:number | null,formData:object,companyId:number | undefined)=>{
   return procoreinstance
   .put(`${PROCORE.SANDBOX_URL}/rest/v1.0/observations/items/${observationId}`,formData,{
-  headers: accesstoken(),
+  headers: accesstoken(companyId),
    })
    .then((response)=>{
     return response.data
@@ -500,13 +497,13 @@ export const updateAttachmentsExistObservation =(observationId:number | null,for
 
 
 /**submittal APIs */
-export const createSubmittal = (formData: object,projectId:number | undefined) => {
+export const createSubmittal = (formData: object,projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .post(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals`,
       formData,
       {
-        headers: accesstoken(true),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -517,10 +514,10 @@ export const createSubmittal = (formData: object,projectId:number | undefined) =
     });
 };
 
-export const listSubmittal = (projectId:number | undefined) => {
+export const listSubmittal = (projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals`, {
-      headers: accesstoken(),
+      headers: accesstoken(companyId),
     })
     .then((response) => {
       return response;
@@ -569,12 +566,12 @@ export const linkTaskSubmittal = (
     });
 };
 
-export const showSubmittalDetails = (id: number|null,projectId:number | undefined) => {
+export const showSubmittalDetails = (id: number|null,projectId:number | undefined,companyId:number | undefined) => {
   return procoreinstance
     .get(
       `${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/${id}`,
       {
-        headers: accesstoken(),
+        headers: accesstoken(companyId),
       }
     )
     .then((response) => {
@@ -585,10 +582,10 @@ export const showSubmittalDetails = (id: number|null,projectId:number | undefine
     });
 };
 
-export const updateAttachmentsExistSubmittal =(projectId:number | undefined, submittalId:number | null, formData:object)=>{
+export const updateAttachmentsExistSubmittal =(projectId:number | undefined, submittalId:number | null, formData:object,companyId:number | undefined)=>{
   return procoreinstance
   .put(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/${submittalId}`,formData,{
-  headers: accesstoken(),
+  headers: accesstoken(companyId),
    })
    .then((response)=>{
     return response.data
@@ -598,10 +595,10 @@ export const updateAttachmentsExistSubmittal =(projectId:number | undefined, sub
    })
 }
 
-export const filesUpload =(projectId:number | undefined,formData:object)=>{
+export const filesUpload =(projectId:number | undefined,formData:object,companyId:number | undefined)=>{
   return procoreinstance
   .post(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/uploads`,formData,{
-    headers:accesstoken(),
+    headers:accesstoken(companyId),
   })
   .then((response)=>{
     return response.data
@@ -612,10 +609,10 @@ export const filesUpload =(projectId:number | undefined,formData:object)=>{
 }
 
 
-export const projectFile =(projectId:number|undefined,formData:object)=>{
+export const projectFile =(projectId:number|undefined,formData:object,companyId:number | undefined)=>{
   return procoreinstance
   .post(`${PROCORE.SANDBOX_URL}/rest/v1.0/files?project_id=${projectId}`,formData,{
-        headers:accesstoken(),
+        headers:accesstoken(companyId),
   })
   .then((response)=>{
     return response.data
@@ -626,11 +623,11 @@ export const projectFile =(projectId:number|undefined,formData:object)=>{
 }
 
 
-export const permissions =(projectId:number | undefined)=>{
+export const permissions =(projectId:number | undefined, companyId:number | undefined)=>{
 
   return procoreinstance .get(`${PROCORE.SANDBOX_URL}/rest/v1.0/settings/permissions?project_id=${projectId}`,
   {
-    headers:accesstoken(),
+    headers:accesstoken(companyId),
   })
   .then((response)=>{
     return response.data
@@ -641,12 +638,12 @@ export const permissions =(projectId:number | undefined)=>{
 }
 
 
-export const getSubmittalReceivedFrom =(projectId:number | undefined, responsibleContractorId:number|null)=>{
+export const getSubmittalReceivedFrom =(projectId:number | undefined, responsibleContractorId:number|null,companyId:number | undefined)=>{
   if(responsibleContractorId !== null){
   return procoreinstance
   .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_received_froms?responsible_contractor_id=${responsibleContractorId}`,
   {
-    headers:accesstoken(),
+    headers:accesstoken(companyId),
   })
   .then((response)=>{
     return response.data
@@ -659,7 +656,7 @@ export const getSubmittalReceivedFrom =(projectId:number | undefined, responsibl
     return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_received_froms`,
   {
-    headers:accesstoken(),
+    headers:accesstoken(companyId),
   })
   .then((response)=>{
     return response.data
@@ -671,13 +668,13 @@ export const getSubmittalReceivedFrom =(projectId:number | undefined, responsibl
 }
 
 
-export const getSubmittalResponsibleContractor =(projectId:number | undefined, receivedFromId: number | null)=>{
+export const getSubmittalResponsibleContractor =(projectId:number | undefined, receivedFromId: number | null,companyId:number | undefined)=>{
   
   if(receivedFromId !==null){
     return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_responsible_contractors?received_from_id=${receivedFromId}`,
     {
-      headers:accesstoken()
+      headers:accesstoken(companyId)
     })
     .then((response)=>{
       return response.data
@@ -689,7 +686,7 @@ export const getSubmittalResponsibleContractor =(projectId:number | undefined, r
     return procoreinstance
     .get(`${PROCORE.SANDBOX_URL}/rest/v1.1/projects/${projectId}/submittals/potential_responsible_contractors`,
     {
-      headers:accesstoken()
+      headers:accesstoken(companyId)
     })
     .then((response)=>{
       return response.data
