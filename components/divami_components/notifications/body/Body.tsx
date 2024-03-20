@@ -321,7 +321,7 @@ const Body = ({
                                     ) : notificationObj.category==="Issue"   ? <Image src={issueIcon} className="h-8 w-8 mt-2" alt="" />:notificationObj.category=== "Task" ? <Image src={task} className="h-8 w-8 mt-2" alt="" />:notificationObj.category=== "Snapshot" ? <Image src={cameraIcon} className="h-8 w-8 mt-2" alt="" />:""}  
                                 </div>
                             
-                              <div className="col-span-7 ">
+                              <div className="col-span-7 cursor-pointer">
                                <div className="ml-2">
                               <p className="text-sm overflow-hidden" style={{
                                         wordWrap: 'break-word',
@@ -437,12 +437,12 @@ const Body = ({
           <div className="flex justify-between px-2 py-2">
 
             <div className="">
-            <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black" onClick={loadMoreData}>
+            <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black cursor-pointer" onClick={loadMoreData}>
               Load More
             </a>
           </div>
           <div className="">
-          <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black"   onClick={scrollTop}>
+          <a className="font-normal  text-base leading-[21.79px]  text-[#F1742E]  hover:text-black cursor-pointer"   onClick={scrollTop}>
               Top
             </a>
           </div>

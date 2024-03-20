@@ -60,8 +60,9 @@ export const CustomMenu = ({
     });
   };
   return (
-    <MenuWrapper className={`${id} ${isActive ? "active" : ""} cursor-pointer`}>
+    <MenuWrapper className={`${id} ${isActive ? "active" : ""}`} >
       <Image
+     className="cursor-pointer"
         src={imageSrc}
         alt=""
         width={width ? width : 20}
